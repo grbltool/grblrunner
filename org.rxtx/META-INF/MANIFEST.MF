@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: rxtx
+Bundle-SymbolicName: org.rxtx;singleton:=true
+Bundle-Version: 2.2
+Bundle-ClassPath: RXTXcomm.jar
+Bundle-Vendor: rxtx.org
+Export-Package: gnu.io;version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-NativeCode: lib/dlls/Windows/amd64/rxtxSerial.dll; osname=win32; processor=x86_64

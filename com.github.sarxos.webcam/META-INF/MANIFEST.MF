@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Webcam2
+Bundle-SymbolicName: com.github.sarxos.webcam
+Bundle-Version: 0.3.10
+Bundle-Vendor: Sarxos
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.slf4j;bundle-version="1.7.12"
+Export-Package: com.github.sarxos.webcam
+Bundle-ClassPath: bridj-0.6.2.jar,
+ .

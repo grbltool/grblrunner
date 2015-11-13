@@ -1,0 +1,142 @@
+package de.jungierek.grblrunner.parts.groups;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.jungierek.grblrunner.tools.GuiFactory;
+import de.jungierek.grblrunner.tools.IEvents;
+import de.jungierek.grblrunner.tools.IPersistenceKeys;
+
+public class StatusLineGroup {
+
+    private static final Logger LOG = LoggerFactory.getLogger ( StatusLineGroup.class );
+
+    private static final String GROUP_NAME = "Status";
+
+    private Label statusLabel;
+
+    @PostConstruct
+    public void createGui ( Composite parent, IEclipseContext context ) {
+
+        LOG.debug ( "createGui: parent=" + parent );
+
+        int partCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_COLS )).intValue ();
+        int groupCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_COLS )).intValue ();
+        Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, 1, true );
+
+        final int cols = 1;
+        group.setLayout ( new GridLayout ( cols, true ) );
+
+        statusLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "Status", 1 );
+
+    }
+
+    @Inject
+    @Optional
+    public void applicationStartedNotified ( @UIEventTopic(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE) Object event ) {
+
+        LOG.trace ( "applicationStarted: event=" + event ); // MApplication
+
+        statusLabel.setText ( "retrieving COM-Ports ..." );
+
+    }
+
+    @Inject
+    @Optional
+    public void alarmNotified ( @UIEventTopic(IEvents.EVENT_GCODE_ALARM) String line ) {
+
+        LOG.debug ( "alarmNotified: line=" + line );
+
+        statusLabel.setText ( line );
+
+    }
+
+    @Inject
+    @Optional
+    public void portsDetectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_PORTS_DETECTED) String [] ports ) {
+
+        LOG.trace ( "portsDetectedNotified: ports=" + ports );
+
+        statusLabel.setText ( "COM-Ports detected" );
+
+    }
+
+    @Inject
+    @Optional
+    public void connectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_CONNECTED) String port ) {
+
+        LOG.trace ( "connectedNotified: port=" + port );
+
+        statusLabel.setText ( "grbl connected on port " + port );
+
+    }
+
+    @Inject
+    @Optional
+    public void disconnectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_DISCONNECTED) String port ) {
+
+        LOG.trace ( "connectedNotified: port=" + port );
+
+        statusLabel.setText ( "grbl disconnected" );
+
+    }
+
+    private String startMsg;
+
+    @SuppressWarnings("deprecation")
+    @Inject
+    @Optional
+    public void playerStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_START) String timestamp ) {
+
+        LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
+
+        startMsg = "runnning gcode program since " + timestamp + " ... ";
+        statusLabel.setText ( startMsg );
+
+    }
+
+    @Inject
+    @Optional
+    public void playerStopNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_STOP) String timestamp ) {
+
+        LOG.trace ( "playerStopNotified: timestamp=" + timestamp );
+
+        statusLabel.setText ( startMsg + "finsihed at " + timestamp );
+        startMsg = null;
+
+    }
+
+    @Inject
+    @Optional
+    public void scanStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SCAN_START) String timestamp ) {
+
+        LOG.trace ( "scanStartNotified:" );
+
+        startMsg = "scanning probe data since " + timestamp + " ... ";
+        statusLabel.setText ( startMsg );
+
+    }
+
+    @Inject
+    @Optional
+    public void scanStopNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SCAN_STOP) String timestamp ) {
+
+        LOG.trace ( "scanStopNotified: " );
+
+        statusLabel.setText ( startMsg + "finsihed at " + timestamp );
+
+    }
+
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            name="GrblRunner"
+            application="org.eclipse.e4.ui.workbench.swt.E4Application">
+         <property
+               name="appName"
+               value="GrblRunner">
+         </property>
+         <property
+               name="cssTheme"
+               value="platform://plugin/de.jungierek.grblrunner/css/default.css">
+         </property>
+      </product>
+   </extension>
+
+</plugin>
