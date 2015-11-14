@@ -312,8 +312,10 @@ public class SerialServiceImpl implements ISerialService {
     @Override
     public void close () {
 
-        LOG.debug ( "close: ..." );
+        LOG.debug ( "close: serialReceiverThread=" + serialReceiverThread );
         
+        if ( serialReceiverThread == null ) return;
+
         new Thread ( ( ) -> {
 
             serialReceiverThread.interrupt ();

@@ -10,6 +10,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,22 @@ public class StartupAddon {
     /*
      * Notizen: IApplicationContext enthäkt startup Parameter via getArguments()
      */
+    
+    private EventHandler addHandler = new EventHandler () {
+
+        @Override
+        public void handleEvent ( Event event ) {
+
+            LOG.info ( "handleEvent: event=" + event );
+
+            if ( !(event.getProperty ( UIEvents.EventTags.ELEMENT ) instanceof MWindow) ) return;
+
+            if ( !UIEvents.isCREATE ( event ) ) return;
+
+            LOG.info ( "handleEvent: event=" + event );
+
+        }
+    };
 
     @Inject
     public StartupAddon () {
@@ -51,6 +69,9 @@ public class StartupAddon {
     public void processAddon ( ISerialService serial, EModelService modelService, MApplication application ) {
 
         LOG.debug ( "processAddon: detect serial ports" );
+
+        // eventBroker.subscribe ( UIEvents.Window.TOPIC_ALL, addHandler );
+        eventBroker.subscribe ( UIEvents.TrimmedWindow.TOPIC_ALL, addHandler );
 
         serial.detectSerialPortsAsync ();
         

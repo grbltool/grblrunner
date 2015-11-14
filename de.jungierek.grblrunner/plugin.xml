@@ -17,5 +17,16 @@
          </property>
       </product>
    </extension>
+   <extension
+         id="quit.handler"
+         name="Quit Handler"
+         point="org.eclipse.e4.workbench.model">
+      <processor
+            apply="always"
+            beforefragment="false"
+            class="de.jungierek.grblrunner.addons.QuitProcessor">
+            <element id="de.jungierek.grblrunner.window.main"/>
+      </processor>
+   </extension>
 
 </plugin>
