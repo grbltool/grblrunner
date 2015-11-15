@@ -15,8 +15,10 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.IConstants;
+import de.jungierek.grblrunner.tools.IEvents;
 
 public class QuitProcessor {
 
@@ -35,7 +37,7 @@ public class QuitProcessor {
 
     }
 
-    // https://www.eclipse.org/forums/index.php/t/369989/
+    // Quelle: https://www.eclipse.org/forums/index.php/t/369989/
 
     @Execute
     void installIntoContext () {
@@ -63,11 +65,11 @@ public class QuitProcessor {
                                 Object value = context.get ( IWindowCloseHandler.class ); // access the context value to be reevaluated on every future change of the value
 
                                 if ( !quitHandler.equals ( value ) ) { // prevents endless loop
-                                    LOG.info ( "installIntoContext: set quit handler event=" + event );
+                                    LOG.debug ( "installIntoContext: set quit handler event=" + event );
                                     context.set ( IWindowCloseHandler.class, quitHandler );
                                 }
 
-                                return true; // ture keeps tracking and the quitHandler as the only opportunity
+                                return true; // true keeps tracking and the quitHandler as the only opportunity
                             }
 
                         } );
@@ -83,7 +85,14 @@ public class QuitProcessor {
         @Override
         public boolean close ( MWindow window ) {
 
-            LOG.info ( "close:" );
+            LOG.debug ( "close:" );
+
+            IGcodeService gcodeService = window.getContext ().get ( IGcodeService.class );
+            if ( gcodeService.isPlaying () || gcodeService.isScanning () ) {
+                LOG.warn ( "close: job is runnung" );
+                eventBroker.post ( IEvents.EVENT_MSG_ERROR, "Closing application is not possible! Job is running!" );
+                return false;
+            }
 
             ISerialService serial = window.getContext ().get ( ISerialService.class );
             serial.close ();

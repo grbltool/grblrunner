@@ -1080,19 +1080,31 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         final String feed = "F" + gcodeLine.getFeedrate ();
                         IGcodePoint [] path = gcodeModel.interpolateLine ( gcodeLine.getStart (), gcodeLine.getEnd () );
                         for ( int i = 1; i < path.length; i++ ) {
-                            // TODO eliminate first point
+                            // TODO eliminate first point?
                             String segment = cmd;
                             segment += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getX () );
                             segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getY () );
                             segment += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getZ () );
-                            // if ( gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) s += feed;
                             segment += feed;
                             eventBroker.send ( EVENT_GCODE_PLAYER_LINE_SEGMENT, segment );
                             sendCommandSuppressInTerminal ( segment );
                         }
                     }
                     else {
-                        sendCommandSuppressInTerminal ( gcodeLine.getLine () );
+                        // after rotation the original line is obsolet for motion commands
+                        if ( gcodeLine.isMotionMode () ) {
+                            final String cmd = gcodeLine.getGcodeMode ().getCommand ();
+                            final String feed = "F" + gcodeLine.getFeedrate ();
+                            String line = cmd;
+                            line += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getX () );
+                            line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
+                            line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
+                            line += feed;
+                            sendCommandSuppressInTerminal ( line );
+                        }
+                        else {
+                             sendCommandSuppressInTerminal ( gcodeLine.getLine () );
+                        }
                     }
                     gcodeLine.setProcessed ( true );
                 }

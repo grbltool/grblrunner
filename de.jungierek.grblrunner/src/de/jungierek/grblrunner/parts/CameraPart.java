@@ -41,6 +41,9 @@ public class CameraPart implements PaintListener, IWebcamServiceReceiver {
     @Inject
     private IWebcamService webcamService;
 
+    @Inject
+    private Display display;
+
     @PostConstruct
     private void createGui ( Composite parent ) {
         
@@ -174,7 +177,7 @@ public class CameraPart implements PaintListener, IWebcamServiceReceiver {
             }
         }
 
-        return new Image ( Display.getDefault (), swtImageData );
+        return new Image ( display, swtImageData );
 
     }
 
@@ -184,7 +187,7 @@ public class CameraPart implements PaintListener, IWebcamServiceReceiver {
         LOG.trace ( "received called" );
 
         webcamImage = image;
-        Display.getDefault ().syncExec ( ( ) -> {
+        display.syncExec ( ( ) -> {
             if ( !webcamCanvas.isDisposed () ) webcamCanvas.redraw ();
         } );
 

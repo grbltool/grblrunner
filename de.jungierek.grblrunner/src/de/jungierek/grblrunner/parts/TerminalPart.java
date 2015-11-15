@@ -2,12 +2,10 @@ package de.jungierek.grblrunner.parts;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -15,7 +13,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +35,7 @@ public class TerminalPart {
     private IGcodeModel gcodeModel;
 
     @Inject
-    @Named(IServiceConstants.ACTIVE_SHELL)
-    private Shell shell;
+    Display display;
 
     private Color WHITE, RED, GREEN, GRAY, LIGHT_GREEN, LIGHT_GRAY, YELLOW;
 
@@ -51,8 +47,6 @@ public class TerminalPart {
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
-
-        final Display display = shell.getDisplay ();
 
         WHITE = display.getSystemColor ( SWT.COLOR_WHITE );
         RED = display.getSystemColor ( SWT.COLOR_RED );

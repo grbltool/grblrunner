@@ -241,6 +241,7 @@ public class GcodeFileGroup {
         fileNameLabel.setText ( fileName );
 
         updateMinMax ();
+        gcodeRotationText.setText ( String.format ( "%.0f", model.getRotationAngle () ) );
 
         setControlsEnabled ( true );
 

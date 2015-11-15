@@ -481,7 +481,7 @@ public class GcodeViewGroup {
                 gc.setForeground ( getColor ( color[i] ) );
                 drawLine ( gc, p0, gcodeToCanvas ( factor, shift, v[i] ) );
                 Point p = gcodeToCanvas ( 1.3 * factor, shift, v[i] );
-                gc.setForeground ( Display.getCurrent ().getSystemColor ( SWT.COLOR_BLACK ) );
+                gc.setForeground ( display.getSystemColor ( SWT.COLOR_BLACK ) );
                 org.eclipse.swt.graphics.Point extent = gc.textExtent ( axis[i] );
                 gc.drawString ( axis[i], (int) p.x - extent.x / 2, (int) p.y - extent.y / 2, true );
             }

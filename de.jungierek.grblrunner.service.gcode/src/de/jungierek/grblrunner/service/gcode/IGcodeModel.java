@@ -31,6 +31,7 @@ public interface IGcodeModel {
     public IGcodePoint getShift ();
 
     public void rotate ( double angle );
+    double getRotationAngle ();
 
     // ---------------------------------------------------------------------
 

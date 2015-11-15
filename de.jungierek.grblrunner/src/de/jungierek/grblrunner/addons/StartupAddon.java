@@ -39,7 +39,7 @@ public class StartupAddon {
     private MWindow window;
 
     /*
-     * Notizen: IApplicationContext enthäkt startup Parameter via getArguments()
+     * Notizen: IApplicationContext enthält startup Parameter via getArguments()
      */
     
     private EventHandler addHandler = new EventHandler () {
@@ -47,13 +47,11 @@ public class StartupAddon {
         @Override
         public void handleEvent ( Event event ) {
 
-            LOG.info ( "handleEvent: event=" + event );
-
             if ( !(event.getProperty ( UIEvents.EventTags.ELEMENT ) instanceof MWindow) ) return;
 
             if ( !UIEvents.isCREATE ( event ) ) return;
 
-            LOG.info ( "handleEvent: event=" + event );
+            LOG.debug ( "handleEvent: event=" + event );
 
         }
     };

@@ -63,8 +63,17 @@ public class GcodeModelImpl implements IGcodeModel {
         // gcodeLines.clear ();
         gcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
 
+        rotationAngle = 0.0;
+
         disposeProbeData ();
     
+    }
+
+    @Override
+    public double getRotationAngle () {
+
+        return rotationAngle / ONE_DEGREE;
+
     }
 
     @Override
@@ -101,6 +110,8 @@ public class GcodeModelImpl implements IGcodeModel {
     
     
         LOG.debug ( "rotate: angle=" + angle );
+
+        if ( this.rotationAngle == angle * ONE_DEGREE ) return;
     
         this.rotationAngle = angle * ONE_DEGREE;
         

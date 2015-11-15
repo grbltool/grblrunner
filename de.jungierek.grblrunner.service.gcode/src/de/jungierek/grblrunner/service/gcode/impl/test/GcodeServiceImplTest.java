@@ -543,6 +543,12 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
             fail ( "GcodeModel: prepareAutolevelScan not implemented" );
         }
 
+        @Override
+        public double getRotationAngle () {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
     }
 
     @Override
