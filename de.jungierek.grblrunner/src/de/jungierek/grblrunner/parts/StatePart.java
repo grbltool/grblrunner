@@ -25,13 +25,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IEvents;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class StatePart {
@@ -252,7 +252,18 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_CONNECTED) String portName ) {
+    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
+    
+        LOG.debug ( "alarmNotified: start" );
+        setStateLabel ( EGrblState.ALARM );
+        // inform about whole message
+        stateLabel.setText ( line );
+    
+    }
+
+    @Inject
+    @Optional
+    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
 
         LOG.debug ( "connectedNotified: portName=" + portName );
 
@@ -266,7 +277,18 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void sentNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SENT) IGcodeResponse command ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
+    
+        LOG.debug ( "disconnectedNotified: param=" + param );
+        
+        stateLabel.setText ( UNCONNECTED_TEXT );
+        setControlsEnabled ( false );
+    
+    }
+
+    @Inject
+    @Optional
+    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGcodeResponse command ) {
 
         LOG.trace ( "sentNotified: command=" + command );
 
@@ -278,7 +300,7 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void receivedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_RECEIVED) IGcodeResponse response ) {
+    public void receivedNotified ( @UIEventTopic(IEvents.GRBL_RECEIVED) IGcodeResponse response ) {
 
         if ( response == null ) {
             LOG.warn ( "receivedNotified: response == null" );
@@ -305,37 +327,7 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void grblRestartedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_GRBL_RESTARTED) String line ) {
-
-        LOG.trace ( "grblRestartedNotified: line=" + line );
-
-    }
-
-    @Inject
-    @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_DISCONNECTED) String param ) {
-
-        LOG.debug ( "disconnectedNotified: param=" + param );
-        
-        stateLabel.setText ( UNCONNECTED_TEXT );
-        setControlsEnabled ( false );
-
-    }
-
-    @Inject
-    @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.EVENT_GCODE_ALARM) String line ) {
-
-        LOG.debug ( "alarmNotified: start" );
-        setStateLabel ( EGrblState.ALARM );
-        // inform about whole message
-        stateLabel.setText ( line );
-
-    }
-
-    @Inject
-    @Optional
-    public void updateStateNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_STATE) IGcodeGrblState grblState ) {
+    public void updateStateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState grblState ) {
 
         LOG.debug ( "updateStateNotified: grblState=" + grblState );
         
@@ -355,7 +347,7 @@ public class StatePart {
     
     @Inject
     @Optional
-    public void updateMotionModeNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_MOTION_MODE) String motionMode ) {
+    public void updateMotionModeNotified ( @UIEventTopic(IEvents.UPDATE_MOTION_MODE) String motionMode ) {
 
         LOG.trace ( "updateMotionModeNotified: motionMode=" + motionMode );
         motionModeLabel.setText ( motionMode );
@@ -364,7 +356,7 @@ public class StatePart {
     
     @Inject
     @Optional
-    public void updateCoordSelectNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_COORD_SELECT) String coordSelect ) {
+    public void updateCoordSelectNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE) String coordSelect ) {
 
         LOG.trace ( "updateCoordSelectNotified: coordSelect=" + coordSelect );
         coordSystemCombo.select ( coordSelect.charAt ( 2 ) - '4' );
@@ -374,7 +366,7 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void updateCoordSelectOffsetsNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_COORD_SELECT_OFFSET) Object dummy ) {
+    public void updateCoordSelectOffsetsNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE_OFFSET) Object dummy ) {
 
         LOG.trace ( "updateCoordSelectOffsetsNotified:" );
         // do nothing
@@ -383,7 +375,7 @@ public class StatePart {
     
     @Inject
     @Optional
-    public void updatePlaneNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_PLANE) String plane ) {
+    public void updatePlaneNotified ( @UIEventTopic(IEvents.UPDATE_PLANE) String plane ) {
 
         LOG.trace ( "updatePlaneNotified: plane=" + plane );
         planeLabel.setText ( plane );
@@ -392,7 +384,7 @@ public class StatePart {
     
     @Inject
     @Optional
-    public void updateMetricModeNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_METRIC_MODE) String metricMode ) {
+    public void updateMetricModeNotified ( @UIEventTopic(IEvents.UPDATE_METRIC_MODE) String metricMode ) {
 
         LOG.trace ( "updateMetricModeNotified: metricMode=" + metricMode );
         unitLabel.setText ( metricMode );
@@ -401,7 +393,7 @@ public class StatePart {
     
     @Inject
     @Optional
-    public void updateToolNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_TOOL) String tool ) {
+    public void updateToolNotified ( @UIEventTopic(IEvents.UPDATE_TOOL) String tool ) {
 
         LOG.trace ( "updateToolNotified: tool=" + tool );
         toolLabel.setText ( tool );
@@ -410,7 +402,7 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void updateCoolantModeNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_COOLANT_MODE) String coolantMode ) {
+    public void updateCoolantModeNotified ( @UIEventTopic(IEvents.UPDATE_COOLANT_MODE) String coolantMode ) {
 
         LOG.trace ( "updateCoolantModeNotified: coolantMode=" + coolantMode );
         coolantLabel.setText ( coolantMode );
@@ -419,7 +411,7 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void updateSpindleModeNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_SPINDLE_MODE) String spindleMode ) {
+    public void updateSpindleModeNotified ( @UIEventTopic(IEvents.UPDATE_SPINDLE_MODE) String spindleMode ) {
 
         LOG.trace ( "updateSpindleModeNotified: tool=" + spindleMode );
 
@@ -429,7 +421,7 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void updateFeedrateNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_FEEDRATE) String feedrate ) {
+    public void updateFeedrateNotified ( @UIEventTopic(IEvents.UPDATE_FEEDRATE) String feedrate ) {
 
         LOG.trace ( "updateFeedrateNotified: feedrate=" + feedrate );
         feedrateLabel.setText ( feedrate );
@@ -438,7 +430,7 @@ public class StatePart {
     
     @Inject
     @Optional
-    public void updateSpindlespeedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_SPINDLESPEED) String spindlespeed ) {
+    public void updateSpindlespeedNotified ( @UIEventTopic(IEvents.UPDATE_SPINDLESPEED) String spindlespeed ) {
 
         LOG.trace ( "updateSpindlespeedNotified: spindlespeed=" + spindlespeed );
         spindlespeedLabel.setText ( spindlespeed );
@@ -447,7 +439,7 @@ public class StatePart {
     
     @Inject
     @Optional
-    public void updateDistanceModeNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_DISTANCE_MODE) String distanceMode ) {
+    public void updateDistanceModeNotified ( @UIEventTopic(IEvents.UPDATE_DISTANCE_MODE) String distanceMode ) {
 
         LOG.trace ( "updateDistanceModeNotified: distanceMode=" + distanceMode );
         distanceModeLabel.setText ( distanceMode );
@@ -456,7 +448,7 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_START) String fileName ) {
+    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String fileName ) {
 
         LOG.trace ( "playerStartNotified: fileName=" + fileName );
         setControlsEnabled ( false );
@@ -465,9 +457,29 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_STOP) String fileName ) {
+    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String fileName ) {
 
         LOG.trace ( "playerStopNotified: fileName=" + fileName );
+        setControlsEnabled ( true );
+
+    }
+
+    @Inject
+    @Optional
+    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) Object dummy ) {
+
+        LOG.trace ( "scanStartNotified:" );
+
+        setControlsEnabled ( false );
+
+    }
+
+    @Inject
+    @Optional
+    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) Object dummy ) {
+
+        LOG.trace ( "scanStopNotified:" );
+
         setControlsEnabled ( true );
 
     }

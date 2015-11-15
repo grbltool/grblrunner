@@ -15,13 +15,13 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IEvents;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class ProgressGroup {
@@ -61,7 +61,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.EVENT_GCODE_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
 
         LOG.debug ( "alarmNotified: line=" + line );
 
@@ -71,7 +71,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void updateStateNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_STATE) IGcodeGrblState grblState ) {
+    public void updateStateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState grblState ) {
 
         LOG.trace ( "updateStateNotified: grblState=" + grblState );
 
@@ -100,7 +100,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_DISCONNECTED) String port ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String port ) {
 
         LOG.trace ( "connectedNotified: port=" + port );
 
@@ -111,7 +111,7 @@ public class ProgressGroup {
     @SuppressWarnings("deprecation")
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_START) String timestamp ) {
+    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String timestamp ) {
 
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
@@ -123,7 +123,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void gcodePlayerLineNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_LINE) IGcodeLine line ) {
+    public void playerLineNotified ( @UIEventTopic(IEvents.PLAYER_LINE) IGcodeLine line ) {
 
         LOG.trace ( "gcodePlayerLineNotified: line=" + line );
 
@@ -133,7 +133,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SCAN_START) String timestamp ) {
+    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) String timestamp ) {
 
         LOG.trace ( "scanStartNotified:" );
 
@@ -146,7 +146,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void updateProbeNotified ( @UIEventTopic(IEvents.EVENT_PROBE_UPDATE) IGcodePoint probe ) {
+    public void updateProbeNotified ( @UIEventTopic(IEvents.AUTOLEVEL_UPDATE) IGcodePoint probe ) {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
@@ -156,29 +156,6 @@ public class ProgressGroup {
             // progressBar.setState ( SWT.NORMAL );
 
         }
-
-    }
-
-    @Inject
-    @Optional
-    public void progressTotalTicksNotified ( @UIEventTopic(IEvents.EVENT_PROGRESS_TOTAL_TICKS) Integer totalTicks ) {
-
-        LOG.warn ( "progressTotalTicksNotified: totalTicks=" + totalTicks );
-
-        progressBar.setMinimum ( 0 );
-        progressBar.setMaximum ( totalTicks );
-        progressBar.setSelection ( 0 );
-        // progressBar.setState ( SWT.NORMAL );
-
-    }
-
-    @Inject
-    @Optional
-    public void progressTickNotified ( @UIEventTopic(IEvents.EVENT_PROGRESS_TICK) Integer numTicks ) {
-
-        LOG.warn ( "progressTickNotified: numTicks" + numTicks );
-
-        progressBar.setSelection ( progressBar.getSelection () + numTicks );
 
     }
 

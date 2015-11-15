@@ -19,12 +19,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IEvents;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
-import de.jungierek.grblrunner.tools.IPreferences;
 
 public class GcodeLargeGroup {
 
@@ -72,7 +72,7 @@ public class GcodeLargeGroup {
 
     @Inject
     @Optional
-    public void stateUpdateNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_STATE) IGcodeGrblState state ) {
+    public void stateUpdateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState state ) {
 
         LOG.debug ( "stateUpdateNotified: state="+state);
         
@@ -87,7 +87,7 @@ public class GcodeLargeGroup {
 
     @Inject
     @Optional
-    public void updateCoordSelectNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_COORD_SELECT) String coordSelect ) {
+    public void updateCoordSelectNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE) String coordSelect ) {
 
         LOG.debug ( "updateCoordSelectNotified: coordSelect=" + coordSelect );
 
@@ -103,7 +103,7 @@ public class GcodeLargeGroup {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
 
         LOG.trace ( "disconnectedNotified: param=" + param );
 

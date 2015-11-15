@@ -18,25 +18,14 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.service.serial.ISerialServiceReceiver;
 
 public class SerialServiceImpl implements ISerialService {
 
     private static final Logger LOG = LoggerFactory.getLogger ( SerialServiceImpl.class );
-
-    // private static final String EVENT_SERIAL_ALL = "TOPIC_SERIAL/*";
-    private static final String EVENT_SERIAL_PORTS_DETECTING = "TOPIC_SERIAL/PORTS_DETECTING";
-    private static final String EVENT_SERIAL_PORTS_DETECTED = "TOPIC_SERIAL/PORTS_DETECTED";
-    private static final String EVENT_SERIAL_PORT_SELECTED = "TOPIC_SERIAL/PORTS_SELECTED";
-    private static final String EVENT_SERIAL_CONNECTED = "TOPIC_SERIAL/CONNECTED";
-    private static final String EVENT_SERIAL_DISCONNECTED = "TOPIC_SERIAL/DISCONNECTED";
-
-    private static final int MAX_WAIT_MS = 2000;
-
-    public static final String EVENT_MSG_ERROR = "TOPIC_MSG/ERROR";
-    public static final String EVENT_MSG_INFO = "TOPIC_MSG/INFO";
-    public static final String EVENT_MSG_WARNING = "TOPIC_MSG/WARNING";
 
     private Enumeration<CommPortIdentifier> portEnum;
 
@@ -81,7 +70,7 @@ public class SerialServiceImpl implements ISerialService {
 
         LOG.debug ( "detectSerialPorts:" );
 
-        eventBroker.send ( EVENT_SERIAL_PORTS_DETECTING, null );
+        eventBroker.send ( IEvents.SERIAL_PORTS_DETECTING, null );
 
         portName = null; // deselect
 
@@ -107,7 +96,7 @@ public class SerialServiceImpl implements ISerialService {
         LOG.debug ( "detectSerialPorts: ports=" + ports );
 
         LOG.debug ( "detectSerialPorts: posting event" );
-        eventBroker.send ( EVENT_SERIAL_PORTS_DETECTED, cachedPorts );
+        eventBroker.send ( IEvents.SERIAL_PORTS_DETECTED, cachedPorts );
 
     }
 
@@ -138,7 +127,7 @@ public class SerialServiceImpl implements ISerialService {
             this.portName = portName;
 
             LOG.debug ( "setPortName: posting event" );
-            eventBroker.post ( EVENT_SERIAL_PORT_SELECTED, portName );
+            eventBroker.post ( IEvents.SERIAL_PORT_SELECTED, portName );
 
         }
 
@@ -265,7 +254,7 @@ public class SerialServiceImpl implements ISerialService {
         sb.append ( "Cause:\n" );
         sb.append ( exc + "\n\n" );
 
-        eventBroker.send ( EVENT_MSG_ERROR, "" + sb );
+        eventBroker.send ( IEvents.MESSAGE_ERROR, "" + sb );
 
     }
 
@@ -280,7 +269,7 @@ public class SerialServiceImpl implements ISerialService {
         try {
 
             commPortIdentifier = CommPortIdentifier.getPortIdentifier ( portName );
-            serialPort = (SerialPort) commPortIdentifier.open ( "grbl-runner", MAX_WAIT_MS );
+            serialPort = (SerialPort) commPortIdentifier.open ( "grbl-runner", IPreferences.SERIAL_MAX_WAIT_MS );
             serialPort.setSerialPortParams ( baudrate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE );
             in = new RXTXInputStream ( serialPort );
             out = serialPort.getOutputStream ();
@@ -289,7 +278,7 @@ public class SerialServiceImpl implements ISerialService {
             serialReceiverThread.start ();
 
             LOG.trace ( "connect: posting event" );
-            eventBroker.post ( EVENT_SERIAL_CONNECTED, portName );
+            eventBroker.post ( IEvents.SERIAL_CONNECTED, portName );
 
             // a little bit later
             send ( new byte [] { ISerialService.GRBL_RESET_CODE } );
@@ -321,7 +310,7 @@ public class SerialServiceImpl implements ISerialService {
             serialReceiverThread.interrupt ();
 
             LOG.debug ( "close: posting event" );
-            eventBroker.send ( EVENT_SERIAL_DISCONNECTED, "-" );
+            eventBroker.send ( IEvents.SERIAL_DISCONNECTED, "-" );
 
             try {
                 in.close ();

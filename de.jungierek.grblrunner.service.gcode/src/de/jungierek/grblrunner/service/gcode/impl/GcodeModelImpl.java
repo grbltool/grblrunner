@@ -11,11 +11,12 @@ import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
-import de.jungierek.grblrunner.service.gcode.IPreferences;
 
 public class GcodeModelImpl implements IGcodeModel {
     
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeModelImpl.class );
+
+    public final static IGcodePoint GCODE_DEFAULT_START_POINT = new GcodePointImpl ( 0.0, 0.0, 0.0 );
 
     private int nextLineNo = 0;
     private List<GcodeLineImpl> gcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
@@ -145,7 +146,7 @@ public class GcodeModelImpl implements IGcodeModel {
         
         visit ( new IGcodeModelVisitor() {
             
-            IGcodePoint lastEndPoint = IPreferences.DEFAULT_START_POINT;
+            IGcodePoint lastEndPoint = GCODE_DEFAULT_START_POINT;
             // EGcodeMode lastMotionMode = EGcodeMode.GCODE_MODE_UNDEF;
             EGcodeMode lastMotionMode = EGcodeMode.MOTION_MODE_SEEK; // TODO change to _LINEAR?
             int lastFeedrate = 0;

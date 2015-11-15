@@ -35,6 +35,9 @@ import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.parts.Point;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
@@ -44,10 +47,7 @@ import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IConstants;
-import de.jungierek.grblrunner.tools.IEvents;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
-import de.jungierek.grblrunner.tools.IPreferences;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class GcodeViewGroup {
@@ -175,7 +175,7 @@ public class GcodeViewGroup {
 
             IGcodePoint min = model.getMin ();
             IGcodePoint max = model.getMax ();
-            if ( !IPreferences.DUMP_PARSED_GCODE_LINE ) {
+            if ( !IPreferences.FIT_TO_SIZE_WITH_Z ) {
                 min = min.zeroAxis ( 'Z' );
                 max = max.zeroAxis ( 'Z' );
             }
@@ -212,7 +212,7 @@ public class GcodeViewGroup {
 
         }
         else {
-            eventBroker.send ( IEvents.EVENT_MSG_ERROR, "no gcode program loaded!" );
+            eventBroker.send ( IEvents.MESSAGE_ERROR, "no gcode program loaded!" );
         }
 
     }
@@ -958,7 +958,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void stateUpdateNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_STATE) IGcodeGrblState state ) {
+    public void stateUpdateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState state ) {
 
         // System.out.println ( logName () + "stateUpdateNotified: state=" + state );
 
@@ -969,7 +969,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_LOADED) String fileName ) {
+    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName ) {
 
         LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
 
@@ -989,7 +989,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void updateCoordSelectOffsetsNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_COORD_SELECT_OFFSET) Object dummy ) {
+    public void updateCoordSelectOffsetsNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE_OFFSET) Object dummy ) {
 
         LOG.debug ( "updateCoordSelectOffsetsNotified" );
 
@@ -999,7 +999,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void updateProbeNotified ( @UIEventTopic(IEvents.EVENT_PROBE_UPDATE) IGcodePoint probe ) {
+    public void updateProbeNotified ( @UIEventTopic(IEvents.AUTOLEVEL_UPDATE) IGcodePoint probe ) {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 

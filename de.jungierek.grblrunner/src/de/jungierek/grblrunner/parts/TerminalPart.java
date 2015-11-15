@@ -16,12 +16,12 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
-import de.jungierek.grblrunner.tools.IEvents;
-import de.jungierek.grblrunner.tools.IPreferences;
 
 public class TerminalPart {
 
@@ -99,7 +99,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.EVENT_GCODE_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
         
         LOG.trace ( "alarmNotified: line=" + line );
 
@@ -109,7 +109,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_START) String timestamp ) {
+    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String timestamp ) {
 
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
@@ -119,7 +119,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void playerLineNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_LINE_SEGMENT) String gcodeSegment ) {
+    public void playerLineSegmentNotified ( @UIEventTopic(IEvents.PLAYER_SEGMENT) String gcodeSegment ) {
 
         LOG.trace ( "playerLineNotified: gcodeSegment=" + gcodeSegment );
 
@@ -130,7 +130,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void playerLineNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_LINE) IGcodeLine gcodeLine ) {
+    public void playerLineNotified ( @UIEventTopic(IEvents.PLAYER_LINE) IGcodeLine gcodeLine ) {
     
         LOG.trace ( "playerLineNotified: gcodeLine=" + gcodeLine );
 
@@ -153,7 +153,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_STOP) String timestamp ) {
+    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String timestamp ) {
 
         LOG.trace ( "playerStopNotified: timestamp=" + timestamp );
 
@@ -165,7 +165,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void sentNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SENT) IGcodeResponse command ) {
+    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGcodeResponse command ) {
 
         LOG.trace ( "sentNotified: command=" + command );
 
@@ -189,7 +189,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void receivedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_RECEIVED) IGcodeResponse response ) {
+    public void receivedNotified ( @UIEventTopic(IEvents.GRBL_RECEIVED) IGcodeResponse response ) {
 
         LOG.trace ( "receivedNotified: response=" + response );
 
@@ -231,7 +231,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SCAN_START) String timestamp ) {
+    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) String timestamp ) {
 
         LOG.trace ( "scanStartNotified:" );
 
@@ -241,7 +241,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void updateProbeNotified ( @UIEventTopic(IEvents.EVENT_PROBE_UPDATE) IGcodePoint probe ) {
+    public void updateProbeNotified ( @UIEventTopic(IEvents.AUTOLEVEL_UPDATE) IGcodePoint probe ) {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
@@ -254,7 +254,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void scanStopNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SCAN_STOP) String timestamp ) {
+    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) String timestamp ) {
 
         LOG.trace ( "scanStopNotified:" );
 

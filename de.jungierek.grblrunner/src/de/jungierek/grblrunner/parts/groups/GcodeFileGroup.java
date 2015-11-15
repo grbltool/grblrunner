@@ -29,15 +29,15 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandIDs;
-import de.jungierek.grblrunner.tools.IEvents;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
-import de.jungierek.grblrunner.tools.IPreferences;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class GcodeFileGroup {
@@ -214,7 +214,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_CONNECTED) String portName ) {
+    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
 
         LOG.trace ( "connectedNotified: portName=" + portName );
 
@@ -224,7 +224,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
 
         LOG.trace ( "connectedNotified: param=" + param );
 
@@ -234,7 +234,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_LOADED) String fileName ) {
+    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName ) {
 
         LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
 
@@ -256,7 +256,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.EVENT_GCODE_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
 
         LOG.trace ( "alarmNotified: line=" + line );
 
@@ -266,7 +266,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void grblRestartedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_GRBL_RESTARTED) String line ) {
+    public void grblRestartedNotified ( @UIEventTopic(IEvents.GRBL_RESTARTED) String line ) {
 
         LOG.trace ( "grblRestartedNotified: line=" + line );
 
@@ -276,7 +276,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SCAN_START) Object dummy ) {
+    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) Object dummy ) {
 
         LOG.debug ( "scanStopNotified:" );
 
@@ -286,7 +286,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void scanStopNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SCAN_STOP) Object dummy ) {
+    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) Object dummy ) {
 
         LOG.debug ( "scanStopNotified:" );
 
@@ -296,7 +296,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_START) String fileName ) {
+    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String fileName ) {
 
         LOG.trace ( "playerStartNotified: fileName=" + fileName );
 
@@ -306,7 +306,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_STOP) String fileName ) {
+    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String fileName ) {
 
         LOG.trace ( "playerStopNotified: fileName=" + fileName );
 

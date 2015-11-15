@@ -19,6 +19,8 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
@@ -26,7 +28,6 @@ import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
-import de.jungierek.grblrunner.service.gcode.IPreferences;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.service.serial.ISerialServiceReceiver;
 
@@ -43,55 +44,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @Inject
     private IGcodeModel gcodeModel;
 
-    public static final String [] AXIS = { "X", "Y", "Z" };
-
-    public static final String EVENT_GCODE_ALL = "TOPIC_GCODE/*";
-
-    public static final String EVENT_GCODE_ALARM = "TOPIC_GCODE/ALARM";
-    public static final String EVENT_GCODE_GRBL_RESTARTED = "TOPIC_GCODE/GRBL_RESTARTED";
-
-    public static final String EVENT_GCODE_SENT = "TOPIC_GCODE/SENT";
-    public static final String EVENT_GCODE_RECEIVED = "TOPIC_GCODE/RECEIVED";
-
-    public static final String EVENT_GCODE_UPDATE_STATE = "TOPIC_GCODE/UPDATE_STATE";
-    public static final String EVENT_GCODE_UPDATE_MOTION_MODE = "TOPIC_GCODE/UPDATE_MOTION_MODE";
-    public static final String EVENT_GCODE_UPDATE_COORD_SELECT = "TOPIC_GCODE/UPDATE_COORD_SELECT";
-    public static final String EVENT_GCODE_UPDATE_COORD_SELECT_OFFSET = "TOPIC_GCODE/UPDATE_COORD_SELECT_OFFSET";
-    public static final String EVENT_GCODE_UPDATE_PLANE = "TOPIC_GCODE/UPDATE_PLANE";
-    public static final String EVENT_GCODE_UPDATE_METRIC_MODE = "TOPIC_GCODE/UPDATE_METRIC_MODE";
-    public static final String EVENT_GCODE_UPDATE_FEEDRATE = "TOPIC_GCODE/UPDATE_FEEDRATE";
-    public static final String EVENT_GCODE_UPDATE_SPINDLESPEED = "TOPIC_GCODE/UPDATE_SPINDLESPEED";
-    public static final String EVENT_GCODE_UPDATE_DISTANCE_MODE = "TOPIC_GCODE/UPDATE_DISTANCE_MODE";
-    public static final String EVENT_GCODE_UPDATE_TOOL = "TOPIC_GCODE/UPDATE_TOOL";
-    public static final String EVENT_GCODE_UPDATE_SPINDLE_MODE = "TOPIC_GCODE/UPDATE_SPINDLE_MODE";
-    public static final String EVENT_GCODE_UPDATE_COOLANT_MODE = "TOPIC_GCODE/UPDATE_COOLANT_MODE";
-    public static final String EVENT_GCODE_UPDATE_PROBE = "TOPIC_GCODE/UPDATE_PROBE";
-
-    public static final String EVENT_PROBE_DATA_SAVED = "TOPIC_GCODE/PROBE_DATA_SAVED";
-    public static final String EVENT_PROBE_DATA_LOADED = "TOPIC_GCODE/PROBE_DATA_LOADED";
-    public static final String EVENT_PROBE_DATA_CLEARED = "TOPIC_GCODE/PROBE_DATA_CLEARED";
-
-    public static final String EVENT_GCODE_PLAYER_LOADED = "TOPIC_GCODE/PLAYER_LOADED";
-    public static final String EVENT_GCODE_PLAYER_START = "TOPIC_GCODE/PLAYER_START";
-    public static final String EVENT_GCODE_PLAYER_STOP = "TOPIC_GCODE/PLAYER_STOP";
-    public static final String EVENT_GCODE_PLAYER_LINE = "TOPIC_GCODE/PLAYER_LINE";
-    public static final String EVENT_GCODE_PLAYER_LINE_SEGMENT = "TOPIC_GCODE/PLAYER_SEGMENT";
-    public static final String EVENT_GCODE_SCAN_START = "TOPIC_GCODE/SCAN_START";
-    public static final String EVENT_GCODE_SCAN_STOP = "TOPIC_GCODE/SCAN_STOP";
-
-    public static final String EVENT_SERIAL_CONNECTED = "TOPIC_SERIAL/CONNECTED";
-    public static final String EVENT_SERIAL_DISCONNECTED = "TOPIC_SERIAL/DISCONNECTED";
-
-    public static final String SCAN_START = "SCAN_START";
-    public static final String SCAN_END = "SCAN_END";
-
-    public static final String EVENT_MSG_ERROR = "TOPIC_MSG/ERROR";
-    public static final String EVENT_MSG_INFO = "TOPIC_MSG/INFO";
-    public static final String EVENT_MSG_WARNING = "TOPIC_MSG/WARNING";
-
     // protected for test purposes
-    public static final int QUEUE_LENGTH = 20;
-    protected ArrayBlockingQueue<GcodeResponseImpl> queue = new ArrayBlockingQueue<GcodeResponseImpl> ( QUEUE_LENGTH, false );
+    protected ArrayBlockingQueue<GcodeResponseImpl> queue = new ArrayBlockingQueue<GcodeResponseImpl> ( IConstants.GCODE_QUEUE_LENGTH, false );
 
     private File gcodeFile, probeDataFile;
 
@@ -239,7 +193,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         // System.out.println ( logName () + "received: posting event waitForOk=" + waitForOk + " skiByAlarm=" + skipByAlarm + " suppressInTerminl=" + suppressInTerminal + " line="
         // + line );
         analyseResponse ( line );
-        eventBroker.send ( EVENT_GCODE_RECEIVED, new GcodeResponseImpl ( suppressLine, line ) );
+        eventBroker.send ( IEvents.GRBL_RECEIVED, new GcodeResponseImpl ( suppressLine, line ) );
 
         // ... nächstes Kommando frei geben
         if ( releaseWaitForOk ) waitForOk = false;
@@ -248,7 +202,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
     private GcodePointImpl parseCoordinates ( String line, String intro, char closingChar ) {
 
-        return new GcodePointImpl ( parseVector ( line, AXIS.length, intro, closingChar ) );
+        return new GcodePointImpl ( parseVector ( line, IConstants.AXIS.length, intro, closingChar ) );
 
     }
 
@@ -287,12 +241,12 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
         if ( line.startsWith ( "ALARM" ) ) {
 
-            eventBroker.send ( EVENT_GCODE_ALARM, line ); // inform about alarm message
+            eventBroker.send ( IEvents.GRBL_ALARM, line ); // inform about alarm message
 
         }
         else if ( line.startsWith ( "Grbl" ) ) {
 
-            eventBroker.send ( EVENT_GCODE_GRBL_RESTARTED, line ); // inform about grbl restart
+            eventBroker.send ( IEvents.GRBL_RESTARTED, line ); // inform about grbl restart
 
         }
         else if ( line.startsWith ( "<" ) ) { // we found state line
@@ -306,7 +260,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             // update only on change
             if ( lastState == null || !lastState.equals ( gcodeState ) ) {
                 lastState = gcodeState;
-                eventBroker.send ( EVENT_GCODE_UPDATE_STATE, gcodeState );
+                eventBroker.send ( IEvents.UPDATE_STATE, gcodeState );
             }
 
         }
@@ -332,7 +286,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             else {
                 if ( scanRunning ) gcodeModel.setProbePoint ( probePoint );
                 if ( ignoreNextProbe ) ignoreNextProbe = false;
-                else eventBroker.send ( EVENT_GCODE_UPDATE_PROBE, probePoint );
+                else eventBroker.send ( IEvents.AUTOLEVEL_UPDATE, probePoint );
             }
         }
         else if ( line.startsWith ( "[" + lastCoordSelect ) ) {
@@ -350,7 +304,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             lastCoordSelectTempOffset = parseCoordinates ( line, "G92:", ']' );
             // System.out.println ( logName () + "receivedNotified: " + lastCoordSelect + "=" + lastCoordSelectOffset + " G92=" + lastCoordSelectTempOffset );
             gcodeModel.setShift ( lastCoordSelectOffset.add ( lastCoordSelectTempOffset ) );
-            eventBroker.send ( EVENT_GCODE_UPDATE_COORD_SELECT_OFFSET, null ); // inform all receivers only once, G92 is the last entry
+            eventBroker.send ( IEvents.UPDATE_FIXTURE_OFFSET, null ); // inform all receivers only once, G92 is the last entry
             ignoreNextProbe = true;
         }
         else if ( line.startsWith ( "[G" ) ) {
@@ -372,14 +326,14 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             EGcodeMode motionMode = EGcodeMode.identify ( token[0] );
             if ( lastMotionMode != motionMode && motionMode != EGcodeMode.GCODE_MODE_UNDEF ) {
                 lastMotionMode = motionMode;
-                eventBroker.send ( EVENT_GCODE_UPDATE_MOTION_MODE, motionMode.getCommand () );
+                eventBroker.send ( IEvents.UPDATE_MOTION_MODE, motionMode.getCommand () );
             }
 
             // token [1] -> G54 .. G59
             String coordSelect = token[1];
             if ( lastCoordSelect != coordSelect && !coordSelect.equals ( lastCoordSelect ) ) {
                 lastCoordSelect = coordSelect;
-                eventBroker.send ( EVENT_GCODE_UPDATE_COORD_SELECT, coordSelect );
+                eventBroker.send ( IEvents.UPDATE_FIXTURE, coordSelect );
                 sendCommandSuppressInTerminal ( "$#" );
             }
 
@@ -401,21 +355,21 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             if ( !plane.equals ( lastPlane ) ) {
                 lastPlane = plane;
-                eventBroker.send ( EVENT_GCODE_UPDATE_PLANE, plane );
+                eventBroker.send ( IEvents.UPDATE_PLANE, plane );
             }
 
             // token [3] -> inch or mm
             String metricMode = token[3].equals ( "G20" ) ? "inch" : "mm";
             if ( !metricMode.equals ( lastMetricMode ) ) {
                 lastMetricMode = metricMode;
-                eventBroker.send ( EVENT_GCODE_UPDATE_METRIC_MODE, metricMode );
+                eventBroker.send ( IEvents.UPDATE_METRIC_MODE, metricMode );
             }
 
             // token [4] absolute or relative
             String distanceMode = token[4].equals ( "G90" ) ? "absolute" : "relative";
             if ( !distanceMode.equals ( lastDistanceMode ) ) {
                 lastDistanceMode = distanceMode;
-                eventBroker.send ( EVENT_GCODE_UPDATE_DISTANCE_MODE, distanceMode );
+                eventBroker.send ( IEvents.UPDATE_DISTANCE_MODE, distanceMode );
             }
 
             // TODO token [5] path control mode G93 inverse time mode G94 units per minute mode G95 units per revision mode
@@ -438,7 +392,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
             if ( !spindleMode.equals ( lastSpindleMode ) ) {
                 lastSpindleMode = spindleMode;
-                eventBroker.send ( EVENT_GCODE_UPDATE_SPINDLE_MODE, spindleMode );
+                eventBroker.send ( IEvents.UPDATE_SPINDLE_MODE, spindleMode );
             }
 
             // TODO token [8] coolant mode M7 mist coolant M8 flood coolant M9 stop coolant
@@ -458,14 +412,14 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
             if ( !coolantMode.equals ( lastCoolantMode ) ) {
                 lastCoolantMode = coolantMode;
-                eventBroker.send ( EVENT_GCODE_UPDATE_COOLANT_MODE, coolantMode );
+                eventBroker.send ( IEvents.UPDATE_COOLANT_MODE, coolantMode );
             }
 
             // token [9] Tn tool number
             String tool = token[9];
             if ( !tool.equals ( lastTool ) ) {
                 lastTool = tool;
-                eventBroker.send ( EVENT_GCODE_UPDATE_TOOL, tool );
+                eventBroker.send ( IEvents.UPDATE_TOOL, tool );
             }
 
             // token [10] -> feedrate
@@ -473,7 +427,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             if ( feedrate.endsWith ( "." ) ) feedrate = feedrate.substring ( 0, feedrate.length () - 1 );
             if ( !feedrate.equals ( lastFeedrate ) ) {
                 lastFeedrate = feedrate;
-                eventBroker.send ( EVENT_GCODE_UPDATE_FEEDRATE, feedrate );
+                eventBroker.send ( IEvents.UPDATE_FEEDRATE, feedrate );
             }
 
             // token [12] -> spindle speed
@@ -481,7 +435,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             if ( spindlespeed.endsWith ( "." ) ) spindlespeed = spindlespeed.substring ( 0, spindlespeed.length () - 1 );
             if ( !spindlespeed.equals ( lastSpindlespeed ) ) {
                 lastSpindlespeed = spindlespeed;
-                eventBroker.send ( EVENT_GCODE_UPDATE_SPINDLESPEED, spindlespeed );
+                eventBroker.send ( IEvents.UPDATE_SPINDLESPEED, spindlespeed );
             }
 
         }
@@ -525,19 +479,19 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @Override
     public void scan ( double zMin, double zMax, double zClearance, double probeFeedrate ) {
 
-        if ( IPreferences.USE_RANDOM_Z_SIMULATION ) {
+        if ( IConstants.AUTOLEVEL_USE_RANDOM_Z_SIMULATION ) {
             
             new Thread ( ( ) -> {
 
                 LOG.warn ( "scan: randomZSimulation" );
 
-                eventBroker.send ( EVENT_GCODE_SCAN_START, getTimestamp () );
+                eventBroker.send ( IEvents.AUTOLEVEL_START, getTimestamp () );
 
                 scanRunning = true;
                 IGcodePoint [][] m = gcodeModel.getScanMatrix ();
                 for ( int i = 0; i < m.length; i++ ) {
                     for ( int j = 0; j < m[i].length; j++ ) {
-                        if ( IPreferences.SLOW_Z_SIMULATION ) {
+                        if ( IConstants.AUTOLEVEL_SLOW_Z_SIMULATION ) {
                             try {
                                 Thread.sleep ( 100 );
                             }
@@ -548,13 +502,13 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         m[i][j] = probe;
                         LOG.debug ( "scan: probe=" + probe );
                         IGcodePoint p = probe;
-                        eventBroker.send ( EVENT_GCODE_UPDATE_PROBE, p );
+                        eventBroker.send ( IEvents.AUTOLEVEL_UPDATE, p );
                     }
                 }
                 scanRunning = false;
                 gcodeModel.setScanDataCompleted ();
 
-                eventBroker.send ( EVENT_GCODE_SCAN_STOP, getTimestamp () );
+                eventBroker.send ( IEvents.AUTOLEVEL_STOP, getTimestamp () );
 
             } ).start ();
 
@@ -572,7 +526,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     public void loadProbeData () {
 
         if ( playRunning || scanRunning ) {
-            eventBroker.send ( EVENT_MSG_ERROR, "Laden der Höhendaten nicht möglich, da laufende Aktivitäten" );
+            eventBroker.send ( IEvents.MESSAGE_ERROR, "Laden der Höhendaten nicht möglich, da laufende Aktivitäten" );
             return;
         }
 
@@ -596,7 +550,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
         gcodeModel.disposeProbeData ();
 
-        eventBroker.send ( EVENT_PROBE_DATA_CLEARED, probeDataFile.getPath () );
+        eventBroker.send ( IEvents.AUTOLEVEL_DATA_CLEARED, probeDataFile.getPath () );
 
     }
 
@@ -617,7 +571,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @SuppressWarnings("restriction")
     @Inject
     @Optional
-    public void connectedNotified ( @EventTopic(EVENT_SERIAL_CONNECTED) String portName ) {
+    public void connectedNotified ( @EventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
 
         LOG.debug ( "connectedNotified: portName=" + portName );
 
@@ -640,7 +594,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @SuppressWarnings("restriction")
     @Inject
     @Optional
-    public void disconnectedNotified ( @EventTopic(EVENT_SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @EventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
     
         LOG.debug ( "disconnectedNotified: param=" + param );
     
@@ -705,7 +659,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         sb.append ( "Cause:\n" );
         sb.append ( exc + "\n\n" );
 
-        eventBroker.send ( EVENT_MSG_ERROR, "" + sb );
+        eventBroker.send ( IEvents.MESSAGE_ERROR, "" + sb );
 
     }
 
@@ -772,7 +726,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         }
                         else {
                             LOG.error ( "gcode area differs" );
-                            eventBroker.send ( EVENT_MSG_ERROR,
+                            eventBroker.send ( IEvents.MESSAGE_ERROR,
                                     "GCODE area differs!\nmin1=" + min + " min2=" + gcodeModel.getMin () + "\nmax1=" + max + " max2=" + gcodeModel.getMax () );
                             return;
                         }
@@ -795,7 +749,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
                 reader.close ();
 
-                eventBroker.send ( EVENT_PROBE_DATA_LOADED, file.getPath () );
+                eventBroker.send ( IEvents.AUTOLEVEL_DATA_LOADED, file.getPath () );
 
             }
             catch ( IOException exc ) {
@@ -876,7 +830,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 writer.write ( "end of data" );
                 // writer.newLine ();
 
-                eventBroker.send ( EVENT_PROBE_DATA_SAVED, file.getPath () );
+                eventBroker.send ( IEvents.AUTOLEVEL_DATA_SAVED, file.getPath () );
 
             }
             catch ( IOException exc ) {
@@ -924,7 +878,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     
             IGcodePoint [][] m = gcodeModel.getScanMatrix ();
     
-            sendCommand ( SCAN_START );
+            sendCommand ( IConstants.GCODE_SCAN_START );
     
             IGcodePoint probePoint = m[0][0];
             sendCommandSuppressInTerminal ( "G21" );
@@ -961,7 +915,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     
             }
     
-            sendCommand ( SCAN_END );
+            sendCommand ( IConstants.GCODE_SCAN_END );
     
             LOG.debug ( "stopped" );
     
@@ -1022,7 +976,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
                 gcodeModel.parseGcode ();
 
-                eventBroker.send ( EVENT_GCODE_PLAYER_LOADED, file.getPath () );
+                eventBroker.send ( IEvents.PLAYER_LOADED, file.getPath () );
 
             }
             catch ( IOException exc ) { // including FileNotFoundException
@@ -1059,7 +1013,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             playRunning = true;
 
-            eventBroker.send ( EVENT_GCODE_PLAYER_START, getTimestamp () );
+            eventBroker.send ( IEvents.PLAYER_START, getTimestamp () );
 
             gcodeModel.resetProcessed ();
 
@@ -1071,7 +1025,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     if ( skipByAlarm ) return;
 
                     LOG.debug ( THREAD_NAME + ": line=" + gcodeLine.getLine () + " | gcodeLine=" + gcodeLine );
-                    eventBroker.send ( EVENT_GCODE_PLAYER_LINE, gcodeLine );
+                    eventBroker.send ( IEvents.PLAYER_LINE, gcodeLine );
 
                     LOG.debug ( THREAD_NAME + ": line=" + gcodeLine.getLine () );
                     // if ( gcodeModel.isScanDataComplete () && gcodeLine.isMotionMode () ) {
@@ -1086,7 +1040,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                             segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getY () );
                             segment += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getZ () );
                             segment += feed;
-                            eventBroker.send ( EVENT_GCODE_PLAYER_LINE_SEGMENT, segment );
+                            eventBroker.send ( IEvents.PLAYER_SEGMENT, segment );
                             sendCommandSuppressInTerminal ( segment );
                         }
                     }
@@ -1111,7 +1065,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             } );
 
-            eventBroker.send ( EVENT_GCODE_PLAYER_STOP, getTimestamp () );
+            eventBroker.send ( IEvents.PLAYER_STOP, getTimestamp () );
             // TODO
             // if ( skipByAlarm ) {
             // eventBroker.send ( EVENT_GCODE_PLAYER_CANCELED, getTimestamp () );
@@ -1157,14 +1111,14 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     GcodeResponseImpl cmd = queue.take ();
                     if ( !skipByAlarm || cmd.isReset () || cmd.isHome () || cmd.isUnlock () ) {
 
-                        if ( cmd.line.startsWith ( SCAN_START ) ) {
+                        if ( cmd.line.startsWith ( IConstants.GCODE_SCAN_START ) ) {
                             scanRunning = true;
-                            eventBroker.send ( EVENT_GCODE_SCAN_START, getTimestamp () );
+                            eventBroker.send ( IEvents.AUTOLEVEL_START, getTimestamp () );
                         }
-                        else if ( cmd.line.startsWith ( SCAN_END ) ) {
+                        else if ( cmd.line.startsWith ( IConstants.GCODE_SCAN_END ) ) {
                             scanRunning = false;
                             gcodeModel.setScanDataCompleted ();
-                            eventBroker.send ( EVENT_GCODE_SCAN_STOP, getTimestamp () ); //
+                            eventBroker.send ( IEvents.AUTOLEVEL_STOP, getTimestamp () ); //
                         }
                         else {
 
@@ -1172,7 +1126,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                             suppressInTerminal = cmd.suppressInTerminal;
 
                             byte [] buffer = cmd.line.getBytes ( StandardCharsets.US_ASCII );
-                            eventBroker.send ( EVENT_GCODE_SENT, cmd );
+                            eventBroker.send ( IEvents.GRBL_SENT, cmd );
 
                             serial.send ( buffer );
 

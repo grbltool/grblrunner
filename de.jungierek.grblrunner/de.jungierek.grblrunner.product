@@ -3,7 +3,6 @@
 
 <product name="GrblRunner" uid="de.jungierek.grblrunner.product" id="de.jungierek.grblrunner.product" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="0.0.1" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -16,14 +15,12 @@
 
    <windowImages/>
 
-
    <launcher>
       <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -36,6 +33,7 @@
       <plugin id="com.google.guava"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="de.jungierek.grblrunner"/>
+      <plugin id="de.jungierek.grblrunner.constants"/>
       <plugin id="de.jungierek.grblrunner.service.gcode"/>
       <plugin id="de.jungierek.grblrunner.service.serial"/>
       <plugin id="de.jungierek.grblrunner.service.webcam"/>

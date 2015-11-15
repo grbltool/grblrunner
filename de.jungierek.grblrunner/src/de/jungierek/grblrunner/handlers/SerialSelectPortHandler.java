@@ -11,8 +11,8 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.serial.ISerialService;
-import de.jungierek.grblrunner.tools.IEvents;
 
 public class SerialSelectPortHandler {
 
@@ -40,7 +40,7 @@ public class SerialSelectPortHandler {
 
     @Inject
     @Optional
-    public void portsDetectingNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_PORTS_DETECTING) Object dummy ) {
+    public void portsDetectingNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTING) Object dummy ) {
 
         LOG.debug ( "portsDetectedNotified:" );
 
@@ -50,7 +50,7 @@ public class SerialSelectPortHandler {
 
     @Inject
     @Optional
-    public void portsDetectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_PORTS_DETECTED) String [] ports ) {
+    public void portsDetectedNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTED) String [] ports ) {
 
         LOG.debug ( "portsDetectedNotified: ports=" + ports );
 

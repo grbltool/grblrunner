@@ -29,13 +29,13 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandIDs;
-import de.jungierek.grblrunner.tools.IConstants;
-import de.jungierek.grblrunner.tools.IEvents;
-import de.jungierek.grblrunner.tools.IPreferences;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class ControlPart {
@@ -536,7 +536,29 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_CONNECTED) String portName ) {
+    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
+    
+        LOG.trace ( "alarmNotified: line=" + line );
+    
+        setNormalControlsEnabled ( false );
+        setAutolevelControlsEnabled ( false );
+    
+    }
+
+    @Inject
+    @Optional
+    public void grblRestartedNotified ( @UIEventTopic(IEvents.GRBL_RESTARTED) String line ) {
+    
+        LOG.trace ( "grblRestartedNotified: line=" + line );
+    
+        setNormalControlsEnabled ( true );
+        setAutolevelControlsEnabled ( true );
+    
+    }
+
+    @Inject
+    @Optional
+    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
 
         LOG.trace ( "connectedNotified: portName=" + portName );
         setControlsEnabled ( true );
@@ -546,7 +568,7 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
 
         LOG.trace ( "connectedNotified: param=" + param );
         setControlsEnabled ( false );
@@ -556,7 +578,7 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_LOADED) String fileName ) {
+    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName ) {
 
         LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
 
@@ -568,43 +590,7 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.EVENT_GCODE_ALARM) String line ) {
-
-        LOG.trace ( "alarmNotified: line=" + line );
-
-        setNormalControlsEnabled ( false );
-        setAutolevelControlsEnabled ( false );
-
-    }
-
-    @Inject
-    @Optional
-    public void grblRestartedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_GRBL_RESTARTED) String line ) {
-
-        LOG.trace ( "grblRestartedNotified: line=" + line );
-
-        setNormalControlsEnabled ( true );
-        setAutolevelControlsEnabled ( true );
-
-    }
-
-    @Inject
-    @Optional
-    public void updateSpindlespeedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_UPDATE_SPINDLESPEED) String spindlespeed ) {
-
-        LOG.trace ( "updateSpindlespeedNotified: spindlespeed=" + spindlespeed );
-
-        if ( !ignoreSpindleSpeedUpdate ) {
-            ignoreSpindleSpeedUpdate = false;
-            int speed = Integer.parseInt ( spindlespeed );
-            spindleVelocitySlider.setSelection ( speed );
-        }
-
-    }
-
-    @Inject
-    @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_START) String fileName ) {
+    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String fileName ) {
 
         LOG.trace ( "playerStartNotified: fileName=" + fileName );
 
@@ -615,7 +601,7 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_STOP) String fileName ) {
+    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String fileName ) {
 
         LOG.trace ( "playerStopNotified: fileName=" + fileName );
 
@@ -626,7 +612,7 @@ public class ControlPart {
     
     @Inject
     @Optional
-    public void probeDataLoadedNotified ( @UIEventTopic(IEvents.EVENT_PROBE_DATA_LOADED) String fileName ) {
+    public void probeDataLoadedNotified ( @UIEventTopic(IEvents.AUTOLEVEL_DATA_LOADED) String fileName ) {
 
         LOG.trace ( "probeDataloadedNotified: fileName=" + fileName );
 
@@ -645,7 +631,7 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void probeDataSavedNotified ( @UIEventTopic(IEvents.EVENT_PROBE_DATA_SAVED) String fileName ) {
+    public void probeDataSavedNotified ( @UIEventTopic(IEvents.AUTOLEVEL_DATA_SAVED) String fileName ) {
 
         LOG.trace ( "probeDataSavedNotified: fileName=" + fileName );
 
@@ -653,7 +639,7 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void probeDataClearedNotified ( @UIEventTopic(IEvents.EVENT_PROBE_DATA_CLEARED) String fileName ) {
+    public void probeDataClearedNotified ( @UIEventTopic(IEvents.AUTOLEVEL_DATA_CLEARED) String fileName ) {
 
         LOG.trace ( "probeDataClearedNotified: fileName=" + fileName );
 
@@ -665,7 +651,7 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SCAN_START) Object dummy ) {
+    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) Object dummy ) {
 
         LOG.trace ( "scanStartNotified:" );
 
@@ -676,7 +662,7 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void scanStopNotified ( @UIEventTopic(IEvents.EVENT_GCODE_SCAN_STOP) Object dummy ) {
+    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) Object dummy ) {
     
         LOG.trace ( "scanStopNotified:" );
     
@@ -684,6 +670,20 @@ public class ControlPart {
         setAutolevelControlsEnabled ( true );
 
         redrawGcode ();
+    
+    }
+
+    @Inject
+    @Optional
+    public void updateSpindlespeedNotified ( @UIEventTopic(IEvents.UPDATE_SPINDLESPEED) String spindlespeed ) {
+    
+        LOG.trace ( "updateSpindlespeedNotified: spindlespeed=" + spindlespeed );
+    
+        if ( !ignoreSpindleSpeedUpdate ) {
+            ignoreSpindleSpeedUpdate = false;
+            int speed = Integer.parseInt ( spindlespeed );
+            spindleVelocitySlider.setSelection ( speed );
+        }
     
     }
 

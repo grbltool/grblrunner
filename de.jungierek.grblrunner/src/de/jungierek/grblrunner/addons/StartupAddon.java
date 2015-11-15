@@ -15,15 +15,15 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
 import de.jungierek.grblrunner.service.serial.ISerialService;
-import de.jungierek.grblrunner.tools.IConstants;
-import de.jungierek.grblrunner.tools.IEvents;
-import de.jungierek.grblrunner.tools.IPreferences;
 
 @SuppressWarnings("restriction")
 public class StartupAddon {
@@ -101,7 +101,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void grblRestartedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_GRBL_RESTARTED) String line ) {
+    public void grblRestartedNotified ( @UIEventTopic(IEvents.GRBL_RESTARTED) String line ) {
 
         LOG.trace ( "grblRestartedNotified: line=" + line );
 
@@ -112,7 +112,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void serialDisconnectNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_DISCONNECTED) String port ) {
+    public void serialDisconnectNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String port ) {
 
         LOG.trace ( "serialEventNotified:" );
 
@@ -144,7 +144,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void serialPortsDetectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_PORTS_DETECTED) String [] portNames ) {
+    public void serialPortsDetectedNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTED) String [] portNames ) {
 
         LOG.trace ( "serialPortsDetectedNotified:" );
 
@@ -161,7 +161,7 @@ public class StartupAddon {
     @SuppressWarnings("unused")
     @Inject
     @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.EVENT_GCODE_PLAYER_LOADED) String fileName, IGcodeModel gcodeModel ) {
+    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName, IGcodeModel gcodeModel ) {
 
         LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
 

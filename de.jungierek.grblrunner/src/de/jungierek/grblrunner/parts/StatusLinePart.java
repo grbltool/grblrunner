@@ -18,13 +18,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.parts.groups.CommandGroup;
 import de.jungierek.grblrunner.parts.groups.GcodeLargeGroup;
 import de.jungierek.grblrunner.parts.groups.ProgressGroup;
 import de.jungierek.grblrunner.parts.groups.StatusLineGroup;
 import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
-import de.jungierek.grblrunner.tools.IEvents;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class StatusLinePart {
@@ -76,7 +76,7 @@ public class StatusLinePart {
 
     @Inject
     @Optional
-    public void msgErrorNotified ( @UIEventTopic(IEvents.EVENT_MSG_ERROR) String msg ) {
+    public void msgErrorNotified ( @UIEventTopic(IEvents.MESSAGE_ERROR) String msg ) {
 
         LOG.trace ( "msgErrorNotified: msg=" + msg );
 

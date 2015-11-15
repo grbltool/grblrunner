@@ -24,10 +24,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandIDs;
-import de.jungierek.grblrunner.tools.IEvents;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
@@ -167,7 +167,7 @@ public class SerialPart {
 
     @Inject
     @Optional
-    public void portsDetectingNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_PORTS_DETECTING) Object dummy ) {
+    public void portsDetectingNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTING) Object dummy ) {
 
         LOG.debug ( "portsDetectedNotified:" );
 
@@ -180,7 +180,7 @@ public class SerialPart {
 
     @Inject
     @Optional
-    public void portsDetectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_PORTS_DETECTED) String [] ports ) {
+    public void portsDetectedNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTED) String [] ports ) {
 
         LOG.debug ( "portsDetectedNotified: ports=" + ports );
 
@@ -204,7 +204,7 @@ public class SerialPart {
 
     @Inject
     @Optional
-    public void portSelectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_PORT_SELECTED) String port ) {
+    public void portSelectedNotified ( @UIEventTopic(IEvents.SERIAL_PORT_SELECTED) String port ) {
 
         LOG.debug ( "portSelectedNotified: port=" + port );
 
@@ -216,7 +216,7 @@ public class SerialPart {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_CONNECTED) String portName ) {
+    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
 
         LOG.debug ( "connectedNotified: portName=" + portName );
 
@@ -229,7 +229,7 @@ public class SerialPart {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.EVENT_SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
 
         LOG.debug ( "disconnectedNotified: param=" + param );
 

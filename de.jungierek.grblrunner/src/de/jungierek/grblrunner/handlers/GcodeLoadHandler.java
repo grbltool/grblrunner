@@ -15,11 +15,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
-import de.jungierek.grblrunner.tools.IPreferences;
 
 public class GcodeLoadHandler {
 

@@ -34,15 +34,14 @@ public class CameraPart implements PaintListener, IWebcamServiceReceiver {
 
     private static final Logger LOG = LoggerFactory.getLogger ( CameraPart.class );
 
-    private Canvas webcamCanvas;
-
-    BufferedImage webcamImage;
-
     @Inject
     private IWebcamService webcamService;
 
     @Inject
     private Display display;
+
+    private Canvas webcamCanvas;
+    private BufferedImage webcamImage;
 
     @PostConstruct
     private void createGui ( Composite parent ) {
@@ -52,15 +51,10 @@ public class CameraPart implements PaintListener, IWebcamServiceReceiver {
         // }
         
         Webcam webcam = Webcam.getDefault ();
-        if ( webcam != null ) {
-            System.out.println ( "Webcam: " + webcam.getName () );
-        }
-        else {
-            System.out.println ( "No webcam detected" );
-        }
+        LOG.debug ( "createGui: webcam=" + webcam );
+        if ( webcam == null ) LOG.warn ( "createGui: No webcam detected" );
 
         int cols = 1;
-
         parent.setLayout ( new GridLayout ( cols, true ) ); // equal width column
 
         webcamCanvas = new Canvas ( parent, SWT.NO_BACKGROUND );
