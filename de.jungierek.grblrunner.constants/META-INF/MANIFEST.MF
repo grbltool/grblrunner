@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Constants
+Bundle-SymbolicName: de.jungierek.grblrunner.constants
+Bundle-Version: 1.0.0
+Bundle-Vendor: junand
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.swt;bundle-version="3.103.2"
+Export-Package: de.jungierek.grblrunner.constants
