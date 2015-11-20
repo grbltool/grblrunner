@@ -57,17 +57,15 @@ public class Point {
 
     }
 
-    public void max ( Point p ) {
+    public Point max ( Point p ) {
 
-        x = Math.max ( x, p.x );
-        y = Math.max ( y, p.y );
+        return new Point ( Math.max ( x, p.x ), Math.max ( y, p.y ) );
 
     }
 
-    public void min ( Point p ) {
+    public Point min ( Point p ) {
 
-        x = Math.min ( x, p.x );
-        y = Math.min ( y, p.y );
+        return new Point ( Math.min ( x, p.x ), Math.min ( y, p.y ) );
 
     }
 

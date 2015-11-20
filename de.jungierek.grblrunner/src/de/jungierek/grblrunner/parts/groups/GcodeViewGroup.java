@@ -175,20 +175,31 @@ public class GcodeViewGroup {
 
             IGcodePoint min = model.getMin ();
             IGcodePoint max = model.getMax ();
+            LOG.debug ( "fitToSize 1: min=" + min + " max=" + max );
+
             if ( !IPreferences.FIT_TO_SIZE_WITH_Z ) {
                 min = min.zeroAxis ( 'Z' );
                 max = max.zeroAxis ( 'Z' );
+                LOG.debug ( "fitToSize 2: min=" + min + " max=" + max );
             }
 
-            // an now without
+       
+            // all 4 corners in gcode
+            IGcodePoint p00 = min;
+            IGcodePoint p10 = gcode.createGcodePoint ( max.getX (), min.getY (), 0.0 ); // TODO interpolate z
+            IGcodePoint p01 = gcode.createGcodePoint ( min.getX (), max.getY (), 0.0 ); // TODO interpolate z
+            IGcodePoint p11 = max;
+            LOG.debug ( "fitToSize 3: p00=" + p00 + " p10=" + p10 + " p01=" + p01 + " p11=" + p11 );
 
-            // TODO gcode max/min bei Drehung ermitteln!
-            // funktionerit derzeit nur in xy
+            Point p00Pixel = gcodeToPixel ( 1.0, p00 );
+            Point p10Pixel = gcodeToPixel ( 1.0, p10 );
+            Point p01Pixel = gcodeToPixel ( 1.0, p01 );
+            Point p11Pixel = gcodeToPixel ( 1.0, p11 );
+            LOG.debug ( "fitToSize 4: p00Pixel=" + p00Pixel + " p10Pixel=" + p10Pixel + " p01Pixel=" + p01Pixel + " p11Pixel=" + p11Pixel );
 
-            Point minPixelZoom1 = gcodeToPixel ( 1.0, min );
-            Point maxPixelZoom1 = gcodeToPixel ( 1.0, max );
-            Point minPixel = minPixelZoom1; // TODO check all corner points
-            Point maxPixel = maxPixelZoom1; // TODO check all corner points
+            Point minPixel = p00Pixel.min ( p10Pixel.min ( p01Pixel.min ( p11Pixel ) ) );
+            Point maxPixel = p00Pixel.max ( p10Pixel.max ( p01Pixel.max ( p11Pixel ) ) );
+            LOG.debug ( "fitToSize 5: min=" + minPixel + " max=" + maxPixel );
 
             Rectangle clientArea = canvas.getClientArea ();
             LOG.debug ( "fitToSize: canvas x=" + clientArea.x + " y =" + clientArea.y + " w=" + clientArea.width + " h=" + clientArea.height );
@@ -201,11 +212,19 @@ public class GcodeViewGroup {
                 zoom = 1.0;
             }
             scale = Math.floor ( zoom );
-            LOG.debug ( "fitToSize: zoom=" + scale + " x=" + zoomX + " y=" + zoomY );
+            LOG.debug ( "fitToSize: scale=" + scale + " x=" + zoomX + " y=" + zoomY );
             
-            Point minPixelForShift = gcodeToPixel ( scale, min.add ( model.getShift () ) );
-            LOG.debug ( "fitToSize: minPixel=" + minPixelForShift );
-            canvasShift = new Point ( margin, margin ).sub ( minPixelForShift );
+            p00Pixel = gcodeToPixel ( p00.add ( model.getShift () ) );
+            p10Pixel = gcodeToPixel ( p10.add ( model.getShift () ) );
+            p01Pixel = gcodeToPixel ( p01.add ( model.getShift () ) );
+            p11Pixel = gcodeToPixel ( p11.add ( model.getShift () ) );
+            LOG.debug ( "fitToSize: p00Pixel=" + p00Pixel + " p10Pixel=" + p10Pixel + " p01Pixel=" + p01Pixel + " p11Pixel=" + p11Pixel );
+
+            minPixel = p00Pixel.min ( p10Pixel.min ( p01Pixel.min ( p11Pixel ) ) );
+            // maxPixel = p00Pixel.max ( p10Pixel.max ( p01Pixel.max ( p11Pixel ) ) );
+            LOG.debug ( "fitToSize: min=" + minPixel );
+
+            canvasShift = new Point ( margin, margin ).sub ( minPixel );
             LOG.debug ( "fitToSize: canvasShift=" + canvasShift );
 
             canvas.redraw ();
@@ -346,6 +365,12 @@ public class GcodeViewGroup {
     private Point gcodeToCanvas ( double zoom, Point shift, IGcodePoint gcodePoint ) {
 
         return pixelToCanvas ( gcodeToPixel ( zoom, gcodePoint ), shift );
+
+    }
+
+    private Point gcodeToPixel ( IGcodePoint gcodePoint ) {
+        
+        return gcodeToPixel ( scale, gcodePoint );
 
     }
 
