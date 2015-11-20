@@ -18,11 +18,9 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
-import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
-import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 
 @SuppressWarnings("restriction")
@@ -112,7 +110,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void serialDisconnectNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String port ) {
+    public void serialDisconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String port ) {
 
         LOG.trace ( "serialEventNotified:" );
 
@@ -120,25 +118,36 @@ public class StartupAddon {
 
     }
 
-    @Inject
-    @Optional
-    public void gcodeEventNotified ( @UIEventTopic("TOPIC_GCODE/*") Object data ) {
+    private void updateToolbarState () {
 
-        if ( data != null && data instanceof IGcodeResponse ) {} // noop
-        else if ( data != null && data instanceof EGrblState ) {} // noop
-        else {
-            LOG.trace ( "gcodeEventNotified: data=" + data );
-            eventBroker.send ( UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID );
-        }
+        eventBroker.send ( UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID );
 
     }
 
     @Inject
     @Optional
-    public void serialEventNotified ( @UIEventTopic("TOPIC_SERIAL/*") Object data ) {
+    public void playerEventNotified ( @UIEventTopic(IEvents.PLAYER_ALL) Object data ) {
+
+        LOG.trace ( "playerEventNotified: data=" + data );
+        updateToolbarState ();
+
+    }
+
+    @Inject
+    @Optional
+    public void autolevelEventNotified ( @UIEventTopic(IEvents.AUTOLEVEL_ALL) Object data ) {
+
+        LOG.trace ( "autolevelEventNotified: data=" + data );
+        updateToolbarState ();
+
+    }
+
+    @Inject
+    @Optional
+    public void serialEventNotified ( @UIEventTopic(IEvents.SERIAL_ALL) Object data ) {
 
         LOG.trace ( "serialEventNotified: data=" + data );
-        eventBroker.send ( UIEvents.REQUEST_ENABLEMENT_UPDATE_TOPIC, UIEvents.ALL_ELEMENT_ID );
+        updateToolbarState ();
 
     }
 

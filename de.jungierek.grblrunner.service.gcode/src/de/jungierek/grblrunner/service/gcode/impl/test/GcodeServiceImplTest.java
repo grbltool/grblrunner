@@ -193,6 +193,12 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
             this.receiver = receiver;
         }
 
+        @Override
+        public boolean isDetectingSerialPorts () {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
     }
 
     private class EventBrokerMock implements IEventBroker {

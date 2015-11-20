@@ -23,7 +23,7 @@ public class SerialConnectHandler {
 	@CanExecute
     public boolean canExecute ( ISerialService serial ) {
 		
-        return serial.getPortName () != null && !serial.isOpen ();
+        return serial.getPortName () != null && !serial.isOpen () && !serial.isDetectingSerialPorts ();
 
 	}
 		

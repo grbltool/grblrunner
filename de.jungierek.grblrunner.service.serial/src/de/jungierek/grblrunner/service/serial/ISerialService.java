@@ -16,6 +16,7 @@ public interface ISerialService {
     
     public void detectSerialPortsAsync ();
     public String [] getCachedSerialPorts ();
+    public boolean isDetectingSerialPorts ();
     
     public void setPortName ( String portName );
     public String getPortName ();

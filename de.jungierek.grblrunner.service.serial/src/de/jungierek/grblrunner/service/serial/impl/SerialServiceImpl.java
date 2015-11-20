@@ -27,14 +27,14 @@ public class SerialServiceImpl implements ISerialService {
 
     private static final Logger LOG = LoggerFactory.getLogger ( SerialServiceImpl.class );
 
-    private Enumeration<CommPortIdentifier> portEnum;
-
-    private String [] cachedPorts;
-
-    private ISerialServiceReceiver listener;
-
     @Inject
     private IEventBroker eventBroker;
+
+    private Enumeration<CommPortIdentifier> portEnum;
+    private String [] cachedPorts;
+    private boolean detectingSerialPortsIsRunning;
+
+    private ISerialServiceReceiver listener;
 
     private static String getPortTypeName ( int portType ) {
         switch ( portType ) {
@@ -65,10 +65,19 @@ public class SerialServiceImpl implements ISerialService {
 
     }
 
+    @Override
+    public boolean isDetectingSerialPorts () {
+
+        return detectingSerialPortsIsRunning;
+
+    }
+
     // in case method called twice or more
     private void detectSerialPorts () {
 
         LOG.debug ( "detectSerialPorts:" );
+
+        detectingSerialPortsIsRunning = true;
 
         eventBroker.send ( IEvents.SERIAL_PORTS_DETECTING, null );
 
@@ -94,6 +103,8 @@ public class SerialServiceImpl implements ISerialService {
             else ports += "," + port;
         }
         LOG.debug ( "detectSerialPorts: ports=" + ports );
+
+        detectingSerialPortsIsRunning = false;
 
         LOG.debug ( "detectSerialPorts: posting event" );
         eventBroker.send ( IEvents.SERIAL_PORTS_DETECTED, cachedPorts );
@@ -309,9 +320,6 @@ public class SerialServiceImpl implements ISerialService {
 
             serialReceiverThread.interrupt ();
 
-            LOG.debug ( "close: posting event" );
-            eventBroker.send ( IEvents.SERIAL_DISCONNECTED, "-" );
-
             try {
                 in.close ();
                 out.close ();
@@ -324,6 +332,9 @@ public class SerialServiceImpl implements ISerialService {
                 LOG.error ( "exc=" + exc );
                 sendErrorMessage ( "serial port " + portName + " not connected!", exc );
             }
+
+            LOG.debug ( "close: posting event" );
+            eventBroker.send ( IEvents.SERIAL_DISCONNECTED, "-" );
 
         } ).start ();
 
@@ -338,7 +349,7 @@ public class SerialServiceImpl implements ISerialService {
 
         try {
             synchronized ( lock ) {
-                out.write ( c );
+                if ( out != null ) out.write ( c );
             }
 
         }
@@ -356,7 +367,7 @@ public class SerialServiceImpl implements ISerialService {
 
         try {
             synchronized ( lock ) {
-                out.write ( bytes );
+                if ( out != null ) out.write ( bytes );
             }
         }
         catch ( IOException exc ) {
