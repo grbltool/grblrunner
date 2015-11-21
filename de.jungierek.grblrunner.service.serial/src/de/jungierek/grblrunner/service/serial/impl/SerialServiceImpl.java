@@ -211,6 +211,8 @@ public class SerialServiceImpl implements ISerialService {
                                 eolFound = true;
 
                                 line += new String ( buffer, startPos, i + 1 - startPos );
+
+                                // TODO maybe enclosing the received call with a catch clause for runtime excptions
                                 if ( listener != null ) listener.received ( line );
 
                                 startPos = i + 1;

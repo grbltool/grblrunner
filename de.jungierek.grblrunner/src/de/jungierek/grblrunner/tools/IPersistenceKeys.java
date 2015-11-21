@@ -6,6 +6,8 @@ public interface IPersistenceKeys {
 
     public static final String KEY_PART_COLS = "part.cols";
     public static final String KEY_PART_GROUP_COLS = "part.group.cols";
+    public static final String KEY_PART_GROUP_ROWS = "part.group.rows";
+    public static final String KEY_PART_GROUP_ORIENTATION = "part.group.orientation";
 
     public static final String KEY_LAST_COORDINATE_SYSTEM = "LAST_COORDINATE_SYSTEM";
 
