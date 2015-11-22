@@ -20,5 +20,6 @@ public interface IGcodePoint {
     
     public IGcodePoint zeroAxis ( char axis );
     public IGcodePoint addAxis ( char axis, IGcodePoint point );
+    public IGcodePoint addAxis ( char axis, double value );
 
 }

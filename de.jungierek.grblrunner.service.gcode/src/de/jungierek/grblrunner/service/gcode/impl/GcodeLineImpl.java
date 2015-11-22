@@ -79,9 +79,37 @@ public class GcodeLineImpl implements IGcodeLine {
     }
 
     @Override
+    public boolean isMoveInXYZ () {
+
+        return isMoveInXY () || isMoveInZ ();
+
+    }
+
+    @Override
     public boolean isMoveInXY () {
 
-        return start != null && end != null && (start.getX () != end.getX () || start.getY () != end.getY ());
+        return isMoveInX () || isMoveInY ();
+
+    }
+
+    @Override
+    public boolean isMoveInX () {
+
+        return start != null && end != null && start.getX () != end.getX ();
+
+    }
+
+    @Override
+    public boolean isMoveInY () {
+
+        return start != null && end != null && start.getY () != end.getY ();
+
+    }
+
+    @Override
+    public boolean isMoveInZ () {
+
+        return start != null && end != null && start.getZ () != end.getZ ();
 
     }
 

@@ -16,8 +16,12 @@ public interface IGcodeLine {
     public boolean isProcessed ();
     public void setProcessed ( boolean processed );
 
-    boolean isMotionMode ();
+    public boolean isMotionMode ();
+    public boolean isMoveInXYZ ();
     public boolean isMoveInXY ();
+    public boolean isMoveInX ();
+    public boolean isMoveInY ();
+    public boolean isMoveInZ ();
 
     public void parseGcode ( EGcodeMode lastMotionMode , IGcodePoint lastEnd , int lastFeedrate  );
 

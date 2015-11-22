@@ -16,35 +16,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IPreferences;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class GcodeLoadHandler {
 
-    private static final String INITIAL_GCODE_PATH = "C:\\Users\\Andreas\\Documents\\eagle";
-
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeLoadHandler.class );
 
     @Execute
-    public void execute ( MApplication application, Shell shell, @Named(IServiceConstants.ACTIVE_PART) MPart part, IGcodeService gcode ) {
+    public void execute ( MApplication application, Shell shell, @Named(IServiceConstants.ACTIVE_PART) MPart part,
+            @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
 
         LOG.debug ( "execute:" );
 
         FileDialog dialog = new FileDialog ( shell, SWT.OPEN );
 
         // TODO file extension to preference
-        dialog.setFilterExtensions ( IPreferences.GCODE_FILE_EXTENSION );
+        dialog.setFilterExtensions ( IPreferences.GCODE_FILE_EXTENSIONS );
 
         // TODO_PREF base file path to preference
         String filterPath = application.getPersistedState ().get ( IPersistenceKeys.KEY_GCODE_PATH );
-        if ( filterPath == null ) filterPath = INITIAL_GCODE_PATH;
+        if ( filterPath == null ) filterPath = IPreferences.INITIAL_GCODE_PATH;
         dialog.setFilterPath ( filterPath );
 
         String result = dialog.open ();
         if ( result != null ) {
-            gcode.load ( new File ( result ) );
+            gcodeProgram.loadGcodeProgram ( new File ( result ) );
             final int start = result.lastIndexOf ( File.separator ) + 1;
             final int end = result.lastIndexOf ( '.' );
             String name = result.substring ( start, end );
@@ -55,11 +54,11 @@ public class GcodeLoadHandler {
     }
 
     @CanExecute
-    public boolean canExecute ( IGcodeService gcode, IGcodeModel model, ISerialService serial ) {
+    public boolean canExecute ( ISerialService serial, IGcodeService gcodeService, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
 
-        LOG.trace ( "canExecute:" );
+        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isScanning () );
 
-        return serial.isOpen () && !gcode.isPlaying () && !gcode.isScanning ();
+        return serial.isOpen () && !gcodeService.isPlaying () && !gcodeService.isScanning ();
 
     }
 

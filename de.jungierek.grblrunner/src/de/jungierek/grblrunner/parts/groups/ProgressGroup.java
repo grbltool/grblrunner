@@ -2,10 +2,13 @@ package de.jungierek.grblrunner.parts.groups;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -18,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
@@ -34,9 +37,13 @@ public class ProgressGroup {
     private IGcodeService gcodeService;
 
     @Inject
-    private IGcodeModel gcodeModel;
+    private ESelectionService selectionService;
 
     private ProgressBar progressBar;
+
+    private int progressMaxPlayer;
+
+    private int progressMaxScan;
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
@@ -57,6 +64,22 @@ public class ProgressGroup {
         progressBar.setMaximum ( 1 );
         progressBar.setState ( SWT.NORMAL );
 
+    }
+
+    @Inject
+    public void setGcodeProgram ( @Optional @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
+    
+        LOG.debug ( "setGcodeProgram: program=" + program );
+    
+        if ( program == null ) {
+            progressMaxPlayer = 1;
+            progressMaxScan = 1;
+        }
+        else {
+            progressMaxPlayer = program.getLineCount ();
+            progressMaxScan = program.getNumProbePoints ();
+        }
+    
     }
 
     @Inject
@@ -108,15 +131,15 @@ public class ProgressGroup {
 
     }
 
-    @SuppressWarnings("deprecation")
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String timestamp ) {
+    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String timestamp, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
 
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
         progressBar.setMinimum ( 0 );
-        progressBar.setMaximum ( gcodeModel.getLineCount () );
+        // progressBar.setMaximum ( progressMaxPlayer );
+        progressBar.setMaximum ( program.getLineCount () );
         progressBar.setSelection ( 0 );
 
     }
@@ -133,14 +156,14 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) String timestamp ) {
+    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) String timestamp, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
 
         LOG.trace ( "scanStartNotified:" );
 
         progressBar.setMinimum ( 0 );
-        progressBar.setMaximum ( gcodeModel.getNumProbePoints () );
+        // progressBar.setMaximum ( progressMaxScan );
+        program.getNumProbePoints ();
         progressBar.setSelection ( 0 );
-        // progressBar.setState ( SWT.NORMAL );
 
     }
 
@@ -153,7 +176,6 @@ public class ProgressGroup {
         if ( gcodeService.isScanning () ) {
 
             progressBar.setSelection ( progressBar.getSelection () + 1 );
-            // progressBar.setState ( SWT.NORMAL );
 
         }
 

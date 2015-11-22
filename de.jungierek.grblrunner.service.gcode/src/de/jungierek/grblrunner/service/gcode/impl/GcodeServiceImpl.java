@@ -1,11 +1,5 @@
 package de.jungierek.grblrunner.service.gcode.impl;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,12 +15,13 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.service.serial.ISerialServiceReceiver;
@@ -41,13 +36,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @Inject
     private ISerialService serial;
 
-    @Inject
-    private IGcodeModel gcodeModel;
-
     // protected for test purposes
     protected ArrayBlockingQueue<GcodeResponseImpl> queue = new ArrayBlockingQueue<GcodeResponseImpl> ( IConstants.GCODE_QUEUE_LENGTH, false );
-
-    private File gcodeFile, probeDataFile;
 
     protected volatile boolean waitForOk = false;
     protected volatile boolean skipByAlarm = false;
@@ -78,15 +68,18 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     protected volatile boolean playRunning = false;
     protected volatile boolean scanRunning = false;
 
+    private IGcodePoint fixtureSshift = new GcodePointImpl ( 0.0, 0.0, 0.0 );
+
+    private IGcodeProgram gcodeProgram;
+
     @Inject
     public GcodeServiceImpl () {}
 
     // only for test
-    protected GcodeServiceImpl ( IEventBroker eventBroker, ISerialService serial, IGcodeModel gcodeModel ) {
+    protected GcodeServiceImpl ( IEventBroker eventBroker, ISerialService serial ) {
 
         this.eventBroker = eventBroker;
         this.serial = serial;
-        this.gcodeModel = gcodeModel;
 
     }
 
@@ -104,7 +97,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
     @Override
     public void sendReset () {
-        new Thread ( ( ) -> sendSingleSignCommand ( IGcodeService.GRBL_RESET_CODE ) ).start ();
+        new Thread ( ( ) -> sendSingleSignCommand ( IConstants.GRBL_RESET_CODE ) ).start ();
     }
 
     @Override
@@ -141,15 +134,14 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
     }
 
-    @Override
-    public void sendCommand ( String line, boolean suppressInTerminal ) {
+    private void sendCommand ( String line, boolean suppressInTerminal ) {
 
         try {
 
-            queue.put ( new GcodeResponseImpl ( suppressInTerminal, line + LF ) );
+            queue.put ( new GcodeResponseImpl ( suppressInTerminal, line + IConstants.LF ) );
 
             if ( line.startsWith ( "G92" ) || line.startsWith ( "G10" ) ) { // detect G92 or G10 to update shift
-                queue.put ( new GcodeResponseImpl ( true, "$#" + LF ) );
+                queue.put ( new GcodeResponseImpl ( true, "$#" + IConstants.LF ) );
             }
 
         }
@@ -284,7 +276,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 LOG.error ( "analyseResponse: probe is null!" );
             }
             else {
-                if ( scanRunning ) gcodeModel.setProbePoint ( probePoint );
+                // transfer probe coordinates from machine to working coordinates
+                if ( scanRunning ) gcodeProgram.setProbePoint ( probePoint.sub ( fixtureSshift ) );
                 if ( ignoreNextProbe ) ignoreNextProbe = false;
                 else eventBroker.send ( IEvents.AUTOLEVEL_UPDATE, probePoint );
             }
@@ -303,8 +296,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         else if ( line.startsWith ( "[G92" ) ) {
             lastCoordSelectTempOffset = parseCoordinates ( line, "G92:", ']' );
             // System.out.println ( logName () + "receivedNotified: " + lastCoordSelect + "=" + lastCoordSelectOffset + " G92=" + lastCoordSelectTempOffset );
-            gcodeModel.setShift ( lastCoordSelectOffset.add ( lastCoordSelectTempOffset ) );
-            eventBroker.send ( IEvents.UPDATE_FIXTURE_OFFSET, null ); // inform all receivers only once, G92 is the last entry
+            fixtureSshift = lastCoordSelectOffset.add ( lastCoordSelectTempOffset );
+            eventBroker.send ( IEvents.UPDATE_FIXTURE_OFFSET, fixtureSshift ); // inform all receivers only once, G92 is the last entry
             ignoreNextProbe = true;
         }
         else if ( line.startsWith ( "[G" ) ) {
@@ -443,44 +436,43 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     }
 
     @Override
-    public File getGcodeFile () {
+    public void setFixtureShift ( IGcodePoint shift ) {
 
-        return gcodeFile;
-
-    }
-
-    @Override
-    public File getProbeDataFile () {
-
-        return probeDataFile;
+        if ( shift != null ) fixtureSshift = shift;
 
     }
 
     @Override
-    public void load ( File gcodeFile ) {
+    public IGcodePoint getFixtureShift () {
 
-        this.gcodeFile = gcodeFile;
-        String fileName = gcodeFile.getPath ();
-        probeDataFile = new File ( fileName.substring ( 0, fileName.lastIndexOf ( '.' ) ) + ".probe" );
-
-        // decouple from UI thread
-        new GcodeLoaderThread ( gcodeFile ).start ();
+        return fixtureSshift;
 
     }
 
     @Override
-    public void play () {
+    public void playGcodeProgram ( IGcodeProgram program ) {
+
+        if ( isPlaying () || isScanning () ) return;
+
+        gcodeProgram = program;
 
         // decouple from UI thread
         new GcodePlayerThread ().start ();
 
     }
 
+    // TODO eliminiate extra parameters, hold this in the service as gui model
     @Override
-    public void scan ( double zMin, double zMax, double zClearance, double probeFeedrate ) {
+    public void scanAutolevelData ( IGcodeProgram program, double zMin, double zMax, double zClearance, double probeFeedrate ) {
 
-        if ( IConstants.AUTOLEVEL_USE_RANDOM_Z_SIMULATION ) {
+        if ( isPlaying () || isScanning () ) return;
+
+        gcodeProgram = program;
+
+        if ( IPreferences.AUTOLEVEL_USE_RANDOM_Z_SIMULATION ) {
             
+            gcodeProgram.prepareAutolevelScan ();
+
             new Thread ( ( ) -> {
 
                 LOG.warn ( "scan: randomZSimulation" );
@@ -488,25 +480,27 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 eventBroker.send ( IEvents.AUTOLEVEL_START, getTimestamp () );
 
                 scanRunning = true;
-                IGcodePoint [][] m = gcodeModel.getScanMatrix ();
-                for ( int i = 0; i < m.length; i++ ) {
-                    for ( int j = 0; j < m[i].length; j++ ) {
-                        if ( IConstants.AUTOLEVEL_SLOW_Z_SIMULATION ) {
+
+                final int xlength = gcodeProgram.getXSteps () + 1;
+                final int ylength = gcodeProgram.getYSteps () + 1;
+
+                for ( int i = 0; i < xlength; i++ ) {
+                    for ( int j = 0; j < ylength; j++ ) {
+                        if ( IPreferences.AUTOLEVEL_SLOW_Z_SIMULATION ) {
                             try {
                                 Thread.sleep ( 100 );
                             }
                             catch ( InterruptedException exc ) {}
                         }
                         double z = 3.0 * Math.random ();
-                        final GcodePointImpl probe = new GcodePointImpl ( m[i][j].getX (), m[i][j].getY (), z );
-                        m[i][j] = probe;
+                        IGcodePoint probe = gcodeProgram.getProbePointAt ( i, j ).addAxis ( 'Z', z );
+                        gcodeProgram.setProbePoint ( probe );
                         LOG.debug ( "scan: probe=" + probe );
-                        IGcodePoint p = probe;
-                        eventBroker.send ( IEvents.AUTOLEVEL_UPDATE, p );
+                        eventBroker.send ( IEvents.AUTOLEVEL_UPDATE, probe );
                     }
                 }
                 scanRunning = false;
-                gcodeModel.setScanDataCompleted ();
+                gcodeProgram.setAutolevelScanCompleted ();
 
                 eventBroker.send ( IEvents.AUTOLEVEL_STOP, getTimestamp () );
 
@@ -523,38 +517,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     }
 
     @Override
-    public void loadProbeData () {
-
-        if ( playRunning || scanRunning ) {
-            eventBroker.send ( IEvents.MESSAGE_ERROR, "Laden der Höhendaten nicht möglich, da laufende Aktivitäten" );
-            return;
-        }
-
-        // decouple from UI thread
-        new ProbeLoaderThread ( probeDataFile ).start ();
-
-    }
-
-    @Override
-    public void saveProbeData () {
-
-        if ( playRunning || scanRunning || !gcodeModel.isScanDataComplete () ) return;
-
-        // decouple from UI thread
-        new ProbeSaverThread ( probeDataFile ).start ();
-
-    }
-
-    @Override
-    public void clearProbeData () {
-
-        gcodeModel.disposeProbeData ();
-
-        eventBroker.send ( IEvents.AUTOLEVEL_DATA_CLEARED, probeDataFile.getPath () );
-
-    }
-
-    @Override
     public boolean isScanning () {
 
         return scanRunning;
@@ -565,6 +527,13 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     public boolean isPlaying () {
 
         return playRunning;
+
+    }
+
+    @Override
+    public boolean isAlarm () {
+
+        return skipByAlarm;
 
     }
 
@@ -663,187 +632,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
     }
 
-    protected class ProbeLoaderThread extends Thread {
-
-        private final static String THREAD_NAME = "probe-file-loader";
-
-        private File file;
-
-        public ProbeLoaderThread ( File file ) {
-
-            super ( THREAD_NAME + " " + file.getName () );
-            this.file = file;
-
-        }
-
-        @Override
-        public synchronized void start () {
-
-            LOG.debug ( THREAD_NAME + ": starting" );
-            super.start ();
-
-        }
-
-        @Override
-        public void run () {
-
-            try ( BufferedReader reader = new BufferedReader ( new FileReader ( file ) ) ) {
-
-                String line;
-                double [] dim = null;
-                GcodePointImpl min = null, max = null;
-                double stepWidthX, stepWidthY;
-                IGcodePoint [][] matrix = null;
-
-                while ( (line = reader.readLine ()) != null ) {
-
-                    if ( line.startsWith ( "*" ) ) {
-                        // igmore comment
-                    }
-                    else if ( line.startsWith ( "dim" ) ) {
-                        dim = parseVector ( line, 2, "=[", ']' );
-                        LOG.debug ( "dim_x=" + dim[0] + ", dim_y=" + dim[1] );
-                    }
-                    else if ( line.startsWith ( "min" ) ) {
-                        min = parseCoordinates ( line, "=[", ']' );
-                        LOG.debug ( "min=" + min );
-                    }
-                    else if ( line.startsWith ( "max" ) ) {
-                        max = parseCoordinates ( line, "=[", ']' );
-                        LOG.debug ( "max=" + max );
-                    }
-                    else if ( line.startsWith ( "stepWidthX" ) ) {
-                        stepWidthX = parseDouble ( 0.0, line.substring ( line.indexOf ( '=' ) + 1 ) );
-                        LOG.debug ( "stepWidthX=" + stepWidthX );
-                    }
-                    else if ( line.startsWith ( "stepWidthY" ) ) {
-                        stepWidthY = parseDouble ( 0.0, line.substring ( line.indexOf ( '=' ) + 1 ) );
-                        LOG.debug ( "stepWidthY=" + stepWidthY );
-                        // check size of gcode area
-                        if ( min.zeroAxis ( 'Z' ).equals ( gcodeModel.getMin ().zeroAxis ( 'Z' ) ) && max.zeroAxis ( 'Z' ).equals ( gcodeModel.getMax ().zeroAxis ( 'Z' ) ) ) {
-                            gcodeModel.prepareAutolevelScan ( (int) dim[0] - 1, (int) dim[1] - 1 );
-                            matrix = gcodeModel.getScanMatrix ();
-                        }
-                        else {
-                            LOG.error ( "gcode area differs" );
-                            eventBroker.send ( IEvents.MESSAGE_ERROR,
-                                    "GCODE area differs!\nmin1=" + min + " min2=" + gcodeModel.getMin () + "\nmax1=" + max + " max2=" + gcodeModel.getMax () );
-                            return;
-                        }
-                    }
-                    else if ( line.startsWith ( "m(" ) ) {
-                        double [] ij = parseVector ( line, 2, "m(", ')' );
-                        int i = (int) ij[0];
-                        int j = (int) ij[1];
-                        GcodePointImpl p = parseCoordinates ( line, ")=[", ']' );
-                        LOG.debug ( ("i=" + ij[0] + " j=" + ij[1] + " z=" + p.getZ ()) );
-                        // matrix[i][j] = matrix[i][j].addAxis ( 'Z', p );
-                        matrix[i][j] = new GcodePointImpl ( matrix[i][j].getX (), matrix[i][j].getY (), p.getZ () );
-                    }
-                    else if ( line.startsWith ( "end of data" ) ) {
-                        gcodeModel.setScanDataCompleted ();
-                        break;
-                        // LOG.debug ( "never be here" );
-                    }
-                }
-
-                reader.close ();
-
-                eventBroker.send ( IEvents.AUTOLEVEL_DATA_LOADED, file.getPath () );
-
-            }
-            catch ( IOException exc ) {
-                LOG.error ( "exc=" + exc );
-                sendErrorMessageFromThread ( THREAD_NAME, exc );
-            }
-
-            LOG.debug ( "stopped" );
-
-        }
-
-    }
-
-    protected class ProbeSaverThread extends Thread {
-
-        private final static String THREAD_NAME = "probe-file-saver";
-
-        private File file;
-
-        public ProbeSaverThread ( File file ) {
-
-            super ( THREAD_NAME + " " + file.getName () );
-            this.file = file;
-
-        }
-
-        @Override
-        public synchronized void start () {
-
-            LOG.debug ( THREAD_NAME + ": starting" );
-            super.start ();
-
-        }
-
-        @Override
-        public void run () {
-
-            // Vorbedingungen
-            // 1. ein Gcode-Model muss da sein
-            // 2. eine Scan Matrix muss da sein
-            //
-            // Speichern
-            // a) Abmaße des Gcode Models
-            // b) steps
-            // c) Dimension der Matrix
-            // d) alle Probe Points
-
-            IGcodePoint [][] matrix = gcodeModel.getScanMatrix ();
-            IGcodePoint min = gcodeModel.getMin ();
-            IGcodePoint max = gcodeModel.getMax ();
-            double stepWidthX = gcodeModel.getStepWidthX ();
-            double stepWidthY = gcodeModel.getStepWidthY ();
-
-            try ( BufferedWriter writer = new BufferedWriter ( new FileWriter ( file ) ); ) {
-
-                writer.write ( "* generated " + new SimpleDateFormat ( "dd.MM.yyyy HH.mm:ss" ).format ( new Date () ) );
-                writer.newLine ();
-                writer.write ( "* " + file.getPath () );
-                writer.newLine ();
-                writer.write ( "dim=[" + matrix.length + "," + matrix[0].length + "]" );
-                writer.newLine ();
-                writer.write ( "min=" + min );
-                writer.newLine ();
-                writer.write ( "max=" + max );
-                writer.newLine ();
-                writer.write ( "stepWidthX=" + stepWidthX );
-                writer.newLine ();
-                writer.write ( "stepWidthY=" + stepWidthY );
-                writer.newLine ();
-
-                for ( int i = 0; i < matrix.length; i++ ) {
-                    for ( int j = 0; j < matrix[0].length; j++ ) {
-                        writer.write ( "m(" + i + "," + j + ")=" + matrix[i][j] );
-                        writer.newLine ();
-                    }
-                }
-
-                writer.write ( "end of data" );
-                // writer.newLine ();
-
-                eventBroker.send ( IEvents.AUTOLEVEL_DATA_SAVED, file.getPath () );
-
-            }
-            catch ( IOException exc ) {
-                LOG.error ( "exc=" + exc );
-                sendErrorMessageFromThread ( THREAD_NAME, exc );
-            }
-
-            LOG.debug ( "stopped" );
-
-        }
-
-    }
-
     protected class ProbeScannerThread extends Thread {
     
         private final static String THREAD_NAME = "gcode-scanner";
@@ -876,29 +664,30 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         @Override
         public void run () {
     
-            IGcodePoint [][] m = gcodeModel.getScanMatrix ();
-    
             sendCommand ( IConstants.GCODE_SCAN_START );
+
+            final int xlength = gcodeProgram.getXSteps () + 1;
+            final int ylength = gcodeProgram.getYSteps () + 1;
     
-            IGcodePoint probePoint = m[0][0];
+            IGcodePoint probePoint = gcodeProgram.getProbePointAt ( 0, 0 );
             sendCommandSuppressInTerminal ( "G21" );
             sendCommandSuppressInTerminal ( "G90" );
             sendCommandSuppressInTerminal ( "G0Z" + zClearance );
             sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
             sendCommandSuppressInTerminal ( "G0Z" + zMax );
-    
-            for ( int i = 0; i < m.length; i++ ) {
+
+            for ( int i = 0; i < xlength; i++ ) {
     
                 if ( skipByAlarm ) break;
 
                 // TODO implement mäander
-                for ( int j = 0; j < m[i].length; j++ ) {
+                for ( int j = 0; j < ylength; j++ ) {
 
                     if ( skipByAlarm ) break;
     
                     // progressListener.tick ();
     
-                    probePoint = m[i][j];
+                    probePoint = gcodeProgram.getProbePointAt ( i, j );
     
                     if ( true ) {
                         sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
@@ -920,74 +709,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             LOG.debug ( "stopped" );
     
         }
-    }
-
-    protected class GcodeLoaderThread extends Thread {
-
-
-        private final static String THREAD_NAME = "gcode-file-loader";
-
-        private File file;
-
-        public GcodeLoaderThread ( File file ) {
-
-            super ( THREAD_NAME + " " + file.getName () );
-            this.file = file;
-
-        }
-
-        @Override
-        public synchronized void start () {
-
-            LOG.debug ( THREAD_NAME + ": starting" );
-            super.start ();
-
-        }
-
-        private boolean isLineEmpty ( String line ) {
-
-            boolean result = true;
-
-            for ( int i = 0; i < line.length (); i++ ) {
-                if ( line.charAt ( i ) != ' ' ) {
-                    result = false;
-                    break;
-                }
-            }
-
-            return result;
-
-        }
-
-        @Override
-        public void run () {
-
-            try ( BufferedReader reader = new BufferedReader ( new FileReader ( file ) ) ) {
-
-                gcodeModel.clear ();
-
-                String line;
-                while ( (line = reader.readLine ()) != null ) {
-                    if ( !isLineEmpty ( line ) ) {
-                        gcodeModel.appendGcodeLine ( line );
-                    }
-                }
-                reader.close ();
-
-                gcodeModel.parseGcode ();
-
-                eventBroker.send ( IEvents.PLAYER_LOADED, file.getPath () );
-
-            }
-            catch ( IOException exc ) { // including FileNotFoundException
-                LOG.error ( "exc=" + exc );
-                sendErrorMessageFromThread ( THREAD_NAME, exc );
-            }
-
-            LOG.debug ( "stopped" );
-
-        }
-
     }
 
     protected class GcodePlayerThread extends Thread {
@@ -1015,9 +736,9 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             eventBroker.send ( IEvents.PLAYER_START, getTimestamp () );
 
-            gcodeModel.resetProcessed ();
+            gcodeProgram.resetProcessed ();
 
-            gcodeModel.visit ( new IGcodeModelVisitor () {
+            gcodeProgram.visit ( new IGcodeModelVisitor () {
 
                 @Override
                 public void visit ( IGcodeLine gcodeLine ) {
@@ -1028,20 +749,24 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     eventBroker.send ( IEvents.PLAYER_LINE, gcodeLine );
 
                     LOG.debug ( THREAD_NAME + ": line=" + gcodeLine.getLine () );
-                    // if ( gcodeModel.isScanDataComplete () && gcodeLine.isMotionMode () ) {
-                    if ( gcodeModel.isScanDataComplete () && gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) {
+                    LOG.info ( "orig=" + gcodeLine.getLine () );
+                    // if ( gcodeModel.getTheProgram ().isScanDataComplete () && gcodeLine.isMotionMode () ) {
+                    if ( gcodeProgram.isAutolevelScanComplete () && gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) {
                         final String cmd = gcodeLine.getGcodeMode ().getCommand ();
                         final String feed = "F" + gcodeLine.getFeedrate ();
-                        IGcodePoint [] path = gcodeModel.interpolateLine ( gcodeLine.getStart (), gcodeLine.getEnd () );
-                        for ( int i = 1; i < path.length; i++ ) {
-                            // TODO eliminate first point?
-                            String segment = cmd;
-                            segment += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getX () );
-                            segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getY () );
-                            segment += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getZ () );
-                            segment += feed;
-                            eventBroker.send ( IEvents.PLAYER_SEGMENT, segment );
-                            sendCommandSuppressInTerminal ( segment );
+                        if ( gcodeLine.isMoveInXYZ () ) {
+                            IGcodePoint [] path = gcodeProgram.interpolateLine ( gcodeLine.getStart (), gcodeLine.getEnd () );
+                            for ( int i = 1; i < path.length; i++ ) {
+                                // TODO eliminate first point?
+                                String segment = cmd;
+                                segment += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getX () );
+                                segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getY () );
+                                segment += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getZ () );
+                                segment += feed;
+                                eventBroker.send ( IEvents.PLAYER_SEGMENT, segment );
+                                sendCommandSuppressInTerminal ( segment );
+                                LOG.info ( "  segment=" + segment );
+                            }
                         }
                     }
                     else {
@@ -1049,12 +774,16 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         if ( gcodeLine.isMotionMode () ) {
                             final String cmd = gcodeLine.getGcodeMode ().getCommand ();
                             final String feed = "F" + gcodeLine.getFeedrate ();
-                            String line = cmd;
-                            line += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getX () );
-                            line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
-                            line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
+                            String line = "";
+                            if ( gcodeLine.isMoveInXYZ () ) {
+                                line += cmd;
+                                if ( gcodeLine.isMoveInX () ) line += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getX () );
+                                if ( gcodeLine.isMoveInY () ) line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
+                                if ( gcodeLine.isMoveInZ () ) line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
+                            }
                             line += feed;
                             sendCommandSuppressInTerminal ( line );
+                            LOG.info ( "line=" + line );
                         }
                         else {
                              sendCommandSuppressInTerminal ( gcodeLine.getLine () );
@@ -1117,7 +846,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         }
                         else if ( cmd.line.startsWith ( IConstants.GCODE_SCAN_END ) ) {
                             scanRunning = false;
-                            gcodeModel.setScanDataCompleted ();
+                            // TODO think about this
+                            gcodeProgram.setAutolevelScanCompleted ();
                             eventBroker.send ( IEvents.AUTOLEVEL_STOP, getTimestamp () ); //
                         }
                         else {

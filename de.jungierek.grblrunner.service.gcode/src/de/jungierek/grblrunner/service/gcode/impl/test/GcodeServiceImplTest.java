@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.File;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
@@ -22,11 +23,10 @@ import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
-import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.gcode.impl.GcodeGrblStateImpl;
 import de.jungierek.grblrunner.service.gcode.impl.GcodePointImpl;
 import de.jungierek.grblrunner.service.gcode.impl.GcodeResponseImpl;
@@ -53,7 +53,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
         private GcodeServiceImplTestee ( EventBrokerMock eventBrocker, SerialServiceMock serial, GcodeModelMock model ) {
             
-            super ( eventBrocker, serial, model );
+            // super ( eventBrocker, serial, model );
             gcodeSenderThread = new GcodeSenderThread ();
             
         }
@@ -377,7 +377,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
     }
 
-    private class GcodeModelMock implements IGcodeModel {
+    private class GcodeModelMock implements IGcodeProgram {
 
         private Object expectedProbe;
         private boolean setProbePointCalled;
@@ -394,7 +394,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         }
 
         @Override
-        public void appendGcodeLine ( String line ) {
+        public void appendLine ( String line ) {
             fail ( "GcodeModel: appendGcodeLine not implemented" );
         }
 
@@ -422,7 +422,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         }
 
         @Override
-        public void parseGcode () {
+        public void parse () {
             fail ( "GcodeModel: parseGcode not implemented" );
         }
 
@@ -434,17 +434,6 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         @Override
         public void prepareAutolevelScan ( int xSteps, int ySteps ) {
             fail ( "GcodeModel: prepareAutolevelScan not implemented" );
-        }
-
-        @Override
-        public void resetAutolevelScan () {
-            fail ( "GcodeModel: resetAutolevelScan not implemented" );
-        }
-
-        @Override
-        public IGcodePoint [][] getScanMatrix () {
-            fail ( "GcodeModel: getScanMatrix not implemented" );
-            return null;
         }
 
         public boolean isProbePointCalled () {
@@ -492,19 +481,6 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
         }
 
-        @Override
-        public void setShift ( IGcodePoint shift ) {
-
-            if ( expectedShift == null ) fail ( "GcodeModel: setShift not expected shift=" + shift );
-            assertEquals ( "setShift", expectedShift, shift );
-
-        }
-
-        @Override
-        public IGcodePoint getShift () {
-            fail ( "GcodeModel: getShift not implemented" );
-            return null;
-        }
 
         @Override
         public int getXSteps () {
@@ -525,23 +501,23 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         }
 
         @Override
-        public void disposeProbeData () {
+        public void clearAutolevelData () {
             fail ( "GcodeModel: clearScan not implemented" );
         }
 
         @Override
-        public void setScanDataCompleted () {
+        public void setAutolevelScanCompleted () {
             fail ( "GcodeModel: setScanDataCompleted not implemented" );
         }
 
         @Override
-        public boolean isScanDataComplete () {
+        public boolean isAutolevelScanComplete () {
             fail ( "GcodeModel: isScanDataComplete not implemented" );
             return false;
         }
 
         @Override
-        public boolean isGcodeProgramLoaded () {
+        public boolean isLoaded () {
             fail ( "GcodeModel: isGcodeProgramLoaded not implemented" );
             return false;
         }
@@ -555,6 +531,48 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         public double getRotationAngle () {
             // TODO Auto-generated method stub
             return 0;
+        }
+
+        @Override
+        public IGcodePoint getProbePointAt ( int ix, int iy ) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean isAutolevelScanPrepared () {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public File getGcodeProgramFile () {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void loadGcodeProgram ( File gcodeFile ) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public File getAutolevelDataFile () {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void loadAutolevelData () {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void saveAutolevelData () {
+            // TODO Auto-generated method stub
+
         }
 
     }
@@ -650,11 +668,11 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         
         GcodeServiceImplTestee t = (GcodeServiceImplTestee) underTest;
 
-        underTest.sendCommand ( "blabla", false );
+        underTest.sendCommand ( "blabla" );
         assertEquals ( "send 1 length", 1, t.getQueueLength () );
 
         final GcodeResponseImpl response = t.getQueueElements ()[0];
-        assertEquals ( "send line", "blabla" + IGcodeService.LF, response.line );
+        assertEquals ( "send line", "blabla" + IConstants.LF, response.line );
         assertFalse ( "send suppress", response.suppressInTerminal );
         
     }
@@ -664,15 +682,15 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
         GcodeServiceImplTestee t = (GcodeServiceImplTestee) underTest;
 
-        underTest.sendCommand ( "G92 blabla", true );
+        underTest.sendCommandSuppressInTerminal ( "G92 blabla" );
         assertEquals ( "send 1 length", 2, t.getQueueLength () );
 
         GcodeResponseImpl response = t.getQueueElements ()[0];
-        assertEquals ( "send 1 line", "G92 blabla" + IGcodeService.LF, response.line );
+        assertEquals ( "send 1 line", "G92 blabla" + IConstants.LF, response.line );
         assertTrue ( "send 1 suppress", response.suppressInTerminal );
 
         response = t.getQueueElements ()[1];
-        assertEquals ( "send 2 line", "$#" + IGcodeService.LF, response.line );
+        assertEquals ( "send 2 line", "$#" + IConstants.LF, response.line );
         assertTrue ( "send 2 suppress", response.suppressInTerminal );
 
     }

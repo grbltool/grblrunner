@@ -1,7 +1,7 @@
 package de.jungierek.grblrunner.service.gcode.impl;
 
+import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
-import de.jungierek.grblrunner.service.gcode.IGcodeService;
 
 public class GcodeResponseImpl implements IGcodeResponse {
     
@@ -34,7 +34,7 @@ public class GcodeResponseImpl implements IGcodeResponse {
     @Override
     public boolean isReset () {
         
-        return line != null && line.length () == 1 && line.charAt ( 0 ) == IGcodeService.GRBL_RESET_CODE;
+        return line != null && line.length () == 1 && line.charAt ( 0 ) == IConstants.GRBL_RESET_CODE;
         
     }
 

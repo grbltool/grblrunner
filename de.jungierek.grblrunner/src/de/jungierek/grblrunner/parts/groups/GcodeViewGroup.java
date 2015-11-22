@@ -4,13 +4,14 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -42,9 +43,9 @@ import de.jungierek.grblrunner.parts.Point;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
@@ -60,9 +61,6 @@ public class GcodeViewGroup {
     private MApplication application;
 
     @Inject
-    private IGcodeModel model;
-
-    @Inject
     private IGcodeService gcode;
 
     @Inject
@@ -70,6 +68,8 @@ public class GcodeViewGroup {
 
     @Inject
     private IEventBroker eventBroker;
+    
+    private IGcodeProgram gcodeProgram;
 
     private Rectangle canvasArea; // TODO check for this global var
 
@@ -99,6 +99,16 @@ public class GcodeViewGroup {
     private Label pixelShiftLabel;
     private Label rotationLabel;
     private Label mouseCoordinateLabel;
+
+    @Inject
+    public void setGcodeProgram ( @Optional @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
+
+        LOG.debug ( "setGcodeProgram: program=" + program );
+        
+        gcodeProgram = program;
+        if ( canvas != null && !canvas.isDisposed () ) canvas.redraw ();
+
+    }
 
     public void toggleViewGrid () {
         
@@ -167,14 +177,16 @@ public class GcodeViewGroup {
 
     public void fitToSize () {
         
+        if ( gcodeProgram == null ) return;
+
         final double margin = IPreferences.FIT_TO_SIZE_MARGIN; // TODO Pref
 
-        if ( model.isGcodeProgramLoaded () ) {
+        if ( gcodeProgram.isLoaded () ) {
 
             LOG.debug ( "fitToSize: ----------------------------------------------------" );
 
-            IGcodePoint min = model.getMin ();
-            IGcodePoint max = model.getMax ();
+            IGcodePoint min = gcodeProgram.getMin ();
+            IGcodePoint max = gcodeProgram.getMax ();
             LOG.debug ( "fitToSize 1: min=" + min + " max=" + max );
 
             if ( !IPreferences.FIT_TO_SIZE_WITH_Z ) {
@@ -214,10 +226,10 @@ public class GcodeViewGroup {
             scale = Math.floor ( zoom );
             LOG.debug ( "fitToSize: scale=" + scale + " x=" + zoomX + " y=" + zoomY );
             
-            p00Pixel = gcodeToPixel ( p00.add ( model.getShift () ) );
-            p10Pixel = gcodeToPixel ( p10.add ( model.getShift () ) );
-            p01Pixel = gcodeToPixel ( p01.add ( model.getShift () ) );
-            p11Pixel = gcodeToPixel ( p11.add ( model.getShift () ) );
+            p00Pixel = gcodeToPixel ( p00.add ( gcode.getFixtureShift () ) );
+            p10Pixel = gcodeToPixel ( p10.add ( gcode.getFixtureShift () ) );
+            p01Pixel = gcodeToPixel ( p01.add ( gcode.getFixtureShift () ) );
+            p11Pixel = gcodeToPixel ( p11.add ( gcode.getFixtureShift () ) );
             LOG.debug ( "fitToSize: p00Pixel=" + p00Pixel + " p10Pixel=" + p10Pixel + " p01Pixel=" + p01Pixel + " p11Pixel=" + p11Pixel );
 
             minPixel = p00Pixel.min ( p10Pixel.min ( p01Pixel.min ( p11Pixel ) ) );
@@ -235,14 +247,6 @@ public class GcodeViewGroup {
         }
 
     }
-
-    @Focus
-    public void setFocus () {
-
-        canvas.setFocus ();
-
-    }
-
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
@@ -284,7 +288,7 @@ public class GcodeViewGroup {
 
         canvas.redraw ();
 
-        // create arrays here, because we need injected model for this
+        // create arrays here, because we need injected gcode service for this
         initWorkAreaPoints ();
 
         restorePersistedState ();
@@ -465,8 +469,8 @@ public class GcodeViewGroup {
             if ( viewWorkarea ) drawWorkArea ( gc, 'W' );
             drawOrigign ( gc, 'M' );
             drawOrigign ( gc, 'W' );
-            if ( viewGrid ) drawGrid ( gc );
-            if ( viewGcode ) drawGcode ( gc );
+            if ( gcodeProgram != null && viewGrid ) drawGrid ( gc );
+            if ( gcodeProgram != null && viewGcode ) drawGcode ( gc );
             drawGantry ( gc );
 
             // Double Buffering
@@ -515,32 +519,34 @@ public class GcodeViewGroup {
 
         private void drawGrid ( GC gc ) {
 
-            IGcodePoint [][] m = model.getScanMatrix ();
-            LOG.trace ( "drawGrid: m=" + m );
+            LOG.trace ( "drawGrid:" );
 
-            if ( m == null ) return;
+            if ( !gcodeProgram.isAutolevelScanPrepared () ) return;
 
             gc.setLineStyle ( SWT.LINE_SOLID );
             gc.setLineWidth ( 1 );
             gc.setForeground ( getColor ( SWT.COLOR_MAGENTA ) );
 
-            IGcodePoint gcodeShift = model.getShift ();
+            IGcodePoint gcodeShift = gcode.getFixtureShift ();
 
-            for ( int i = 0; i < m.length; i++ ) {
-                for ( int j = 0; j < m[i].length; j++ ) {
+            int xlength = gcodeProgram.getXSteps () + 1;
+            int ylength = gcodeProgram.getYSteps () + 1;
 
-                    IGcodePoint p1 = m[i][j];
+            for ( int i = 0; i < xlength; i++ ) {
+                for ( int j = 0; j < ylength; j++ ) {
+
+                    IGcodePoint p1 = gcodeProgram.getProbePointAt ( i, j );
                     if ( !viewAltitude ) p1 = p1.zeroAxis ( 'Z' );
                     p1 = p1.add ( gcodeShift );
 
-                    if ( i + 1 < m.length ) {
-                        IGcodePoint p2 = m[i + 1][j];
+                    if ( i + 1 < xlength ) {
+                        IGcodePoint p2 = gcodeProgram.getProbePointAt ( i + 1, j );
                         if ( !viewAltitude ) p2 = p2.zeroAxis ( 'Z' );
                         drawLine ( gc, p1, p2.add ( gcodeShift ) );
                     }
 
-                    if ( j + 1 < m[i].length ) {
-                        IGcodePoint p2 = m[i][j + 1];
+                    if ( j + 1 < ylength ) {
+                        IGcodePoint p2 = gcodeProgram.getProbePointAt ( i, j + 1 );
                         if ( !viewAltitude ) p2 = p2.zeroAxis ( 'Z' );
                         drawLine ( gc, p1, p2.add ( gcodeShift ) );
                     }
@@ -567,12 +573,15 @@ public class GcodeViewGroup {
         }
 
         private void drawGcode ( GC gc ) {
-            model.visit ( new IGcodeModelVisitor () {
+
+            gcodeProgram.visit ( new IGcodeModelVisitor () {
 
                 @Override
                 public void visit ( IGcodeLine gcodeLine ) {
 
                     EGcodeMode gcodeMode = gcodeLine.getGcodeMode ();
+
+                    if ( gcodeMode == null ) return;
 
                     Color color;
 
@@ -643,7 +652,7 @@ public class GcodeViewGroup {
 
             int color = SWT.COLOR_MAGENTA;
             if ( type == 'W' ) {
-                zero = zero.add ( model.getShift () );
+                zero = zero.add ( gcode.getFixtureShift () );
                 color = SWT.COLOR_CYAN;
             }
 
@@ -668,7 +677,7 @@ public class GcodeViewGroup {
                 gc.setLineStyle ( SWT.LINE_DOT );
                 gc.setLineWidth ( 1 );
                 gc.setForeground ( getColor ( color ) );
-                drawLine ( gc, zero, zero.addAxis ( 'Z', model.getShift () ) );
+                drawLine ( gc, zero, zero.addAxis ( 'Z', gcode.getFixtureShift () ) );
             }
 
         }
@@ -683,13 +692,13 @@ public class GcodeViewGroup {
             IGcodePoint p1 = workAreaPoints[workAreaPoints.length - 1];
             if ( type == 'W' ) {
                 // p1 = p1.add ( gcodeModel.getShift () );
-                p1 = p1.addAxis ( 'Z', model.getShift () );
+                p1 = p1.addAxis ( 'Z', gcode.getFixtureShift () );
             }
 
             for ( int i = 0; i < workAreaPoints.length; i++ ) {
                 IGcodePoint p2 = workAreaPoints[i];
                 if ( type == 'W' ) {
-                    p2 = p2.addAxis ( 'Z', model.getShift () );
+                    p2 = p2.addAxis ( 'Z', gcode.getFixtureShift () );
                 }
                 drawLine ( gc, p1, p2 );
                 p1 = p2;
@@ -699,8 +708,8 @@ public class GcodeViewGroup {
             gc.setLineStyle ( SWT.LINE_DASH );
             gc.setLineWidth ( 1 );
             gc.setForeground ( getColor ( SWT.COLOR_RED ) );
-            drawLine ( gc, workAreaCenterCrossEndPoints[0].addAxis ( 'Z', model.getShift () ), workAreaCenterCrossEndPoints[1].addAxis ( 'Z', model.getShift () ) );
-            drawLine ( gc, workAreaCenterCrossEndPoints[2].addAxis ( 'Z', model.getShift () ), workAreaCenterCrossEndPoints[3].addAxis ( 'Z', model.getShift () ) );
+            drawLine ( gc, workAreaCenterCrossEndPoints[0].addAxis ( 'Z', gcode.getFixtureShift () ), workAreaCenterCrossEndPoints[1].addAxis ( 'Z', gcode.getFixtureShift () ) );
+            drawLine ( gc, workAreaCenterCrossEndPoints[2].addAxis ( 'Z', gcode.getFixtureShift () ), workAreaCenterCrossEndPoints[3].addAxis ( 'Z', gcode.getFixtureShift () ) );
 
         }
 
@@ -711,15 +720,15 @@ public class GcodeViewGroup {
 
             if ( start.equals ( end ) ) return;
 
-            if ( viewAltitude && model.isScanDataComplete () ) {
-                IGcodePoint [] path = model.interpolateLine ( start, end );
+            if ( viewAltitude && gcodeProgram.isAutolevelScanComplete () ) {
+                IGcodePoint [] path = gcodeProgram.interpolateLine ( start, end );
                 for ( int i = 0; i < path.length - 1; i++ ) {
-                    drawLine ( gc, path[i].add ( model.getShift () ), path[i + 1].add ( model.getShift () ) );
+                    drawLine ( gc, path[i].add ( gcode.getFixtureShift () ), path[i + 1].add ( gcode.getFixtureShift () ) );
                 }
             }
             else {
                 // translate to machine coordinates
-                drawLine ( gc, start.add ( model.getShift () ), end.add ( model.getShift () ) );
+                drawLine ( gc, start.add ( gcode.getFixtureShift () ), end.add ( gcode.getFixtureShift () ) );
             }
 
         }
@@ -980,7 +989,7 @@ public class GcodeViewGroup {
         }
 
     }
-
+    
     @Inject
     @Optional
     public void stateUpdateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState state ) {
@@ -1004,9 +1013,9 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void redrawScanGridNotified ( @UIEventTopic(IEvents.REDRAW) Integer viewFlags ) {
+    public void redrawScanGridNotified ( @UIEventTopic(IEvents.REDRAW) Object dummy ) {
 
-        LOG.debug ( "redrawScanGridNotified: viewFlags=" + viewFlags );
+        LOG.debug ( "redrawScanGridNotified: dummy=" + dummy );
 
         canvas.redraw ();
 
@@ -1014,9 +1023,9 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void updateCoordSelectOffsetsNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE_OFFSET) Object dummy ) {
+    public void updateCoordSelectOffsetsNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE_OFFSET) IGcodePoint fixtureOffset ) {
 
-        LOG.debug ( "updateCoordSelectOffsetsNotified" );
+        LOG.debug ( "updateCoordSelectOffsetsNotified: fixtureOffset=" + fixtureOffset );
 
         canvas.redraw ();
 

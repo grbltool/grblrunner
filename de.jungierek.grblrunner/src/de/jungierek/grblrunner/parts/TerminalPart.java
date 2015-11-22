@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
+import de.jungierek.grblrunner.service.gcode.IGcodeService;
 
 public class TerminalPart {
 
@@ -32,10 +32,10 @@ public class TerminalPart {
     private boolean showSuppressedLines = false;
 
     @Inject
-    private IGcodeModel gcodeModel;
+    private IGcodeService gcode;
 
     @Inject
-    Display display;
+    private Display display;
 
     private Color WHITE, RED, GREEN, GRAY, LIGHT_GREEN, LIGHT_GRAY, YELLOW;
 
@@ -245,7 +245,8 @@ public class TerminalPart {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
-        final IGcodePoint p = probe.sub ( gcodeModel.getShift () );
+        // convert from machine to work coordinate system
+        final IGcodePoint p = probe.sub ( gcode.getFixtureShift () );
         terminalText.append ( "" + probe + "    delta=" + String.format ( IGcodePoint.FORMAT_COORDINATE, p.getZ () ) + "\n" );
 
         scrollToEnd ();

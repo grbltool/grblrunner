@@ -1,62 +1,112 @@
 package de.jungierek.grblrunner.service.gcode.impl;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 
-public class GcodeModelImpl implements IGcodeModel {
-    
-    private static final Logger LOG = LoggerFactory.getLogger ( GcodeModelImpl.class );
+public class GcodeProgramImpl implements IGcodeProgram {
+
+    private static final Logger LOG = LoggerFactory.getLogger ( GcodeProgramImpl.class );
 
     public final static IGcodePoint GCODE_DEFAULT_START_POINT = new GcodePointImpl ( 0.0, 0.0, 0.0 );
 
+    @Inject
+    private IEventBroker eventBroker;
+
+    private File gcodeFile, probeDataFile;
+
     private int nextLineNo = 0;
     private List<GcodeLineImpl> gcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
-    
+
     private GcodePointImpl min;
     private GcodePointImpl max;
-    
-    private IGcodePoint gcodeSshift = new GcodePointImpl ( 0.0, 0.0, 0.0 );
 
     private GcodePointImpl matrix [][];
-    private int xSteps, ySteps;
+    private int xSteps = IPreferences.INITIAL_XSTEPS;
+    private int ySteps = IPreferences.INITIAL_YSTEPS;
     private double xStepWidth, yStepWidth;
     private int numProbePoints;
 
     private volatile boolean scanDataComplete = false;
 
-    private final static double ONE_DEGREE = Math.PI / 180.0;
     private double rotationAngle = 0;
 
+    @Inject
+    public GcodeProgramImpl () {
+        
+        LOG.trace ( "GcodeProgramImpl: hash=" + Integer.toHexString ( hashCode () ) );
+        
+    }
+
     @Override
-    public void appendGcodeLine ( String line ) {
+    public File getGcodeProgramFile () {
+
+        return gcodeFile;
+
+    }
+
+    @Override
+    public File getAutolevelDataFile () {
+
+        return probeDataFile;
+
+    }
+
+    @Override
+    public void appendLine ( String line ) {
 
         gcodeLines.add ( new GcodeLineImpl ( nextLineNo++, line ) );
-        
+
     }
 
     @Override
     public IGcodePoint getMin () {
-        
+
         return min;
-        
+
     }
 
     @Override
     public IGcodePoint getMax () {
-        
+
         return max;
-        
+
     }
-    
+
+    @Override
+    public void loadGcodeProgram ( File gcodeFile ) {
+
+        this.gcodeFile = gcodeFile;
+        String fileName = gcodeFile.getPath ();
+        probeDataFile = new File ( fileName.substring ( 0, fileName.lastIndexOf ( '.' ) ) + IPreferences.AUTOLEVEL_DATA_FILE_EXTENSION );
+
+        // decouple from UI thread
+        new GcodeLoaderThread ( gcodeFile ).start ();
+
+    }
+
     @Override
     public void clear () {
 
@@ -66,38 +116,39 @@ public class GcodeModelImpl implements IGcodeModel {
 
         rotationAngle = 0.0;
 
-        disposeProbeData ();
-    
+        // TODO find references and call this explicite
+        clearAutolevelData ();
+
     }
 
     @Override
     public double getRotationAngle () {
 
-        return rotationAngle / ONE_DEGREE;
+        return rotationAngle / IConstants.ONE_DEGREE;
 
     }
 
     @Override
     public int getLineCount () {
-        
+
         return gcodeLines.size ();
-        
+
     }
-    
+
     @Override
     public void visit ( IGcodeModelVisitor visitor ) {
-        
+
         for ( GcodeLineImpl gcodeLine : gcodeLines ) {
             gcodeLine.visit ( visitor );
         }
-    
+
     }
 
     @Override
     public void resetProcessed () {
-        
-        visit ( new IGcodeModelVisitor() {
-            
+
+        visit ( new IGcodeModelVisitor () {
+
             @Override
             public void visit ( IGcodeLine gcodeLine ) {
                 gcodeLine.setProcessed ( false );
@@ -108,52 +159,51 @@ public class GcodeModelImpl implements IGcodeModel {
 
     @Override
     public void rotate ( double angle ) {
-    
-    
+
         LOG.debug ( "rotate: angle=" + angle );
 
-        if ( this.rotationAngle == angle * ONE_DEGREE ) return;
-    
-        this.rotationAngle = angle * ONE_DEGREE;
-        
-        parseGcode (); // reset line vars
+        if ( this.rotationAngle == angle * IConstants.ONE_DEGREE ) return;
+
+        this.rotationAngle = angle * IConstants.ONE_DEGREE;
+
+        parse (); // reset line vars
 
         initMinMax ();
-    
-        visit ( new IGcodeModelVisitor() {
-            
+
+        visit ( new IGcodeModelVisitor () {
+
             IGcodePoint lastEnd = null;
-    
+
             @Override
             public void visit ( IGcodeLine gcodeLine ) {
-    
+
                 gcodeLine.rotate ( rotationAngle, lastEnd );
                 if ( gcodeLine.isMotionMode () ) {
                     lastEnd = gcodeLine.getEnd ();
                     handleMinMax ( gcodeLine );
                 }
-    
+
             }
-            
+
         } );
-    
+
     }
 
     @Override
-    public void parseGcode () {
-        
+    public void parse () {
+
         initMinMax ();
-        
-        visit ( new IGcodeModelVisitor() {
-            
+
+        visit ( new IGcodeModelVisitor () {
+
             IGcodePoint lastEndPoint = GCODE_DEFAULT_START_POINT;
             // EGcodeMode lastMotionMode = EGcodeMode.GCODE_MODE_UNDEF;
             EGcodeMode lastMotionMode = EGcodeMode.MOTION_MODE_SEEK; // TODO change to _LINEAR?
             int lastFeedrate = 0;
-            
+
             @Override
             public void visit ( IGcodeLine gcodeLine ) {
-                
+
                 gcodeLine.parseGcode ( lastMotionMode, lastEndPoint, lastFeedrate );
 
                 if ( gcodeLine.isMotionMode () ) {
@@ -167,7 +217,7 @@ public class GcodeModelImpl implements IGcodeModel {
                 }
 
             }
-            
+
         } );
 
     }
@@ -178,53 +228,76 @@ public class GcodeModelImpl implements IGcodeModel {
         max = new GcodePointImpl ( -999.0, -999.0, -999.0 );
 
     }
-    
+
     private void handleMinMax ( IGcodeLine gcodeLine ) {
-    
+
         if ( gcodeLine.isMoveInXY () ) {
 
             IGcodePoint point = gcodeLine.getEnd ();
-    
+
             LOG.trace ( "parseGcode: min=" + min + " max=" + max + " lastend=" + point );
             min = (GcodePointImpl) min.min ( point );
             max = (GcodePointImpl) max.max ( point );
-    
+
         }
-    
+
     }
 
     @Override
-    public boolean isScanDataComplete () {
+    public boolean isAutolevelScanComplete () {
 
         return scanDataComplete;
 
     }
 
     @Override
-    public boolean isGcodeProgramLoaded () {
+    public boolean isLoaded () {
 
         return gcodeLines.size () > 0;
 
     }
 
     @Override
-    public void setScanDataCompleted () {
+    public void setAutolevelScanCompleted () {
 
         scanDataComplete = true;
 
     }
 
     @Override
-    public void disposeProbeData () {
+    public void loadAutolevelData () {
+
+        // decouple from UI thread
+        new ProbeLoaderThread ( probeDataFile ).start ();
+
+    }
+
+    @Override
+    public void saveAutolevelData () {
+
+        // gcodeProgram = program;
+
+        if ( !isAutolevelScanComplete () ) return;
+
+        // decouple from UI thread
+        new ProbeSaverThread ( probeDataFile ).start ();
+
+    }
+
+    @Override
+    public void clearAutolevelData () {
 
         scanDataComplete = false;
         matrix = null;
 
-        // for ( int i = 0; i < matrix.length; i++ ) {
-        // for ( int j = 0; j < matrix[i].length; j++ ) {
-        // matrix[i][j] = new GcodePointImpl ( matrix[i][j].x, matrix[i][j].y, 0.0 );
-        // }
-        // }
+        eventBroker.send ( IEvents.AUTOLEVEL_DATA_CLEARED, probeDataFile.getPath () );
+
+    }
+
+    @Override
+    public boolean isAutolevelScanPrepared () {
+
+        return matrix != null;
 
     }
 
@@ -234,7 +307,7 @@ public class GcodeModelImpl implements IGcodeModel {
         if ( getLineCount () == 0 ) return;
 
         LOG.debug ( "prepareAutolevelScan: matrix=" + matrix + " xSteps=" + xSteps + " ySteps=" + ySteps );
-        
+
         scanDataComplete = false;
 
         if ( matrix != null && this.xSteps == xSteps && this.ySteps == ySteps ) return;
@@ -251,18 +324,18 @@ public class GcodeModelImpl implements IGcodeModel {
 
         xStepWidth = (max.getX () - min.getX ()) / xSteps;
         yStepWidth = (max.getY () - min.getY ()) / ySteps;
-        
+
         numProbePoints = (xSteps + 1) * (ySteps + 1);
 
         if ( matrix == null || xSteps != matrix.length || ySteps != matrix[0].length ) {
             matrix = new GcodePointImpl [this.xSteps + 1] [this.ySteps + 1];
         }
 
-        resetAutolevelScan ();
+        clearZ ();
+
     }
 
-    @Override
-    public void resetAutolevelScan () {
+    private void clearZ () {
 
         for ( int i = 0; i < matrix.length; i++ ) {
             double x = min.getX () + i * xStepWidth;
@@ -274,12 +347,11 @@ public class GcodeModelImpl implements IGcodeModel {
 
     }
 
+    // coordinates are in working coordinates!!!
     @Override
     public void setProbePoint ( IGcodePoint probe ) {
 
-        // TODO extract computing of indizes in separate Methods, see also interpolate
-        // Grbl sends data in machine coordinates, transfer to working coordinates
-        final GcodePointImpl p = (GcodePointImpl) probe.sub ( gcodeSshift );
+        final GcodePointImpl p = (GcodePointImpl) probe;
 
         final double distx = p.x - min.x;
         final double ii = distx / this.xStepWidth + EPSILON;
@@ -289,9 +361,16 @@ public class GcodeModelImpl implements IGcodeModel {
         final double jj = disty / this.yStepWidth + EPSILON;
         int j = (int) jj;
 
-        // LOG.debug ( "setProbePoint: dx=" + distx + " dy=" + disty + "  ii=" + ii + " i=" + i + " jj=" + jj + " j=" + j );
+        LOG.debug ( "setProbePoint: dx=" + distx + " dy=" + disty + "  ii=" + ii + " i=" + i + " jj=" + jj + " j=" + j );
 
         matrix[i][j] = p;
+
+    }
+
+    @Override
+    public IGcodePoint getProbePointAt ( int ix, int iy ) {
+
+        return matrix[ix][iy];
 
     }
 
@@ -307,38 +386,15 @@ public class GcodeModelImpl implements IGcodeModel {
 
     @Override
     public double getStepWidthX () {
-    
-        return xStepWidth;
-    
-    }
 
+        return xStepWidth;
+
+    }
 
     @Override
     public double getStepWidthY () {
-    
+
         return yStepWidth;
-    
-    }
-
-
-    @Override
-    public IGcodePoint [][] getScanMatrix () {
-
-        return matrix;
-
-    }
-
-    @Override
-    public void setShift ( IGcodePoint shift ) {
-
-        if ( shift != null ) gcodeSshift = shift;
-
-    }
-
-    @Override
-    public IGcodePoint getShift () {
-
-        return gcodeSshift;
 
     }
 
@@ -350,6 +406,14 @@ public class GcodeModelImpl implements IGcodeModel {
     }
 
     private GcodePointImpl interpolate ( IGcodePoint point ) {
+
+        GcodePointImpl p = (GcodePointImpl) point;
+
+        return new GcodePointImpl ( p.x, p.y, interpolateZ ( point ) );
+
+    }
+
+    private double interpolateZ ( IGcodePoint point ) {
 
         // TODO extract computing of indizes in separate Methods, see also setProbePoint
 
@@ -377,19 +441,19 @@ public class GcodeModelImpl implements IGcodeModel {
         result += a1 * b * matrix[i][j + 1].z;
         result += a * b1 * matrix[i + 1][j].z;
         result += a * b * matrix[i + 1][j + 1].z;
-        
-        return new GcodePointImpl ( p.x, p.y, result );
+
+        return result;
 
     }
 
     @Override
     public IGcodePoint [] interpolateLine ( IGcodePoint point1, IGcodePoint point2 ) {
-        
+
         ArrayList<IGcodePoint> result = new ArrayList<IGcodePoint> ();
 
         GcodePointImpl p1 = (GcodePointImpl) point1;
         GcodePointImpl p2 = (GcodePointImpl) point2;
-        
+
         // first point of path
         result.add ( interpolate ( p1 ) );
 
@@ -417,7 +481,7 @@ public class GcodeModelImpl implements IGcodeModel {
         double jj2 = (p2.y - min.y) / yStepWidth + EPSILON;
         int j2 = (int) jj2;
         jj2 -= j2;
-        
+
         double llXY = dx * dx + dy * dy;
         double distXY = Math.sqrt ( llXY );
 
@@ -441,7 +505,7 @@ public class GcodeModelImpl implements IGcodeModel {
             if ( ii1 == 0.0 ) i--;
             // if ( ii2 != 0.0 ) i2++;
         }
-        
+
         int j = j1;
         if ( dy > 0.0 ) {
             j++;
@@ -501,16 +565,308 @@ public class GcodeModelImpl implements IGcodeModel {
                 if ( dy > 0.0 ) j++;
                 else j--;
             }
-            
+
             result.add ( interpolate ( new GcodePointImpl ( x, y, z ) ) );
 
         }
 
         result.add ( interpolate ( p2 ) );
-    
+
         return result.toArray ( new IGcodePoint [0] );
-    
+
     }
+
+    private void sendErrorMessageFromThread ( final String threadName, Exception exc ) {
+
+        final String intialMsg = "Thread " + threadName + " not executed!";
+
+        sendErrorMessage ( intialMsg, exc );
+
+    }
+
+    private void sendErrorMessage ( final String intialMsg, Exception exc ) {
+
+        StringBuilder sb = new StringBuilder ();
+        sb.append ( intialMsg );
+        sb.append ( "\n\n" );
+        sb.append ( "Cause:\n" );
+        sb.append ( exc + "\n\n" );
+
+        eventBroker.send ( IEvents.MESSAGE_ERROR, "" + sb );
+
+    }
+
+    // TODO eliminate double impl
+    private GcodePointImpl parseCoordinates ( String line, String intro, char closingChar ) {
+
+        return new GcodePointImpl ( parseVector ( line, IConstants.AXIS.length, intro, closingChar ) );
+
+    }
+
+    // TODO eliminate double impl
+    private double [] parseVector ( String line, int vectorLength, String intro, char closingChar ) {
+
+        double [] coord = new double [vectorLength];
+
+        int startPos = line.indexOf ( intro ) + intro.length ();
+        int endPos = -1;
+
+        for ( int i = 0; i < vectorLength; i++ ) {
+            endPos = line.indexOf ( (i < vectorLength - 1 ? "," : "" + closingChar), startPos );
+            coord[i] = parseDouble ( 99999.999, line.substring ( startPos, endPos ) );
+            startPos = endPos + 1;
+        }
+
+        return coord;
+
+    }
+
+    // TODO eliminate double impl
+    private double parseDouble ( double defaultValue, String s ) {
+
+        double result = defaultValue;
+        try {
+            result = Double.parseDouble ( s );
+        }
+        catch ( NumberFormatException exc ) {}
+
+        return result;
+
+    }
+
+    protected class GcodeLoaderThread extends Thread {
+
+        private final static String THREAD_NAME = "gcode-file-loader";
+
+        private File file;
+
+        public GcodeLoaderThread ( File file ) {
+
+            super ( THREAD_NAME + " " + file.getName () );
+            this.file = file;
+
+        }
+
+        @Override
+        public synchronized void start () {
+
+            LOG.debug ( THREAD_NAME + ": starting" );
+            super.start ();
+
+        }
+
+        private boolean isLineEmpty ( String line ) {
+
+            boolean result = true;
+
+            for ( int i = 0; i < line.length (); i++ ) {
+                if ( line.charAt ( i ) != ' ' ) {
+                    result = false;
+                    break;
+                }
+            }
+
+            return result;
+
+        }
+
+        @Override
+        public void run () {
+
+            try ( BufferedReader reader = new BufferedReader ( new FileReader ( file ) ) ) {
+
+                clear ();
+
+                String line;
+                while ( (line = reader.readLine ()) != null ) {
+                    if ( !isLineEmpty ( line ) ) {
+                        appendLine ( line );
+                    }
+                }
+                reader.close ();
+
+                parse ();
+                prepareAutolevelScan ( IPreferences.INITIAL_XSTEPS, IPreferences.INITIAL_YSTEPS );
+
+                eventBroker.send ( IEvents.PLAYER_LOADED, file.getPath () );
+
+            }
+            catch ( IOException | RuntimeException exc ) { // including FileNotFoundException
+                LOG.error ( "exc=" + exc );
+                sendErrorMessageFromThread ( THREAD_NAME, exc );
+            }
+
+            LOG.debug ( "stopped" );
+
+        }
+
+    }
+
+    protected class ProbeLoaderThread extends Thread {
+
+        private final static String THREAD_NAME = "probe-file-loader";
+
+        private File file;
+
+        public ProbeLoaderThread ( File file ) {
+
+            super ( THREAD_NAME + " " + file.getName () );
+            this.file = file;
+
+        }
+
+        @Override
+        public synchronized void start () {
+
+            LOG.debug ( THREAD_NAME + ": starting" );
+            super.start ();
+
+        }
+
+
+        @Override
+        public void run () {
+
+            try ( BufferedReader reader = new BufferedReader ( new FileReader ( file ) ) ) {
+
+                String line;
+                double [] dim = null;
+                GcodePointImpl min = null, max = null;
+                double stepWidthX, stepWidthY;
+
+                while ( (line = reader.readLine ()) != null ) {
+
+                    if ( line.startsWith ( "*" ) ) {
+                        // igmore comment
+                    }
+                    else if ( line.startsWith ( "dim" ) ) {
+                        dim = parseVector ( line, 2, "=[", ']' );
+                        LOG.debug ( "dim_x=" + dim[0] + ", dim_y=" + dim[1] );
+                    }
+                    else if ( line.startsWith ( "min" ) ) {
+                        min = parseCoordinates ( line, "=[", ']' );
+                        LOG.debug ( "min=" + min );
+                    }
+                    else if ( line.startsWith ( "max" ) ) {
+                        max = parseCoordinates ( line, "=[", ']' );
+                        LOG.debug ( "max=" + max );
+                    }
+                    else if ( line.startsWith ( "stepWidthX" ) ) {
+                        stepWidthX = parseDouble ( 0.0, line.substring ( line.indexOf ( '=' ) + 1 ) );
+                        LOG.debug ( "stepWidthX=" + stepWidthX );
+                    }
+                    else if ( line.startsWith ( "stepWidthY" ) ) {
+                        stepWidthY = parseDouble ( 0.0, line.substring ( line.indexOf ( '=' ) + 1 ) );
+                        LOG.debug ( "stepWidthY=" + stepWidthY );
+                        // check size of gcode area
+                        if ( min.zeroAxis ( 'Z' ).equals ( getMin ().zeroAxis ( 'Z' ) ) && max.zeroAxis ( 'Z' ).equals ( getMax ().zeroAxis ( 'Z' ) ) ) {
+                            prepareAutolevelScan ( (int) dim[0] - 1, (int) dim[1] - 1 );
+                        }
+                        else {
+                            LOG.error ( "gcode area differs" );
+                            eventBroker.send ( IEvents.MESSAGE_ERROR, "GCODE area differs!\nmin1=" + min + " min2=" + getMin () + "\nmax1=" + max + " max2=" + getMax () );
+                            return;
+                        }
+                    }
+                    else if ( line.startsWith ( "m(" ) ) {
+                        setProbePoint ( parseCoordinates ( line, ")=[", ']' ) );
+                    }
+                    else if ( line.startsWith ( "end of data" ) ) {
+                        setAutolevelScanCompleted ();
+                        break;
+                        // LOG.debug ( "never be here" );
+                    }
+                }
+
+                reader.close ();
+
+                eventBroker.send ( IEvents.AUTOLEVEL_DATA_LOADED, file.getPath () );
+
+            }
+            catch ( IOException exc ) {
+                LOG.error ( "exc=" + exc );
+                sendErrorMessageFromThread ( THREAD_NAME, exc );
+            }
+
+            LOG.debug ( "stopped" );
+
+        }
+
+    }
+
+    protected class ProbeSaverThread extends Thread {
+
+        private final static String THREAD_NAME = "probe-file-saver";
+
+        private File file;
+
+        public ProbeSaverThread ( File file ) {
+
+            super ( THREAD_NAME + " " + file.getName () );
+            this.file = file;
+
+        }
+
+        @Override
+        public synchronized void start () {
+
+            LOG.debug ( THREAD_NAME + ": starting" );
+            super.start ();
+
+        }
+
+        @Override
+        public void run () {
+
+            IGcodePoint min = getMin ();
+            IGcodePoint max = getMax ();
+            double stepWidthX = getStepWidthX ();
+            double stepWidthY = getStepWidthY ();
+            int xlength = getXSteps () + 1;
+            int ylength = getYSteps () + 1;
+
+            try ( BufferedWriter writer = new BufferedWriter ( new FileWriter ( file ) ); ) {
+
+                writer.write ( "* generated " + new SimpleDateFormat ( "dd.MM.yyyy HH.mm:ss" ).format ( new Date () ) );
+                writer.newLine ();
+                writer.write ( "* " + file.getPath () );
+                writer.newLine ();
+                writer.write ( "dim=[" + xlength + "," + ylength + "]" );
+                writer.newLine ();
+                writer.write ( "min=" + min );
+                writer.newLine ();
+                writer.write ( "max=" + max );
+                writer.newLine ();
+                writer.write ( "stepWidthX=" + stepWidthX );
+                writer.newLine ();
+                writer.write ( "stepWidthY=" + stepWidthY );
+                writer.newLine ();
+
+                for ( int i = 0; i < xlength; i++ ) {
+                    for ( int j = 0; j < ylength; j++ ) {
+                        writer.write ( "m(" + i + "," + j + ")=" + getProbePointAt ( i, j ) );
+                        writer.newLine ();
+                    }
+                }
+
+                writer.write ( "end of data" );
+                // writer.newLine ();
+
+                eventBroker.send ( IEvents.AUTOLEVEL_DATA_SAVED, file.getPath () );
+
+            }
+            catch ( IOException exc ) {
+                LOG.error ( "exc=" + exc );
+                sendErrorMessageFromThread ( THREAD_NAME, exc );
+            }
+
+            LOG.debug ( "stopped" );
+
+        }
+
+    }
+
+    // ====================================================================================================================================
 
     public void initTest () {
 
@@ -519,7 +875,7 @@ public class GcodeModelImpl implements IGcodeModel {
         GcodePointImpl p02 = new GcodePointImpl ( 0.0, 2.0, 0.5 );
         GcodePointImpl p03 = new GcodePointImpl ( 0.0, 3.0, 0.25 );
         GcodePointImpl p04 = new GcodePointImpl ( 0.0, 4.0, 0.0 );
-        
+
         GcodePointImpl p10 = new GcodePointImpl ( 1.0, 0.0, 0.75 );
         GcodePointImpl p11 = new GcodePointImpl ( 1.0, 1.0, 0.625 );
         GcodePointImpl p12 = new GcodePointImpl ( 1.0, 2.0, 0.5 );
@@ -564,9 +920,9 @@ public class GcodeModelImpl implements IGcodeModel {
         yStepWidth = (max.y - min.y) / ySteps;
 
     }
-    
+
     public void testCase ( String name, GcodePointImpl p1, GcodePointImpl p2 ) {
-        
+
         IGcodePoint [] path = interpolateLine ( p1, p2 );
 
         System.out.println ( name + ": len=" + path.length + " p1=" + p1 + " p2=" + p2 );
@@ -579,18 +935,18 @@ public class GcodeModelImpl implements IGcodeModel {
 
     public static void main ( String [] args ) {
 
-        GcodeModelImpl m = new GcodeModelImpl ();
+        GcodeProgramImpl m = new GcodeProgramImpl ();
         m.initTest ();
-        
+
         // for ( int i = 0; i < m.matrix.length; i++ ) {
         // for ( int j = 0; j < m.matrix[i].length; j++ ) {
         // System.out.println ( "i=" + i + " j=" + j + " z=" + m.matrix[i][j].z );
         // }
         // }
-        
+
         // GcodePointImpl p = new GcodePointImpl ( 0.5, 0.5, 0.0 );
         // System.out.println ( "z=" + m.interpolate ( p ).z );
-        
+
         /* @formatter:off */
         Object tests [][] = new Object [] [] {
                 
@@ -624,7 +980,7 @@ public class GcodeModelImpl implements IGcodeModel {
 
         for ( int i = 0; i < tests.length; i++ ) {
             int j = 0;
-            String name = (String) tests [i][j++];
+            String name = (String) tests[i][j++];
             GcodePointImpl p1 = (GcodePointImpl) tests[i][j++];
             GcodePointImpl p2 = (GcodePointImpl) tests[i][j++];
             m.testCase ( name, p1, p2 );
@@ -632,5 +988,5 @@ public class GcodeModelImpl implements IGcodeModel {
 
     }
 
-}
 
+}

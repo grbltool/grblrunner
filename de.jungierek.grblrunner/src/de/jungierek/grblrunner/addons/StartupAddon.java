@@ -1,13 +1,18 @@
 package de.jungierek.grblrunner.addons;
 
+import java.util.Locale;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.osgi.service.event.Event;
@@ -18,9 +23,8 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
-import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
-import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
+import de.jungierek.grblrunner.parts.GcodeEditor;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 
 @SuppressWarnings("restriction")
@@ -59,6 +63,9 @@ public class StartupAddon {
 
         LOG.debug ( "StartupAddon: Constructor called" );
 
+        // HACK set US loacale for number conversion
+        Locale.setDefault ( Locale.US );
+
     }
 
     @PostConstruct
@@ -94,6 +101,22 @@ public class StartupAddon {
         LOG.debug ( "applicationStarted: event=" + event );
 
         if ( window != null ) window.setLabel ( IPreferences.APPLICATION_TITILE );
+
+    }
+
+    // @Inject
+    public void partSwitched ( @Named(IServiceConstants.ACTIVE_PART) MPart part ) {
+
+        LOG.info ( "partSwitched: part=" + part );
+        if ( part != null ) {
+            Object object = part.getObject ();
+            if ( object != null ) {
+                LOG.info ( "partSwitched: obj=" + object );
+                if ( object instanceof GcodeEditor ) {
+                    LOG.info ( "partSwitched: prog=" + part.getContext ().get ( IGcodeProgram.class ) );
+                }
+            }
+        }
 
     }
 
@@ -164,27 +187,6 @@ public class StartupAddon {
         }
         // the only one info about ports
         LOG.info ( "serialPortsDetectedNotified: ports=" + ports );
-
-    }
-
-    @SuppressWarnings("unused")
-    @Inject
-    @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName, IGcodeModel gcodeModel ) {
-
-        LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
-
-        if ( IPreferences.DUMP_PARSED_GCODE_LINE && gcodeModel != null ) {
-
-            gcodeModel.visit ( new IGcodeModelVisitor () {
-                @Override
-                public void visit ( IGcodeLine gcodeLine ) {
-                    LOG.info ( "playerLoadedNotified: line=" + gcodeLine.getLine () );
-                    LOG.info ( "playerLoadedNotified:          gcodeLine=" + gcodeLine );
-                }
-            } );
-
-        }
 
     }
 

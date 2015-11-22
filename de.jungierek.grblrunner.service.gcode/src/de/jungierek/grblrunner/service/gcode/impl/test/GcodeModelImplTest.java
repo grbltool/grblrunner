@@ -3,7 +3,6 @@ package de.jungierek.grblrunner.service.gcode.impl.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
@@ -13,19 +12,19 @@ import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
-import de.jungierek.grblrunner.service.gcode.impl.GcodeModelImpl;
 import de.jungierek.grblrunner.service.gcode.impl.GcodePointImpl;
+import de.jungierek.grblrunner.service.gcode.impl.GcodeProgramImpl;
 
 public class GcodeModelImplTest {
 
     private double delta = 0.001;
 
-    private GcodeModelImpl underTest;
+    private GcodeProgramImpl underTest;
 
     @Before
     public void setUp () {
 
-        underTest = new GcodeModelImpl ();
+        underTest = new GcodeProgramImpl ();
 
     }
 
@@ -37,8 +36,8 @@ public class GcodeModelImplTest {
         assertEquals ( "line count", 0, underTest.getLineCount () );
         assertEquals ( "step width x", 0, underTest.getStepWidthX (), delta );
         assertEquals ( "step width y", 0, underTest.getStepWidthY (), delta );
-        assertNull ( "matrix", underTest.getScanMatrix () );
-        assertEquals ( "shift", new GcodePointImpl ( 0.0, 0.0, 0.0 ), underTest.getShift () );
+        // assertNull ( "matrix", underTest.getScanMatrix () );
+        // assertEquals ( "shift", new GcodePointImpl ( 0.0, 0.0, 0.0 ), underTest.getFixtureShift () );
 
     }
 
@@ -48,7 +47,7 @@ public class GcodeModelImplTest {
         String lines [] = { "G0X0Y0Z0", "X4", "Y4", "X0", "Y0", };
 
         for ( String l : lines ) {
-            underTest.appendGcodeLine ( l );
+            underTest.appendLine ( l );
         }
 
         assertEquals ( "line count", 5, underTest.getLineCount () );
@@ -97,7 +96,7 @@ public class GcodeModelImplTest {
 
         testAppendGcodeLine ();
 
-        underTest.parseGcode ();
+        underTest.parse ();
 
         assertEquals ( "line count", 5, underTest.getLineCount () );
 
@@ -131,7 +130,8 @@ public class GcodeModelImplTest {
         assertEquals ( "step width x", 1.0, underTest.getStepWidthX (), delta );
         assertEquals ( "step width y", 0.5, underTest.getStepWidthY (), delta );
 
-        IGcodePoint [][] m = underTest.getScanMatrix ();
+        // IGcodePoint [][] m = underTest.getScanMatrix ();
+        IGcodePoint [][] m = null;
 
         assertEquals ( "dim x", 5, m.length );
         assertEquals ( "dim y", 9, m[0].length );
@@ -148,8 +148,8 @@ public class GcodeModelImplTest {
 
         underTest.setProbePoint ( new GcodePointImpl ( 2.0, 3.5, -0.5 ) );
         
-        assertEquals ( "probe", 0.0, underTest.getScanMatrix ()[3][4].getZ (), delta );
-        assertEquals ( "probe", -0.5, underTest.getScanMatrix ()[2][7].getZ (), delta );
+        // assertEquals ( "probe", 0.0, underTest.getScanMatrix ()[3][4].getZ (), delta );
+        // assertEquals ( "probe", -0.5, underTest.getScanMatrix ()[2][7].getZ (), delta );
 
     }
 
@@ -158,11 +158,11 @@ public class GcodeModelImplTest {
 
         GcodePointImpl p = new GcodePointImpl ( 1.0, 2.0, 3.0 );
 
-        underTest.setShift ( p );
-        assertSame ( "same1", p, underTest.getShift () );
+        // underTest.setFixtureShift ( p );
+        // assertSame ( "same1", p, underTest.getFixtureShift () );
 
-        underTest.setShift ( null );
-        assertSame ( "same2", p, underTest.getShift () );
+        // underTest.setFixtureShift ( null );
+        // assertSame ( "same2", p, underTest.getFixtureShift () );
 
     }
 
@@ -284,7 +284,8 @@ public class GcodeModelImplTest {
         assertEquals ( "step width x", 1.0, underTest.getStepWidthX (), delta );
         assertEquals ( "step width y", 1.0, underTest.getStepWidthY (), delta );
     
-        IGcodePoint [][] m = underTest.getScanMatrix ();
+        // IGcodePoint [][] m = underTest.getScanMatrix ();
+        IGcodePoint [][] m = null;
     
         assertEquals ( "dim x", 5, m.length );
         assertEquals ( "dim y", 5, m[0].length );

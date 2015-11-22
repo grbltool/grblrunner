@@ -23,7 +23,6 @@ import de.jungierek.grblrunner.parts.groups.CommandGroup;
 import de.jungierek.grblrunner.parts.groups.GcodeLargeGroup;
 import de.jungierek.grblrunner.parts.groups.ProgressGroup;
 import de.jungierek.grblrunner.parts.groups.StatusLineGroup;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
@@ -33,9 +32,6 @@ public class StatusLinePart {
 
     @Inject
     private IGcodeService gcodeService;
-
-    @Inject
-    private IGcodeModel gcodeModel;
 
     @Inject
     @Named(IServiceConstants.ACTIVE_SHELL)

@@ -26,3 +26,4 @@ Require-Bundle: org.eclipse.equinox.util;bundle-version="1.0.500",
  org.eclipse.core.runtime;bundle-version="3.10.0"
 Export-Package: de.jungierek.grblrunner.service.gcode
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: de.jungierek.grblrunner.service.gcode.impl.Activator

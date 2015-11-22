@@ -1,7 +1,5 @@
 package de.jungierek.grblrunner.parts;
 
-import java.util.Locale;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandIDs;
@@ -50,10 +48,7 @@ public class ControlPart {
     private IEventBroker eventBroker;
 
     @Inject
-    private IGcodeService gcode;
-
-    @Inject
-    private IGcodeModel model;
+    private IGcodeService gcodeService;
 
     @Inject
     private PartTools partTools; 
@@ -103,20 +98,14 @@ public class ControlPart {
     private Text scanClearanceZText;
     private Text scanFeedrateText;
 
+    private IGcodeProgram gcodeProgram;
+
     @Inject
 	public ControlPart() {}
 	
-    @Focus
-    public void setFocusToCommandText () {
-        
-    }
-    
     @PostConstruct
     public void createGui ( Composite parent ) {
 
-        // HACK set US loacale for number conversion
-        Locale.setDefault ( Locale.US );
-	    
 	    int cols = 8;
         parent.setLayout ( new GridLayout ( cols, true ) ); // equal width column
         
@@ -143,6 +132,33 @@ public class ControlPart {
 
     }
 	
+    @Focus
+    public void focus () {}
+
+    private void setGridFields () {
+    
+        if ( gcodeProgram == null ) return;
+
+        ignoreStepTextModifyListener = true;
+        scanStepXText.setText ( "" + gcodeProgram.getXSteps () );
+        scanStepYText.setText ( "" + gcodeProgram.getYSteps () );
+        ignoreStepTextModifyListener = false;
+    
+        scanStepWidthXLabel.setText ( String.format ( "%.3f", gcodeProgram.getStepWidthX () ) );
+        scanStepWidthYLabel.setText ( String.format ( "%.3f", gcodeProgram.getStepWidthY () ) );
+    
+    }
+
+    @Inject
+    public void setGcodeProgram ( @Optional @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
+
+        LOG.debug ( "setGcodeProgram: program=" + program );
+
+        gcodeProgram = program;
+        setGridFields ();
+
+    }
+
     private class SimpleGrblCommandSelectionListener extends SelectionAdapter {
         
         private String simpleCommand = "NO_COMMAND";
@@ -156,7 +172,7 @@ public class ControlPart {
         @Override
         public void widgetSelected ( SelectionEvent evt ) {
 
-            gcode.sendCommand ( simpleCommand );
+            gcodeService.sendCommand ( simpleCommand );
             
         }
 
@@ -175,7 +191,7 @@ public class ControlPart {
         @Override
         public void widgetSelected ( SelectionEvent evt ) {
 
-            gcode.sendCommandSuppressInTerminal ( simpleCommand );
+            gcodeService.sendCommandSuppressInTerminal ( simpleCommand );
 
         }
 
@@ -196,7 +212,7 @@ public class ControlPart {
         @Override
         public void widgetSelected ( SelectionEvent evt ) {
             
-            gcode.sendCommandSuppressInTerminal ( "G91G0" + axis + (dirSign == ' ' ? "" : dirSign) + rangeCombo.getText () );
+            gcodeService.sendCommandSuppressInTerminal ( "G91G0" + axis + (dirSign == ' ' ? "" : dirSign) + rangeCombo.getText () );
             
         }
         
@@ -207,9 +223,10 @@ public class ControlPart {
         int xSteps = partTools.parseIntegerField ( scanStepXText, 1 );
         int ySteps = partTools.parseIntegerField ( scanStepYText, 1 );
 
-        model.prepareAutolevelScan ( xSteps, ySteps ); // resets scan completed
-        scanStepWidthXLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, model.getStepWidthX () ) );
-        scanStepWidthYLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, model.getStepWidthY () ) );
+        // TODO test gcodeProgram for != null?
+        gcodeProgram.prepareAutolevelScan ( xSteps, ySteps ); // resets scan completed
+        scanStepWidthXLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );
+        scanStepWidthYLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthY () ) );
         
         redrawGcode ();
 
@@ -270,7 +287,8 @@ public class ControlPart {
             public void widgetSelected ( SelectionEvent evt ) {
                 updateGrid ();
                 // @formatter:off
-                gcode.scan ( 
+                gcodeService.scanAutolevelData (
+                        gcodeProgram, // current selected gcode program
                         partTools.parseDoubleField ( scanMinZText, IPreferences.PROBE_Z_MIN ), 
                         partTools.parseDoubleField ( scanMaxZText, IPreferences.PROBE_Z_MAX ),
                         partTools.parseDoubleField ( scanClearanceZText, IPreferences.PROBE_Z_CLEARANCE ),
@@ -299,7 +317,7 @@ public class ControlPart {
             
             @Override
             public void widgetSelected ( SelectionEvent evt ) {
-                gcode.sendCommandSuppressInTerminal ( "G90G38.2Z" + probeDepthText.getText () + "F" + IPreferences.PROBE_FEEDRATE );
+                gcodeService.sendCommandSuppressInTerminal ( "G90G38.2Z" + probeDepthText.getText () + "F" + IPreferences.PROBE_FEEDRATE );
             }
 
         } );
@@ -327,7 +345,7 @@ public class ControlPart {
                 final int speed = spindleVelocitySlider.getSelection ();
                 // to prevent deadlocks in UI Thread
                 ignoreSpindleSpeedUpdate = true;
-                new Thread ( ( ) -> gcode.sendCommandSuppressInTerminal ( "S" + speed ) ).start ();
+                new Thread ( ( ) -> gcodeService.sendCommandSuppressInTerminal ( "S" + speed ) ).start ();
             }
         } );
         spindleStartButton.addSelectionListener ( new SimpleGrblCommandSelectionListenerSuppressedInTerminal ( "M3" ) );
@@ -495,10 +513,10 @@ public class ControlPart {
         scanClearanceZText.setEnabled ( enabled );
         scanFeedrateText.setEnabled ( enabled );
 
-        scanStartButton.setEnabled ( enabled && model.isGcodeProgramLoaded () && !model.isScanDataComplete () );
-        scanClearButton.setEnabled ( enabled && model.isScanDataComplete () );
-        loadProbeDataButton.setEnabled ( enabled && model.isGcodeProgramLoaded () && gcode.getProbeDataFile ().isFile () );
-        saveProbeDataButton.setEnabled ( enabled && model.isScanDataComplete () );
+        scanStartButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeProgram.isAutolevelScanComplete () );
+        scanClearButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.isAutolevelScanComplete () );
+        loadProbeDataButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.isLoaded () && gcodeProgram.getAutolevelDataFile ().isFile () );
+        saveProbeDataButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.isAutolevelScanComplete () );
         
     }
 
@@ -616,13 +634,7 @@ public class ControlPart {
 
         LOG.trace ( "probeDataloadedNotified: fileName=" + fileName );
 
-        ignoreStepTextModifyListener = true;
-        scanStepXText.setText ( "" + model.getXSteps () );
-        scanStepYText.setText ( "" + model.getYSteps () );
-        ignoreStepTextModifyListener = false;
-
-        scanStepWidthXLabel.setText ( String.format ( "%.3f", model.getStepWidthX () ) );
-        scanStepWidthYLabel.setText ( String.format ( "%.3f", model.getStepWidthY () ) );
+        setGridFields ();
 
         setAutolevelControlsEnabled ( true );
         redrawGcode ();

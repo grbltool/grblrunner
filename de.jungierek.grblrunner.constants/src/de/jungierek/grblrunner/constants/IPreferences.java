@@ -8,7 +8,9 @@ public interface IPreferences {
 
     public static final String APPLICATION_TITILE = "GrblRunner";
 
-    public static final String [] GCODE_FILE_EXTENSION = new String [] { "*.ngc" };
+    public static final String INITIAL_GCODE_PATH = "C:\\Users\\Andreas\\Documents\\eagle";
+    public static final String [] GCODE_FILE_EXTENSIONS = new String [] { "*.ngc" };
+    public static final String AUTOLEVEL_DATA_FILE_EXTENSION = ".probe";
 
     public static final int SPINDLE_MIN_RPM = 0;
     public static final int SPINDLE_MAX_RPM = 12000;
@@ -42,5 +44,8 @@ public interface IPreferences {
     public static final boolean BUTTON_GCODE_DIALOG_ON = true;
 
     public static final int SERIAL_MAX_WAIT_MS = 2000;
+
+    public final static boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = true;
+    public final static boolean AUTOLEVEL_SLOW_Z_SIMULATION = false;
 
 }

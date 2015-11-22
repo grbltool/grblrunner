@@ -5,7 +5,6 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,13 +34,13 @@ public class SerialPortGroup {
 
     private Combo portCombo;
 
-    @Focus
-    public void SetFocusToPortCombo () {
-
-        portCombo.setFocus ();
-
-    }
-
+    // @Focus
+    // public void SetFocusToPortCombo () {
+    //
+    // portCombo.setFocus ();
+    //
+    // }
+    //
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context, ISerialService serialService, IGcodeService gcodeService ) {
 

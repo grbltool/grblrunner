@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModel;
 import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandIDs;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
@@ -47,13 +47,13 @@ public class GcodeFileGroup {
     private static final String GROUP_NAME = "Gcode File";
 
     @Inject
-    private IGcodeModel model;
-
-    @Inject
     private PartTools partTools;
 
     @Inject
     private IEventBroker eventBroker;
+
+    @Inject
+    private IGcodeProgram gcodeProgram;
 
     @Inject
     @Named(IServiceConstants.ACTIVE_SHELL)
@@ -106,8 +106,8 @@ public class GcodeFileGroup {
 
             @Override
             public void modifyText ( ModifyEvent evt ) {
-                model.rotate ( partTools.parseIntegerField ( gcodeRotationText, 0 ) );
-                model.prepareAutolevelScan ();
+                gcodeProgram.rotate ( partTools.parseIntegerField ( gcodeRotationText, 0 ) );
+                gcodeProgram.prepareAutolevelScan ();
                 updateMinMax ();
                 eventBroker.send ( IEvents.REDRAW, null );
             }
@@ -154,7 +154,7 @@ public class GcodeFileGroup {
             textGcodeLine.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, true ) );
             textGcodeLine.setEditable ( false );
 
-            model.visit ( new IGcodeModelVisitor () {
+            gcodeProgram.visit ( new IGcodeModelVisitor () {
 
                 private static final String JUSTIFY_PLACE = "                                                                                "; // 80x space
 
@@ -204,11 +204,11 @@ public class GcodeFileGroup {
     private void setControlsEnabled ( boolean enabled ) {
 
         fileLoadButton.setEnabled ( enabled );
-        fileRefreshButton.setEnabled ( enabled && model.isGcodeProgramLoaded () );
-        fileRunButton.setEnabled ( enabled && model.isGcodeProgramLoaded () );
-        if ( IPreferences.BUTTON_GCODE_DIALOG_ON ) fileViewButton.setEnabled ( enabled && model.isGcodeProgramLoaded () );
+        fileRefreshButton.setEnabled ( enabled && gcodeProgram.isLoaded () );
+        fileRunButton.setEnabled ( enabled && gcodeProgram.isLoaded () );
+        if ( IPreferences.BUTTON_GCODE_DIALOG_ON ) fileViewButton.setEnabled ( enabled && gcodeProgram.isLoaded () );
 
-        gcodeRotationText.setEnabled ( enabled && model.isGcodeProgramLoaded () );
+        gcodeRotationText.setEnabled ( enabled && gcodeProgram.isLoaded () );
 
     }
 
@@ -241,7 +241,7 @@ public class GcodeFileGroup {
         fileNameLabel.setText ( fileName );
 
         updateMinMax ();
-        gcodeRotationText.setText ( String.format ( "%.0f", model.getRotationAngle () ) );
+        gcodeRotationText.setText ( String.format ( "%.0f", gcodeProgram.getRotationAngle () ) );
 
         setControlsEnabled ( true );
 
@@ -249,8 +249,8 @@ public class GcodeFileGroup {
 
     private void updateMinMax () {
 
-        gcodeMinLabel.setText ( "" + model.getMin () );
-        gcodeMaxLabel.setText ( "" + model.getMax () );
+        gcodeMinLabel.setText ( "" + gcodeProgram.getMin () );
+        gcodeMaxLabel.setText ( "" + gcodeProgram.getMax () );
 
     }
 

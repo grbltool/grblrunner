@@ -165,8 +165,7 @@ public class GcodePointImpl implements IGcodePoint {
 
     }
 
-    @Override
-    public IGcodePoint addAxis ( char axis, IGcodePoint point ) {
+    public IGcodePoint _addAxis ( char axis, IGcodePoint point ) {
 
         GcodePointImpl result = this;
 
@@ -181,6 +180,58 @@ public class GcodePointImpl implements IGcodePoint {
 
             case 'Z':
                 result = new GcodePointImpl ( x, y, z + point.getZ () );
+                break;
+
+            default:
+                break;
+        }
+
+        return result;
+
+    }
+
+    @Override
+    public IGcodePoint addAxis ( char axis, IGcodePoint point ) {
+
+        double value = 0.0;
+
+        switch ( axis ) {
+            case 'X':
+                value = point.getX ();
+                break;
+
+            case 'Y':
+                value = point.getY ();
+                break;
+
+            case 'Z':
+                value = point.getZ ();
+                break;
+
+            default:
+                break;
+        }
+
+        return addAxis ( axis, value );
+
+    }
+
+    @Override
+    public IGcodePoint addAxis ( char axis, double value ) {
+
+        GcodePointImpl result = this;
+
+        switch ( axis ) {
+            case 'X':
+                result = new GcodePointImpl ( x + value, y, z );
+                break;
+
+            case 'Y':
+                result = new GcodePointImpl ( x, y + value, z );
+                break;
+
+            case 'Z':
+                result = new GcodePointImpl ( x, y, z + value );
                 break;
 
             default:

@@ -13,10 +13,12 @@ public interface IConstants {
 
     public static final int GCODE_QUEUE_LENGTH = 20;
 
-    public final static boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = false;
-    public final static boolean AUTOLEVEL_SLOW_Z_SIMULATION = false;
-
     public static final String GCODE_SCAN_START = "SCAN_START";
     public static final String GCODE_SCAN_END = "SCAN_END";
+
+    public static final char CR = 0x0D;
+    public static final char LF = 0x0A;
+    public static final char GRBL_RESET_CODE = 0x18;
+    public static final String GRBL_RESET_STRING = new String ( new byte [] { GRBL_RESET_CODE } );
 
 }

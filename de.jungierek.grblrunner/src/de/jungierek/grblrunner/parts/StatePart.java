@@ -366,15 +366,6 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void updateCoordSelectOffsetsNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE_OFFSET) Object dummy ) {
-
-        LOG.trace ( "updateCoordSelectOffsetsNotified:" );
-        // do nothing
-
-    }
-    
-    @Inject
-    @Optional
     public void updatePlaneNotified ( @UIEventTopic(IEvents.UPDATE_PLANE) String plane ) {
 
         LOG.trace ( "updatePlaneNotified: plane=" + plane );
