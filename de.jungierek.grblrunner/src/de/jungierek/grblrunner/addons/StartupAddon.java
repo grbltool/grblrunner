@@ -1,5 +1,6 @@
 package de.jungierek.grblrunner.addons;
 
+import java.io.File;
 import java.util.Locale;
 
 import javax.annotation.PostConstruct;
@@ -40,6 +41,8 @@ public class StartupAddon {
 
     private MWindow window;
 
+    private IGcodeProgram gcodeProgram;
+
     /*
      * Notizen: IApplicationContext enthält startup Parameter via getArguments()
      */
@@ -57,6 +60,8 @@ public class StartupAddon {
 
         }
     };
+
+    private String grblVersion;
 
     @Inject
     public StartupAddon () {
@@ -81,8 +86,40 @@ public class StartupAddon {
         window = (MWindow) modelService.find ( IConstants.MAIN_WINDOW_ID, application );
         LOG.debug ( "processAddon: window=" + window );
 
+        setWindowLabel ();
+
     }
 
+
+    @Inject
+    public void setGcodeProgram ( @Optional @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
+
+        LOG.debug ( "setGcodeProgram: program=" + program );
+
+        gcodeProgram = program;
+        setWindowLabel ();
+
+    }
+
+    private void setWindowLabel () {
+    
+        if ( window == null ) return;
+
+        String msg = IPreferences.APPLICATION_TITILE;
+    
+        if ( serial.isOpen () ) {
+            msg += " " + serial.getPortName ();
+            if ( grblVersion != null ) msg += " " + grblVersion;
+        }
+    
+        if ( gcodeProgram != null ) {
+            File gcodeProgramFile = gcodeProgram.getGcodeProgramFile ();
+            if ( gcodeProgramFile != null ) msg += " - " + gcodeProgramFile.getPath ();
+        }
+    
+        window.setLabel ( msg );
+    
+    }
 
     @Inject
     @Optional
@@ -100,7 +137,7 @@ public class StartupAddon {
 
         LOG.debug ( "applicationStarted: event=" + event );
 
-        if ( window != null ) window.setLabel ( IPreferences.APPLICATION_TITILE );
+        setWindowLabel ();
 
     }
 
@@ -126,8 +163,18 @@ public class StartupAddon {
 
         LOG.trace ( "grblRestartedNotified: line=" + line );
 
-        String grblVersion = line.substring ( 0, line.indexOf ( '[' ) - 1 );
-        if ( window != null ) window.setLabel ( IPreferences.APPLICATION_TITILE + " " + serial.getPortName () + " " + grblVersion );
+        grblVersion = line.substring ( 0, line.indexOf ( '[' ) - 1 );
+        setWindowLabel ();
+
+    }
+
+    @Inject
+    @Optional
+    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName ) {
+
+        LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
+
+        setWindowLabel ();
 
     }
 
@@ -137,7 +184,7 @@ public class StartupAddon {
 
         LOG.trace ( "serialEventNotified:" );
 
-        if ( window != null ) window.setLabel ( IPreferences.APPLICATION_TITILE );
+        setWindowLabel ();
 
     }
 

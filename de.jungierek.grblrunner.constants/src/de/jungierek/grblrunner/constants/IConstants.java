@@ -4,6 +4,8 @@ package de.jungierek.grblrunner.constants;
 public interface IConstants {
 
     public static final String MAIN_WINDOW_ID = "de.jungierek.grblrunner.window.main";
+    public static final String EDITOR_PARTSTACK_ID = "de.jungierek.grblrunner.partstack.editors";
+    public static final String EDITOR_PARTDESCRIPTOR_ID = "de.jungierek.grblrunner.partdescriptor.gcode.editor";
 
     public static final String FORMAT_COORDINATE = "%.3f";
 
