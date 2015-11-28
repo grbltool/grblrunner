@@ -6,7 +6,7 @@ public interface IGcodeProgram {
 
     public static final double EPSILON = 0.001;
 
-    public void visit ( IGcodeModelVisitor visitor );
+    IGcodeLine [] getAllGcodeLines ();
 
     public File getGcodeProgramFile ();
     public void loadGcodeProgram ( File gcodeFile );

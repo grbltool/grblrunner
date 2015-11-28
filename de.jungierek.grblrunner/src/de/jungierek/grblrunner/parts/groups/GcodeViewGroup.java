@@ -43,7 +43,6 @@ import de.jungierek.grblrunner.parts.Point;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
@@ -61,14 +60,14 @@ public class GcodeViewGroup {
     private MApplication application;
 
     @Inject
-    private IGcodeService gcode;
+    private IGcodeService gcodeService;
 
     @Inject
     private PartTools partTools;
 
     @Inject
     private IEventBroker eventBroker;
-    
+
     private IGcodeProgram gcodeProgram;
 
     private Rectangle canvasArea; // TODO check for this global var
@@ -104,44 +103,44 @@ public class GcodeViewGroup {
     public void setGcodeProgram ( @Optional @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
 
         LOG.debug ( "setGcodeProgram: program=" + program );
-        
+
         gcodeProgram = program;
-        if ( canvas != null && !canvas.isDisposed () ) canvas.redraw ();
+        redraw ();
 
     }
 
     public void toggleViewGrid () {
-        
+
         this.viewGrid = !this.viewGrid;
-        canvas.redraw ();
+        redraw ();
 
     }
 
     public void toggleViewGcode () {
 
         this.viewGcode = !this.viewGcode;
-        canvas.redraw ();
+        redraw ();
 
     }
 
     public void toggleViewAltitude () {
 
         this.viewAltitude = !this.viewAltitude;
-        canvas.redraw ();
-        
+        redraw ();
+
     }
 
     public void toggleViewLabel () {
-        
+
         this.viewAltitudeLabel = !this.viewAltitudeLabel;
-        canvas.redraw ();
-        
+        redraw ();
+
     }
 
     public void toggleViewWorkarea () {
 
         this.viewWorkarea = !this.viewWorkarea;
-        canvas.redraw ();
+        redraw ();
 
     }
 
@@ -151,7 +150,7 @@ public class GcodeViewGroup {
         rotY = 0.0 * IConstants.ONE_DEGREE;
         rotZ = 0.0 * IConstants.ONE_DEGREE;
 
-        canvas.redraw ();
+        redraw ();
 
     }
 
@@ -161,7 +160,7 @@ public class GcodeViewGroup {
         rotY = 0.0 * IConstants.ONE_DEGREE;
         rotZ = 0.0 * IConstants.ONE_DEGREE;
 
-        canvas.redraw ();
+        redraw ();
 
     }
 
@@ -171,12 +170,22 @@ public class GcodeViewGroup {
         rotY = 0.0 * IConstants.ONE_DEGREE;
         rotZ = 90.0 * IConstants.ONE_DEGREE;
 
-        canvas.redraw ();
+        redraw ();
+
+    }
+
+    public void viewIso () {
+
+        rotX = 60.0 * IConstants.ONE_DEGREE;
+        rotY = 0.0 * IConstants.ONE_DEGREE;
+        rotZ = -35.264 * IConstants.ONE_DEGREE;
+
+        redraw ();
 
     }
 
     public void fitToSize () {
-        
+
         if ( gcodeProgram == null ) return;
 
         final double margin = IPreferences.FIT_TO_SIZE_MARGIN; // TODO Pref
@@ -195,11 +204,10 @@ public class GcodeViewGroup {
                 LOG.debug ( "fitToSize 2: min=" + min + " max=" + max );
             }
 
-       
             // all 4 corners in gcode
             IGcodePoint p00 = min;
-            IGcodePoint p10 = gcode.createGcodePoint ( max.getX (), min.getY (), 0.0 ); // TODO interpolate z
-            IGcodePoint p01 = gcode.createGcodePoint ( min.getX (), max.getY (), 0.0 ); // TODO interpolate z
+            IGcodePoint p10 = gcodeService.createGcodePoint ( max.getX (), min.getY (), 0.0 ); // TODO interpolate z
+            IGcodePoint p01 = gcodeService.createGcodePoint ( min.getX (), max.getY (), 0.0 ); // TODO interpolate z
             IGcodePoint p11 = max;
             LOG.debug ( "fitToSize 3: p00=" + p00 + " p10=" + p10 + " p01=" + p01 + " p11=" + p11 );
 
@@ -216,7 +224,7 @@ public class GcodeViewGroup {
             Rectangle clientArea = canvas.getClientArea ();
             LOG.debug ( "fitToSize: canvas x=" + clientArea.x + " y =" + clientArea.y + " w=" + clientArea.width + " h=" + clientArea.height );
             LOG.debug ( "fitToSize: minPixel=" + minPixel + " maxPixel=" + maxPixel );
-            
+
             double zoomX = (clientArea.width - 2.0 * margin) / (maxPixel.x - minPixel.x);
             double zoomY = (clientArea.height - 2.0 * margin) / (maxPixel.y - minPixel.y);
             double zoom = Math.min ( zoomX, zoomY );
@@ -225,11 +233,11 @@ public class GcodeViewGroup {
             }
             scale = Math.floor ( zoom );
             LOG.debug ( "fitToSize: scale=" + scale + " x=" + zoomX + " y=" + zoomY );
-            
-            p00Pixel = gcodeToPixel ( p00.add ( gcode.getFixtureShift () ) );
-            p10Pixel = gcodeToPixel ( p10.add ( gcode.getFixtureShift () ) );
-            p01Pixel = gcodeToPixel ( p01.add ( gcode.getFixtureShift () ) );
-            p11Pixel = gcodeToPixel ( p11.add ( gcode.getFixtureShift () ) );
+
+            p00Pixel = gcodeToPixel ( p00.add ( gcodeService.getFixtureShift () ) );
+            p10Pixel = gcodeToPixel ( p10.add ( gcodeService.getFixtureShift () ) );
+            p01Pixel = gcodeToPixel ( p01.add ( gcodeService.getFixtureShift () ) );
+            p11Pixel = gcodeToPixel ( p11.add ( gcodeService.getFixtureShift () ) );
             LOG.debug ( "fitToSize: p00Pixel=" + p00Pixel + " p10Pixel=" + p10Pixel + " p01Pixel=" + p01Pixel + " p11Pixel=" + p11Pixel );
 
             minPixel = p00Pixel.min ( p10Pixel.min ( p01Pixel.min ( p11Pixel ) ) );
@@ -239,7 +247,7 @@ public class GcodeViewGroup {
             canvasShift = new Point ( margin, margin ).sub ( minPixel );
             LOG.debug ( "fitToSize: canvasShift=" + canvasShift );
 
-            canvas.redraw ();
+            redraw ();
 
         }
         else {
@@ -286,13 +294,17 @@ public class GcodeViewGroup {
         canvas.addMouseWheelListener ( mouseDetector );
         canvas.addKeyListener ( mouseDetector );
 
-        canvas.redraw ();
+        redraw ();
 
         // create arrays here, because we need injected gcode service for this
         initWorkAreaPoints ();
 
         restorePersistedState ();
 
+    }
+
+    private void redraw () {
+        if ( canvas != null && !canvas.isDisposed () ) canvas.redraw ();
     }
 
     private void restorePersistedState () {
@@ -330,17 +342,17 @@ public class GcodeViewGroup {
 
         /* @formatter:off */
         workAreaPoints = new IGcodePoint [] { 
-                gcode.createGcodePoint ( workAreaMaxX, 0.0, 0.0 ), 
-                gcode.createGcodePoint ( workAreaMaxX, workAreaMaxY, 0.0 ), 
-                gcode.createGcodePoint ( 0.0, workAreaMaxY, 0.0 ), 
-                gcode.createGcodePoint ( 0.0, 0.0, 0.0 ),
+                gcodeService.createGcodePoint ( workAreaMaxX, 0.0, 0.0 ), 
+                gcodeService.createGcodePoint ( workAreaMaxX, workAreaMaxY, 0.0 ), 
+                gcodeService.createGcodePoint ( 0.0, workAreaMaxY, 0.0 ), 
+                gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 ),
         };
         
         workAreaCenterCrossEndPoints = new IGcodePoint [] { 
-                gcode.createGcodePoint ( workAreaMaxX / 2 - workAreaCenterCrossLength, workAreaMaxY / 2, 0.0 ), 
-                gcode.createGcodePoint ( workAreaMaxX / 2 + workAreaCenterCrossLength, workAreaMaxY / 2, 0.0 ), 
-                gcode.createGcodePoint ( workAreaMaxX / 2, workAreaMaxY / 2 - workAreaCenterCrossLength, 0.0 ), 
-                gcode.createGcodePoint ( workAreaMaxX / 2, workAreaMaxY / 2 + workAreaCenterCrossLength, 0.0 ),
+                gcodeService.createGcodePoint ( workAreaMaxX / 2 - workAreaCenterCrossLength, workAreaMaxY / 2, 0.0 ), 
+                gcodeService.createGcodePoint ( workAreaMaxX / 2 + workAreaCenterCrossLength, workAreaMaxY / 2, 0.0 ), 
+                gcodeService.createGcodePoint ( workAreaMaxX / 2, workAreaMaxY / 2 - workAreaCenterCrossLength, 0.0 ), 
+                gcodeService.createGcodePoint ( workAreaMaxX / 2, workAreaMaxY / 2 + workAreaCenterCrossLength, 0.0 ),
         };
         /* @formatter:on */
 
@@ -352,7 +364,7 @@ public class GcodeViewGroup {
 
         LOG.debug ( "initCanvasShift:" );
 
-        Point canvasPoint = gcodeToCanvas ( gcode.createGcodePoint ( workAreaMaxX, workAreaMaxY, 0.0 ) );
+        Point canvasPoint = gcodeToCanvas ( gcodeService.createGcodePoint ( workAreaMaxX, workAreaMaxY, 0.0 ) );
         Point pixelPoint = canvasToPixel ( (int) canvasPoint.x, (int) canvasPoint.y );
 
         canvasShift.x = (canvasArea.width - canvasArea.x - pixelPoint.x) / 2;
@@ -373,7 +385,7 @@ public class GcodeViewGroup {
     }
 
     private Point gcodeToPixel ( IGcodePoint gcodePoint ) {
-        
+
         return gcodeToPixel ( scale, gcodePoint );
 
     }
@@ -487,14 +499,14 @@ public class GcodeViewGroup {
 
         private void draw3DCross ( GC gc ) {
 
-            final IGcodePoint origin = gcode.createGcodePoint ( 0.0, 0.0, 0.0 );
+            final IGcodePoint origin = gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 );
             final double factor = 30.0;
             final Point shift = new Point ( 40.0, 40.0 );
             /* @formatter:off */
             final IGcodePoint [] v = new IGcodePoint [] { 
-                    gcode.createGcodePoint ( 1.0, 0.0, 0.0 ), 
-                    gcode.createGcodePoint ( 0.0, 1.0, 0.0 ), 
-                    gcode.createGcodePoint ( 0.0, 0.0, 1.0 ) 
+                    gcodeService.createGcodePoint ( 1.0, 0.0, 0.0 ), 
+                    gcodeService.createGcodePoint ( 0.0, 1.0, 0.0 ), 
+                    gcodeService.createGcodePoint ( 0.0, 0.0, 1.0 ) 
             };
             // TODO_PREF make it static
             final int color [] = new int [] { SWT.COLOR_RED, SWT.COLOR_GREEN, SWT.COLOR_BLUE };
@@ -527,7 +539,7 @@ public class GcodeViewGroup {
             gc.setLineWidth ( 1 );
             gc.setForeground ( getColor ( SWT.COLOR_MAGENTA ) );
 
-            IGcodePoint gcodeShift = gcode.getFixtureShift ();
+            IGcodePoint gcodeShift = gcodeService.getFixtureShift ();
 
             int xlength = gcodeProgram.getXSteps () + 1;
             int ylength = gcodeProgram.getYSteps () + 1;
@@ -574,59 +586,55 @@ public class GcodeViewGroup {
 
         private void drawGcode ( GC gc ) {
 
-            gcodeProgram.visit ( new IGcodeModelVisitor () {
+            for ( IGcodeLine gcodeLine : gcodeProgram.getAllGcodeLines () ) {
 
-                @Override
-                public void visit ( IGcodeLine gcodeLine ) {
+                EGcodeMode gcodeMode = gcodeLine.getGcodeMode ();
 
-                    EGcodeMode gcodeMode = gcodeLine.getGcodeMode ();
+                if ( gcodeMode == null ) return;
 
-                    if ( gcodeMode == null ) return;
+                Color color;
 
-                    Color color;
+                switch ( gcodeMode ) {
 
-                    switch ( gcodeMode ) {
+                // line attributes to preference
 
-                    // line attributes to preference
+                    case MOTION_MODE_SEEK:
+                        gc.setLineStyle ( SWT.LINE_SOLID );
+                        gc.setLineWidth ( 1 );
+                        color = getColor ( SWT.COLOR_GRAY );
+                        if ( gcodeLine.isProcessed () ) {
+                            color = getColor ( SWT.COLOR_GREEN );
+                        }
+                        gc.setForeground ( color );
+                        drawLine ( gc, gcodeLine );
+                        break;
+                    case MOTION_MODE_LINEAR:
+                        gc.setLineStyle ( SWT.LINE_SOLID );
+                        gc.setLineWidth ( 1 );
+                        color = getColor ( SWT.COLOR_BLUE );
+                        if ( gcodeLine.isProcessed () ) {
+                            color = getColor ( SWT.COLOR_GREEN );
+                        }
+                        gc.setForeground ( color );
+                        drawLine ( gc, gcodeLine );
+                        break;
+                    case MOTION_MODE_PROBE:
+                        gc.setLineStyle ( SWT.LINE_DASH );
+                        gc.setLineWidth ( 1 );
+                        gc.setForeground ( getColor ( SWT.COLOR_RED ) );
+                        drawLine ( gc, gcodeLine );
+                        break;
 
-                        case MOTION_MODE_SEEK:
-                            gc.setLineStyle ( SWT.LINE_SOLID );
-                            gc.setLineWidth ( 1 );
-                            color = getColor ( SWT.COLOR_GRAY );
-                            if ( gcodeLine.isProcessed () ) {
-                                color = getColor ( SWT.COLOR_GREEN );
-                            }
-                            gc.setForeground ( color );
-                            drawLine ( gc, gcodeLine );
-                            break;
-                        case MOTION_MODE_LINEAR:
-                            gc.setLineStyle ( SWT.LINE_SOLID );
-                            gc.setLineWidth ( 1 );
-                            color = getColor ( SWT.COLOR_BLUE );
-                            if ( gcodeLine.isProcessed () ) {
-                                color = getColor ( SWT.COLOR_GREEN );
-                            }
-                            gc.setForeground ( color );
-                            drawLine ( gc, gcodeLine );
-                            break;
-                        case MOTION_MODE_PROBE:
-                            gc.setLineStyle ( SWT.LINE_DASH );
-                            gc.setLineWidth ( 1 );
-                            gc.setForeground ( getColor ( SWT.COLOR_RED ) );
-                            drawLine ( gc, gcodeLine );
-                            break;
+                    case COMMENT:
+                        break;
 
-                        case COMMENT:
-                            break;
-
-                        default:
-                            // do nothing
-                            break;
-                    }
-
+                    default:
+                        // do nothing
+                        break;
                 }
 
-            } );
+            }
+
         }
 
         @SuppressWarnings("unused")
@@ -648,16 +656,16 @@ public class GcodeViewGroup {
 
             final double r = 0.5;
 
-            IGcodePoint zero = gcode.createGcodePoint ( 0.0, 0.0, 0.0 );
+            IGcodePoint zero = gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 );
 
             int color = SWT.COLOR_MAGENTA;
             if ( type == 'W' ) {
-                zero = zero.add ( gcode.getFixtureShift () );
+                zero = zero.add ( gcodeService.getFixtureShift () );
                 color = SWT.COLOR_CYAN;
             }
 
-            IGcodePoint xDist = gcode.createGcodePoint ( r, 0.0, 0.0 );
-            IGcodePoint yDist = gcode.createGcodePoint ( 0.0, r, 0.0 );
+            IGcodePoint xDist = gcodeService.createGcodePoint ( r, 0.0, 0.0 );
+            IGcodePoint yDist = gcodeService.createGcodePoint ( 0.0, r, 0.0 );
 
             Point p1 = gcodeToCanvas ( zero.sub ( xDist ) );
             Point p2 = gcodeToCanvas ( zero.add ( yDist ) );
@@ -677,7 +685,7 @@ public class GcodeViewGroup {
                 gc.setLineStyle ( SWT.LINE_DOT );
                 gc.setLineWidth ( 1 );
                 gc.setForeground ( getColor ( color ) );
-                drawLine ( gc, zero, zero.addAxis ( 'Z', gcode.getFixtureShift () ) );
+                drawLine ( gc, zero, zero.addAxis ( 'Z', gcodeService.getFixtureShift () ) );
             }
 
         }
@@ -692,13 +700,13 @@ public class GcodeViewGroup {
             IGcodePoint p1 = workAreaPoints[workAreaPoints.length - 1];
             if ( type == 'W' ) {
                 // p1 = p1.add ( gcodeModel.getShift () );
-                p1 = p1.addAxis ( 'Z', gcode.getFixtureShift () );
+                p1 = p1.addAxis ( 'Z', gcodeService.getFixtureShift () );
             }
 
             for ( int i = 0; i < workAreaPoints.length; i++ ) {
                 IGcodePoint p2 = workAreaPoints[i];
                 if ( type == 'W' ) {
-                    p2 = p2.addAxis ( 'Z', gcode.getFixtureShift () );
+                    p2 = p2.addAxis ( 'Z', gcodeService.getFixtureShift () );
                 }
                 drawLine ( gc, p1, p2 );
                 p1 = p2;
@@ -708,10 +716,14 @@ public class GcodeViewGroup {
             gc.setLineStyle ( SWT.LINE_DASH );
             gc.setLineWidth ( 1 );
             gc.setForeground ( getColor ( SWT.COLOR_RED ) );
-            drawLine ( gc, workAreaCenterCrossEndPoints[0].addAxis ( 'Z', gcode.getFixtureShift () ), workAreaCenterCrossEndPoints[1].addAxis ( 'Z', gcode.getFixtureShift () ) );
-            drawLine ( gc, workAreaCenterCrossEndPoints[2].addAxis ( 'Z', gcode.getFixtureShift () ), workAreaCenterCrossEndPoints[3].addAxis ( 'Z', gcode.getFixtureShift () ) );
+            drawLine ( gc, workAreaCenterCrossEndPoints[0].addAxis ( 'Z', gcodeService.getFixtureShift () ),
+                    workAreaCenterCrossEndPoints[1].addAxis ( 'Z', gcodeService.getFixtureShift () ) );
+            drawLine ( gc, workAreaCenterCrossEndPoints[2].addAxis ( 'Z', gcodeService.getFixtureShift () ),
+                    workAreaCenterCrossEndPoints[3].addAxis ( 'Z', gcodeService.getFixtureShift () ) );
 
         }
+
+        private boolean f = true;
 
         private void drawLine ( GC gc, IGcodeLine gcodeLine ) {
 
@@ -723,12 +735,12 @@ public class GcodeViewGroup {
             if ( viewAltitude && gcodeProgram.isAutolevelScanComplete () ) {
                 IGcodePoint [] path = gcodeProgram.interpolateLine ( start, end );
                 for ( int i = 0; i < path.length - 1; i++ ) {
-                    drawLine ( gc, path[i].add ( gcode.getFixtureShift () ), path[i + 1].add ( gcode.getFixtureShift () ) );
+                    drawLine ( gc, path[i].add ( gcodeService.getFixtureShift () ), path[i + 1].add ( gcodeService.getFixtureShift () ) );
                 }
             }
             else {
                 // translate to machine coordinates
-                drawLine ( gc, start.add ( gcode.getFixtureShift () ), end.add ( gcode.getFixtureShift () ) );
+                drawLine ( gc, start.add ( gcodeService.getFixtureShift () ), end.add ( gcodeService.getFixtureShift () ) );
             }
 
         }
@@ -775,7 +787,7 @@ public class GcodeViewGroup {
             if ( scale < 1.0 ) scale = 1.0;
 
             savePersistedState ();
-            canvas.redraw ();
+            redraw ();
 
         }
 
@@ -803,12 +815,12 @@ public class GcodeViewGroup {
 
             Canvas canvas = (Canvas) evt.getSource ();
             Rectangle clientArea = canvas.getClientArea ();
-            
+
             final int x = evt.x - clientArea.x;
-            final int y = clientArea.height-evt.y - clientArea.y;
+            final int y = clientArea.height - evt.y - clientArea.y;
             mouseCoordinateLabel.setText ( "[" + x + "," + y + "]" );
 
-            canvas.redraw ();
+            redraw ();
 
         }
 
@@ -828,7 +840,7 @@ public class GcodeViewGroup {
                 canvasShift.add ( midCanvas.sub ( click ) );
 
                 savePersistedState ();
-                canvas.redraw ();
+                redraw ();
 
             }
             // right double eliminates shift
@@ -844,7 +856,7 @@ public class GcodeViewGroup {
                 scale = 5.0;
 
                 savePersistedState ();
-                canvas.redraw ();
+                redraw ();
 
             }
 
@@ -867,7 +879,7 @@ public class GcodeViewGroup {
                 canvasShift.sub ( lastPoint );
                 lastPoint = p;
 
-                canvas.redraw ();
+                redraw ();
             }
             else if ( rotate ) {
                 Point p = canvasToPixelIncludingGcodeShift ( evt.x, evt.y );
@@ -875,7 +887,7 @@ public class GcodeViewGroup {
                 rotZ += -(lastPoint.x - p.x) * IConstants.ONE_DEGREE / 4;
                 lastPoint = p;
 
-                canvas.redraw ();
+                redraw ();
             }
             else if ( capture ) {
                 // TODO implement capture
@@ -953,25 +965,25 @@ public class GcodeViewGroup {
                     case 0x1000001: // up
                         canvasShift.y += 10;
                         savePersistedState ();
-                        canvas.redraw ();
+                        redraw ();
                         break;
 
                     case 0x1000002: // down
                         canvasShift.y -= 10;
                         savePersistedState ();
-                        canvas.redraw ();
+                        redraw ();
                         break;
 
                     case 0x1000003: // left
                         canvasShift.x -= 10;
                         savePersistedState ();
-                        canvas.redraw ();
+                        redraw ();
                         break;
 
                     case 0x1000004: // right
                         canvasShift.x += 10;
                         savePersistedState ();
-                        canvas.redraw ();
+                        redraw ();
                         break;
 
                     default:
@@ -989,7 +1001,7 @@ public class GcodeViewGroup {
         }
 
     }
-    
+
     @Inject
     @Optional
     public void stateUpdateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState state ) {
@@ -997,7 +1009,7 @@ public class GcodeViewGroup {
         // System.out.println ( logName () + "stateUpdateNotified: state=" + state );
 
         gcodeState = state;
-        canvas.redraw ();
+        redraw ();
 
     }
 
@@ -1007,17 +1019,17 @@ public class GcodeViewGroup {
 
         LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
 
-        canvas.redraw ();
+        redraw ();
 
     }
 
     @Inject
     @Optional
-    public void redrawScanGridNotified ( @UIEventTopic(IEvents.REDRAW) Object dummy ) {
+    public void redrawNotified ( @UIEventTopic(IEvents.REDRAW) Object dummy ) {
 
         LOG.debug ( "redrawScanGridNotified: dummy=" + dummy );
 
-        canvas.redraw ();
+        redraw ();
 
     }
 
@@ -1027,7 +1039,7 @@ public class GcodeViewGroup {
 
         LOG.debug ( "updateCoordSelectOffsetsNotified: fixtureOffset=" + fixtureOffset );
 
-        canvas.redraw ();
+        redraw ();
 
     }
 
@@ -1037,7 +1049,7 @@ public class GcodeViewGroup {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
-        if ( gcode.isScanning () ) canvas.redraw ();
+        if ( gcodeService.isScanning () ) redraw ();
 
     }
 

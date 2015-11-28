@@ -33,19 +33,15 @@ public interface IPreferences {
     public static final boolean INITIAL_VIEW_GRID = true;
     public static final boolean INITIAL_VIEW_WORKAREA = true;
 
-    public final static boolean DUMP_PARSED_GCODE_LINE = false;
-
     public final static double FIT_TO_SIZE_MARGIN = 20.0;
     public final static boolean FIT_TO_SIZE_WITH_Z = false;
 
     public static final int GCODE_LARGE_FONT_SIZE = 20;
     public static final int GCODE_LARGE_FONT_STYLE = SWT.BOLD;
 
-    public static final boolean BUTTON_GCODE_DIALOG_ON = true;
-
     public static final int SERIAL_MAX_WAIT_MS = 2000;
 
-    public final static boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = true;
+    public final static boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = false;
     public final static boolean AUTOLEVEL_SLOW_Z_SIMULATION = false;
 
 }

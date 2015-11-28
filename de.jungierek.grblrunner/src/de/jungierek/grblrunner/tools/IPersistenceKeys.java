@@ -19,4 +19,6 @@ public interface IPersistenceKeys {
     public static final String KEY_AUTO_CONNECT_PORT = "AUTO_CONNECT_PORT";
     public static final String AUTO_CONNECT_ON = "x";
 
+    public static final String KEY_EDITOR_PATH = "EDITOR_PATH";
+
 }

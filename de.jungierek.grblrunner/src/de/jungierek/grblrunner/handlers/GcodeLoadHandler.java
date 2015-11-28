@@ -5,7 +5,6 @@ import java.io.File;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -25,7 +24,6 @@ import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
-import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class GcodeLoadHandler {
@@ -104,11 +102,11 @@ public class GcodeLoadHandler {
     }
 
     @CanExecute
-    public boolean canExecute ( ISerialService serial, IGcodeService gcodeService, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
+    public boolean canExecute ( IGcodeService gcodeService, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
 
         LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isScanning () );
 
-        return serial.isOpen () && !gcodeService.isPlaying () && !gcodeService.isScanning ();
+        return !gcodeService.isPlaying () && !gcodeService.isScanning ();
 
     }
 

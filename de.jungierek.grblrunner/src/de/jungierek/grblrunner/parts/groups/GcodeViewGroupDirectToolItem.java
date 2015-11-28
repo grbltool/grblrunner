@@ -29,6 +29,9 @@ public class GcodeViewGroupDirectToolItem {
 
         if ( type != null ) {
             switch ( type ) {
+                case "iso":
+                    gcodeViewGroup.viewIso ();
+                    break;
                 case "grid":
                     gcodeViewGroup.toggleViewGrid ();
                     break;

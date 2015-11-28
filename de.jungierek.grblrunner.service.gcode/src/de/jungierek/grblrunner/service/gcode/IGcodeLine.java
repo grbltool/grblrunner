@@ -27,7 +27,5 @@ public interface IGcodeLine {
 
     public void rotate ( double rotationAngle, IGcodePoint lastEnd );
 
-    public void visit ( IGcodeModelVisitor visitor );
-
 }
 

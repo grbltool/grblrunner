@@ -140,12 +140,12 @@ public class ControlPart {
         if ( gcodeProgram == null ) return;
 
         ignoreStepTextModifyListener = true;
-        scanStepXText.setText ( "" + gcodeProgram.getXSteps () );
-        scanStepYText.setText ( "" + gcodeProgram.getYSteps () );
+        if ( !scanStepXText.isDisposed () ) scanStepXText.setText ( "" + gcodeProgram.getXSteps () );
+        if ( !scanStepYText.isDisposed () ) scanStepYText.setText ( "" + gcodeProgram.getYSteps () );
         ignoreStepTextModifyListener = false;
     
-        scanStepWidthXLabel.setText ( String.format ( "%.3f", gcodeProgram.getStepWidthX () ) );
-        scanStepWidthYLabel.setText ( String.format ( "%.3f", gcodeProgram.getStepWidthY () ) );
+        if ( !scanStepWidthXLabel.isDisposed () ) scanStepWidthXLabel.setText ( String.format ( "%.3f", gcodeProgram.getStepWidthX () ) );
+        if ( !scanStepWidthYLabel.isDisposed () ) scanStepWidthYLabel.setText ( String.format ( "%.3f", gcodeProgram.getStepWidthY () ) );
     
     }
 
@@ -601,8 +601,6 @@ public class ControlPart {
         LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
 
         setAutolevelControlsEnabled ( true );
-
-        updateGrid ();
 
     }
 

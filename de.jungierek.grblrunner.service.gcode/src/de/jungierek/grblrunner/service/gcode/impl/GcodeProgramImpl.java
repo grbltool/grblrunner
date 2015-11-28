@@ -22,7 +22,6 @@ import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 
@@ -32,7 +31,8 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     public final static IGcodePoint GCODE_DEFAULT_START_POINT = new GcodePointImpl ( 0.0, 0.0, 0.0 );
 
-    @Inject
+    // never use field injection, because if a gcode editor is closed this gives a exception (uninject, not resolved ...)
+    // @Inject
     private IEventBroker eventBroker;
 
     private File gcodeFile, probeDataFile;
@@ -53,11 +53,17 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     private double rotationAngle = 0;
 
-    @Inject
     public GcodeProgramImpl () {
+        // TODO Auto-generated constructor stub
+    }
+
+    @Inject
+    public GcodeProgramImpl ( IEventBroker eventBroker ) {
         
         LOG.trace ( "GcodeProgramImpl: hash=" + Integer.toHexString ( hashCode () ) );
         
+        this.eventBroker = eventBroker;
+
     }
 
     @Override
@@ -78,6 +84,13 @@ public class GcodeProgramImpl implements IGcodeProgram {
     public void appendLine ( String line ) {
 
         gcodeLines.add ( new GcodeLineImpl ( nextLineNo++, line ) );
+
+    }
+    
+    @Override
+    public IGcodeLine [] getAllGcodeLines () {
+
+        return gcodeLines.toArray ( new IGcodeLine [0] );
 
     }
 
@@ -136,24 +149,11 @@ public class GcodeProgramImpl implements IGcodeProgram {
     }
 
     @Override
-    public void visit ( IGcodeModelVisitor visitor ) {
-
-        for ( GcodeLineImpl gcodeLine : gcodeLines ) {
-            gcodeLine.visit ( visitor );
-        }
-
-    }
-
-    @Override
     public void resetProcessed () {
 
-        visit ( new IGcodeModelVisitor () {
-
-            @Override
-            public void visit ( IGcodeLine gcodeLine ) {
-                gcodeLine.setProcessed ( false );
-            }
-        } );
+        for ( IGcodeLine gcodeLine : getAllGcodeLines () ) {
+            gcodeLine.setProcessed ( false );
+        }
 
     }
 
@@ -170,22 +170,14 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         initMinMax ();
 
-        visit ( new IGcodeModelVisitor () {
-
-            IGcodePoint lastEnd = null;
-
-            @Override
-            public void visit ( IGcodeLine gcodeLine ) {
-
-                gcodeLine.rotate ( rotationAngle, lastEnd );
-                if ( gcodeLine.isMotionMode () ) {
-                    lastEnd = gcodeLine.getEnd ();
-                    handleMinMax ( gcodeLine );
-                }
-
+        IGcodePoint lastEnd = null;
+        for ( IGcodeLine gcodeLine : getAllGcodeLines () ) {
+            gcodeLine.rotate ( rotationAngle, lastEnd );
+            if ( gcodeLine.isMotionMode () ) {
+                lastEnd = gcodeLine.getEnd ();
+                handleMinMax ( gcodeLine );
             }
-
-        } );
+        }
 
     }
 
@@ -194,31 +186,26 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         initMinMax ();
 
-        visit ( new IGcodeModelVisitor () {
+        IGcodePoint lastEndPoint = GCODE_DEFAULT_START_POINT;
+        // EGcodeMode lastMotionMode = EGcodeMode.GCODE_MODE_UNDEF;
+        EGcodeMode lastMotionMode = EGcodeMode.MOTION_MODE_SEEK; // TODO change to _LINEAR?
+        int lastFeedrate = 0;
 
-            IGcodePoint lastEndPoint = GCODE_DEFAULT_START_POINT;
-            // EGcodeMode lastMotionMode = EGcodeMode.GCODE_MODE_UNDEF;
-            EGcodeMode lastMotionMode = EGcodeMode.MOTION_MODE_SEEK; // TODO change to _LINEAR?
-            int lastFeedrate = 0;
+        for ( IGcodeLine gcodeLine : getAllGcodeLines () ) {
 
-            @Override
-            public void visit ( IGcodeLine gcodeLine ) {
+            gcodeLine.parseGcode ( lastMotionMode, lastEndPoint, lastFeedrate );
 
-                gcodeLine.parseGcode ( lastMotionMode, lastEndPoint, lastFeedrate );
+            if ( gcodeLine.isMotionMode () ) {
 
-                if ( gcodeLine.isMotionMode () ) {
+                lastMotionMode = gcodeLine.getGcodeMode ();
+                lastEndPoint = gcodeLine.getEnd ();
+                lastFeedrate = gcodeLine.getFeedrate ();
 
-                    lastMotionMode = gcodeLine.getGcodeMode ();
-                    lastEndPoint = gcodeLine.getEnd ();
-                    lastFeedrate = gcodeLine.getFeedrate ();
-
-                    handleMinMax ( gcodeLine );
-
-                }
+                handleMinMax ( gcodeLine );
 
             }
 
-        } );
+        }
 
     }
 

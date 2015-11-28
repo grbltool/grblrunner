@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.impl.GcodeLineImpl;
 import de.jungierek.grblrunner.service.gcode.impl.GcodePointImpl;
@@ -247,13 +246,13 @@ public class GcodeLineImplTest {
 
         assertFalse ( "before visit", visited );
 
-        l.visit ( new IGcodeModelVisitor () {
-
-            @Override
-            public void visit ( IGcodeLine gcodeLine ) {
-                visited = true;
-            }
-        } );
+        // l.visit ( new IGcodeModelVisitor () {
+        //
+        // @Override
+        // public void visit ( IGcodeLine gcodeLine ) {
+        // visited = true;
+        // }
+        // } );
 
         assertTrue ( "after visit", visited );
 

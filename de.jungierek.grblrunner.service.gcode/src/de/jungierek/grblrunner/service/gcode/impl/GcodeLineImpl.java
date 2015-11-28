@@ -2,7 +2,6 @@ package de.jungierek.grblrunner.service.gcode.impl;
 
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 
 public class GcodeLineImpl implements IGcodeLine {
@@ -193,13 +192,6 @@ public class GcodeLineImpl implements IGcodeLine {
 
         }
 
-    }
-
-    @Override
-    public void visit ( IGcodeModelVisitor visitor ) {
-    
-        visitor.visit ( this );
-    
     }
 
     @Override

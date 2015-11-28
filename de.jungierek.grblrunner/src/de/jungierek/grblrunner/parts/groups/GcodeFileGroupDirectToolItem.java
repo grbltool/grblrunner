@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 
@@ -38,6 +37,8 @@ public class GcodeFileGroupDirectToolItem {
     }
 
     private class GcodeDialog extends Dialog {
+
+        private static final String JUSTIFY_PLACE = "                                                                                "; // 80x space
 
         public GcodeDialog ( Shell shell ) {
 
@@ -63,48 +64,43 @@ public class GcodeFileGroupDirectToolItem {
             textGcodeLine.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, true ) );
             textGcodeLine.setEditable ( false );
 
-            gcodeProgram.visit ( new IGcodeModelVisitor () {
+            for ( IGcodeLine gcodeLine : gcodeProgram.getAllGcodeLines () ) {
 
-                private static final String JUSTIFY_PLACE = "                                                                                "; // 80x space
+                StringBuilder sb = new StringBuilder ( 200 );
+                sb.append ( "  " );
+                sb.append ( gcodeLine.getLine () );
 
-                @Override
-                public void visit ( IGcodeLine gcodeLine ) {
+                if ( gcodeLine.isMotionMode () ) {
 
-                    StringBuilder sb = new StringBuilder ( 200 );
-                    sb.append ( "  " );
-                    sb.append ( gcodeLine.getLine () );
+                    IGcodePoint start = gcodeLine.getStart ();
+                    IGcodePoint end = gcodeLine.getEnd ();
 
-                    if ( gcodeLine.isMotionMode () ) {
+                    int col = 30;
+                    sb.append ( JUSTIFY_PLACE.substring ( 0, col - sb.length () ) );
+                    sb.append ( String.format ( "%5s:  ", gcodeLine.getLineNo () ) );
+                    sb.append ( String.format ( "%3s   ", gcodeLine.getGcodeMode ().getCommand () ) );
 
-                        IGcodePoint start = gcodeLine.getStart ();
-                        IGcodePoint end = gcodeLine.getEnd ();
+                    sb.append ( String.format ( "X%+08.3f ", start.getX () ) );
+                    sb.append ( String.format ( "Y%+08.3f ", start.getY () ) );
+                    sb.append ( String.format ( "Z%+08.3f   ", start.getZ () ) );
 
-                        int col = 30;
-                        sb.append ( JUSTIFY_PLACE.substring ( 0, col - sb.length () ) );
-                        sb.append ( String.format ( "%5s:  ", gcodeLine.getLineNo () ) );
-                        sb.append ( String.format ( "%3s   ", gcodeLine.getGcodeMode ().getCommand () ) );
+                    sb.append ( String.format ( "X%+08.3f ", end.getX () ) );
+                    sb.append ( String.format ( "Y%+08.3f ", end.getY () ) );
+                    sb.append ( String.format ( "Z%+08.3f   ", end.getZ () ) );
 
-                        sb.append ( String.format ( "X%+08.3f ", start.getX () ) );
-                        sb.append ( String.format ( "Y%+08.3f ", start.getY () ) );
-                        sb.append ( String.format ( "Z%+08.3f   ", start.getZ () ) );
+                    sb.append ( String.format ( "F%s   ", gcodeLine.getFeedrate () ) );
 
-                        sb.append ( String.format ( "X%+08.3f ", end.getX () ) );
-                        sb.append ( String.format ( "Y%+08.3f ", end.getY () ) );
-                        sb.append ( String.format ( "Z%+08.3f   ", end.getZ () ) );
-
-                        sb.append ( String.format ( "F%s   ", gcodeLine.getFeedrate () ) );
-
-                        // sb.append ( gcodeLine );
-                    }
-
-                    sb.append ( "\n" );
-
-                    textGcodeLine.append ( "" + sb );
-
+                    // sb.append ( gcodeLine );
                 }
-            } );
+
+                sb.append ( "\n" );
+
+                textGcodeLine.append ( "" + sb );
+
+            }
 
             return super.createDialogArea ( parent );
+
         }
 
     }

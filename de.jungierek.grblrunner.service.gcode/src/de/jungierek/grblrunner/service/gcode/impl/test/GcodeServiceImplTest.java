@@ -23,7 +23,7 @@ import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
-import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
+import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
@@ -427,11 +427,6 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         }
 
         @Override
-        public void visit ( IGcodeModelVisitor visitor ) {
-            fail ( "GcodeModel: visit not implemented" );
-        }
-
-        @Override
         public void prepareAutolevelScan ( int xSteps, int ySteps ) {
             fail ( "GcodeModel: prepareAutolevelScan not implemented" );
         }
@@ -573,6 +568,12 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         public void saveAutolevelData () {
             // TODO Auto-generated method stub
 
+        }
+
+        @Override
+        public IGcodeLine [] getAllGcodeLines () {
+            // TODO Auto-generated method stub
+            return null;
         }
 
     }

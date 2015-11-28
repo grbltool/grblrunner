@@ -78,8 +78,7 @@ public class StartupAddon {
 
         LOG.debug ( "processAddon: detect serial ports" );
 
-        // eventBroker.subscribe ( UIEvents.Window.TOPIC_ALL, addHandler );
-        eventBroker.subscribe ( UIEvents.TrimmedWindow.TOPIC_ALL, addHandler );
+        // eventBroker.subscribe ( UIEvents.TrimmedWindow.TOPIC_ALL, addHandler );
 
         serial.detectSerialPortsAsync ();
         

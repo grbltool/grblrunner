@@ -19,7 +19,6 @@ import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
-import de.jungierek.grblrunner.service.gcode.IGcodeModelVisitor;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
@@ -738,61 +737,56 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             gcodeProgram.resetProcessed ();
 
-            gcodeProgram.visit ( new IGcodeModelVisitor () {
+            IGcodeLine [] allGcodeLines = gcodeProgram.getAllGcodeLines ();
+            for ( IGcodeLine gcodeLine : allGcodeLines ) {
 
-                @Override
-                public void visit ( IGcodeLine gcodeLine ) {
+                if ( skipByAlarm ) break;
 
-                    if ( skipByAlarm ) return;
+                LOG.trace ( THREAD_NAME + ": line=" + gcodeLine.getLine () + " | gcodeLine=" + gcodeLine );
+                eventBroker.send ( IEvents.PLAYER_LINE, gcodeLine );
 
-                    LOG.debug ( THREAD_NAME + ": line=" + gcodeLine.getLine () + " | gcodeLine=" + gcodeLine );
-                    eventBroker.send ( IEvents.PLAYER_LINE, gcodeLine );
-
-                    LOG.debug ( THREAD_NAME + ": line=" + gcodeLine.getLine () );
-                    LOG.info ( "orig=" + gcodeLine.getLine () );
-                    // if ( gcodeModel.getTheProgram ().isScanDataComplete () && gcodeLine.isMotionMode () ) {
-                    if ( gcodeProgram.isAutolevelScanComplete () && gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) {
+                // if ( gcodeModel.getTheProgram ().isScanDataComplete () && gcodeLine.isMotionMode () ) {
+                if ( gcodeProgram.isAutolevelScanComplete () && gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) {
+                    final String cmd = gcodeLine.getGcodeMode ().getCommand ();
+                    final String feed = "F" + gcodeLine.getFeedrate ();
+                    if ( gcodeLine.isMoveInXYZ () ) {
+                        IGcodePoint [] path = gcodeProgram.interpolateLine ( gcodeLine.getStart (), gcodeLine.getEnd () );
+                        for ( int i = 1; i < path.length; i++ ) {
+                            // TODO eliminate first point?
+                            String segment = cmd;
+                            segment += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getX () );
+                            segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getY () );
+                            segment += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getZ () );
+                            segment += feed;
+                            eventBroker.send ( IEvents.PLAYER_SEGMENT, segment );
+                            sendCommandSuppressInTerminal ( segment );
+                            LOG.trace ( "  segment=" + segment );
+                        }
+                    }
+                }
+                else {
+                    // after rotation the original line is obsolet for motion commands
+                    if ( gcodeLine.isMotionMode () ) {
                         final String cmd = gcodeLine.getGcodeMode ().getCommand ();
                         final String feed = "F" + gcodeLine.getFeedrate ();
+                        String line = "";
                         if ( gcodeLine.isMoveInXYZ () ) {
-                            IGcodePoint [] path = gcodeProgram.interpolateLine ( gcodeLine.getStart (), gcodeLine.getEnd () );
-                            for ( int i = 1; i < path.length; i++ ) {
-                                // TODO eliminate first point?
-                                String segment = cmd;
-                                segment += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getX () );
-                                segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getY () );
-                                segment += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getZ () );
-                                segment += feed;
-                                eventBroker.send ( IEvents.PLAYER_SEGMENT, segment );
-                                sendCommandSuppressInTerminal ( segment );
-                                LOG.info ( "  segment=" + segment );
-                            }
+                            line += cmd;
+                            if ( gcodeLine.isMoveInX () ) line += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getX () );
+                            if ( gcodeLine.isMoveInY () ) line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
+                            if ( gcodeLine.isMoveInZ () ) line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
                         }
+                        line += feed;
+                        sendCommandSuppressInTerminal ( line );
+                        LOG.trace ( "line=" + line );
                     }
                     else {
-                        // after rotation the original line is obsolet for motion commands
-                        if ( gcodeLine.isMotionMode () ) {
-                            final String cmd = gcodeLine.getGcodeMode ().getCommand ();
-                            final String feed = "F" + gcodeLine.getFeedrate ();
-                            String line = "";
-                            if ( gcodeLine.isMoveInXYZ () ) {
-                                line += cmd;
-                                if ( gcodeLine.isMoveInX () ) line += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getX () );
-                                if ( gcodeLine.isMoveInY () ) line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
-                                if ( gcodeLine.isMoveInZ () ) line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
-                            }
-                            line += feed;
-                            sendCommandSuppressInTerminal ( line );
-                            LOG.info ( "line=" + line );
-                        }
-                        else {
-                             sendCommandSuppressInTerminal ( gcodeLine.getLine () );
-                        }
+                        sendCommandSuppressInTerminal ( gcodeLine.getLine () );
                     }
-                    gcodeLine.setProcessed ( true );
                 }
+                gcodeLine.setProcessed ( true );
 
-            } );
+            }
 
             eventBroker.send ( IEvents.PLAYER_STOP, getTimestamp () );
             // TODO
