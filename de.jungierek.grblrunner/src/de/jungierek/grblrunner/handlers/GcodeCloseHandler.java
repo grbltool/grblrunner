@@ -9,7 +9,7 @@ import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.parts.GcodeEditor;
+import de.jungierek.grblrunner.parts.GcodeEditorPart;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 
@@ -42,7 +42,7 @@ public class GcodeCloseHandler {
 
         LOG.debug ( "canExecute: part=" + part + " program=" + gcodeProgram );
 
-        if ( part == null || !(part.getObject () instanceof GcodeEditor) ) return false;
+        if ( part == null || !(part.getObject () instanceof GcodeEditorPart) ) return false;
 
         return !gcodeService.isPlaying () && !gcodeService.isScanning ();
 

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
-import de.jungierek.grblrunner.parts.GcodeEditor;
+import de.jungierek.grblrunner.parts.GcodeEditorPart;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 
@@ -148,7 +148,7 @@ public class StartupAddon {
             Object object = part.getObject ();
             if ( object != null ) {
                 LOG.info ( "partSwitched: obj=" + object );
-                if ( object instanceof GcodeEditor ) {
+                if ( object instanceof GcodeEditorPart ) {
                     LOG.info ( "partSwitched: prog=" + part.getContext ().get ( IGcodeProgram.class ) );
                 }
             }

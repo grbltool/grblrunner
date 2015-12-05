@@ -32,9 +32,9 @@ import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
-public class GcodeEditor {
+public class GcodeEditorPart {
 
-    private static final Logger LOG = LoggerFactory.getLogger ( GcodeEditor.class );
+    private static final Logger LOG = LoggerFactory.getLogger ( GcodeEditorPart.class );
 
     @Inject
     private IGcodeProgram gcodeProgram;
