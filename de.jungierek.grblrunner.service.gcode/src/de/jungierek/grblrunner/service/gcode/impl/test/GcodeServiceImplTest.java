@@ -576,6 +576,12 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
             return null;
         }
 
+        @Override
+        public String getGcodeProgramName () {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
     }
 
     @Override

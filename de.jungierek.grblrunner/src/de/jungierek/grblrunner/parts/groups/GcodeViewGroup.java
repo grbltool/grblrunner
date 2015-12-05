@@ -69,6 +69,7 @@ public class GcodeViewGroup {
     private IEventBroker eventBroker;
 
     private IGcodeProgram gcodeProgram;
+    private IGcodeProgram overlayGcodeProgram;
 
     private Rectangle canvasArea; // TODO check for this global var
 
@@ -105,6 +106,15 @@ public class GcodeViewGroup {
         LOG.debug ( "setGcodeProgram: program=" + program );
 
         gcodeProgram = program;
+        redraw ();
+
+    }
+
+    public void setOverlayGcodeProgram ( IGcodeProgram program ) {
+
+        LOG.debug ( "setOverlayGcodeProgram: program=" + program );
+
+        overlayGcodeProgram = program;
         redraw ();
 
     }
@@ -358,20 +368,6 @@ public class GcodeViewGroup {
 
     }
 
-    // TOOD may be delete this methode
-    @SuppressWarnings("unused")
-    private void initPixelShift () {
-
-        LOG.debug ( "initCanvasShift:" );
-
-        Point canvasPoint = gcodeToCanvas ( gcodeService.createGcodePoint ( workAreaMaxX, workAreaMaxY, 0.0 ) );
-        Point pixelPoint = canvasToPixel ( (int) canvasPoint.x, (int) canvasPoint.y );
-
-        canvasShift.x = (canvasArea.width - canvasArea.x - pixelPoint.x) / 2;
-        canvasShift.y = (canvasArea.height - canvasArea.y - pixelPoint.y) / 2;
-
-    }
-
     private Point gcodeToCanvas ( IGcodePoint gcodePoint ) {
 
         return gcodeToCanvas ( scale, canvasShift, gcodePoint );
@@ -482,7 +478,12 @@ public class GcodeViewGroup {
             drawOrigign ( gc, 'M' );
             drawOrigign ( gc, 'W' );
             if ( gcodeProgram != null && viewGrid ) drawGrid ( gc );
-            if ( gcodeProgram != null && viewGcode ) drawGcode ( gc );
+            if ( gcodeProgram != null && viewGcode ) {
+                drawGcode ( gc, gcodeProgram );
+                if ( gcodeProgram != overlayGcodeProgram && overlayGcodeProgram != null ) {
+                    drawGcode ( gc, overlayGcodeProgram );
+                }
+            }
             drawGantry ( gc );
 
             // Double Buffering
@@ -584,9 +585,9 @@ public class GcodeViewGroup {
 
         }
 
-        private void drawGcode ( GC gc ) {
+        private void drawGcode ( GC gc, IGcodeProgram program ) {
 
-            for ( IGcodeLine gcodeLine : gcodeProgram.getAllGcodeLines () ) {
+            for ( IGcodeLine gcodeLine : program.getAllGcodeLines () ) {
 
                 EGcodeMode gcodeMode = gcodeLine.getGcodeMode ();
 
@@ -617,6 +618,26 @@ public class GcodeViewGroup {
                         }
                         gc.setForeground ( color );
                         drawLine ( gc, gcodeLine );
+                        break;
+                    case MOTION_MODE_CW_ARC:
+                        gc.setLineStyle ( SWT.LINE_SOLID );
+                        gc.setLineWidth ( 1 );
+                        color = getColor ( SWT.COLOR_BLUE );
+                        if ( gcodeLine.isProcessed () ) {
+                            color = getColor ( SWT.COLOR_GREEN );
+                        }
+                        gc.setForeground ( color );
+                        drawCircle ( gc, +1, gcodeLine );
+                        break;
+                    case MOTION_MODE_CCW_ARC:
+                        gc.setLineStyle ( SWT.LINE_SOLID );
+                        gc.setLineWidth ( 1 );
+                        color = getColor ( SWT.COLOR_BLUE );
+                        if ( gcodeLine.isProcessed () ) {
+                            color = getColor ( SWT.COLOR_GREEN );
+                        }
+                        gc.setForeground ( color );
+                        drawCircle ( gc, -1, gcodeLine );
                         break;
                     case MOTION_MODE_PROBE:
                         gc.setLineStyle ( SWT.LINE_DASH );
@@ -723,8 +744,6 @@ public class GcodeViewGroup {
 
         }
 
-        private boolean f = true;
-
         private void drawLine ( GC gc, IGcodeLine gcodeLine ) {
 
             IGcodePoint start = gcodeLine.getStart ();
@@ -762,6 +781,104 @@ public class GcodeViewGroup {
         private void drawLine ( GC gc, Point p1, Point p2 ) {
 
             gc.drawLine ( (int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y );
+
+        }
+
+        private double computeAngle ( IGcodePoint p, IGcodePoint center, double radius ) {
+
+            double cosAngle = (p.getX () - center.getX ()) / radius;
+            double angle = Math.acos ( cosAngle ) / IConstants.ONE_DEGREE;
+
+            if ( p.getY () < center.getY () ) {
+                angle = 360 - angle;
+            }
+
+            return angle;
+
+        }
+
+        private double computeAngle ( IGcodePoint p1, IGcodePoint p2, IGcodePoint center, double radius ) {
+
+            final double x1 = p1.getX () - center.getX ();
+            final double x2 = p2.getX () - center.getX ();
+            final double y1 = p1.getY () - center.getY ();
+            final double y2 = p2.getY () - center.getY ();
+
+            double cosAngle = (x1 * x2 + y1 * y2) / radius * radius;
+            double angle = Math.acos ( cosAngle ) / IConstants.ONE_DEGREE;
+
+            return angle;
+
+        }
+
+        // all in plane xy
+        private void drawCircle ( GC gc, double mult, IGcodeLine gcodeLine ) {
+
+            LOG.debug ( "drawCircle: gcodeLine=" + gcodeLine );
+
+            IGcodePoint start = gcodeLine.getStart ().add ( gcodeService.getFixtureShift () );
+            IGcodePoint end = gcodeLine.getEnd ().add ( gcodeService.getFixtureShift () );
+            double r = gcodeLine.getRadius ();
+
+            if ( start.equals ( end ) ) return; // TODO this is may be wrong, this is a full circle
+
+            // from grbl code
+            double x = end.getX () - start.getX ();
+            double y = end.getY () - start.getY ();
+            
+            final double dd = x*x + y*y;
+            double d = Math.sqrt ( dd );
+            double h = Math.sqrt ( r * r - dd / 4 );
+            
+            // G2, bei G3 + und - vor h alternieren
+            double i = start.getX () + x / 2 + mult * h / d * y;
+            double j = start.getY () + y / 2 - mult * h / d * x;
+            // LOG.debug ( "drawCircle: dd=" + dd + " d=" + d + " h=" + h + " i=" + i + " j=" + j );
+            IGcodePoint center = gcodeService.createGcodePoint ( i, j, 0.0 );
+            
+            double startAngle = computeAngle ( start, center, r );
+            double endAngle = computeAngle ( end, center, r );
+            double arcAngle = endAngle - startAngle;
+            // LOG.debug ( "drawCircle: arcAngle=" + arcAngle + " mult=" + mult );
+            if ( arcAngle < -180 ) arcAngle += 360;
+            else if ( Math.abs ( mult * arcAngle - 180 ) < 0.0001 ) arcAngle = -arcAngle;
+            else if ( arcAngle > 180 ) arcAngle -= 360;
+            // LOG.debug ( "drawCircle: startAngle=" + startAngle + " endAngle=" + endAngle + " arcAngle=" + arcAngle );
+            
+            // rotate all points by z angle
+            // the 4 tangential points: north, west, south, east
+            IGcodePoint north = gcodeService.createGcodePoint ( i, j + r, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
+            IGcodePoint west = gcodeService.createGcodePoint ( i - r, j, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
+            IGcodePoint south = gcodeService.createGcodePoint ( i, j - r, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
+            IGcodePoint east = gcodeService.createGcodePoint ( i + r, j, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
+
+            drawCircle ( gc, north, west, south, east, (int) (startAngle - (rotZ / IConstants.ONE_DEGREE)), (int) arcAngle );
+            // LOG.debug ( "drawCircle: ====================================" );
+
+        }
+
+        private void drawCircle ( GC gc, IGcodePoint pointN, IGcodePoint pointW, IGcodePoint pointS, IGcodePoint pointE, int startAngle, int arcAngle ) {
+
+            // LOG.debug ( "drawCircle: north=" + pointN + " west=" + pointW + " south=" + pointS + " east=" + pointE );
+
+            Point pN = gcodeToCanvas ( pointN );
+            Point pW = gcodeToCanvas ( pointW );
+            Point pS = gcodeToCanvas ( pointS );
+            Point pE = gcodeToCanvas ( pointE );
+
+            // The resulting arc begins at startAngle and extends for arcAngle degrees, using the current color. Angles are interpreted such that 0 degrees is at the 3 o'clock
+            // position. A positive value indicates a counter-clockwise rotation while a negative value indicates a clockwise rotation.
+            // The center of the arc is the center of the rectangle whose origin is (x, y) and whose size is specified by the width and height arguments.
+            // The resulting arc covers an area width + 1 pixels wide by height + 1 pixels tall.
+            
+            int w = (int) (pE.x - pW.x);
+            int h = (int) (pS.y - pN.y);
+            int x = (int) pN.x - w / 2;
+            int y = (int) pW.y - h / 2;
+            
+            // LOG.debug ( "drawCircle: x=" + x + " y=" + y + " h=" + h + " w=" + w );
+
+            gc.drawArc ( x, y, w, h, startAngle, arcAngle );
 
         }
 

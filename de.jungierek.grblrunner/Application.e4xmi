@@ -165,13 +165,13 @@
           <persistedState key="type" value="fittosize"/>
         </children>
         <children xsi:type="menu:ToolBarSeparator" xmi:id="_yTmnQIYHEeWmorqqLo61Ew" elementId="de.jungierek.grblrunner.toolbarseparator.6"/>
+        <children xsi:type="menu:ToolControl" xmi:id="_8x1M0JZyEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.toolcontrol.view.overlay" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.ViewPartToolControl"/>
       </toolbar>
     </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_22zJsHZxEeWm0vFGmduGXw" elementId="de.jungierek.grblrunner.part.command" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.CommandPart" label="Command"/>
     <sharedElements xsi:type="basic:Part" xmi:id="_E6J2sH14EeWUeKTWSShdvw" elementId="de.jungierek.grblrunner.part.statusline" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.ProgressToolControl" label="StatusLine">
       <variables>NoTitle</variables>
     </sharedElements>
-    <sharedElements xsi:type="basic:Part" xmi:id="_Y4gqQITFEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.part.gcode" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditor" label="Gcode"/>
     <trimBars xmi:id="_ZFqE8HzvEeWJM-9TFkic0g" elementId="de.jungierek.grblrunner.trimbar.top">
       <tags>Draggable</tags>
       <children xsi:type="menu:ToolBar" xmi:id="_0iPWUH7mEeWvPaFOc9q6Rg" elementId="de.jungierek.grblrunner.toolbar.serial">
@@ -245,7 +245,7 @@
   <handlers xmi:id="_8EmGUJVUEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handler.gcode.close" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeCloseHandler" command="_0fevEJVUEeWjToG7KvW0lw"/>
   <handlers xmi:id="_WZk6wJW9EeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handler.debug" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.DebugHandler" command="_Kk5LwJW9EeWjToG7KvW0lw"/>
   <bindingTables xmi:id="_JWsysIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.bindingtable.global" bindingContext="_TThFefsBEeSJsKKNyX_1bw">
-    <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+G" command="_PP9sEHdmEeW3XImWwiVxiA">
+    <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+O" command="_PP9sEHdmEeW3XImWwiVxiA">
       <tags>type:user</tags>
     </bindings>
     <bindings xmi:id="_37dOYIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.autolevel.load" keySequence="M1+P" command="_gieyAHwiEeWvRN9uvDzZzw">
@@ -268,8 +268,8 @@
     <toolbar xmi:id="_2Iz88JE5EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.toolbar.5">
       <children xsi:type="menu:HandledToolItem" xmi:id="_jGv2sJE4EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.handledtoolitem.editor.play" iconURI="platform:/plugin/de.jungierek.grblrunner/run.gif" command="_dBKgMHdoEeW3XImWwiVxiA"/>
       <children xsi:type="menu:HandledToolItem" xmi:id="_q-yJ8JE4EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.handledtoolitem.editor.refresh" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/refresh.gif" command="_bf5LoHdxEeW3XImWwiVxiA"/>
-      <children xsi:type="menu:DirectToolItem" xmi:id="_FDF4AJFHEeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.directtoolitem.editor.view" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/gcode.gif" tooltip="view gcode" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.groups.GcodeFileGroupDirectToolItem"/>
-      <children xsi:type="menu:ToolControl" xmi:id="_SkX2QJFIEeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.toolcontrol.editor" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.groups.GcodeFileGroupToolitem"/>
+      <children xsi:type="menu:DirectToolItem" xmi:id="_FDF4AJFHEeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.directtoolitem.editor.view" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/gcode.gif" tooltip="view gcode" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorDirectToolItem"/>
+      <children xsi:type="menu:ToolControl" xmi:id="_SkX2QJFIEeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.toolcontrol.editor" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorToolControl"/>
       <children xsi:type="menu:HandledToolItem" xmi:id="_1Bx84JXuEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handledtoolitem.editor.close" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/delete.gif" command="_0fevEJVUEeWjToG7KvW0lw"/>
     </toolbar>
   </descriptors>

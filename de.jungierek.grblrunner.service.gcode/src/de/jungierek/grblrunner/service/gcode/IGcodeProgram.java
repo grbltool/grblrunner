@@ -9,6 +9,7 @@ public interface IGcodeProgram {
     IGcodeLine [] getAllGcodeLines ();
 
     public File getGcodeProgramFile ();
+    public String getGcodeProgramName ();
     public void loadGcodeProgram ( File gcodeFile );
     public boolean isLoaded ();
     public void clear ();

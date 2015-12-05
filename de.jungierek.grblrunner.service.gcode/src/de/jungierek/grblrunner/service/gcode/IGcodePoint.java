@@ -22,4 +22,6 @@ public interface IGcodePoint {
     public IGcodePoint addAxis ( char axis, IGcodePoint point );
     public IGcodePoint addAxis ( char axis, double value );
 
+    IGcodePoint rotate ( char axis, double angle );
+
 }

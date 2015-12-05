@@ -36,8 +36,6 @@ public class GcodeEditor {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeEditor.class );
 
-    private static final String GROUP_NAME = "Gcode File";
-
     @Inject
     private IGcodeProgram gcodeProgram;
 
@@ -66,14 +64,12 @@ public class GcodeEditor {
         gcodeFileGroup = ContextInjectionFactory.make ( GcodeFileGroup.class, context );
 
         gcodeText = new Text ( parent, SWT.MULTI | SWT.V_SCROLL );
-        gcodeText.setFont ( new Font ( display, "Courier", 10, SWT.NONE ) );
+        gcodeText.setFont ( new Font ( display, "Courier", 10, SWT.NONE ) ); // TODO make it more portable
         gcodeText.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
         // largeFont = FontDescriptor.createFrom ( gcodeModeLabel.getFont () ).setStyle ( IPreferences.GCODE_LARGE_FONT_STYLE ).setHeight ( IPreferences.GCODE_LARGE_FONT_SIZE
         // ).createFont ( gcodeModeLabel.getDisplay () );
         gcodeText.setEditable ( false );
 
-        gcodeText.setText ( "..." );
-		
         String path = part.getPersistedState ().get ( IPersistenceKeys.KEY_EDITOR_PATH );
         if ( path != null ) {
             gcodeProgram.loadGcodeProgram ( new File ( path ) );

@@ -220,15 +220,20 @@ public class ControlPart {
 
     private void updateGrid () {
 
-        int xSteps = partTools.parseIntegerField ( scanStepXText, 1 );
-        int ySteps = partTools.parseIntegerField ( scanStepYText, 1 );
+        // probeDataCleared is called after closing a editor part and the next one is not initialized
+        // on gcode loading the probe data are always reseted
+        if ( gcodeProgram != null ) {
 
-        // TODO test gcodeProgram for != null?
-        gcodeProgram.prepareAutolevelScan ( xSteps, ySteps ); // resets scan completed
-        scanStepWidthXLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );
-        scanStepWidthYLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthY () ) );
-        
-        redrawGcode ();
+            int xSteps = partTools.parseIntegerField ( scanStepXText, 1 );
+            int ySteps = partTools.parseIntegerField ( scanStepYText, 1 );
+
+            gcodeProgram.prepareAutolevelScan ( xSteps, ySteps ); // resets scan completed
+            scanStepWidthXLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );
+            scanStepWidthYLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthY () ) );
+
+        }
+
+        redrawGcode (); // redraw gcode every time, if gcodeProgram is null, then the view is "cleared"
 
     }
 

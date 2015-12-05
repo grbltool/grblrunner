@@ -62,10 +62,7 @@ public class GcodeLoadHandler {
             IGcodeProgram gcodeProgram = part.getContext ().get ( IGcodeProgram.class );
 
             gcodeProgram.loadGcodeProgram ( new File ( result ) );
-            final int start = result.lastIndexOf ( File.separator ) + 1;
-            final int end = result.lastIndexOf ( '.' );
-            String name = result.substring ( start, end );
-            part.setLabel ( name );
+            part.setLabel ( gcodeProgram.getGcodeProgramName () );
 
             application.getPersistedState ().put ( IPersistenceKeys.KEY_GCODE_PATH, filterPath );
 

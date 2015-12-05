@@ -121,6 +121,14 @@ public class GcodeProgramImpl implements IGcodeProgram {
     }
 
     @Override
+    public String getGcodeProgramName () {
+
+        final String name = gcodeFile.getName ();
+        return name.substring ( 0, name.indexOf ( '.' ) );
+
+    }
+
+    @Override
     public void clear () {
 
         nextLineNo = 0;
@@ -173,7 +181,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         IGcodePoint lastEnd = null;
         for ( IGcodeLine gcodeLine : getAllGcodeLines () ) {
             gcodeLine.rotate ( rotationAngle, lastEnd );
-            if ( gcodeLine.isMotionMode () ) {
+            if ( gcodeLine.isMotionMode () || gcodeLine.isArcMode () ) {
                 lastEnd = gcodeLine.getEnd ();
                 handleMinMax ( gcodeLine );
             }
@@ -187,18 +195,28 @@ public class GcodeProgramImpl implements IGcodeProgram {
         initMinMax ();
 
         IGcodePoint lastEndPoint = GCODE_DEFAULT_START_POINT;
-        // EGcodeMode lastMotionMode = EGcodeMode.GCODE_MODE_UNDEF;
-        EGcodeMode lastMotionMode = EGcodeMode.MOTION_MODE_SEEK; // TODO change to _LINEAR?
+        EGcodeMode lastMotionMode = EGcodeMode.MOTION_MODE_SEEK;
+        double lastRadius = 0.0;
         int lastFeedrate = 0;
 
         for ( IGcodeLine gcodeLine : getAllGcodeLines () ) {
 
-            gcodeLine.parseGcode ( lastMotionMode, lastEndPoint, lastFeedrate );
+            gcodeLine.parseGcode ( lastMotionMode, lastEndPoint, lastRadius, lastFeedrate );
 
             if ( gcodeLine.isMotionMode () ) {
 
                 lastMotionMode = gcodeLine.getGcodeMode ();
                 lastEndPoint = gcodeLine.getEnd ();
+                lastFeedrate = gcodeLine.getFeedrate ();
+
+                handleMinMax ( gcodeLine );
+
+            }
+            else if ( gcodeLine.isArcMode () ) {
+
+                lastMotionMode = gcodeLine.getGcodeMode ();
+                lastEndPoint = gcodeLine.getEnd ();
+                lastRadius = gcodeLine.getRadius ();
                 lastFeedrate = gcodeLine.getFeedrate ();
 
                 handleMinMax ( gcodeLine );

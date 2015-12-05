@@ -11,6 +11,7 @@ public class GcodeLineImpl implements IGcodeLine {
     private EGcodeMode mode;
     private IGcodePoint start;
     private IGcodePoint end;
+    private double radius;
     private int feedrate;
     private boolean processed;
 
@@ -53,6 +54,13 @@ public class GcodeLineImpl implements IGcodeLine {
     public IGcodePoint getEnd () {
 
         return end;
+
+    }
+
+    @Override
+    public double getRadius () {
+
+        return radius;
 
     }
 
@@ -120,6 +128,29 @@ public class GcodeLineImpl implements IGcodeLine {
 
     }
 
+    @Override
+    public boolean isArcMode () {
+
+        // return mode == EGcodeMode.MOTION_MODE_SEEK || mode == EGcodeMode.MOTION_MODE_LINEAR;
+        return mode.isArcMode ();
+
+    }
+
+    private void parseMotionArc ( IGcodePoint lastEnd, double lastRadius, int last_feedrate ) {
+
+        this.start = lastEnd;
+
+        double x = scanAxisCoordinate ( 'X', lastEnd.getX () );
+        double y = scanAxisCoordinate ( 'Y', lastEnd.getY () );
+        double z = scanAxisCoordinate ( 'Z', lastEnd.getZ () );
+        this.end = new GcodePointImpl ( x, y, z );
+
+        radius = scanAxisCoordinate ( 'R', lastRadius );
+
+        feedrate = (int) scanAxisCoordinate ( 'F', last_feedrate );
+
+    }
+
     private void parseMotionLine ( IGcodePoint lastEnd, int last_feedrate ) {
 
         this.start = lastEnd;
@@ -153,7 +184,7 @@ public class GcodeLineImpl implements IGcodeLine {
 
     // start ist Referenz, end ist ein neues Objekt
     @Override
-    public void parseGcode ( EGcodeMode lastMotionMode , IGcodePoint lastEnd , int lastFeedrate  ) {
+    public void parseGcode ( EGcodeMode lastMotionMode, IGcodePoint lastEnd, double lastRadius, int lastFeedrate ) {
 
         if ( lastEnd == null ) return;
 
@@ -162,11 +193,19 @@ public class GcodeLineImpl implements IGcodeLine {
         if ( this.mode.isMotionMode () ) {
             parseMotionLine ( lastEnd, lastFeedrate );
         }
+        else if ( this.mode.isArcMode () ) {
+            parseMotionArc ( lastEnd, lastRadius, lastFeedrate );
+        }
         else if ( this.mode == EGcodeMode.GCODE_MODE_UNDEF ) {
             // HACK there is a gap: when in a line is only mess without commented out, then this is an error
             // then there is a 0-move, because last point is the target
             this.mode = lastMotionMode;
-            parseMotionLine ( lastEnd, lastFeedrate );
+            if ( this.mode.isMotionMode () ) {
+                parseMotionLine ( lastEnd, lastFeedrate );
+            }
+            else if ( this.mode.isArcMode () ) {
+                parseMotionArc ( lastEnd, lastRadius, lastFeedrate );
+            }
         }
 
     }
@@ -178,18 +217,9 @@ public class GcodeLineImpl implements IGcodeLine {
         // a end point from the last gcode line is the same reference as the current start
         // first startpoint is (0,0,0)
 
-        if ( isMotionMode () ) {
-
+        if ( isMotionMode () || isArcMode () ) {
             if ( lastEnd != null ) start = lastEnd;
-
-            double x0 = end.getX ();
-            double y0 = end.getY ();
-
-            double x1 = x0 * Math.cos ( angle ) + y0 * Math.sin ( angle );
-            double y1 = x0 * -Math.sin ( angle ) + y0 * Math.cos ( angle );
-
-            end = new GcodePointImpl ( x1, y1, end.getZ () );
-
+            end = end.rotate ( 'Z', angle );
         }
 
     }
@@ -200,6 +230,9 @@ public class GcodeLineImpl implements IGcodeLine {
         String result = "[" + lineNo + ": " + mode;
         if ( isMotionMode () ) {
             result += " " + start + " -> " + end + " " + feedrate + " mm/min";
+        }
+        else if ( isArcMode () ) {
+            result += " " + start + " -> " + end + " r="+radius + " " + feedrate + " mm/min";
         }
         else if ( mode == EGcodeMode.COMMENT ) {
             result += line;

@@ -1,4 +1,4 @@
-package de.jungierek.grblrunner.parts.groups;
+package de.jungierek.grblrunner.parts;
 
 import javax.inject.Inject;
 
@@ -20,9 +20,9 @@ import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 
-public class GcodeFileGroupDirectToolItem {
+public class GcodeEditorDirectToolItem {
 
-    private static final Logger LOG = LoggerFactory.getLogger ( GcodeFileGroupDirectToolItem.class );
+    private static final Logger LOG = LoggerFactory.getLogger ( GcodeEditorDirectToolItem.class );
 
     @Inject
     private IGcodeProgram gcodeProgram;

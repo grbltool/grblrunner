@@ -67,4 +67,10 @@ public enum EGcodeMode {
                 
     }
 
+    public boolean isArcMode () {
+
+        return this == EGcodeMode.MOTION_MODE_CW_ARC || this == EGcodeMode.MOTION_MODE_CCW_ARC;
+
+    }
+
 }

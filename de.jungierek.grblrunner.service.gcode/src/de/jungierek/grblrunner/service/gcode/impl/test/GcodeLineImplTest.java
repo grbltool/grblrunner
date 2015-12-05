@@ -38,7 +38,7 @@ public class GcodeLineImplTest {
         String line = "bla bla";
 
         GcodeLineImpl l = new GcodeLineImpl ( lineNo, line );
-        l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, null, -1 );
+        // l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, null, -1 );
 
         checkinitialGcodeline ( l, lineNo, line );
 
@@ -71,7 +71,7 @@ public class GcodeLineImplTest {
         IGcodePoint lastEnd = new GcodePointImpl ( expectedX, expectedY, expectedZ );
 
         GcodeLineImpl l = new GcodeLineImpl ( lineNo, line );
-        l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, lastEnd, -1 );
+        // l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, lastEnd, -1 );
 
         assertEquals ( "lineNo", lineNo, l.getLineNo () );
         assertEquals ( "line", line, l.getLine () );
@@ -100,7 +100,7 @@ public class GcodeLineImplTest {
         IGcodePoint lastEnd = new GcodePointImpl ( expectedX, expectedY, expectedZ );
 
         GcodeLineImpl l = new GcodeLineImpl ( lineNo, line );
-        l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, lastEnd, -1 );
+        // l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, lastEnd, -1 );
 
         assertEquals ( "lineNo", lineNo, l.getLineNo () );
         assertEquals ( "line", line, l.getLine () );
@@ -129,7 +129,7 @@ public class GcodeLineImplTest {
         IGcodePoint lastEnd = new GcodePointImpl ( expectedX, expectedY, expectedZ );
 
         GcodeLineImpl l = new GcodeLineImpl ( lineNo, line );
-        l.parseGcode ( EGcodeMode.MOTION_MODE_LINEAR, lastEnd, -1 );
+        // l.parseGcode ( EGcodeMode.MOTION_MODE_LINEAR, lastEnd, -1 );
 
         assertEquals ( "lineNo", lineNo, l.getLineNo () );
         assertEquals ( "line", line, l.getLine () );
@@ -158,7 +158,7 @@ public class GcodeLineImplTest {
         IGcodePoint lastEnd = new GcodePointImpl ( expectedX, expectedY, expectedZ );
 
         GcodeLineImpl l = new GcodeLineImpl ( lineNo, line );
-        l.parseGcode ( EGcodeMode.MOTION_MODE_LINEAR, lastEnd, -1 );
+        // l.parseGcode ( EGcodeMode.MOTION_MODE_LINEAR, lastEnd, -1 );
 
         assertEquals ( "lineNo", lineNo, l.getLineNo () );
         assertEquals ( "line", line, l.getLine () );
@@ -187,7 +187,7 @@ public class GcodeLineImplTest {
         IGcodePoint lastEnd = new GcodePointImpl ( expectedX, expectedY, expectedZ );
 
         GcodeLineImpl l = new GcodeLineImpl ( lineNo, line );
-        l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, lastEnd, -1 );
+        // l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, lastEnd, -1 );
 
         assertEquals ( "lineNo", lineNo, l.getLineNo () );
         assertEquals ( "line", line, l.getLine () );
@@ -216,7 +216,7 @@ public class GcodeLineImplTest {
         IGcodePoint lastEnd = new GcodePointImpl ( expectedX, expectedY, expectedZ );
 
         GcodeLineImpl l = new GcodeLineImpl ( lineNo, line );
-        l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, lastEnd, -1 );
+        // l.parseGcode ( EGcodeMode.GCODE_MODE_UNDEF, lastEnd, -1 );
 
         assertEquals ( "lineNo", lineNo, l.getLineNo () );
         assertEquals ( "line", line, l.getLine () );
@@ -242,7 +242,7 @@ public class GcodeLineImplTest {
         String line = "bla bla";
 
 
-        GcodeLineImpl l = new GcodeLineImpl ( lineNo, line );
+        // GcodeLineImpl l = new GcodeLineImpl ( lineNo, line );
 
         assertFalse ( "before visit", visited );
 

@@ -165,31 +165,6 @@ public class GcodePointImpl implements IGcodePoint {
 
     }
 
-    public IGcodePoint _addAxis ( char axis, IGcodePoint point ) {
-
-        GcodePointImpl result = this;
-
-        switch ( axis ) {
-            case 'X':
-                result = new GcodePointImpl ( x + point.getX (), y, z );
-                break;
-
-            case 'Y':
-                result = new GcodePointImpl ( x, y + point.getY (), z );
-                break;
-
-            case 'Z':
-                result = new GcodePointImpl ( x, y, z + point.getZ () );
-                break;
-
-            default:
-                break;
-        }
-
-        return result;
-
-    }
-
     @Override
     public IGcodePoint addAxis ( char axis, IGcodePoint point ) {
 
@@ -240,6 +215,39 @@ public class GcodePointImpl implements IGcodePoint {
 
         return result;
 
+    }
+    
+    // angle in clock wise order
+    @Override
+    public IGcodePoint rotate ( char axis, double angle ) {
+
+        GcodePointImpl result = this;
+
+        double x1 = x;
+        double y1 = y;
+        double z1 = z;
+
+        final double cosAngle = Math.cos ( angle );
+        final double sinAngle = Math.sin ( angle );
+
+        switch ( axis ) {
+            case 'X':
+                break;
+
+            case 'Y':
+                break;
+
+            case 'Z':
+                x1 = x * cosAngle + y * sinAngle;
+                y1 = x * -sinAngle + y * cosAngle;
+                break;
+
+            default:
+                break;
+        }
+
+        return new GcodePointImpl ( x1, y1, z1 );
+    
     }
 
 }

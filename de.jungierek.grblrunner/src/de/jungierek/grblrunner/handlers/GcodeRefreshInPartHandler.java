@@ -27,7 +27,7 @@ public class GcodeRefreshInPartHandler {
 
         LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isScanning () );
 
-        return serial.isOpen () && gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeService.isPlaying () && !gcodeService.isScanning ()
+        return gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeService.isPlaying () && !gcodeService.isScanning ()
                 && gcodeProgram.getGcodeProgramFile ().isFile ();
 
     }

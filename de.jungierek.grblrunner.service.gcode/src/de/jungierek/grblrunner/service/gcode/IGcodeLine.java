@@ -11,6 +11,7 @@ public interface IGcodeLine {
     public IGcodePoint getStart ();
     public IGcodePoint getEnd ();
     public EGcodeMode getGcodeMode ();
+    public double getRadius ();
     public int getFeedrate ();
 
     public boolean isProcessed ();
@@ -22,8 +23,9 @@ public interface IGcodeLine {
     public boolean isMoveInX ();
     public boolean isMoveInY ();
     public boolean isMoveInZ ();
+    boolean isArcMode ();
 
-    public void parseGcode ( EGcodeMode lastMotionMode , IGcodePoint lastEnd , int lastFeedrate  );
+    void parseGcode ( EGcodeMode lastMotionMode, IGcodePoint lastEnd, double lastRadius, int lastFeedrate );
 
     public void rotate ( double rotationAngle, IGcodePoint lastEnd );
 

@@ -1,4 +1,4 @@
-package de.jungierek.grblrunner.parts.groups;
+package de.jungierek.grblrunner.parts;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -21,9 +21,9 @@ import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory.IntegerVerifyer;
 import de.jungierek.grblrunner.tools.PartTools;
 
-public class GcodeFileGroupToolitem {
+public class GcodeEditorToolControl {
     
-    private static final Logger LOG = LoggerFactory.getLogger ( GcodeFileGroupToolitem.class );
+    private static final Logger LOG = LoggerFactory.getLogger ( GcodeEditorToolControl.class );
 
     @Inject
     private IGcodeProgram gcodeProgram;
@@ -63,7 +63,7 @@ public class GcodeFileGroupToolitem {
 
                 if ( ignoreRotationTextModifyListener ) return;
 
-                LOG.info ( "modifyText: gcodeRotationText" );
+                LOG.debug ( "modifyText: gcodeRotationText" );
                 gcodeProgram.rotate ( partTools.parseIntegerField ( gcodeRotationText, 0 ) );
                 gcodeProgram.prepareAutolevelScan ();
 

@@ -12,6 +12,7 @@ public interface IConstants {
     public final static double ONE_DEGREE = Math.PI / 180.0;
 
     public static final String [] AXIS = { "X", "Y", "Z" };
+    public static final String [] COORDINATE_SYSTEMS = { "G54", "G55", "G56", "G57", "G58", "G59" };
 
     public static final int GCODE_QUEUE_LENGTH = 20;
 
@@ -22,5 +23,7 @@ public interface IConstants {
     public static final char LF = 0x0A;
     public static final char GRBL_RESET_CODE = 0x18;
     public static final String GRBL_RESET_STRING = new String ( new byte [] { GRBL_RESET_CODE } );
+
+    public static final String NO_OVERLAY = "NO OVERLAY";
 
 }

@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
@@ -72,8 +73,6 @@ public class StatePart {
 
     private CCombo coordSystemCombo;
 
-    private static final String [] COORDINATE_SYSTEMS = { "G54", "G55", "G56", "G57", "G58", "G59" };
-
     private Label stateLabel;
     private Label feedrateLabel;
     private Label toolLabel;
@@ -115,7 +114,7 @@ public class StatePart {
 
         coordSystemCombo = new CCombo ( groupCoordinates, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER | SWT.CENTER );
         coordSystemCombo.setEnabled ( false );
-        coordSystemCombo.setItems ( COORDINATE_SYSTEMS );
+        coordSystemCombo.setItems ( IConstants.COORDINATE_SYSTEMS );
         coordSystemCombo.select ( 0 ); // G54
         coordSystemCombo.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false, 2, 1 ) );
 
