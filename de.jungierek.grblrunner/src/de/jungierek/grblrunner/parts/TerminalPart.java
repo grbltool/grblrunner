@@ -42,8 +42,8 @@ public class TerminalPart {
     // private Text terminalText;
     private StyledText terminalText;
 
-    @Inject
-    public TerminalPart () {}
+    private boolean showGrblState = true;
+    private boolean showGcodeState = true;
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
@@ -182,10 +182,18 @@ public class TerminalPart {
             appendText ( line, SWT.BOLD );
         }
         else if ( showSuppressedLines ) {
-            appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
+
+            boolean show = true;
+
+            if ( line.startsWith ( "$G" ) ) show = showGcodeState;
+
+            if ( show ) appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
+
         }
 
     }
+    
+    private boolean ignoreNextOk = false;
 
     @Inject
     @Optional
@@ -214,7 +222,8 @@ public class TerminalPart {
         }
         else if ( showSuppressedLines ) {
             if ( line.startsWith ( "ok" ) ) {
-                appendText ( line, LIGHT_GREEN, null, SWT.BOLD );
+                if ( ignoreNextOk ) ignoreNextOk = false;
+                else appendText ( line, LIGHT_GREEN, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "error" ) ) {
                 appendText ( line, RED, null, SWT.BOLD );
@@ -223,7 +232,26 @@ public class TerminalPart {
                 appendText ( line, WHITE, LIGHT_GRAY );
             }
             else {
-                appendText ( line, LIGHT_GRAY, null );
+
+                boolean show = true;
+
+                if ( line.startsWith ( "<" ) ) show = showGrblState;
+                else if ( line.startsWith ( "[G54" ) ) {} // do nothing
+                else if ( line.startsWith ( "[G55" ) ) {} // do nothing
+                else if ( line.startsWith ( "[G56" ) ) {} // do nothing
+                else if ( line.startsWith ( "[G57" ) ) {} // do nothing
+                else if ( line.startsWith ( "[G58" ) ) {} // do nothing
+                else if ( line.startsWith ( "[G59" ) ) {} // do nothing
+                else if ( line.startsWith ( "[G28" ) ) {} // do nothing
+                else if ( line.startsWith ( "[G30" ) ) {} // do nothing
+                else if ( line.startsWith ( "[G92" ) ) {} // do nothing
+                else if ( line.startsWith ( "[G" ) ) {
+                    show = showGcodeState;
+                    if ( !show ) ignoreNextOk = true;
+                }
+
+                if ( show ) appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
+
             }
         }
 
@@ -276,6 +304,22 @@ public class TerminalPart {
 
         LOG.debug ( "clearText:" );
         terminalText.setText ( "" );
+
+    }
+
+    public void setShowGrblState ( boolean show ) {
+
+        LOG.info ( "setSuppressGrblState: selected=" + show );
+
+        showGrblState = show;
+
+    }
+
+    public void setShowGcodeState ( boolean show ) {
+
+        LOG.info ( "setSuppressGcodState: selected=" + show );
+
+        showGcodeState = show;
 
     }
         
