@@ -32,6 +32,7 @@ import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
+import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandIDs;
 import de.jungierek.grblrunner.tools.PartTools;
@@ -100,9 +101,6 @@ public class ControlPart {
 
     private IGcodeProgram gcodeProgram;
 
-    @Inject
-	public ControlPart() {}
-	
     @PostConstruct
     public void createGui ( Composite parent ) {
 
@@ -150,12 +148,19 @@ public class ControlPart {
     }
 
     @Inject
+    private ISerialService serialService;
+
+    @Inject
     public void setGcodeProgram ( @Optional @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
 
         LOG.debug ( "setGcodeProgram: program=" + program );
 
         gcodeProgram = program;
         setGridFields ();
+
+        if ( scanClearanceZText != null && !scanClearanceZText.isDisposed () ) { // gui created
+            setAutolevelControlsEnabled ( serialService.isOpen () );
+        }
 
     }
 
@@ -260,7 +265,7 @@ public class ControlPart {
         scanStepXText = GuiFactory.createIntegerText ( groupScan, "" + IPreferences.INITIAL_XSTEPS, 1, true, 0 );
         scanStepWidthXLabel = GuiFactory.createCoordinateLabel ( groupScan );
         GuiFactory.createHeadingLabel ( groupScan, "Z clear", 1, false );
-        scanClearanceZText = GuiFactory.createDoubleText ( groupScan, String.format ( "%+.1f", IPreferences.PROBE_Z_CLEARANCE ), 1, true );
+        scanClearanceZText = GuiFactory.createDoubleText ( groupScan, String.format ( "%+.1f", IPreferences.Z_CLEARANCE ), 1, true );
 
         GuiFactory.createHeadingLabel ( groupScan, "Y Steps", 1, false );
         scanStepYText = GuiFactory.createIntegerText ( groupScan, "" + IPreferences.INITIAL_YSTEPS, 1, true, 0 );
@@ -296,7 +301,7 @@ public class ControlPart {
                         gcodeProgram, // current selected gcode program
                         partTools.parseDoubleField ( scanMinZText, IPreferences.PROBE_Z_MIN ), 
                         partTools.parseDoubleField ( scanMaxZText, IPreferences.PROBE_Z_MAX ),
-                        partTools.parseDoubleField ( scanClearanceZText, IPreferences.PROBE_Z_CLEARANCE ),
+                        partTools.parseDoubleField ( scanClearanceZText, IPreferences.Z_CLEARANCE ),
                         partTools.parseDoubleField ( scanFeedrateText, IPreferences.PROBE_FEEDRATE )   
                 );
                 // @formatter:on
@@ -518,10 +523,12 @@ public class ControlPart {
         scanClearanceZText.setEnabled ( enabled );
         scanFeedrateText.setEnabled ( enabled );
 
-        scanStartButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeProgram.isAutolevelScanComplete () );
-        scanClearButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.isAutolevelScanComplete () );
-        loadProbeDataButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.isLoaded () && gcodeProgram.getAutolevelDataFile ().isFile () );
-        saveProbeDataButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.isAutolevelScanComplete () );
+        scanStartButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.getGcodeProgramFile () != null && gcodeProgram.isLoaded ()
+                && !gcodeProgram.isAutolevelScanComplete () );
+        scanClearButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.getGcodeProgramFile () != null && gcodeProgram.isAutolevelScanComplete () );
+        loadProbeDataButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.getGcodeProgramFile () != null && gcodeProgram.isLoaded ()
+                && gcodeProgram.getAutolevelDataFile () != null && gcodeProgram.getAutolevelDataFile ().isFile () );
+        saveProbeDataButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.getGcodeProgramFile () != null && gcodeProgram.isAutolevelScanComplete () );
         
     }
 
@@ -601,11 +608,11 @@ public class ControlPart {
 
     @Inject
     @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
 
-        LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
+        LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
-        setAutolevelControlsEnabled ( true );
+        setAutolevelControlsEnabled ( serialService.isOpen () );
 
     }
 

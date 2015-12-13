@@ -295,7 +295,9 @@ public class GcodeProgramImpl implements IGcodeProgram {
         scanDataComplete = false;
         matrix = null;
 
-        eventBroker.send ( IEvents.AUTOLEVEL_DATA_CLEARED, probeDataFile.getPath () );
+        if ( probeDataFile != null ) {
+            eventBroker.send ( IEvents.AUTOLEVEL_DATA_CLEARED, probeDataFile.getPath () );
+        }
 
     }
 
@@ -693,7 +695,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
                 parse ();
                 prepareAutolevelScan ( IPreferences.INITIAL_XSTEPS, IPreferences.INITIAL_YSTEPS );
 
-                eventBroker.send ( IEvents.PLAYER_LOADED, file.getPath () );
+                eventBroker.send ( IEvents.GCODE_PROGRAM_LOADED, file.getPath () );
 
             }
             catch ( IOException | RuntimeException exc ) { // including FileNotFoundException

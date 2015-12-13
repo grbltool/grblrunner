@@ -23,6 +23,9 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.service.gcode.IGcodeLine;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
+
 @SuppressWarnings("restriction")
 @Singleton
 @Creatable
@@ -94,6 +97,18 @@ public class PartTools {
 
         }
 
+    }
+
+    public void gcodeToText ( Text text, IGcodeProgram gcodeProgram ) {
+
+        text.setText ( "" );
+        StringBuilder sb = new StringBuilder ();
+
+        for ( IGcodeLine gcodeLine : gcodeProgram.getAllGcodeLines () ) {
+            sb.append ( gcodeLine.getLine () + "\n" );
+        }
+
+        text.setText ( "" + sb );
     }
 
     public CommandExecuteSelectionListener createCommandExecuteSelectionListener ( String commandId ) {

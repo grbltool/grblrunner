@@ -12,21 +12,40 @@ public interface IPreferences {
     public static final String [] GCODE_FILE_EXTENSIONS = new String [] { "*.ngc" };
     public static final String AUTOLEVEL_DATA_FILE_EXTENSION = ".probe";
 
-    public static final int SPINDLE_MIN_RPM = 0;
-    public static final int SPINDLE_MAX_RPM = 12000;
-
-    public static final double PROBE_FEEDRATE = 40;
-    public final static double PROBE_Z_CLEARANCE = 25.0;
-    public final static double PROBE_Z_MIN = -1.0;
-    public final static double PROBE_Z_MAX = +3.0;
-    public final static int INITIAL_XSTEPS = 1;
-    public final static int INITIAL_YSTEPS = 1;
-
     public static final double WORK_AREA_X = 107.5;
     public static final double WORK_AREA_Y = 84.3;
 
+    public static final int SPINDLE_MIN_RPM = 0;
+    public static final int SPINDLE_MAX_RPM = 12000;
+
+    public final static double Z_CLEARANCE = 15.0;
+
+    public static final double PROBE_FEEDRATE = 40;
+    public final static double PROBE_Z_MIN = -1.0;
+    public final static double PROBE_Z_MAX = +3.0;
+
+    public final static int MACRO_SPINDLE_SPEED = 7000;
+    public final static double MACRO_Z_LIFTUP = 2.0;
+
+    public final static int HOBBED_BOLT_FEEDRATE = 10;
+    public final static int HOBBED_BOLT_ANGLE = 30;
+    public final static int HOBBED_BOLT_BOLT_DIAMETER = 8;
+    public final static double HOBBED_BOLT_X_CLEARANCE = 7;
+    public static final int HOBBED_BOLT_COUNT_RETRACTION = 3;
+    public static final double HOBBED_BOLT_RETRACTION = 1.0;
+    public static final int HOBBED_BOLT_WAIT_AT_TARGET = 5;
+
+    public final static int POCKET_MILL_Z_FEEDRATE = 20;
+    public final static int POCKET_MILL_XY_FEEDRATE = 70;
+    public static final double POCKET_MILL_DIAMETER = 1.5;
+    public static final double POCKET_MILL_DIMENSION = 10.0;
+    public static final double POCKET_MILL_Z_DEPTH = -1.0;
+    public static final int POCKET_MILL_OVERLAP = 10;
+
+    public final static int INITIAL_XSTEPS = 1;
+    public final static int INITIAL_YSTEPS = 1;
+
     public static final boolean SHOW_GCODE_LINE = false;
-    public final static boolean SELECT_FILE_ENABLED_FOREVER = false;
 
     public static final boolean INITIAL_VIEW_ALTITUDE = true;
     public static final boolean INITIAL_VIEW_GCODE = true;

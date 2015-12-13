@@ -107,7 +107,7 @@ public class SerialServiceImpl implements ISerialService {
         detectingSerialPortsIsRunning = false;
 
         LOG.debug ( "detectSerialPorts: posting event" );
-        eventBroker.send ( IEvents.SERIAL_PORTS_DETECTED, cachedPorts );
+        if ( eventBroker != null ) eventBroker.send ( IEvents.SERIAL_PORTS_DETECTED, cachedPorts );
 
     }
 

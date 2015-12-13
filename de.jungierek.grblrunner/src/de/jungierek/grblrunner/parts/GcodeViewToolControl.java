@@ -25,17 +25,20 @@ import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 
-public class ViewPartToolControl {
+public class GcodeViewToolControl {
 
-    private static final Logger LOG = LoggerFactory.getLogger ( ViewPartToolControl.class );
+    private static final Logger LOG = LoggerFactory.getLogger ( GcodeViewToolControl.class );
 
     @Inject
     private EPartService partService;
 
+    @Inject
+    private MPart part;
+
     private CCombo cCombo;
 	
 	@PostConstruct
-    public void createGui ( Composite parent, MPart part ) {
+    public void createGui ( Composite parent ) {
 	    
         LOG.debug ( "createGui:" );
 
@@ -51,7 +54,7 @@ public class ViewPartToolControl {
         cCombo.addSelectionListener ( new SelectionAdapter () {
             @Override
             public void widgetSelected ( SelectionEvent evt ) {
-                ((ViewPart) part.getObject ()).getGcodeViewGroup ().setOverlayGcodeProgram ( getSelectedProgram ( cCombo.getText () ) );
+                ((GcodeViewPart) part.getObject ()).getGcodeViewGroup ().setOverlayGcodeProgram ( getSelectedProgram ( cCombo.getText () ) );
             }
 
         } );
@@ -64,7 +67,7 @@ public class ViewPartToolControl {
 
         Collection<MPart> parts = partService.getParts ();
         for ( MPart part : parts ) {
-            if ( IConstants.EDITOR_PARTDESCRIPTOR_ID.equals ( part.getElementId () ) ) {
+            if ( isOverlayPart ( part ) ) {
                 if ( text.equals ( part.getLabel () ) ) {
                     final IEclipseContext context = part.getContext ();
                     if ( context != null ) return context.get ( IGcodeProgram.class );
@@ -88,7 +91,7 @@ public class ViewPartToolControl {
 
         Collection<MPart> parts = partService.getParts ();
         for ( MPart part : parts ) {
-            if ( IConstants.EDITOR_PARTDESCRIPTOR_ID.equals ( part.getElementId () ) ) {
+            if ( isOverlayPart ( part ) ) {
                 if ( part.getContext () != null ) { // part is instantiated
                     itemList.add ( part.getLabel () );
                 }
@@ -98,22 +101,52 @@ public class ViewPartToolControl {
         String [] items = itemList.toArray ( new String [0] );
         cCombo.setItems ( items );
         if ( index > 0 ) {
+            int newIndex = 0;
             for ( int i = 1; i < items.length; i++ ) {
                 if ( text.equals ( items[i] ) ) {
-                    index = i;
+                    newIndex = i;
+                    break;
                 }
-
             }
+            index = newIndex;
         }
         cCombo.select ( index );
+        ((GcodeViewPart) part.getObject ()).getGcodeViewGroup ().setOverlayGcodeProgram ( getSelectedProgram ( cCombo.getText () ) );
+
+    }
+
+    private boolean isOverlayPart ( MPart part ) {
+
+        final String id = part.getElementId ();
+        return IConstants.EDITOR_PARTDESCRIPTOR_ID.equals ( id ) || IConstants.MACRO_PARTDESCRIPTOR_ID.equals ( id );
 
     }
 
     @Inject
     @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
 
-        LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
+        LOG.debug ( "programLoadedNotified: fileName=" + fileName );
+
+        setComboList ();
+
+    }
+
+    @Inject
+    @Optional
+    public void macroGeneratedNotified ( @UIEventTopic(IEvents.GCODE_MACRO_GENERATED) Object dummy ) {
+
+        LOG.debug ( "macroGneratedNotified:" );
+
+        setComboList ();
+
+    }
+
+    @Inject
+    @Optional
+    public void gcodeClosedNotified ( @UIEventTopic(IEvents.GCODE_CLOSED) Object dummy ) {
+
+        LOG.debug ( "gcodeClosedNotified:" );
 
         setComboList ();
 

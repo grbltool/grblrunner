@@ -1,4 +1,4 @@
-package de.jungierek.grblrunner.parts.groups;
+package de.jungierek.grblrunner.parts;
 
 import javax.inject.Inject;
 
@@ -9,11 +9,11 @@ import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.parts.ViewPart;
+import de.jungierek.grblrunner.parts.groups.GcodeViewGroup;
 
-public class GcodeViewGroupDirectToolItem {
+public class GcodeViewDirectToolItem {
 
-    private static final Logger LOG = LoggerFactory.getLogger ( GcodeViewGroupDirectToolItem.class );
+    private static final Logger LOG = LoggerFactory.getLogger ( GcodeViewDirectToolItem.class );
 
     @Inject
     private IEventBroker eventBroker;
@@ -24,7 +24,7 @@ public class GcodeViewGroupDirectToolItem {
 
         LOG.debug ( "execute: part=" + part );
 
-        GcodeViewGroup gcodeViewGroup = ((ViewPart) part.getObject ()).getGcodeViewGroup ();
+        GcodeViewGroup gcodeViewGroup = ((GcodeViewPart) part.getObject ()).getGcodeViewGroup ();
         String type = item.getPersistedState ().get ( "type" );
 
         if ( type != null ) {

@@ -28,7 +28,7 @@ public class GcodeFileGroup {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeFileGroup.class );
 
-    private static final String GROUP_NAME = "Gcode File";
+    private static final String GROUP_NAME = "Gcode";
 
     @Inject
     private PartTools partTools;
@@ -58,19 +58,30 @@ public class GcodeFileGroup {
         final int cols = 9;
         group.setLayout ( new GridLayout ( cols, true ) );
 
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "min:", 1 );
-        gcodeMinLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", cols - 1 );
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "min", 1 );
+        gcodeMinLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
 
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "max:", 1 );
-        gcodeMaxLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", cols - 1 );
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "max", 1 );
+        gcodeMaxLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
 
     }
 
     @Inject
     @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName ) {
+    public void macroGeneratedNotified ( @UIEventTopic(IEvents.GCODE_MACRO_GENERATED) Object dummy ) {
 
-        LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
+        LOG.debug ( "macroGeneratedNotified:" );
+
+        gcodeMinLabel.setText ( "" + gcodeProgram.getMin () );
+        gcodeMaxLabel.setText ( "" + gcodeProgram.getMax () );
+
+    }
+
+    @Inject
+    @Optional
+    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
+
+        LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
         gcodeMinLabel.setText ( "" + gcodeProgram.getMin () );
         gcodeMaxLabel.setText ( "" + gcodeProgram.getMax () );

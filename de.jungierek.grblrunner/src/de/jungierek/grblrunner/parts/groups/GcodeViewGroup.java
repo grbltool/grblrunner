@@ -333,7 +333,7 @@ public class GcodeViewGroup {
 
     }
 
-    private void savePersistedState () {
+    public void savePersistedState () {
 
         final Map<String, String> persistedState = application.getPersistedState ();
 
@@ -903,7 +903,7 @@ public class GcodeViewGroup {
             scale += evt.count / 10; // TODO_PREF to preferences
             if ( scale < 1.0 ) scale = 1.0;
 
-            savePersistedState ();
+            // savePersistedState ();
             redraw ();
 
         }
@@ -956,7 +956,7 @@ public class GcodeViewGroup {
                 Point midCanvas = new Point ( canvasArea.width / 2, canvasArea.height / 2 );
                 canvasShift.add ( midCanvas.sub ( click ) );
 
-                savePersistedState ();
+                // savePersistedState ();
                 redraw ();
 
             }
@@ -972,7 +972,7 @@ public class GcodeViewGroup {
 
                 scale = 5.0;
 
-                savePersistedState ();
+                // savePersistedState ();
                 redraw ();
 
             }
@@ -1067,7 +1067,7 @@ public class GcodeViewGroup {
             rotate = false;
             capture = false;
 
-            savePersistedState ();
+            // savePersistedState ();
 
         }
 
@@ -1081,25 +1081,25 @@ public class GcodeViewGroup {
                 switch ( evt.keyCode ) {
                     case 0x1000001: // up
                         canvasShift.y += 10;
-                        savePersistedState ();
+                        // savePersistedState ();
                         redraw ();
                         break;
 
                     case 0x1000002: // down
                         canvasShift.y -= 10;
-                        savePersistedState ();
+                        // savePersistedState ();
                         redraw ();
                         break;
 
                     case 0x1000003: // left
                         canvasShift.x -= 10;
-                        savePersistedState ();
+                        // savePersistedState ();
                         redraw ();
                         break;
 
                     case 0x1000004: // right
                         canvasShift.x += 10;
-                        savePersistedState ();
+                        // savePersistedState ();
                         redraw ();
                         break;
 
@@ -1132,9 +1132,9 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
 
-        LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
+        LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
         redraw ();
 

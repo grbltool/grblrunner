@@ -6,8 +6,13 @@ public interface IConstants {
     public static final String MAIN_WINDOW_ID = "de.jungierek.grblrunner.window.main";
     public static final String EDITOR_PARTSTACK_ID = "de.jungierek.grblrunner.partstack.editors";
     public static final String EDITOR_PARTDESCRIPTOR_ID = "de.jungierek.grblrunner.partdescriptor.gcode.editor";
+    public static final String MACRO_PARTDESCRIPTOR_ID = "de.jungierek.grblrunner.partdescriptor.gcode.macro";;
+
+    public static final String MACRO_TEXT_ID = "de.jungierek.grblrunner.gcode.text";
 
     public static final String FORMAT_COORDINATE = "%.3f";
+    public static final String FORMAT_HEIGHT = "%+.1f";
+    public static final String FORMAT_FEEDRATE = "%.0f";
 
     public final static double ONE_DEGREE = Math.PI / 180.0;
 

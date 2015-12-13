@@ -1,7 +1,4 @@
- 
 package de.jungierek.grblrunner.parts;
-
-import java.io.File;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -9,11 +6,9 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;
-import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.swt.SWT;
@@ -26,16 +21,19 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.parts.groups.GcodeFileGroup;
+import de.jungierek.grblrunner.parts.groups.MacroGroup;
+import de.jungierek.grblrunner.parts.groups.MacroHobbedBoltGroup;
+import de.jungierek.grblrunner.parts.groups.MacroPocketGroup;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
-public class GcodeEditorPart {
+public class MacroPart {
 
-    private static final Logger LOG = LoggerFactory.getLogger ( GcodeEditorPart.class );
-
+    private static final Logger LOG = LoggerFactory.getLogger ( MacroPart.class );
+    
     @Inject
     private IGcodeProgram gcodeProgram;
 
@@ -47,24 +45,51 @@ public class GcodeEditorPart {
 
     // prevent from garbage collection
     @SuppressWarnings("unused")
+    private MacroHobbedBoltGroup filamentScrewGroup;
+
+    // prevent from garbage collection
+    @SuppressWarnings("unused")
     private GcodeFileGroup gcodeFileGroup;
 
+    // prevent from garbage collection
+    @SuppressWarnings("unused")
+    private MacroGroup pocketGroup;
+
     private Text gcodeText;
-    
-	@PostConstruct
+    private String macroType;
+
+    @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context, Display display, MPart part ) {
-	    
+
         LOG.debug ( "createGui: program=" + gcodeProgram );
 
         final int cols = 1;
         parent.setLayout ( new GridLayout ( cols, false ) );
         context.set ( IPersistenceKeys.KEY_PART_COLS, cols );
         context.set ( IPersistenceKeys.KEY_PART_GROUP_COLS, cols ); // all groups have a width of 1 column
-        
+
         context.set ( IGcodeProgram.class, gcodeProgram );
 
         // collect groups
         gcodeFileGroup = ContextInjectionFactory.make ( GcodeFileGroup.class, context );
+        macroType = part.getPersistedState ().get ( IPersistenceKeys.KEY_MACRO_TYPE );
+        if ( macroType == null ) {
+            macroType = (String) context.get ( IPersistenceKeys.KEY_MACRO_TYPE );
+        }
+        switch ( macroType ) {
+
+            case "hobbed_bolt":
+                filamentScrewGroup = ContextInjectionFactory.make ( MacroHobbedBoltGroup.class, context );
+                break;
+
+            case "pocket":
+                pocketGroup = ContextInjectionFactory.make ( MacroPocketGroup.class, context );
+                break;
+
+            default:
+                break;
+
+        }
 
         gcodeText = new Text ( parent, SWT.MULTI | SWT.V_SCROLL );
         gcodeText.setFont ( new Font ( display, "Courier", 10, SWT.NONE ) ); // TODO make it more portable
@@ -73,13 +98,24 @@ public class GcodeEditorPart {
         // ).createFont ( gcodeModeLabel.getDisplay () );
         gcodeText.setEditable ( false );
 
-        String path = part.getPersistedState ().get ( IPersistenceKeys.KEY_EDITOR_PATH );
-        if ( path != null ) {
-            gcodeProgram.loadGcodeProgram ( new File ( path ) );
-        }
+        context.set ( IConstants.MACRO_TEXT_ID, gcodeText );
 
-	}
-	
+        partTools.gcodeToText ( gcodeText, gcodeProgram );
+
+        // TODO reload parameters
+        // String path = part.getPersistedState ().get ( IPersistenceKeys.KEY_EDITOR_PATH );
+
+    }
+
+    @PersistState
+    public void persistState ( MPart part ) {
+
+        LOG.debug ( "persistState:" );
+
+        part.getPersistedState ().put ( IPersistenceKeys.KEY_MACRO_TYPE, macroType );
+
+    }
+
     @PreDestroy
     public void preDestroy () {
 
@@ -99,34 +135,10 @@ public class GcodeEditorPart {
 
     }
 
-	@Persist
-	public void save() {
+    @Persist
+    public void save () {
 
         LOG.info ( "save:" );
-		
-	}
-	
-    @PersistState
-    public void persistState ( MPart part ) {
-        
-        LOG.debug ( "persistState:" );
-
-        part.getPersistedState ().put ( IPersistenceKeys.KEY_EDITOR_PATH, gcodeProgram.getGcodeProgramFile ().getPath () );
-
-    }
-
-    @Inject
-    @Optional
-    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
-
-        LOG.debug ( "programLoadedNotified: fileName=" + fileName );
-
-        File gcodeProgramFile = gcodeProgram.getGcodeProgramFile ();
-        if ( gcodeProgramFile != null && gcodeProgramFile.getPath ().equals ( fileName ) ) {
-
-            partTools.gcodeToText ( gcodeText, gcodeProgram );
-
-        }
 
     }
 

@@ -5,6 +5,7 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.slf4j.Logger;
@@ -13,16 +14,16 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.parts.groups.GcodeViewGroup;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
-public class ViewPart {
+public class GcodeViewPart {
 
-    private static final Logger LOG = LoggerFactory.getLogger ( ViewPart.class );
+    private static final Logger LOG = LoggerFactory.getLogger ( GcodeViewPart.class );
 
     // prevent from garbage collection
     @SuppressWarnings("unused")
     private GcodeViewGroup gcodeViewGroup;
 
     @Inject
-    public ViewPart () {}
+    public GcodeViewPart () {}
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
@@ -45,5 +46,13 @@ public class ViewPart {
 
     }
     
+    @PersistState
+    public void persistState () {
+
+        LOG.debug ( "persistState:" );
+
+        gcodeViewGroup.savePersistedState ();
+
+    }
 
 }

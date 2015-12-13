@@ -60,40 +60,11 @@ public class GcodeLoadHandler {
             partService.showPart ( part, PartState.ACTIVATE );
 
             IGcodeProgram gcodeProgram = part.getContext ().get ( IGcodeProgram.class );
-
             gcodeProgram.loadGcodeProgram ( new File ( result ) );
             part.setLabel ( gcodeProgram.getGcodeProgramName () );
 
             application.getPersistedState ().put ( IPersistenceKeys.KEY_GCODE_PATH, filterPath );
 
-        }
-
-    }
-
-    // @Execute
-    public void execute2 ( MApplication application, Shell shell, @Named(IServiceConstants.ACTIVE_PART) MPart part,
-            @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
-
-        LOG.debug ( "execute:" );
-
-        FileDialog dialog = new FileDialog ( shell, SWT.OPEN );
-
-        // TODO file extension to preference
-        dialog.setFilterExtensions ( IPreferences.GCODE_FILE_EXTENSIONS );
-
-        // TODO_PREF base file path to preference
-        String filterPath = application.getPersistedState ().get ( IPersistenceKeys.KEY_GCODE_PATH );
-        if ( filterPath == null ) filterPath = IPreferences.INITIAL_GCODE_PATH;
-        dialog.setFilterPath ( filterPath );
-
-        String result = dialog.open ();
-        if ( result != null ) {
-            gcodeProgram.loadGcodeProgram ( new File ( result ) );
-            final int start = result.lastIndexOf ( File.separator ) + 1;
-            final int end = result.lastIndexOf ( '.' );
-            String name = result.substring ( start, end );
-            part.setLabel ( name );
-            application.getPersistedState ().put ( IPersistenceKeys.KEY_GCODE_PATH, filterPath );
         }
 
     }

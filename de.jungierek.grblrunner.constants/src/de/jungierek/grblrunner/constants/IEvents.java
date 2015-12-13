@@ -43,7 +43,6 @@ public interface IEvents {
     public static final String PLAYER_BASE = BASE + SEPARATOR + "player";
     public static final String PLAYER_ALL = PLAYER_BASE + SEPARATOR + "*";
 
-    public static final String PLAYER_LOADED = PLAYER_BASE + SEPARATOR + "loaded";
     public static final String PLAYER_START = PLAYER_BASE + SEPARATOR + "start";
     public static final String PLAYER_STOP = PLAYER_BASE + SEPARATOR + "stop";
     public static final String PLAYER_LINE = PLAYER_BASE + SEPARATOR + "line";
@@ -51,7 +50,6 @@ public interface IEvents {
 
     // *********************************************************************************************
 
-    // TODO rename to autolevel
     public static final String AUTOLEVEL_BASE = BASE + SEPARATOR + "autolevel";
     public static final String AUTOLEVEL_ALL = AUTOLEVEL_BASE + SEPARATOR + "*";
 
@@ -86,6 +84,15 @@ public interface IEvents {
     public static final String REDRAW_ALL = REDRAW_BASE + SEPARATOR + "*";
 
     public static final String REDRAW = REDRAW_BASE;
+
+    // *********************************************************************************************
+
+    public static final String GCODE_BASE = BASE + SEPARATOR + "gcode";
+    public static final String GCODE_ALL = GCODE_BASE + SEPARATOR + "*";
+
+    public static final String GCODE_PROGRAM_LOADED = GCODE_BASE + SEPARATOR + "loaded";
+    public static final String GCODE_MACRO_GENERATED = GCODE_BASE + SEPARATOR + "generated";
+    public static final String GCODE_CLOSED = GCODE_BASE + SEPARATOR + "closed";
 
     // *********************************************************************************************
 

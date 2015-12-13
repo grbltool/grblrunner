@@ -2,6 +2,8 @@ package de.jungierek.grblrunner.tools;
 
 public interface IPersistenceKeys {
 
+    // TODO separate persistenc and context keys
+
     public final static String KEY_GCODE_PATH = "GCODE_PATH";
 
     public static final String KEY_PART_COLS = "part.cols";
@@ -20,5 +22,7 @@ public interface IPersistenceKeys {
     public static final String AUTO_CONNECT_ON = "x";
 
     public static final String KEY_EDITOR_PATH = "EDITOR_PATH";
+
+    public static final String KEY_MACRO_TYPE = "macro.type";
 
 }

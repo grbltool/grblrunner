@@ -169,9 +169,9 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void playerLoadedNotified ( @UIEventTopic(IEvents.PLAYER_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
 
-        LOG.debug ( "playerLoadedNotified: fileName=" + fileName );
+        LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
         setWindowLabel ();
 
