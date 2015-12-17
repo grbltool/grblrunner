@@ -53,6 +53,8 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     private double rotationAngle = 0;
 
+    private boolean playing;
+
     public GcodeProgramImpl () {
         // TODO Auto-generated constructor stub
     }
@@ -259,6 +261,27 @@ public class GcodeProgramImpl implements IGcodeProgram {
     public boolean isLoaded () {
 
         return gcodeLines.size () > 0;
+
+    }
+
+    @Override
+    public void setPlayerStart () {
+
+        this.playing = true;
+
+    }
+
+    @Override
+    public void setPlayerStop () {
+
+        this.playing = false;
+
+    }
+
+    @Override
+    public boolean isPlaying () {
+
+        return playing;
 
     }
 

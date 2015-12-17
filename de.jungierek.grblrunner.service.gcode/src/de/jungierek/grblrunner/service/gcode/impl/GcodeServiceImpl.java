@@ -733,6 +733,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             playRunning = true;
 
+            gcodeProgram.setPlayerStart ();
             eventBroker.send ( IEvents.PLAYER_START, getTimestamp () );
 
             gcodeProgram.resetProcessed ();
@@ -789,6 +790,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
 
             eventBroker.send ( IEvents.PLAYER_STOP, getTimestamp () );
+            gcodeProgram.setPlayerStop ();
             // TODO
             // if ( skipByAlarm ) {
             // eventBroker.send ( EVENT_GCODE_PLAYER_CANCELED, getTimestamp () );

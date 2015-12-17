@@ -6,9 +6,11 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.swt.SWT;
@@ -22,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.parts.groups.GcodeFileGroup;
 import de.jungierek.grblrunner.parts.groups.MacroGroup;
 import de.jungierek.grblrunner.parts.groups.MacroHobbedBoltGroup;
@@ -45,15 +48,11 @@ public class MacroPart {
 
     // prevent from garbage collection
     @SuppressWarnings("unused")
-    private MacroHobbedBoltGroup filamentScrewGroup;
+    private MacroGroup macroGroup;
 
     // prevent from garbage collection
     @SuppressWarnings("unused")
     private GcodeFileGroup gcodeFileGroup;
-
-    // prevent from garbage collection
-    @SuppressWarnings("unused")
-    private MacroGroup pocketGroup;
 
     private Text gcodeText;
     private String macroType;
@@ -79,11 +78,11 @@ public class MacroPart {
         switch ( macroType ) {
 
             case "hobbed_bolt":
-                filamentScrewGroup = ContextInjectionFactory.make ( MacroHobbedBoltGroup.class, context );
+                macroGroup = ContextInjectionFactory.make ( MacroHobbedBoltGroup.class, context );
                 break;
 
             case "pocket":
-                pocketGroup = ContextInjectionFactory.make ( MacroPocketGroup.class, context );
+                macroGroup = ContextInjectionFactory.make ( MacroPocketGroup.class, context );
                 break;
 
             default:
@@ -139,6 +138,30 @@ public class MacroPart {
     public void save () {
 
         LOG.info ( "save:" );
+
+    }
+    
+    @Inject
+    @Optional
+    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String timestamp ) {
+
+        LOG.debug ( "playerStartNotified: isPlaying=" + gcodeProgram.isPlaying () );
+
+        if ( gcodeProgram.isPlaying () ) {
+            macroGroup.setControlsEnabled ( false );
+        }
+
+    }
+
+    @Inject
+    @Optional
+    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String timestamp ) {
+
+        LOG.debug ( "playerStartNotified: isPlaying=" + gcodeProgram.isPlaying () );
+
+        if ( gcodeProgram.isPlaying () ) {
+            macroGroup.setControlsEnabled ( true );
+        }
 
     }
 

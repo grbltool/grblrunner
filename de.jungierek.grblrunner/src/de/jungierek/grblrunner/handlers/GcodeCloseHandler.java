@@ -38,9 +38,12 @@ public class GcodeCloseHandler {
 
         LOG.debug ( "canExecute: part=" + part + " program=" + gcodeProgram );
 
-        if ( part == null || (!(part.getObject () instanceof GcodeEditorPart) && !(part.getObject () instanceof MacroPart)) ) return false;
+        if ( part == null ) return false;
 
-        return !gcodeService.isPlaying () && !gcodeService.isScanning ();
+        final Object partObject = part.getObject ();
+        if ( !(partObject instanceof GcodeEditorPart) && !(partObject instanceof MacroPart) ) return false;
+
+        return !gcodeProgram.isPlaying () && !gcodeService.isScanning ();
 
 	}
 		

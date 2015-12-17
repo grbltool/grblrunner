@@ -35,12 +35,12 @@ public interface IPreferences {
     public static final double HOBBED_BOLT_RETRACTION = 1.0;
     public static final int HOBBED_BOLT_WAIT_AT_TARGET = 5;
 
-    public final static int POCKET_MILL_Z_FEEDRATE = 20;
-    public final static int POCKET_MILL_XY_FEEDRATE = 70;
-    public static final double POCKET_MILL_DIAMETER = 1.5;
+    public final static int POCKET_MILL_Z_FEEDRATE = 50;
+    public final static int POCKET_MILL_XY_FEEDRATE = 150;
+    public static final double POCKET_MILL_DIAMETER = 3.0;
     public static final double POCKET_MILL_DIMENSION = 10.0;
-    public static final double POCKET_MILL_Z_DEPTH = -1.0;
-    public static final int POCKET_MILL_OVERLAP = 10;
+    public static final double POCKET_MILL_Z_DEPTH = -1.4;
+    public static final int POCKET_MILL_OVERLAP = 30;
 
     public final static int INITIAL_XSTEPS = 1;
     public final static int INITIAL_YSTEPS = 1;

@@ -582,6 +582,24 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
             return null;
         }
 
+        @Override
+        public void setPlayerStart () {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void setPlayerStop () {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public boolean isPlaying () {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
     }
 
     @Override

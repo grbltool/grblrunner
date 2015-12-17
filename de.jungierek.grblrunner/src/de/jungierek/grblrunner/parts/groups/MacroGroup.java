@@ -65,7 +65,7 @@ public abstract class MacroGroup {
 
     abstract protected int getGridLayoutColumns ();
     abstract protected String getGroupName ();
-    abstract protected void setControlsEnabled ( boolean b );
+    abstract public void setControlsEnabled ( boolean b );
     abstract protected void createGroupControls ( Group group, int partCols, int groupCols );
 
     abstract protected String getTitle ();

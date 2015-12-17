@@ -203,7 +203,7 @@ public class MacroPocketGroup extends MacroGroup {
     }
 
     @Override
-    protected void setControlsEnabled ( boolean enabled ) {
+    public void setControlsEnabled ( boolean enabled ) {
 
         xDimensionText.setEnabled ( enabled );
         yDimensionText.setEnabled ( enabled );

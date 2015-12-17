@@ -12,6 +12,12 @@ public interface IGcodeProgram {
     public String getGcodeProgramName ();
     public void loadGcodeProgram ( File gcodeFile );
     public boolean isLoaded ();
+
+    public void setPlayerStart ();
+    public void setPlayerStop ();
+
+    public boolean isPlaying ();
+
     public void clear ();
 
     public void appendLine ( String line );

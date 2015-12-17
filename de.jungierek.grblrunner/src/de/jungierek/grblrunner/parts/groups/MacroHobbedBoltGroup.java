@@ -131,7 +131,7 @@ public class MacroHobbedBoltGroup extends MacroGroup {
     }
 
     @Override
-    protected void setControlsEnabled ( boolean enabled ) {
+    public void setControlsEnabled ( boolean enabled ) {
 
         angleText.setEnabled ( enabled );
         feedrateText.setEnabled ( enabled );
