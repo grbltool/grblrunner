@@ -30,8 +30,9 @@ import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
-import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
+import de.jungierek.grblrunner.service.gcode.IGrblRequest;
+import de.jungierek.grblrunner.service.gcode.IGrblResponse;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
@@ -287,11 +288,11 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGcodeResponse command ) {
+    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGrblRequest command ) {
 
         LOG.trace ( "sentNotified: command=" + command );
 
-        if ( command != null && command.getLine () != null && command.getLine ().startsWith ( "$X" ) ) { // unlock
+        if ( command != null && command.isUnlock () ) { // unlock
             unlockSent = true;
         }
 
@@ -299,23 +300,23 @@ public class StatePart {
 
     @Inject
     @Optional
-    public void receivedNotified ( @UIEventTopic(IEvents.GRBL_RECEIVED) IGcodeResponse response ) {
+    public void receivedNotified ( @UIEventTopic(IEvents.GRBL_RECEIVED) IGrblResponse response ) {
 
         if ( response == null ) {
             LOG.warn ( "receivedNotified: response == null" );
             return;
         }
 
-        if ( response.getLine () == null ) {
+        if ( response.getMessage () == null ) {
             LOG.warn ( "receivedNotified: line == null" );
             return;
         }
 
-        if ( !response.getLine ().startsWith ( "<" ) ) {
+        if ( !response.getMessage ().startsWith ( "<" ) ) {
             LOG.trace ( "receivedNotified: response=" + response + " unlockSent=" + unlockSent );
         }
 
-        if ( unlockSent && response.getLine ().startsWith ( "ok" ) ) {
+        if ( unlockSent && response.getMessage ().startsWith ( "ok" ) ) {
             unlockSent = false;
             // first 'ok' after alarm comes with unlock an periodic $G command, then the coordinate system will be set
 

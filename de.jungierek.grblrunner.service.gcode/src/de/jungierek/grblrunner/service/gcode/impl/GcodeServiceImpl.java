@@ -36,7 +36,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     private ISerialService serial;
 
     // protected for test purposes
-    protected ArrayBlockingQueue<GcodeResponseImpl> queue = new ArrayBlockingQueue<GcodeResponseImpl> ( IConstants.GCODE_QUEUE_LENGTH, false );
+    protected ArrayBlockingQueue<GrblRequestImpl> queue = new ArrayBlockingQueue<GrblRequestImpl> ( IConstants.GCODE_QUEUE_LENGTH, false );
 
     protected volatile boolean waitForOk = false;
     protected volatile boolean skipByAlarm = false;
@@ -137,10 +137,10 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
         try {
 
-            queue.put ( new GcodeResponseImpl ( suppressInTerminal, line + IConstants.LF ) );
+            queue.put ( new GrblRequestImpl ( suppressInTerminal, line + IConstants.LF ) );
 
             if ( line.startsWith ( "G92" ) || line.startsWith ( "G10" ) ) { // detect G92 or G10 to update shift
-                queue.put ( new GcodeResponseImpl ( true, "$#" + IConstants.LF ) );
+                queue.put ( new GrblRequestImpl ( true, "$#" + IConstants.LF ) );
             }
 
         }
@@ -184,7 +184,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         // System.out.println ( logName () + "received: posting event waitForOk=" + waitForOk + " skiByAlarm=" + skipByAlarm + " suppressInTerminl=" + suppressInTerminal + " line="
         // + line );
         analyseResponse ( line );
-        eventBroker.send ( IEvents.GRBL_RECEIVED, new GcodeResponseImpl ( suppressLine, line ) );
+        eventBroker.send ( IEvents.GRBL_RECEIVED, new GrblResponseImpl ( suppressLine, line ) );
 
         // ... nächstes Kommando frei geben
         if ( releaseWaitForOk ) waitForOk = false;
@@ -833,14 +833,14 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         sleep ( 100 );
                     }
 
-                    GcodeResponseImpl cmd = queue.take ();
+                    GrblRequestImpl cmd = queue.take ();
                     if ( !skipByAlarm || cmd.isReset () || cmd.isHome () || cmd.isUnlock () ) {
 
-                        if ( cmd.line.startsWith ( IConstants.GCODE_SCAN_START ) ) {
+                        if ( cmd.message.startsWith ( IConstants.GCODE_SCAN_START ) ) {
                             scanRunning = true;
                             eventBroker.send ( IEvents.AUTOLEVEL_START, getTimestamp () );
                         }
-                        else if ( cmd.line.startsWith ( IConstants.GCODE_SCAN_END ) ) {
+                        else if ( cmd.message.startsWith ( IConstants.GCODE_SCAN_END ) ) {
                             scanRunning = false;
                             // TODO think about this
                             gcodeProgram.setAutolevelScanCompleted ();
@@ -851,7 +851,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                             waitForOk = true;
                             suppressInTerminal = cmd.suppressInTerminal;
 
-                            byte [] buffer = cmd.line.getBytes ( StandardCharsets.US_ASCII );
+                            byte [] buffer = cmd.message.getBytes ( StandardCharsets.US_ASCII );
                             eventBroker.send ( IEvents.GRBL_SENT, cmd );
 
                             serial.send ( buffer );

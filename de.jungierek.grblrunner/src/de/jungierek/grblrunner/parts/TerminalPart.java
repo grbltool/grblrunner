@@ -20,8 +20,9 @@ import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
-import de.jungierek.grblrunner.service.gcode.IGcodeResponse;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
+import de.jungierek.grblrunner.service.gcode.IGrblRequest;
+import de.jungierek.grblrunner.service.gcode.IGrblResponse;
 
 public class TerminalPart {
 
@@ -165,7 +166,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGcodeResponse command ) {
+    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGrblRequest command ) {
 
         LOG.trace ( "sentNotified: command=" + command );
 
@@ -176,9 +177,9 @@ public class TerminalPart {
 
         if ( command.isReset () ) return;
 
-        String line = command.getLine ();
+        String line = command.getMessage ();
 
-        if ( !command.suppressInTerminal () ) {
+        if ( !command.isSuppressInTerminal () ) {
             appendText ( line, SWT.BOLD );
         }
         else if ( showSuppressedLines ) {
@@ -197,15 +198,15 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void receivedNotified ( @UIEventTopic(IEvents.GRBL_RECEIVED) IGcodeResponse response ) {
+    public void receivedNotified ( @UIEventTopic(IEvents.GRBL_RECEIVED) IGrblResponse response ) {
 
         LOG.trace ( "receivedNotified: response=" + response );
 
-        if ( response == null || response.getLine () == null ) return;
+        if ( response == null || response.getMessage () == null ) return;
 
-        String line = response.getLine ();
+        String line = response.getMessage ();
 
-        if ( !response.suppressInTerminal () ) {
+        if ( !response.isSuppressInTerminal () ) {
             if ( line.startsWith ( "ok" ) ) {
                 appendText ( line, GREEN, null, SWT.BOLD );
             }
