@@ -195,6 +195,15 @@ public class StartupAddon {
 
     @Inject
     @Optional
+    public void gcodeEventNotified ( @UIEventTopic(IEvents.GCODE_ALL) Object data ) {
+
+        LOG.trace ( "gcodeEventNotified: data=" + data );
+        updateToolbarState ();
+
+    }
+
+    @Inject
+    @Optional
     public void playerEventNotified ( @UIEventTopic(IEvents.PLAYER_ALL) Object data ) {
 
         LOG.trace ( "playerEventNotified: data=" + data );
