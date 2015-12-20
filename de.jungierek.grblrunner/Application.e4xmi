@@ -270,6 +270,9 @@
     <bindings xmi:id="_F0dIMJw3EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.keybinding.macro" keySequence="M1+M" command="_Mt2o8Jw3EeWzN9HK6hG3ug">
       <tags>type:user</tags>
     </bindings>
+    <bindings xmi:id="_muhG4KbqEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.keybinding.refresh" keySequence="M1+R" command="_bf5LoHdxEeW3XImWwiVxiA">
+      <tags>type:user</tags>
+    </bindings>
   </bindingTables>
   <rootContext xmi:id="_TThFefsBEeSJsKKNyX_1bw" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
     <children xmi:id="_TThFevsBEeSJsKKNyX_1bw" elementId="org.eclipse.ui.contexts.window" name="In Windows"/>
