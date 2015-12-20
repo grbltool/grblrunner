@@ -751,7 +751,7 @@ public class GcodeViewGroup {
 
             if ( start.equals ( end ) ) return;
 
-            if ( viewAltitude && gcodeProgram.isAutolevelScanComplete () ) {
+            if ( viewAltitude && gcodeProgram.isAutolevelScanComplete () && gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) {
                 IGcodePoint [] path = gcodeProgram.interpolateLine ( start, end );
                 for ( int i = 0; i < path.length - 1; i++ ) {
                     drawLine ( gc, path[i].add ( gcodeService.getFixtureShift () ), path[i + 1].add ( gcodeService.getFixtureShift () ) );

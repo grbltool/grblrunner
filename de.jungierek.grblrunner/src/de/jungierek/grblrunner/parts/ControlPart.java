@@ -159,7 +159,7 @@ public class ControlPart {
         setGridFields ();
 
         if ( scanClearanceZText != null && !scanClearanceZText.isDisposed () ) { // gui created
-            setAutolevelControlsEnabled ( serialService.isOpen () );
+            setAutolevelControlsEnabled ( true );
         }
 
     }
@@ -523,12 +523,39 @@ public class ControlPart {
         scanClearanceZText.setEnabled ( enabled );
         scanFeedrateText.setEnabled ( enabled );
 
-        scanStartButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.getGcodeProgramFile () != null && gcodeProgram.isLoaded ()
-                && !gcodeProgram.isAutolevelScanComplete () );
-        scanClearButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.getGcodeProgramFile () != null && gcodeProgram.isAutolevelScanComplete () );
-        loadProbeDataButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.getGcodeProgramFile () != null && gcodeProgram.isLoaded ()
-                && gcodeProgram.getAutolevelDataFile () != null && gcodeProgram.getAutolevelDataFile ().isFile () );
-        saveProbeDataButton.setEnabled ( enabled && gcodeProgram != null && gcodeProgram.getGcodeProgramFile () != null && gcodeProgram.isAutolevelScanComplete () );
+        // @formatter:off
+        scanStartButton.setEnabled ( 
+                enabled && 
+                gcodeProgram != null && 
+                    gcodeProgram.getGcodeProgramFile () != null && 
+                    gcodeProgram.isLoaded () && 
+                    !gcodeProgram.isAutolevelScanComplete () &&
+                    serialService.isOpen ()
+        );
+        
+        scanClearButton.setEnabled ( 
+                enabled && 
+                gcodeProgram != null && 
+                    gcodeProgram.getGcodeProgramFile () != null && 
+                    gcodeProgram.isAutolevelScanComplete () 
+        );
+        
+        loadProbeDataButton.setEnabled ( 
+                enabled && 
+                gcodeProgram != null && 
+                    gcodeProgram.getGcodeProgramFile () != null && 
+                    gcodeProgram.isLoaded () && 
+                    gcodeProgram.getAutolevelDataFile () != null && 
+                    gcodeProgram.getAutolevelDataFile ().isFile () 
+         );
+        
+        saveProbeDataButton.setEnabled ( 
+                enabled && 
+                gcodeProgram != null && 
+                    gcodeProgram.getGcodeProgramFile () != null && 
+                    gcodeProgram.isAutolevelScanComplete () 
+        );
+        // @formatter:on
         
     }
 
@@ -593,6 +620,7 @@ public class ControlPart {
         LOG.trace ( "connectedNotified: portName=" + portName );
         setControlsEnabled ( true );
         // commandText.setFocus ();
+        setAutolevelControlsEnabled ( true );
 
     }
 
@@ -612,7 +640,7 @@ public class ControlPart {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
-        setAutolevelControlsEnabled ( serialService.isOpen () );
+        setAutolevelControlsEnabled ( true );
 
     }
 

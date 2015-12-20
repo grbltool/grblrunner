@@ -4,7 +4,7 @@ package de.jungierek.grblrunner.handlers;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,8 @@ public class GcodeSimpleCommandHandler {
     // this works only for toolbar items
     @Execute
     @Optional
-    public void execute ( IGcodeService gcode, MHandledToolItem item ) {
+    // public void execute ( IGcodeService gcode, MHandledToolItem item ) {
+    public void execute ( IGcodeService gcode, MHandledItem item ) {
 
         LOG.debug ( "execute: item=" + item );
 

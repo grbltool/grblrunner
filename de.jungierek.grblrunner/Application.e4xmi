@@ -73,22 +73,26 @@
     </children>
     <mainMenu xmi:id="_eAwgEBFOEeWhXb_CmI9f3g" elementId="de.jungierek.grblrunner.menu.main">
       <children xsi:type="menu:Menu" xmi:id="_sXTwkDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menu.gcode" label="Gcode" mnemonics="G">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_xTHjQDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.load" label="Load" mnemonics="L" command="_PP9sEHdmEeW3XImWwiVxiA"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_X2p0EHdxEeW3XImWwiVxiA" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.refresh" label="Refresh" command="_bf5LoHdxEeW3XImWwiVxiA"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_QmptUEBfEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.play" label="Run" command="_dBKgMHdoEeW3XImWwiVxiA"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_Y3LrcJVWEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.close" label="Close" command="_0fevEJVUEeWjToG7KvW0lw"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_xTHjQDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.load" label="Load" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/open_file.gif" mnemonics="L" command="_PP9sEHdmEeW3XImWwiVxiA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_X2p0EHdxEeW3XImWwiVxiA" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.refresh" label="Refresh" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/refresh.gif" command="_bf5LoHdxEeW3XImWwiVxiA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_QmptUEBfEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.play" label="Run" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/run.gif" command="_dBKgMHdoEeW3XImWwiVxiA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_Y3LrcJVWEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.close" label="Close" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/delete.gif" command="_0fevEJVUEeWjToG7KvW0lw"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_bC_6sDmsEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menuseparator.1"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_tR_TwKcSEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.home" label="Home" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/home.gif" command="_0hrNEH7PEeWpHvdXu7TwpQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_zVsioKcSEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.unlock" label="Unlock" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/unlock.gif" command="_5KwRAH7PEeWpHvdXu7TwpQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_9vUB0KcSEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.check" label="Check" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/check.gif" command="_9zL0sH7PEeWpHvdXu7TwpQ"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_DLA1gKcTEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.menuseparator.5"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_6fyHIDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.exit" label="_Exit"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_UN-uMDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menu.serial.test" label="Serial">
         <children xsi:type="menu:Menu" xmi:id="_3Hrr8Dr1EeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menu.serial.selectport" label="Select Port">
           <children xsi:type="menu:DynamicMenuContribution" xmi:id="_93fL0Dr1EeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.dynamicmenucontribution.serial.selectport" label="COM Port" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.SerialDynMenuHandler"/>
           <children xsi:type="menu:MenuSeparator" xmi:id="_36I0AEDREeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.menuseparator.4"/>
-          <children xsi:type="menu:HandledMenuItem" xmi:id="_49DpkEDREeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.handledmenuitem.serisal.update" label="Update" command="_E7QrgEDTEeWQxYaFUM1aCQ"/>
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_49DpkEDREeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.handledmenuitem.serisal.update" label="Update" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/update_ports.gif" command="_E7QrgEDTEeWQxYaFUM1aCQ"/>
         </children>
         <children xsi:type="menu:MenuSeparator" xmi:id="__eBjAEBfEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.menuseparator.3"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_gSGAUDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.serial.connect" label="Connect" command="_80VckD3xEeWmo4jUF9fDMA"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_j_RcsDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.serial.close" label="Disconnect" command="_NHe68D3yEeWmo4jUF9fDMA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_gSGAUDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.serial.connect" label="Connect" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/connect.gif" command="_80VckD3xEeWmo4jUF9fDMA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_j_RcsDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.serial.close" label="Disconnect" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/disconnect.gif" command="_NHe68D3yEeWmo4jUF9fDMA"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_lsj6oEBgEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.menu.probe" label="Autolevel">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_O3Jo4DmsEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.probe.load" label="Load" command="_gieyAHwiEeWvRN9uvDzZzw"/>
@@ -271,6 +275,15 @@
       <tags>type:user</tags>
     </bindings>
     <bindings xmi:id="_muhG4KbqEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.keybinding.refresh" keySequence="M1+R" command="_bf5LoHdxEeW3XImWwiVxiA">
+      <tags>type:user</tags>
+    </bindings>
+    <bindings xmi:id="_ya-cQKcREeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.keybinding.grbl.home" keySequence="M3+H" command="_0hrNEH7PEeWpHvdXu7TwpQ">
+      <tags>type:user</tags>
+    </bindings>
+    <bindings xmi:id="_ZKwqUKcTEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.keybinding.grbl.unlock" keySequence="M3+X" command="_5KwRAH7PEeWpHvdXu7TwpQ">
+      <tags>type:user</tags>
+    </bindings>
+    <bindings xmi:id="_gzRT0KcTEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.keybinding.grbl.check" keySequence="M3+C" command="_9zL0sH7PEeWpHvdXu7TwpQ">
       <tags>type:user</tags>
     </bindings>
   </bindingTables>
