@@ -126,7 +126,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     public String getGcodeProgramName () {
 
         final String name = gcodeFile.getName ();
-        return name.substring ( 0, name.indexOf ( '.' ) );
+        return name.substring ( 0, name.lastIndexOf ( '.' ) );
 
     }
 
