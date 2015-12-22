@@ -43,6 +43,8 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private GcodePointImpl min;
     private GcodePointImpl max;
 
+    private double durationInMinutes;
+
     private GcodePointImpl matrix [][];
     private int xSteps = IPreferences.INITIAL_XSTEPS;
     private int ySteps = IPreferences.INITIAL_YSTEPS;
@@ -107,6 +109,13 @@ public class GcodeProgramImpl implements IGcodeProgram {
     public IGcodePoint getMax () {
 
         return max;
+
+    }
+
+    @Override
+    public int getDuration () { // min
+
+        return (int) durationInMinutes;
 
     }
 
@@ -233,6 +242,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         min = new GcodePointImpl ( +999.0, +999.0, +999.0 );
         max = new GcodePointImpl ( -999.0, -999.0, -999.0 );
+        durationInMinutes = 0;
 
     }
 
@@ -246,7 +256,29 @@ public class GcodeProgramImpl implements IGcodeProgram {
             min = (GcodePointImpl) min.min ( point );
             max = (GcodePointImpl) max.max ( point );
 
+            durationInMinutes += computeDuration ( gcodeLine );
+
         }
+
+    }
+    
+    private double computeDuration ( IGcodeLine gcodeLine ) {
+
+        IGcodePoint start = gcodeLine.getStart ();
+        IGcodePoint end = gcodeLine.getEnd ();
+
+        final double dx = Math.abs ( end.getX () - start.getX () );
+        final double dy = Math.abs ( end.getY () - start.getY () );
+        final double dz = Math.abs ( end.getZ () - start.getZ () );
+        final double dist = Math.sqrt ( dx * dx + dy * dy + dz * dz );
+
+        double feedrate = IPreferences.MAX_SEEK_FEEDRATE;
+        if ( gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR || gcodeLine.isArcMode () ) {
+            feedrate = gcodeLine.getFeedrate ();
+        }
+        double time = 0.0;
+        if ( feedrate != 0 ) time = dist / feedrate;
+        return time;
 
     }
 
@@ -476,6 +508,17 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     }
 
+    private double subDouble ( double d1, double d2 ) {
+
+        double result = d1 - d2;
+        if ( Math.abs ( result ) <= EPSILON ) {
+            result = 0.0;
+        }
+
+        return result;
+
+    }
+
     @Override
     public IGcodePoint [] interpolateLine ( IGcodePoint point1, IGcodePoint point2 ) {
 
@@ -487,28 +530,28 @@ public class GcodeProgramImpl implements IGcodeProgram {
         // first point of path
         result.add ( interpolate ( p1 ) );
 
-        double dx = p2.x - p1.x;
-        double dy = p2.y - p1.y;
-        double dz = p2.z - p1.z;
+        final double dx = subDouble ( p2.x, p1.x );
+        final double dy = subDouble ( p2.y, p1.y );
+        final double dz = subDouble ( p2.z, p1.z );
 
         if ( dx == 0.0 && dy == 0 ) {
             result.add ( interpolate ( p2 ) );
             return result.toArray ( new IGcodePoint [0] );
         }
 
-        double ii1 = (p1.x - min.x) / xStepWidth + EPSILON;
-        int i1 = (int) ii1;
+        double ii1 = (p1.x - min.x + EPSILON) / xStepWidth;
+        final int i1 = (int) ii1;
         ii1 -= i1;
 
-        double jj1 = (p1.y - min.y) / yStepWidth + EPSILON;
-        int j1 = (int) jj1;
+        double jj1 = (p1.y - min.y + EPSILON) / yStepWidth;
+        final int j1 = (int) jj1;
         jj1 -= j1;
 
-        double ii2 = (p2.x - min.x) / xStepWidth + EPSILON;
+        double ii2 = (p2.x - min.x + EPSILON) / xStepWidth;
         int i2 = (int) ii2;
         ii2 -= i2;
 
-        double jj2 = (p2.y - min.y) / yStepWidth + EPSILON;
+        double jj2 = (p2.y - min.y + EPSILON) / yStepWidth;
         int j2 = (int) jj2;
         jj2 -= j2;
 
@@ -518,32 +561,36 @@ public class GcodeProgramImpl implements IGcodeProgram {
         double llXYZ = llXY + dz * dz;
         double distXYZ = Math.sqrt ( llXYZ );
 
-        dx /= distXY; // cos
-        dy /= distXY; // cos
-        dz *= distXY / llXYZ; // correction for the slope in z vs. the travel in xy
+        double cosX = dx / distXY; // cos
+        double cosY = dy / distXY; // cos
+        final double cosZ = dz * distXY / distXYZ; // correction for the slope in z vs. the travel in xy
 
-        if ( Math.abs ( dx ) < 1e-10 ) dx = 0.0;
-        if ( Math.abs ( dy ) < 1e-10 ) dy = 0.0;
+        // if ( Math.abs ( dx ) < 1e-10 ) dx = 0.0;
+        // if ( Math.abs ( dy ) < 1e-10 ) dy = 0.0;
+        // if ( Math.abs ( dx ) <= EPSILON ) {cosX = 0.0;
+        // if ( Math.abs ( dy ) <= EPSILON ) cosY = 0.0;
 
         // next intersection
         int i = i1;
         if ( dx > 0.0 ) {
             i++;
-            if ( ii2 != 0.0 ) i2++;
+            // if ( ii2 != 0.0 ) i2++;
+            if ( Math.abs ( ii2 ) > EPSILON ) i2++;
         }
         else if ( dx < 0.0 ) {
-            if ( ii1 == 0.0 ) i--;
-            // if ( ii2 != 0.0 ) i2++;
+            // if ( ii1 == 0.0 ) i--;
+            if ( Math.abs ( ii1 ) <= EPSILON ) i--;
         }
 
         int j = j1;
         if ( dy > 0.0 ) {
             j++;
-            if ( jj2 != 0.0 ) j2++;
+            // if ( jj2 != 0.0 ) j2++;
+            if ( Math.abs ( jj2 ) > EPSILON ) j2++;
         }
         else if ( dy < 0.0 ) {
-            if ( jj1 == 0.0 ) j--;
-            // if ( jj2 != 0.0 ) j2++;
+            // if ( jj1 == 0.0 ) j--;
+            if ( Math.abs ( jj1 ) <= EPSILON ) j--;
         }
 
         double x = p1.x;
@@ -559,41 +606,43 @@ public class GcodeProgramImpl implements IGcodeProgram {
         while ( i != i2 || j != j2 ) {
 
             // HACK delete later
-            if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) return null;
-            // System.out.println ( "i=" + i + " j=" + j );
+            // if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) return null;
+            if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) {
+                System.out.println ( "i=" + i + " j=" + j );
+            }
 
             if ( dx != 0.0 ) {
                 xn = min.x + i * xStepWidth; // wie matrix [i][j].x
-                tx = (xn - p1.x) / dx; // distXY from p1 to pn by moving x
+                tx = (xn - p1.x) / cosX; // distXY from p1 to pn by moving x
             }
 
             if ( dy != 0.0 ) {
                 yn = min.y + j * yStepWidth;
-                ty = (yn - p1.y) / dy; // distXY from p1 to pn by moving y
+                ty = (yn - p1.y) / cosY; // distXY from p1 to pn by moving y
             }
 
             if ( Math.abs ( tx ) == Math.abs ( ty ) ) {
                 x = xn;
                 y = yn;
-                z = p1.z + tx * dz;
+                z = p1.z + tx * cosZ;
                 if ( dx > 0.0 ) i++;
-                else i--;
+                else if ( dx <= 0.0 ) i--;
                 if ( dy > 0.0 ) j++;
-                else j--;
+                else if ( dy <= 0.0 ) j--;
             }
-            else if ( tx < ty ) {
+            else if ( Math.abs ( tx ) < Math.abs ( ty ) ) {
                 x = xn;
-                y = p1.y + tx * dy;
-                z = p1.z + tx * dz;
+                y = p1.y + tx * cosY;
+                z = p1.z + tx * cosZ;
                 if ( dx > 0.0 ) i++;
-                else i--;
+                else if ( dx < 0.0 ) i--;
             }
             else {
-                x = p1.x + ty * dx;
+                x = p1.x + ty * cosX;
                 y = yn;
-                z = p1.z + ty * dz;
+                z = p1.z + ty * cosZ;
                 if ( dy > 0.0 ) j++;
-                else j--;
+                else if ( dy < 0.0 ) j--;
             }
 
             result.add ( interpolate ( new GcodePointImpl ( x, y, z ) ) );
@@ -602,7 +651,31 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         result.add ( interpolate ( p2 ) );
 
+        // if ( !isPathMonotonic ( (GcodePointImpl) point1, (GcodePointImpl) point2, result ) ) {
+        //
+        // LOG.error ( "interpolateLine: path=" + result );
+        // LOG.error ( "interpolateLine: dx=" + dx + " dy=" + dy + " dz=" + dz );
+        // LOG.error ( "interpolateLine: i1=" + i1 + " ii1=" + ii1 + " i2=" + i2 + " ii2=" + ii2 );
+        //
+        // }
+
         return result.toArray ( new IGcodePoint [0] );
+
+    }
+
+    @SuppressWarnings("unused")
+    private boolean isPathMonotonic ( GcodePointImpl p1, GcodePointImpl p2, ArrayList<IGcodePoint> path ) {
+        
+        double pathSignum = Math.signum ( p2.x - p1.x );
+
+        for ( IGcodePoint p : path ) {
+            final double pointSignum = Math.signum ( p2.x - p.getX () );
+            if ( pointSignum != 0.0 && pathSignum != pointSignum ) {
+ return false;
+            }
+        }
+        
+        return true;
 
     }
 
@@ -963,7 +1036,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     }
 
-    public static void main ( String [] args ) {
+    public static void _main ( String [] args ) {
 
         GcodeProgramImpl m = new GcodeProgramImpl ();
         m.initTest ();

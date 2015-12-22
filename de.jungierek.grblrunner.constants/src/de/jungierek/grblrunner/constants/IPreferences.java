@@ -63,4 +63,6 @@ public interface IPreferences {
     public final static boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = false;
     public final static boolean AUTOLEVEL_SLOW_Z_SIMULATION = false;
 
+    public static final int MAX_SEEK_FEEDRATE = 600; // mm/min
+
 }

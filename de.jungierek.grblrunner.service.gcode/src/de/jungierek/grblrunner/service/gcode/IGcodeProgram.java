@@ -26,6 +26,8 @@ public interface IGcodeProgram {
     public IGcodePoint getMin ();
     public IGcodePoint getMax ();
 
+    public int getDuration ();
+
     public void parse ();
 
     public void resetProcessed ();

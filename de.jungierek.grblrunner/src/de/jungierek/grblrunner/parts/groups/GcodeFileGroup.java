@@ -6,7 +6,6 @@ import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.swt.SWT;
@@ -22,19 +21,12 @@ import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
-import de.jungierek.grblrunner.tools.PartTools;
 
 public class GcodeFileGroup {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeFileGroup.class );
 
     private static final String GROUP_NAME = "Gcode";
-
-    @Inject
-    private PartTools partTools;
-
-    @Inject
-    private IEventBroker eventBroker;
 
     @Inject
     private IGcodeProgram gcodeProgram;
@@ -45,6 +37,7 @@ public class GcodeFileGroup {
 
     private Label gcodeMinLabel;
     private Label gcodeMaxLabel;
+    private Label gcodeTimeLabel;
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
@@ -64,6 +57,18 @@ public class GcodeFileGroup {
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "max", 1 );
         gcodeMaxLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
 
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "time", 1 );
+        gcodeTimeLabel = GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "12", 1 );
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "min", 1 );
+
+    }
+
+    private void refreshGuiData () {
+
+        gcodeMinLabel.setText ( "" + gcodeProgram.getMin () );
+        gcodeMaxLabel.setText ( "" + gcodeProgram.getMax () );
+        gcodeTimeLabel.setText ( "" + gcodeProgram.getDuration () );
+
     }
 
     @Inject
@@ -72,8 +77,7 @@ public class GcodeFileGroup {
 
         LOG.debug ( "macroGeneratedNotified:" );
 
-        gcodeMinLabel.setText ( "" + gcodeProgram.getMin () );
-        gcodeMaxLabel.setText ( "" + gcodeProgram.getMax () );
+        refreshGuiData ();
 
     }
 
@@ -83,8 +87,7 @@ public class GcodeFileGroup {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
-        gcodeMinLabel.setText ( "" + gcodeProgram.getMin () );
-        gcodeMaxLabel.setText ( "" + gcodeProgram.getMax () );
+        refreshGuiData ();
 
     }
 

@@ -753,7 +753,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     if ( gcodeLine.isMoveInXYZ () ) {
                         IGcodePoint [] path = gcodeProgram.interpolateLine ( gcodeLine.getStart (), gcodeLine.getEnd () );
                         for ( int i = 1; i < path.length; i++ ) {
-                            // TODO eliminate first point?
+                            // Attention: eliminate first point in path with index 0, because G0 lines has'nt autoleveled.
+                            // So the last end point (autoleveled or not) is the start point of the next move
                             String segment = cmd;
                             segment += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getX () );
                             segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getY () );

@@ -600,6 +600,12 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
             return false;
         }
 
+        @Override
+        public int getDuration () {
+            // TODO Auto-generated method stub
+            return 0;
+        }
+
     }
 
     @Override
