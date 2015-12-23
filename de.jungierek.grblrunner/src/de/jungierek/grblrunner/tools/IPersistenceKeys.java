@@ -25,4 +25,8 @@ public interface IPersistenceKeys {
 
     public static final String KEY_MACRO_TYPE = "macro.type";
 
+    public static final String KEY_TERMINAL_GRBL_STATE = "TERMINAL_GRBL_STATE";
+    public static final String KEY_TERMINAL_GRBL_MODES = "TERMINAL_GRBL_MODES";
+    public static final String KEY_TERMINAL_SUPPRESS_LINES = "TERMINAL_GRBL_SUPPRESS_LINES";
+
 }

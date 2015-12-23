@@ -1,11 +1,16 @@
 package de.jungierek.grblrunner.parts;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -23,6 +28,8 @@ import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.gcode.IGrblRequest;
 import de.jungierek.grblrunner.service.gcode.IGrblResponse;
+import de.jungierek.grblrunner.tools.IPersistenceKeys;
+import de.jungierek.grblrunner.tools.PartTools;
 
 public class TerminalPart {
 
@@ -30,24 +37,27 @@ public class TerminalPart {
 
     private static final String JUSTIFY_PLACE = "                    ";
 
-    private boolean showSuppressedLines = false;
-
     @Inject
-    private IGcodeService gcode;
+    private IGcodeService gcodeService;
 
     @Inject
     private Display display;
+
+    @Inject
+    private PartTools partTools;
 
     private Color WHITE, RED, GREEN, GRAY, LIGHT_GREEN, LIGHT_GRAY, YELLOW;
 
     // private Text terminalText;
     private StyledText terminalText;
 
-    private boolean showGrblState = true;
-    private boolean showGcodeState = true;
+    private boolean showSuppressedLines = false;
+
+    private boolean showGrblStateLines = false;
+    private boolean showGcodeModeLines = false;
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, IEclipseContext context, MApplication application ) {
 
         WHITE = display.getSystemColor ( SWT.COLOR_WHITE );
         RED = display.getSystemColor ( SWT.COLOR_RED );
@@ -63,9 +73,14 @@ public class TerminalPart {
         terminalText = new StyledText ( parent, SWT.MULTI | SWT.V_SCROLL );
         // TODO_PREF to pref
         terminalText.setFont ( new Font ( display, "Courier", 10, SWT.NONE ) );
-        //terminalText.setEnabled ( false );
         terminalText.setEditable ( false );
         terminalText.setBackground ( display.getSystemColor ( SWT.COLOR_WHITE ) );
+
+        final Map<String, String> persistedState = application.getPersistedState ();
+        showSuppressedLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_SUPPRESS_LINES ) );
+        showGrblStateLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_STATE ) );
+        showGcodeModeLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_MODES ) );
+        // LOG.info ( "createGui: lines=" + showSuppressedLines + " state=" + showGrblStateLines + " gcode=" + showGcodeModeLines );
 
     }
 
@@ -96,6 +111,19 @@ public class TerminalPart {
     
         appendText ( line, null, null, textStyle );
     
+    }
+
+    @PersistState
+    public void persistState ( MApplication application ) {
+        
+        LOG.debug ( "persistState:" );
+
+        final Map<String, String> persistedState = application.getPersistedState ();
+
+        persistedState.put ( IPersistenceKeys.KEY_TERMINAL_SUPPRESS_LINES, "" + showSuppressedLines );
+        persistedState.put ( IPersistenceKeys.KEY_TERMINAL_GRBL_STATE, "" + showGrblStateLines );
+        persistedState.put ( IPersistenceKeys.KEY_TERMINAL_GRBL_MODES, "" + showGcodeModeLines );
+
     }
 
     @Inject
@@ -166,7 +194,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGrblRequest command ) {
+    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGrblRequest command, EModelService modelService, MApplication application ) {
 
         LOG.trace ( "sentNotified: command=" + command );
 
@@ -186,7 +214,7 @@ public class TerminalPart {
 
             boolean show = true;
 
-            if ( line.startsWith ( "$G" ) ) show = showGcodeState;
+            if ( line.startsWith ( "$G" ) ) show = showGcodeModeLines;
 
             if ( show ) appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
 
@@ -236,7 +264,7 @@ public class TerminalPart {
 
                 boolean show = true;
 
-                if ( line.startsWith ( "<" ) ) show = showGrblState;
+                if ( line.startsWith ( "<" ) ) show = showGrblStateLines;
                 else if ( line.startsWith ( "[G54" ) ) {} // do nothing
                 else if ( line.startsWith ( "[G55" ) ) {} // do nothing
                 else if ( line.startsWith ( "[G56" ) ) {} // do nothing
@@ -247,7 +275,7 @@ public class TerminalPart {
                 else if ( line.startsWith ( "[G30" ) ) {} // do nothing
                 else if ( line.startsWith ( "[G92" ) ) {} // do nothing
                 else if ( line.startsWith ( "[G" ) ) {
-                    show = showGcodeState;
+                    show = showGcodeModeLines;
                     if ( !show ) ignoreNextOk = true;
                 }
 
@@ -275,7 +303,7 @@ public class TerminalPart {
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
         // convert from machine to work coordinate system
-        final IGcodePoint p = probe.sub ( gcode.getFixtureShift () );
+        final IGcodePoint p = probe.sub ( gcodeService.getFixtureShift () );
         terminalText.append ( "" + probe + "    delta=" + String.format ( IGcodePoint.FORMAT_COORDINATE, p.getZ () ) + "\n" );
 
         scrollToEnd ();
@@ -310,17 +338,17 @@ public class TerminalPart {
 
     public void setShowGrblState ( boolean show ) {
 
-        LOG.info ( "setSuppressGrblState: selected=" + show );
+        LOG.debug ( "setSuppressGrblState: selected=" + show );
 
-        showGrblState = show;
+        showGrblStateLines = show;
 
     }
 
     public void setShowGcodeState ( boolean show ) {
 
-        LOG.info ( "setSuppressGcodState: selected=" + show );
+        LOG.debug ( "setSuppressGcodState: selected=" + show );
 
-        showGcodeState = show;
+        showGcodeModeLines = show;
 
     }
         

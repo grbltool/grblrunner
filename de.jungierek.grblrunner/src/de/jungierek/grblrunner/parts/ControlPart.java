@@ -60,8 +60,8 @@ public class ControlPart {
     private Button spindleStopButton;
     private Button grblHelpButton;
     private Button grblSettingsButton;
-    private Button grblParameterButton;
-    private Button grblParserButton;
+    private Button grblCoordinatesButton;
+    private Button grblModesButton;
     private Button grblInfoButton;
     private Button grblStartupBlocksButton;
     private Button grblHomeButton;
@@ -160,25 +160,6 @@ public class ControlPart {
 
         if ( scanClearanceZText != null && !scanClearanceZText.isDisposed () ) { // gui created
             setAutolevelControlsEnabled ( true );
-        }
-
-    }
-
-    private class SimpleGrblCommandSelectionListener extends SelectionAdapter {
-        
-        private String simpleCommand = "NO_COMMAND";
-        
-        public SimpleGrblCommandSelectionListener ( String simpleCommand ) {
-            
-            this.simpleCommand = simpleCommand;
-            
-        }
-
-        @Override
-        public void widgetSelected ( SelectionEvent evt ) {
-
-            gcodeService.sendCommand ( simpleCommand );
-            
         }
 
     }
@@ -370,17 +351,17 @@ public class ControlPart {
         
         grblHelpButton = GuiFactory.createPushButton ( groupSettings, "$", SWT.FILL, true );
         grblSettingsButton = GuiFactory.createPushButton ( groupSettings, "$$", SWT.FILL, true );
-        grblParameterButton = GuiFactory.createPushButton ( groupSettings, "$#", SWT.FILL, true );
-        grblParserButton = GuiFactory.createPushButton ( groupSettings, "$G", SWT.FILL, true );
+        grblCoordinatesButton = GuiFactory.createPushButton ( groupSettings, "$#", SWT.FILL, true );
+        grblModesButton = GuiFactory.createPushButton ( groupSettings, "$G", SWT.FILL, true );
         grblInfoButton = GuiFactory.createPushButton ( groupSettings, "$I", SWT.FILL, true );
         grblStartupBlocksButton = GuiFactory.createPushButton ( groupSettings, "$N", SWT.FILL, true );
 
-        grblHelpButton.addSelectionListener ( new SimpleGrblCommandSelectionListener ( "$" ) );
-        grblSettingsButton.addSelectionListener ( new SimpleGrblCommandSelectionListener ( "$$" ) );
-        grblParameterButton.addSelectionListener ( new SimpleGrblCommandSelectionListener ( "$#" ) );
-        grblParserButton.addSelectionListener ( new SimpleGrblCommandSelectionListener ( "$G" ) );
-        grblInfoButton.addSelectionListener ( new SimpleGrblCommandSelectionListener ( "$I" ) );
-        grblStartupBlocksButton.addSelectionListener ( new SimpleGrblCommandSelectionListener ( "$N" ) );
+        grblHelpButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_HELP ) );
+        grblSettingsButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_SETTINGS ) );
+        grblCoordinatesButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_COORIDNATES ) );
+        grblModesButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_MODES ) );
+        grblInfoButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_INFO ) );
+        grblStartupBlocksButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_STARTUP ) );
 
     }
 
@@ -402,14 +383,9 @@ public class ControlPart {
         grblCheckButton = GuiFactory.createPushButton ( groupGrbl, "check", SWT.FILL, true );
         GuiFactory.createHiddenLabel ( groupGrbl );
         
-        // TODO if i am using handledmenuitem in execute, this call never finds the appropriate handler
-        // grblHomeButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_HOME ) );
-        // grblUnlockButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_UNLOCK ) );
-        // grblCheckButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_CHECK ) );
-
-        grblHomeButton.addSelectionListener ( new SimpleGrblCommandSelectionListenerSuppressedInTerminal ( "$H" ) );
-        grblUnlockButton.addSelectionListener ( new SimpleGrblCommandSelectionListenerSuppressedInTerminal ( "$X" ) );
-        grblCheckButton.addSelectionListener ( new SimpleGrblCommandSelectionListenerSuppressedInTerminal ( "$C" ) );
+        grblHomeButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_HOME ) );
+        grblUnlockButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_UNLOCK ) );
+        grblCheckButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_GRBL_CHECK ) );
 
     }
 
@@ -570,8 +546,8 @@ public class ControlPart {
         
         grblHelpButton.setEnabled ( enabled );
         grblSettingsButton.setEnabled ( enabled );
-        grblParameterButton.setEnabled ( enabled );
-        grblParserButton.setEnabled ( enabled );
+        grblCoordinatesButton.setEnabled ( enabled );
+        grblModesButton.setEnabled ( enabled );
         grblInfoButton.setEnabled ( enabled );
         grblStartupBlocksButton.setEnabled ( enabled );
         

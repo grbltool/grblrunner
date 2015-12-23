@@ -167,4 +167,10 @@ public class PartTools {
 
     }
 
+    public boolean parseBoolean ( String value ) {
+
+        return Boolean.parseBoolean ( value );
+
+    }
+
 }

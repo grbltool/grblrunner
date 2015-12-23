@@ -82,6 +82,13 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_zVsioKcSEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.unlock" label="Unlock" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/unlock.gif" command="_5KwRAH7PEeWpHvdXu7TwpQ"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_9vUB0KcSEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.check" label="Check" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/check.gif" command="_9zL0sH7PEeWpHvdXu7TwpQ"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_DLA1gKcTEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.menuseparator.5"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_RE87QKlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.help" label="Grbl Help" command="_FJUFAH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_R8SL4KlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.settings" label="Grbl Settings" command="_FWMDYH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_STH-kKlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.coordinates" label="Grbl Coordinates" command="_FkdI4H7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_SlXlIKlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.modes" label="Grbl Modes" command="_FvgiUH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_S2GIwKlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.info" label="Grbl Info" command="_F550cH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_TH64kKlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.startup" label="Grbl Startup" command="_GE9N4H7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_T-bCwKlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.menuseparator.6"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_6fyHIDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.exit" label="_Exit"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_UN-uMDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menu.serial.test" label="Serial">
@@ -207,24 +214,12 @@
         <children xsi:type="menu:HandledToolItem" xmi:id="_BMTXgH7OEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handledtoolitem.grbl.unlock" label="Unlock" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/unlock.gif" command="_5KwRAH7PEeWpHvdXu7TwpQ"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_JhNM8H7OEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handledtoolitem.grbl.check" label="Check" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/check.gif" command="_9zL0sH7PEeWpHvdXu7TwpQ"/>
         <children xsi:type="menu:ToolBarSeparator" xmi:id="_pVq-8H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.toolbarseparator.2"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_qLP8EH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$" label="$" command="_FJUFAH7hEeW1G6qhYeYpMg">
-          <persistedState key="no_suppress_lines" value="x"/>
-        </children>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_rpqa0H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$$" label="$$" command="_FWMDYH7hEeW1G6qhYeYpMg">
-          <persistedState key="no_suppress_lines" value="x"/>
-        </children>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_r_wmoH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$#" label="$#" command="_FkdI4H7hEeW1G6qhYeYpMg">
-          <persistedState key="no_suppress_lines" value="x"/>
-        </children>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_sVAd4H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$G" label="$G" command="_FvgiUH7hEeW1G6qhYeYpMg">
-          <persistedState key="no_suppress_lines" value="x"/>
-        </children>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_spfgIH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$I" label="$I" command="_F550cH7hEeW1G6qhYeYpMg">
-          <persistedState key="no_suppress_lines" value="x"/>
-        </children>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_tFYx8H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$N" label="$N" command="_GE9N4H7hEeW1G6qhYeYpMg">
-          <persistedState key="no_suppress_lines" value="x"/>
-        </children>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_qLP8EH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$" label="$" command="_FJUFAH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_rpqa0H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$$" label="$$" command="_FWMDYH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_r_wmoH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$#" label="$#" command="_FkdI4H7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_sVAd4H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$G" label="$G" command="_FvgiUH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_spfgIH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$I" label="$I" command="_F550cH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_tFYx8H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$N" label="$N" command="_GE9N4H7hEeW1G6qhYeYpMg"/>
       </children>
     </trimBars>
   </children>
@@ -246,15 +241,15 @@
   <handlers xmi:id="_nXnU4H4yEeWuY_2UnCduYA" elementId="de.jungierek.grblrunner.handler. cycle.start" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.CycleStartHandler" command="_aF5nMH4yEeWuY_2UnCduYA"/>
   <handlers xmi:id="_ty9AoH4yEeWuY_2UnCduYA" elementId="de.jungierek.grblrunner.handler.cycle.pause" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.CyclePauseHandler" command="_daNQkH4yEeWuY_2UnCduYA"/>
   <handlers xmi:id="_y7Xr8H4yEeWuY_2UnCduYA" elementId="de.jungierek.grblrunner.handler.cycle.reset" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.CycleResetHandler" command="_h_GYEH4yEeWuY_2UnCduYA"/>
-  <handlers xmi:id="_Nn_KMH7QEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handler.grbl.home" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeSimpleCommandHandler" command="_0hrNEH7PEeWpHvdXu7TwpQ"/>
-  <handlers xmi:id="_TdC5EH7QEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handler.gcode.unlock" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeSimpleCommandHandler" command="_5KwRAH7PEeWpHvdXu7TwpQ"/>
-  <handlers xmi:id="_YcbkMH7QEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handler.gcode.check" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeSimpleCommandHandler" command="_9zL0sH7PEeWpHvdXu7TwpQ"/>
-  <handlers xmi:id="_SHMQsH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeSimpleCommandHandler" command="_FJUFAH7hEeW1G6qhYeYpMg"/>
-  <handlers xmi:id="_STu34H7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$$" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeSimpleCommandHandler" command="_FWMDYH7hEeW1G6qhYeYpMg"/>
-  <handlers xmi:id="_SnloAH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$#" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeSimpleCommandHandler" command="_FkdI4H7hEeW1G6qhYeYpMg"/>
-  <handlers xmi:id="_S7pzgH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$G" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeSimpleCommandHandler" command="_FvgiUH7hEeW1G6qhYeYpMg"/>
-  <handlers xmi:id="_TSgNQH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$I" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeSimpleCommandHandler" command="_F550cH7hEeW1G6qhYeYpMg"/>
-  <handlers xmi:id="_Tt3TkH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$N" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeSimpleCommandHandler" command="_GE9N4H7hEeW1G6qhYeYpMg"/>
+  <handlers xmi:id="_Nn_KMH7QEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handler.grbl.home" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblHomeCommandHandleer" command="_0hrNEH7PEeWpHvdXu7TwpQ"/>
+  <handlers xmi:id="_TdC5EH7QEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handler.gcode.unlock" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblUnlockCommandHandler" command="_5KwRAH7PEeWpHvdXu7TwpQ"/>
+  <handlers xmi:id="_YcbkMH7QEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handler.gcode.check" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblCheckCommandHandler" command="_9zL0sH7PEeWpHvdXu7TwpQ"/>
+  <handlers xmi:id="_SHMQsH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblHelpCommandHandler" command="_FJUFAH7hEeW1G6qhYeYpMg"/>
+  <handlers xmi:id="_STu34H7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$$" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblSettingsCommandHandler" command="_FWMDYH7hEeW1G6qhYeYpMg"/>
+  <handlers xmi:id="_SnloAH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$#" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblCoordinatesCommandHandler" command="_FkdI4H7hEeW1G6qhYeYpMg"/>
+  <handlers xmi:id="_S7pzgH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$G" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblModesCommandHandler" command="_FvgiUH7hEeW1G6qhYeYpMg"/>
+  <handlers xmi:id="_TSgNQH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$I" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblInfoCommandHandler" command="_F550cH7hEeW1G6qhYeYpMg"/>
+  <handlers xmi:id="_Tt3TkH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handler.gcode.$N" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblStartupCommandHandler" command="_GE9N4H7hEeW1G6qhYeYpMg"/>
   <handlers xmi:id="_8EmGUJVUEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handler.gcode.close" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeCloseHandler" command="_0fevEJVUEeWjToG7KvW0lw"/>
   <handlers xmi:id="_WZk6wJW9EeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handler.debug" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.DebugHandler" command="_Kk5LwJW9EeWjToG7KvW0lw"/>
   <handlers xmi:id="_VE7ooJw3EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handler.gcode.macro" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeMarcoHandler" command="_Mt2o8Jw3EeWzN9HK6hG3ug"/>
@@ -337,15 +332,15 @@
   <commands xmi:id="_aF5nMH4yEeWuY_2UnCduYA" elementId="de.jungierek.grblrunner.command.cycle.start" commandName="Start/Resume Cycle"/>
   <commands xmi:id="_daNQkH4yEeWuY_2UnCduYA" elementId="de.jungierek.grblrunner.command.cycle.pause" commandName="Pause Cycle"/>
   <commands xmi:id="_h_GYEH4yEeWuY_2UnCduYA" elementId="de.jungierek.grblrunner.command.cycle.reset" commandName="Reset Cycle"/>
-  <commands xmi:id="_0hrNEH7PEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.command.grbl.home" commandName="Home"/>
-  <commands xmi:id="_5KwRAH7PEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.command.grbl.unlock" commandName="Unlock"/>
-  <commands xmi:id="_9zL0sH7PEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.command.grbl.check" commandName="Check"/>
-  <commands xmi:id="_FJUFAH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.gcode.$" commandName="$"/>
-  <commands xmi:id="_FWMDYH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.gcode.$$" commandName="$$"/>
-  <commands xmi:id="_FkdI4H7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.gcode.$#" commandName="$#"/>
-  <commands xmi:id="_FvgiUH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.gcode.$G" commandName="$G"/>
-  <commands xmi:id="_F550cH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.gcode.$I" commandName="$I"/>
-  <commands xmi:id="_GE9N4H7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.gcode.$N" commandName="$N"/>
+  <commands xmi:id="_0hrNEH7PEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.command.grbl.home" commandName="Grbl Home"/>
+  <commands xmi:id="_5KwRAH7PEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.command.grbl.unlock" commandName="Grbl Unlock"/>
+  <commands xmi:id="_9zL0sH7PEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.command.grbl.check" commandName="Grbl Check"/>
+  <commands xmi:id="_FJUFAH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.grbl.help" commandName="Grbl Help"/>
+  <commands xmi:id="_FWMDYH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.grbl.settings" commandName="Grbl Settings"/>
+  <commands xmi:id="_FkdI4H7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.grbl.coordinates" commandName="Grbl Coordinates"/>
+  <commands xmi:id="_FvgiUH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.grbl.modes" commandName="Grbl Modes"/>
+  <commands xmi:id="_F550cH7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.grbl.info" commandName="Grbl Info"/>
+  <commands xmi:id="_GE9N4H7hEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.command.grbl.startup" commandName="Grbl Startup"/>
   <commands xmi:id="_0fevEJVUEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.command.gcode.close" commandName="Close Gcode"/>
   <commands xmi:id="_Kk5LwJW9EeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.command.debug" commandName="Debug"/>
   <commands xmi:id="_Mt2o8Jw3EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.command.gcode.macro" commandName="Gcode Macro"/>
