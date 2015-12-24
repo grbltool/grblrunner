@@ -162,7 +162,7 @@ public class ProgressGroup {
 
         progressBar.setMinimum ( 0 );
         // progressBar.setMaximum ( progressMaxScan );
-        program.getNumProbePoints ();
+        progressBar.setMaximum ( program.getNumProbePoints () );
         progressBar.setSelection ( 0 );
 
     }
