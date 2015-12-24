@@ -53,8 +53,8 @@ public class TerminalPart {
 
     private boolean showSuppressedLines = false;
 
-    private boolean showGrblStateLines = false;
-    private boolean showGcodeModeLines = false;
+    private boolean showGrblStateLines = true;
+    private boolean showGcodeModeLines = true;
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context, MApplication application ) {
