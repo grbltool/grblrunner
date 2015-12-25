@@ -12,7 +12,7 @@ public class GrblCoordinatesCommandHandler extends GrblCommandHandler {
     @Override
     protected boolean isSuppressLines () {
 
-        return true;
+        return false;
 
     }
 

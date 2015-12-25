@@ -5,7 +5,7 @@ public class GrblSettingsCommandHandler extends GrblCommandHandler {
     @Override
     protected String getCommand () {
 
-        return "";
+        return "$$";
     }
 
     @Override
