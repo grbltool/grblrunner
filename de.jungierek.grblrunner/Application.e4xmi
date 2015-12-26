@@ -253,6 +253,7 @@
   <handlers xmi:id="_8EmGUJVUEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handler.gcode.close" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeCloseHandler" command="_0fevEJVUEeWjToG7KvW0lw"/>
   <handlers xmi:id="_WZk6wJW9EeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handler.debug" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.DebugHandler" command="_Kk5LwJW9EeWjToG7KvW0lw"/>
   <handlers xmi:id="_VE7ooJw3EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handler.gcode.macro" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeMarcoHandler" command="_Mt2o8Jw3EeWzN9HK6hG3ug"/>
+  <handlers xmi:id="_5tGfUKuhEeWduZibCJ6agQ" elementId="de.jungierek.grblrunner.handler.grbl.toolchange" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblToolChangeHandler" command="_z96u8KuhEeWduZibCJ6agQ"/>
   <bindingTables xmi:id="_JWsysIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.bindingtable.global" bindingContext="_TThFefsBEeSJsKKNyX_1bw">
     <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+O" command="_PP9sEHdmEeW3XImWwiVxiA">
       <tags>type:user</tags>
@@ -279,6 +280,9 @@
       <tags>type:user</tags>
     </bindings>
     <bindings xmi:id="_gzRT0KcTEeWHi4QNCVun-A" elementId="de.jungierek.grblrunner.keybinding.grbl.check" keySequence="M3+C" command="_9zL0sH7PEeWpHvdXu7TwpQ">
+      <tags>type:user</tags>
+    </bindings>
+    <bindings xmi:id="_IYB4IKuhEeWduZibCJ6agQ" elementId="de.jungierek.grblrunner.keybinding.grbl.toolchange" keySequence="M3+T" command="_z96u8KuhEeWduZibCJ6agQ">
       <tags>type:user</tags>
     </bindings>
   </bindingTables>
@@ -344,6 +348,7 @@
   <commands xmi:id="_0fevEJVUEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.command.gcode.close" commandName="Close Gcode"/>
   <commands xmi:id="_Kk5LwJW9EeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.command.debug" commandName="Debug"/>
   <commands xmi:id="_Mt2o8Jw3EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.command.gcode.macro" commandName="Gcode Macro"/>
+  <commands xmi:id="_z96u8KuhEeWduZibCJ6agQ" elementId="de.jungierek.grblrunner.command.grbl.toolchange" commandName="Grbl Tool Change"/>
   <addons xmi:id="_TThFcvsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_TThFc_sBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_TThFdPsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
