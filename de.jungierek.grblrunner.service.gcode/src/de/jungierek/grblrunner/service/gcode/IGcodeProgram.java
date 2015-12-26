@@ -47,6 +47,11 @@ public interface IGcodeProgram {
     public void prepareAutolevelScan ( int xSteps, int ySteps );
     boolean isAutolevelScanPrepared ();
 
+    void setAutolevelStart ();
+    void setAutolevelStop ();
+
+    boolean isAutolevelScan ();
+
     public int getXSteps ();
     public int getYSteps ();
     public double getStepWidthX ();

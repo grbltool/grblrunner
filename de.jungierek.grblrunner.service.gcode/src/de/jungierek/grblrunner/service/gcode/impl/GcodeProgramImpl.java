@@ -56,10 +56,9 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private double rotationAngle = 0;
 
     private boolean playing;
+    private boolean scanning;
 
-    public GcodeProgramImpl () {
-        // TODO Auto-generated constructor stub
-    }
+    public GcodeProgramImpl () {}
 
     @Inject
     public GcodeProgramImpl ( IEventBroker eventBroker ) {
@@ -148,7 +147,6 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         rotationAngle = 0.0;
 
-        // TODO find references and call this explicite
         clearAutolevelData ();
 
     }
@@ -256,9 +254,9 @@ public class GcodeProgramImpl implements IGcodeProgram {
             min = (GcodePointImpl) min.min ( point );
             max = (GcodePointImpl) max.max ( point );
 
-            durationInMinutes += computeDuration ( gcodeLine );
-
         }
+
+        durationInMinutes += computeDuration ( gcodeLine );
 
     }
     
@@ -272,12 +270,15 @@ public class GcodeProgramImpl implements IGcodeProgram {
         final double dz = Math.abs ( end.getZ () - start.getZ () );
         final double dist = Math.sqrt ( dx * dx + dy * dy + dz * dz );
 
-        double feedrate = IPreferences.MAX_SEEK_FEEDRATE;
+        // double feedrate = IPreferences.MAX_SEEK_FEEDRATE;
+        double feedrate = IPreferences.AVG_SEEK_FEEDRATE;
         if ( gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR || gcodeLine.isArcMode () ) {
             feedrate = gcodeLine.getFeedrate ();
         }
         double time = 0.0;
         if ( feedrate != 0 ) time = dist / feedrate;
+
+        // LOG.info ( "computeDuration: l=" + gcodeLine + " s=" + start + " e=" + end + " d=" + dist + " t=" + time );
         return time;
 
     }
@@ -394,6 +395,27 @@ public class GcodeProgramImpl implements IGcodeProgram {
         }
 
         clearZ ();
+
+    }
+
+    @Override
+    public void setAutolevelStart () {
+
+        scanning = true;
+
+    }
+
+    @Override
+    public void setAutolevelStop () {
+
+        scanning = false;
+
+    }
+
+    @Override
+    public boolean isAutolevelScan () {
+
+        return scanning;
 
     }
 

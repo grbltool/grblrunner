@@ -173,7 +173,7 @@ public class ProgressGroup {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
-        if ( gcodeService.isScanning () ) {
+        if ( gcodeService.isAutolevelScan () ) {
 
             progressBar.setSelection ( progressBar.getSelection () + 1 );
 

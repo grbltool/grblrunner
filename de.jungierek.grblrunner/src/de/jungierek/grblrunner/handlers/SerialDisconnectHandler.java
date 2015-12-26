@@ -23,7 +23,7 @@ public class SerialDisconnectHandler {
     @CanExecute
     public boolean canExecute ( ISerialService serial, IGcodeService gcode ) {
 
-        return serial.isOpen () && !gcode.isScanning () && !gcode.isPlaying ();
+        return serial.isOpen () && !gcode.isAutolevelScan () && !gcode.isPlaying ();
 
     }
 

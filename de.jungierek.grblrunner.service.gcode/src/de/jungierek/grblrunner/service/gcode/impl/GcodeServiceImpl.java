@@ -451,7 +451,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @Override
     public void playGcodeProgram ( IGcodeProgram program ) {
 
-        if ( isPlaying () || isScanning () ) return;
+        if ( isPlaying () || isAutolevelScan () ) return;
 
         gcodeProgram = program;
 
@@ -464,7 +464,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @Override
     public void scanAutolevelData ( IGcodeProgram program, double zMin, double zMax, double zClearance, double probeFeedrate ) {
 
-        if ( isPlaying () || isScanning () ) return;
+        if ( isPlaying () || isAutolevelScan () ) return;
 
         gcodeProgram = program;
 
@@ -516,7 +516,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     }
 
     @Override
-    public boolean isScanning () {
+    public boolean isAutolevelScan () {
 
         return scanRunning;
 
@@ -663,6 +663,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         @Override
         public void run () {
     
+            gcodeProgram.setAutolevelStart ();
             sendCommand ( IConstants.GCODE_SCAN_START );
 
             final int xlength = gcodeProgram.getXSteps () + 1;
@@ -704,6 +705,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
     
             sendCommand ( IConstants.GCODE_SCAN_END );
+            gcodeProgram.setAutolevelStop ();
     
             LOG.debug ( "stopped" );
     
@@ -770,7 +772,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     // after rotation the original line is obsolet for motion commands
                     if ( gcodeLine.isMotionMode () ) {
                         final String cmd = gcodeLine.getGcodeMode ().getCommand ();
-                        final String feed = "F" + gcodeLine.getFeedrate ();
                         String line = "";
                         if ( gcodeLine.isMoveInXYZ () ) {
                             line += cmd;
@@ -778,7 +779,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                             if ( gcodeLine.isMoveInY () ) line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
                             if ( gcodeLine.isMoveInZ () ) line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
                         }
-                        line += feed;
+                        if ( gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) line += "F" + gcodeLine.getFeedrate ();
                         sendCommandSuppressInTerminal ( line );
                         LOG.trace ( "line=" + line );
                     }

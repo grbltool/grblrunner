@@ -25,9 +25,9 @@ public class GcodeRefreshInPartHandler {
     @CanExecute
     public boolean canExecute ( ISerialService serial, IGcodeService gcodeService, IGcodeProgram gcodeProgram ) {
 
-        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isScanning () );
+        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isAutolevelScan () );
 
-        return gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeService.isPlaying () && !gcodeService.isScanning ()
+        return gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeProgram.isPlaying () && !gcodeProgram.isAutolevelScan ()
                 && gcodeProgram.getGcodeProgramFile ().isFile ();
 
     }

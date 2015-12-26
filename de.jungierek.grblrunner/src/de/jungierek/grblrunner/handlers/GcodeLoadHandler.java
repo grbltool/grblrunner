@@ -72,9 +72,12 @@ public class GcodeLoadHandler {
     @CanExecute
     public boolean canExecute ( IGcodeService gcodeService, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
 
-        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isScanning () );
+        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isAutolevelScan () );
 
-        return !gcodeService.isPlaying () && !gcodeService.isScanning ();
+        // return !gcodeService.isPlaying () && !gcodeService.isScanning ();
+
+        // new gcodes are always possible
+        return true;
 
     }
 

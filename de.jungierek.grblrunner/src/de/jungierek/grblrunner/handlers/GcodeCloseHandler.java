@@ -43,7 +43,7 @@ public class GcodeCloseHandler {
         final Object partObject = part.getObject ();
         if ( !(partObject instanceof GcodeEditorPart) && !(partObject instanceof MacroPart) ) return false;
 
-        return !gcodeProgram.isPlaying () && !gcodeService.isScanning ();
+        return !gcodeProgram.isPlaying () && !gcodeProgram.isAutolevelScan ();
 
 	}
 		

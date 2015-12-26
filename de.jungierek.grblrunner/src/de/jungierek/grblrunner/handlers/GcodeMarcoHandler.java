@@ -88,8 +88,10 @@ public class GcodeMarcoHandler {
 	
 	@CanExecute
 	public boolean canExecute() {
-		
+
+        // new macros are always possible
 		return true;
+
 	}
 
     private class MacroPickerDialog extends Dialog {

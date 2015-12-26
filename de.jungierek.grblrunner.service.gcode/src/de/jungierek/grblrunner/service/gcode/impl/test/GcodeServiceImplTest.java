@@ -606,6 +606,24 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
             return 0;
         }
 
+        @Override
+        public void setAutolevelStart () {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void setAutolevelStop () {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public boolean isAutolevelScan () {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
     }
 
     @Override

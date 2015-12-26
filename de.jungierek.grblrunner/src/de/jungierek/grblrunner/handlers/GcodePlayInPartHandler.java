@@ -25,9 +25,10 @@ public class GcodePlayInPartHandler {
     @CanExecute
     public boolean canExecute ( ISerialService serial, IGcodeService gcodeService, IGcodeProgram gcodeProgram ) {
 
-        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isScanning () );
+        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isAutolevelScan () );
 
-        return serial.isOpen () && gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeService.isPlaying () && !gcodeService.isScanning ();
+        // check for global playing or scanning, only one program can be played/scanned!!!
+        return serial.isOpen () && gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeService.isPlaying () && !gcodeService.isAutolevelScan ();
 
     }
 

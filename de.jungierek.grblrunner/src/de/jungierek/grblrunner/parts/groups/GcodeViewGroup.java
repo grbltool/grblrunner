@@ -1167,7 +1167,7 @@ public class GcodeViewGroup {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
-        if ( gcodeService.isScanning () ) redraw ();
+        if ( gcodeService.isAutolevelScan () ) redraw ();
 
     }
 

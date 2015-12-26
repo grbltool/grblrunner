@@ -88,7 +88,7 @@ public class QuitProcessor {
             LOG.debug ( "close:" );
 
             IGcodeService gcodeService = window.getContext ().get ( IGcodeService.class );
-            if ( gcodeService.isPlaying () || gcodeService.isScanning () ) {
+            if ( gcodeService.isPlaying () || gcodeService.isAutolevelScan () ) {
                 LOG.warn ( "close: job is runnung" );
                 eventBroker.post ( IEvents.MESSAGE_ERROR, "Closing application is not possible! Job is running!" );
                 return false;

@@ -17,7 +17,7 @@ public interface IGcodeService {
     public void playGcodeProgram ( IGcodeProgram program );
     public void scanAutolevelData ( IGcodeProgram program, double zMin, double zMax, double zClearance, double probeFedrate );
 
-    public boolean isScanning ();
+    public boolean isAutolevelScan ();
     public boolean isPlaying ();
     public boolean isAlarm ();
 

@@ -38,9 +38,9 @@ public class ProbeDataSaveHandler {
     @CanExecute
     public boolean canExecute ( ISerialService serial, IGcodeService gcodeService, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
 
-        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isScanning () );
+        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isAutolevelScan () );
 
-        return gcodeProgram != null && gcodeProgram.isLoaded () && gcodeProgram.isAutolevelScanComplete () && !gcodeService.isPlaying () && !gcodeService.isScanning ();
+        return gcodeProgram != null && gcodeProgram.isLoaded () && gcodeProgram.isAutolevelScanComplete () && !gcodeService.isPlaying () && !gcodeService.isAutolevelScan ();
 
     }
 

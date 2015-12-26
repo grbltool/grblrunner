@@ -195,6 +195,15 @@ public class StartupAddon {
 
     @Inject
     @Optional
+    public void grblRestartedNotified ( @UIEventTopic(IEvents.GRBL_RESTARTED) Object data ) {
+
+        LOG.trace ( "grblRestartedNotified: data=" + data );
+        updateToolbarState ();
+
+    }
+
+    @Inject
+    @Optional
     public void gcodeEventNotified ( @UIEventTopic(IEvents.GCODE_ALL) Object data ) {
 
         LOG.trace ( "gcodeEventNotified: data=" + data );

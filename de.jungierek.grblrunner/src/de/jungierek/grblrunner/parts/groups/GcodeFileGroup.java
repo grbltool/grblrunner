@@ -58,7 +58,7 @@ public class GcodeFileGroup {
         gcodeMaxLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "time", 1 );
-        gcodeTimeLabel = GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "12", 1 );
+        gcodeTimeLabel = GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "", 1 );
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "min", 1 );
 
     }

@@ -36,7 +36,7 @@ public abstract class GrblCommandHandler {
 
         LOG.trace ( "canExecute:" );
 
-        return serial.isOpen () && !gcodeService.isPlaying () && !gcodeService.isScanning ();
+        return serial.isOpen () && !gcodeService.isPlaying () && !gcodeService.isAutolevelScan ();
 
     }
 
