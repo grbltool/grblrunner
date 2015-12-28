@@ -453,7 +453,12 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
         if ( isPlaying () || isAutolevelScan () ) return;
 
+        if ( gcodeProgram != null ) {
+            gcodeProgram.resetProcessed ();
+        }
+
         gcodeProgram = program;
+        gcodeProgram.resetProcessed ();
 
         // decouple from UI thread
         new GcodePlayerThread ().start ();
@@ -703,9 +708,9 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 }
     
             }
-    
-            sendCommand ( IConstants.GCODE_SCAN_END );
+
             gcodeProgram.setAutolevelStop ();
+            sendCommand ( IConstants.GCODE_SCAN_END );
     
             LOG.debug ( "stopped" );
     
@@ -737,8 +742,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             gcodeProgram.setPlayerStart ();
             eventBroker.send ( IEvents.PLAYER_START, getTimestamp () );
-
-            gcodeProgram.resetProcessed ();
 
             IGcodeLine [] allGcodeLines = gcodeProgram.getAllGcodeLines ();
             for ( IGcodeLine gcodeLine : allGcodeLines ) {
@@ -791,8 +794,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             }
 
-            eventBroker.send ( IEvents.PLAYER_STOP, getTimestamp () );
             gcodeProgram.setPlayerStop ();
+            eventBroker.send ( IEvents.PLAYER_STOP, getTimestamp () );
             // TODO
             // if ( skipByAlarm ) {
             // eventBroker.send ( EVENT_GCODE_PLAYER_CANCELED, getTimestamp () );
