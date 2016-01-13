@@ -29,6 +29,7 @@ public class MacroPocketGroup extends MacroGroup {
     private Text overlapText;
     private Text zFeedrateText;
     private Button cornerCompensationCheckButton;
+    private Button climbCheckButton;
 
     @Override
     protected int getGridLayoutColumns () {
@@ -87,6 +88,12 @@ public class MacroPocketGroup extends MacroGroup {
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "corner comp.", 1 );
         cornerCompensationCheckButton = GuiFactory.createButton ( group, SWT.CHECK, null, SWT.LEFT, SWT.CENTER, true, false );
+        cornerCompensationCheckButton.setSelection ( true );
+        GuiFactory.createHiddenLabel ( group );
+
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "climb", 1 );
+        climbCheckButton = GuiFactory.createButton ( group, SWT.CHECK, null, SWT.LEFT, SWT.CENTER, true, false );
+        climbCheckButton.setSelection ( true );
         GuiFactory.createHiddenLabel ( group );
 
         xyFeedrateText.addModifyListener ( textFieldModifyListener );
@@ -100,6 +107,7 @@ public class MacroPocketGroup extends MacroGroup {
         zDepthText.addModifyListener ( textFieldModifyListener );
         overlapText.addModifyListener ( textFieldModifyListener );
         cornerCompensationCheckButton.addSelectionListener ( buttonSelectionListener );
+        climbCheckButton.addSelectionListener ( buttonSelectionListener );
 
     }
 
@@ -112,6 +120,113 @@ public class MacroPocketGroup extends MacroGroup {
 
     @Override
     public void generateGcodeCore ( IGcodeProgram gcodeProgram ) {
+
+        LOG.debug ( "generateGcodeCore: start" );
+
+        int xyFeedrate = partTools.parseIntegerField ( xyFeedrateText, IPreferences.POCKET_MILL_XY_FEEDRATE );
+        int spindleSpeed = partTools.parseIntegerField ( spindleSpeedText, IPreferences.MACRO_SPINDLE_SPEED );
+        double xDimension = partTools.parseDoubleField ( xDimensionText, IPreferences.POCKET_MILL_DIMENSION );
+        double yDimension = partTools.parseDoubleField ( yDimensionText, IPreferences.POCKET_MILL_DIMENSION );
+        double millDiameter = partTools.parseDoubleField ( millDiameterText, IPreferences.POCKET_MILL_DIAMETER );
+        double zClearance = partTools.parseDoubleField ( zClearanceText, IPreferences.Z_CLEARANCE );
+        double zLiftup = partTools.parseDoubleField ( zLiftupText, IPreferences.MACRO_Z_LIFTUP );
+        double zDepth = partTools.parseDoubleField ( zDepthText, IPreferences.POCKET_MILL_Z_DEPTH );
+        double overlap = partTools.parseIntegerField ( overlapText, IPreferences.POCKET_MILL_OVERLAP ) / 100.0;
+        boolean isCornerCompensation = cornerCompensationCheckButton.getSelection ();
+        boolean isClimb = climbCheckButton.getSelection ();
+        int zFeedrate = partTools.parseIntegerField ( zFeedrateText, IPreferences.POCKET_MILL_Z_FEEDRATE );
+
+        double millRadius = millDiameter / 2;
+        double cornerCompensation = (1 - 1 / Math.sqrt ( 2 )) * millRadius;
+
+        motionSeekZ ( zClearance );
+        spindleOn ( spindleSpeed );
+
+        // Contour
+        // front left
+        double x = millRadius;
+        double y = millRadius;
+        motionSeekXY ( x, y );
+        motionSeekZ ( zLiftup );
+        motionLinearZ ( zDepth, zFeedrate );
+
+        // back left
+        y = yDimension - millRadius;
+        motionLinearXY ( x, y, xyFeedrate );
+        if ( isCornerCompensation ) {
+            motionLinearXY ( x - cornerCompensation, y + cornerCompensation, xyFeedrate );
+            motionLinearXY ( x, y, xyFeedrate );
+        }
+
+        // back right
+        x = xDimension - millRadius;
+        motionLinearXY ( x, y, xyFeedrate );
+        if ( isCornerCompensation ) {
+            motionLinearXY ( x + cornerCompensation, y + cornerCompensation, xyFeedrate );
+            motionLinearXY ( x, y, xyFeedrate );
+        }
+
+        // front right
+        y = millRadius;
+        motionLinearXY ( x, y, xyFeedrate );
+        if ( isCornerCompensation ) {
+            motionLinearXY ( x + cornerCompensation, y - cornerCompensation, xyFeedrate );
+            motionLinearXY ( x, y, xyFeedrate );
+        }
+
+        // front left
+        x = millRadius;
+        motionLinearXY ( x, y, xyFeedrate );
+        if ( isCornerCompensation ) {
+            motionLinearXY ( x - cornerCompensation, y - cornerCompensation, xyFeedrate );
+            motionLinearXY ( x, y, xyFeedrate );
+        }
+        motionSeekZ ( zLiftup );
+
+        // inner area
+        if ( millDiameter > 0.0 ) {
+
+            final double dist = (1 - overlap) * millDiameter;
+            // x = distFromContour;
+            // y = distFromContour;
+            double x1 = millRadius + dist;
+            double y1 = millRadius + dist;
+            double x2 = xDimension - millRadius - dist;
+            double y2 = yDimension - millRadius - dist;
+
+            motionSeekXY ( x1, y1 );
+            motionLinearZ ( zDepth, zFeedrate );
+
+            while ( x1 < x2 && y1 < y2 ) {
+
+                if ( isClimb ) {
+                    motionLinearXY ( x1, y2, xyFeedrate );
+                    motionLinearXY ( x2, y2, xyFeedrate );
+                    motionLinearXY ( x2, y1, xyFeedrate );
+                    motionLinearXY ( x1 + dist, y1, xyFeedrate );
+                }
+                else {
+                    motionLinearXY ( x2, y1, xyFeedrate );
+                    motionLinearXY ( x2, y2, xyFeedrate );
+                    motionLinearXY ( x1, y2, xyFeedrate );
+                    motionLinearXY ( x1, y1 + dist, xyFeedrate );
+                }
+
+
+                x1 += dist;
+                y1 += dist;
+                x2 -= dist;
+                y2 -= dist;
+
+            }
+
+        }
+
+        LOG.debug ( "generateGcodeCore: end" );
+
+    }
+
+    public void generateGcodeCoreOLD ( IGcodeProgram gcodeProgram ) {
         
         LOG.debug ( "generateGcodeCore: start" );
         
@@ -216,6 +331,7 @@ public class MacroPocketGroup extends MacroGroup {
         overlapText.setEnabled ( enabled );
         zFeedrateText.setEnabled ( enabled );
         cornerCompensationCheckButton.setEnabled ( enabled );
+        climbCheckButton.setEnabled ( enabled );
 
     }
 
