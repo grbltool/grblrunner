@@ -1,6 +1,6 @@
 package de.jungierek.grblrunner.handlers;
 
-public class GrblHomeCommandHandleer extends GrblCommandHandler {
+public class GrblHomeCommandHandler extends GrblCommandHandler {
 
     @Override
     protected String getCommand () {
