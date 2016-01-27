@@ -66,7 +66,7 @@ public interface IEvents {
     public static final String UPDATE_ALL = UPDATE_BASE + SEPARATOR + "*";
 
     public static final String UPDATE_STATE = UPDATE_BASE + SEPARATOR + "state";
-    public static final String UPDATE_MOTION_MODE = UPDATE_BASE + SEPARATOR + "motionmode";
+    public static final String UPDATE_MODAL_MODE = UPDATE_BASE + SEPARATOR + "motionmode";
     public static final String UPDATE_FIXTURE = UPDATE_BASE + SEPARATOR + "fixture";
     public static final String UPDATE_FIXTURE_OFFSET = UPDATE_BASE + SEPARATOR + "fixture" + SEPARATOR + "offset";
     public static final String UPDATE_PLANE = UPDATE_BASE + SEPARATOR + "plane";

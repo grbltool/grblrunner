@@ -318,7 +318,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             EGcodeMode motionMode = EGcodeMode.identify ( token[0] );
             if ( lastMotionMode != motionMode && motionMode != EGcodeMode.GCODE_MODE_UNDEF ) {
                 lastMotionMode = motionMode;
-                eventBroker.send ( IEvents.UPDATE_MOTION_MODE, motionMode.getCommand () );
+                eventBroker.send ( IEvents.UPDATE_MODAL_MODE, motionMode.getCommand () );
             }
 
             // token [1] -> G54 .. G59
@@ -336,7 +336,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     plane = "XY";
                     break;
                 case "G18":
-                    plane = "ZY";
+                    plane = "ZX";
                     break;
                 case "G19":
                     plane = "YZ";

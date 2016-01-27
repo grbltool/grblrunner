@@ -326,7 +326,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
                     assertNull ( "data must be null", data );
                     break;
 
-                case IEvents.UPDATE_MOTION_MODE:
+                case IEvents.UPDATE_MODAL_MODE:
                     if ( !(data instanceof String) ) fail ( "data not String " + data.getClass () );
                     String motionMode = (String) data;
                     if ( expectedString == null ) fail ( "nothing expected for motionMode=" + motionMode );
@@ -1088,7 +1088,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         final String line2 = "[G1 G54 G17 G21 G90 G94 M0 M5 M9 T0 F1000. S0.]";
         eventBrokerMock.setExpectedReceivedEvent ( true );
         eventBrokerMock.setExpectedResponse ( false, line2 );
-        eventBrokerMock.setExpectedTopic ( IEvents.UPDATE_MOTION_MODE );
+        eventBrokerMock.setExpectedTopic ( IEvents.UPDATE_MODAL_MODE );
         eventBrokerMock.setExpectedString ( "G1" );
         underTest.received ( line2 );
         assertTrue ( "line2 event send called", eventBrokerMock.isSendCalled () );

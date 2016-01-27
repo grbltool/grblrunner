@@ -1,5 +1,7 @@
 package de.jungierek.grblrunner.tools;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -47,18 +49,26 @@ public class PartTools {
 
         LOG.trace ( "executeCommand:id=" + commandId );
     
-        executeCommand1 ( commandId );
+        executeCommand1 ( commandId, null );
     
     }
 
-    private void executeCommand1 ( final String commandId ) {
+    public void executeCommand ( String commandId, Map<String, Object> parameter ) {
+
+        LOG.trace ( "executeCommand:id=" + commandId );
+
+        executeCommand1 ( commandId, parameter );
+
+    }
+
+    private void executeCommand1 ( final String commandId, Map<String, Object> parameter ) {
 
         LOG.trace ( "executeCommand: id=" + commandId );
 
         Command command = commandService.getCommand ( commandId );
 
         if ( command.isDefined () ) {
-            ParameterizedCommand parameterCommand = commandService.createCommand ( commandId, null );
+            ParameterizedCommand parameterCommand = commandService.createCommand ( commandId, parameter );
             if ( handlerService.canExecute ( parameterCommand ) ) {
                 handlerService.executeHandler ( parameterCommand );
             }
@@ -111,6 +121,12 @@ public class PartTools {
         text.setText ( "" + sb );
     }
 
+    public CommandExecuteSelectionListener createCommandExecuteSelectionListener ( String commandId, Map parameter ) {
+
+        return new CommandExecuteSelectionListener ( commandId, parameter );
+
+    }
+
     public CommandExecuteSelectionListener createCommandExecuteSelectionListener ( String commandId ) {
         
         return new CommandExecuteSelectionListener ( commandId );
@@ -120,16 +136,30 @@ public class PartTools {
     private class CommandExecuteSelectionListener extends SelectionAdapter {
 
         final String commandId;
+        final Map parameter;
+
+        public CommandExecuteSelectionListener ( String commandId, Map parameter ) {
+
+            LOG.trace ( "CommandExecuteSelectionListener: id=" + commandId + " parameter=" + parameter );
+
+            this.commandId = commandId;
+            this.parameter = parameter;
+
+        }
 
         public CommandExecuteSelectionListener ( String commandId ) {
-            LOG.trace ( "CommandExecuteSelectionListener: id=" + commandId );
-            this.commandId = commandId;
+
+            this ( commandId, null );
+
         }
 
         @Override
         public void widgetSelected ( SelectionEvent evt ) {
+
             LOG.trace ( "widgetSelected: evt=" + evt );
-            executeCommand ( commandId );
+
+            executeCommand ( commandId, parameter );
+
         }
 
     }
