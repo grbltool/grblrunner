@@ -105,31 +105,11 @@ public class StateCoordinatesGroup {
             HashMap<String, Object> parameter1 = new HashMap<String, Object> ();
             parameter1.put ( IConstants.COORDINATE_OFFSET_COMMAND_PARAMETER_ID, axisLetter );
             setZeroButton[i].addSelectionListener ( partTools.createCommandExecuteSelectionListener ( IConstants.SET_COORDINATE_OFFSET_COMMAND_ID, parameter1 ) );
-            // setZeroButton[i].addSelectionListener ( new SelectionAdapter () {
-            // @Override
-            // public void widgetSelected ( SelectionEvent evt ) {
-            // LOG.info ( "widgetSelected: set" );
-            // HashMap<String, Object> parameter = new HashMap<String, Object> ();
-            // parameter.put ( IConstants.COORDINATE_OFFSET_COMMAND_PARAMETER_ID, axisLetter );
-            // partTools.executeCommand ( IConstants.SET_COORDINATE_OFFSET_COMMAND_ID, parameter );
-            // gcodeService.sendCommandSuppressInTerminal ( "G10 L20 " + axisLetter + "0" );
-            // }
-            // } );
 
             resetZeroButton[i] = GuiFactory.createPushButton ( group, "reset " + axisLetter );
             HashMap<String, Object> parameter2 = new HashMap<String, Object> ();
             parameter2.put ( IConstants.COORDINATE_OFFSET_COMMAND_PARAMETER_ID, axisLetter );
             resetZeroButton[i].addSelectionListener ( partTools.createCommandExecuteSelectionListener ( IConstants.RESET_COORDINATE_OFFSET_COMMAND_ID, parameter2 ) );
-            // resetZeroButton[i].addSelectionListener ( new SelectionAdapter () {
-            // @Override
-            // public void widgetSelected ( SelectionEvent evt ) {
-            // LOG.info ( "widgetSelected: reset" );
-            // HashMap<String, Object> parameter = new HashMap<String, Object> ();
-            // parameter.put ( IConstants.COORDINATE_OFFSET_COMMAND_PARAMETER_ID, axisLetter );
-            // partTools.executeCommand ( IConstants.RESET_COORDINATE_OFFSET_COMMAND_ID, parameter );
-            // gcodeService.sendCommandSuppressInTerminal ( "G10 L2 " + axisLetter + "0" );
-            // }
-            // } );
 
         }
 
@@ -153,11 +133,13 @@ public class StateCoordinatesGroup {
     }
 
     private void restoreCoordinateSystem () {
+
         String coordSelect = application.getPersistedState ().get ( IPersistenceKeys.KEY_LAST_COORDINATE_SYSTEM );
         if ( coordSelect != null && coordSelect.length () == 3 ) {
             gcodeService.sendCommandSuppressInTerminal ( coordSelect );
             // gcode.sendCommand ( coordSelect );
         }
+
     }
 
     private void setCoordLabels ( double [] coords, Label [] labels ) {
