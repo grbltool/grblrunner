@@ -601,7 +601,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         }
         else if ( dx < 0.0 ) {
             // if ( ii1 == 0.0 ) i--;
-            if ( Math.abs ( ii1 ) <= EPSILON ) i--;
+            if ( i > 0 && Math.abs ( ii1 ) <= EPSILON ) i--;
         }
 
         int j = j1;
@@ -612,7 +612,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         }
         else if ( dy < 0.0 ) {
             // if ( jj1 == 0.0 ) j--;
-            if ( Math.abs ( jj1 ) <= EPSILON ) j--;
+            if ( j > 0 && Math.abs ( jj1 ) <= EPSILON ) j--;
         }
 
         double x = p1.x;
@@ -625,12 +625,13 @@ public class GcodeProgramImpl implements IGcodeProgram {
         double tx = 1e10;
         double ty = 1e10;
 
-        while ( i != i2 || j != j2 ) {
+        while ( isInsideArea ( dx, i, i2 ) || isInsideArea ( dy, j, j2 ) ) {
 
             // HACK delete later
             // if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) return null;
             if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) {
-                System.out.println ( "i=" + i + " j=" + j );
+                System.out.println ( "i=" + i + " j=" + j + " p1=" + p1 + " p2=" + p2 );
+                break; // HACK HACK
             }
 
             if ( dx != 0.0 ) {
@@ -682,6 +683,12 @@ public class GcodeProgramImpl implements IGcodeProgram {
         // }
 
         return result.toArray ( new IGcodePoint [0] );
+
+    }
+
+    private boolean isInsideArea ( double delta, int index, int maxIndex ) {
+
+        return delta == 0.0 && index != maxIndex || delta < 0.0 && index > 0 || delta > 0.0 && index < maxIndex;
 
     }
 
