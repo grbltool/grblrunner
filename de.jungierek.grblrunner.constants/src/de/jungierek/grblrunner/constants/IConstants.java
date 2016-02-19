@@ -10,15 +10,11 @@ public interface IConstants {
 
     public static final String MACRO_TEXT_ID = "de.jungierek.grblrunner.gcode.text";
 
-    public static final String RESET_COORDINATE_OFFSET_COMMAND_ID = "de.jungierek.grblrunner.command.coordinateoffset.reset";
-    public static final String SET_COORDINATE_OFFSET_COMMAND_ID = "de.jungierek.grblrunner.command.coordinateoffset.set";
-    public static final String COORDINATE_OFFSET_COMMAND_PARAMETER_ID = "de.jungierek.grblrunner.commandparameter.coordinateoffset.axis";
-
     public static final String FORMAT_COORDINATE = "%.3f";
     public static final String FORMAT_HEIGHT = "%+.1f";
     public static final String FORMAT_FEEDRATE = "%.0f";
 
-    public final static double ONE_DEGREE = Math.PI / 180.0;
+    public static final double ONE_DEGREE = Math.PI / 180.0;
 
     public static final String [] AXIS = { "X", "Y", "Z" };
     public static final String [] COORDINATE_SYSTEMS = { "G54", "G55", "G56", "G57", "G58", "G59" };

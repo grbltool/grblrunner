@@ -30,6 +30,7 @@ import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.gcode.IGrblRequest;
 import de.jungierek.grblrunner.service.gcode.IGrblResponse;
 import de.jungierek.grblrunner.tools.GuiFactory;
+import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
@@ -103,13 +104,13 @@ public class StateCoordinatesGroup {
 
             setZeroButton[i] = GuiFactory.createPushButton ( group, "zero " + axisLetter );
             HashMap<String, Object> parameter1 = new HashMap<String, Object> ();
-            parameter1.put ( IConstants.COORDINATE_OFFSET_COMMAND_PARAMETER_ID, axisLetter );
-            setZeroButton[i].addSelectionListener ( partTools.createCommandExecuteSelectionListener ( IConstants.SET_COORDINATE_OFFSET_COMMAND_ID, parameter1 ) );
+            parameter1.put ( ICommandID.COORDINATE_OFFSET_PARAMETER, axisLetter );
+            setZeroButton[i].addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.SET_COORDINATE_OFFSET, parameter1 ) );
 
             resetZeroButton[i] = GuiFactory.createPushButton ( group, "reset " + axisLetter );
             HashMap<String, Object> parameter2 = new HashMap<String, Object> ();
-            parameter2.put ( IConstants.COORDINATE_OFFSET_COMMAND_PARAMETER_ID, axisLetter );
-            resetZeroButton[i].addSelectionListener ( partTools.createCommandExecuteSelectionListener ( IConstants.RESET_COORDINATE_OFFSET_COMMAND_ID, parameter2 ) );
+            parameter2.put ( ICommandID.COORDINATE_OFFSET_PARAMETER, axisLetter );
+            resetZeroButton[i].addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.RESET_COORDINATE_OFFSET, parameter2 ) );
 
         }
 

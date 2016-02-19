@@ -103,6 +103,69 @@
             <parameters xmi:id="_3QnaEL--EeWH5ZrUKS-Mfg" elementId="de.jungierek.grblrunner.parameter.coordinateoffset.set.z" name="de.jungierek.grblrunner.commandparameter.coordinateoffset.axis" value="z"/>
           </children>
         </children>
+        <children xsi:type="menu:Menu" xmi:id="_5zgXQNHKEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.menu.spindle" label="Spindle">
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_IPMkwNHLEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handledmenuitem.spindle.start" command="_gYWykNHKEeWpCYzupwGxMA"/>
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_MGK2UNHLEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handledmenuitem.spindle.stop" command="_kDOh0NHKEeWpCYzupwGxMA"/>
+        </children>
+        <children xsi:type="menu:Menu" xmi:id="_QzZacNHLEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.menu.movezero" label="Move Zero">
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_XojUYNHLEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handledmenuitem.movezero.x" label="X" command="_3ZEewNESEeWX7cDkqGQ5EA">
+            <parameters xmi:id="_eGck4NHLEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.parameter.grbl.movezero.axis" name="de.jungierek.grblrunner.commandparameter.grbl.movezero.axis" value="X"/>
+          </children>
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_YOdd0NHLEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handledmenuitem.movezero.y" label="Y" command="_3ZEewNESEeWX7cDkqGQ5EA">
+            <parameters xmi:id="_CRtdMNHMEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.parameter.grbl.movezero.axis" name="de.jungierek.grblrunner.commandparameter.grbl.movezero.axis" value="Y"/>
+          </children>
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_YocEENHLEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handledmenuitem.movezero.z" label="Z" command="_3ZEewNESEeWX7cDkqGQ5EA">
+            <parameters xmi:id="_DaK6ENHMEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.parameter.grbl.movezero.axis" name="de.jungierek.grblrunner.commandparameter.grbl.movezero.axis" value="Z"/>
+          </children>
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_ZLuXUNHLEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handledmenuitem.movezero.xy" label="XY" command="_3ZEewNESEeWX7cDkqGQ5EA">
+            <parameters xmi:id="_E1_X0NHMEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.parameter.grbl.movezero.axis" name="de.jungierek.grblrunner.commandparameter.grbl.movezero.axis" value="XY"/>
+          </children>
+          <children xsi:type="menu:HandledMenuItem" xmi:id="_ZmxUkNHLEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handledmenuitem.movezero.xyz" label="XYZ" command="_3ZEewNESEeWX7cDkqGQ5EA">
+            <parameters xmi:id="_F3FocNHMEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.parameter.grbl.movezero.axis" name="de.jungierek.grblrunner.commandparameter.grbl.movezero.axis" value="XYZ"/>
+          </children>
+        </children>
+        <children xsi:type="menu:Menu" xmi:id="_CU4rkNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.menu.move" toBeRendered="false" label="Move">
+          <children xsi:type="menu:Menu" xmi:id="_NoML0NczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.menu.nove.0_1mm" label="0.1 mm">
+            <children xsi:type="menu:Menu" xmi:id="_hm2SoNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.menu.move.0_1mm.x" label="X">
+              <children xsi:type="menu:HandledMenuItem" xmi:id="_Z0meUNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.handledmenuitem.move.0_1mm.x.right" label=">" command="_KTy44M3dEeWf65rd75VYYA">
+                <parameters xmi:id="_S9UoANc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.0" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="X"/>
+                <parameters xmi:id="_TcAIENc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.1" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+                <parameters xmi:id="_TvGDMNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.2" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis.distance" value="0.1"/>
+              </children>
+              <children xsi:type="menu:HandledMenuItem" xmi:id="_enVNgNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.handledmenuitem.0_1mm.x.left" label="&lt;" command="_KTy44M3dEeWf65rd75VYYA">
+                <parameters xmi:id="_nNWysNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.3" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="X"/>
+                <parameters xmi:id="_nkijoNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.4" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+                <parameters xmi:id="_n77I4Nc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.5" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+              </children>
+            </children>
+            <children xsi:type="menu:Menu" xmi:id="_iSFA8NczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.menu.0_1mm.y" label="Y">
+              <children xsi:type="menu:HandledMenuItem" xmi:id="_e_yw0NczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.handledmenuitem.0_1mm.y.rear" label="^" command="_KTy44M3dEeWf65rd75VYYA">
+                <parameters xmi:id="_sQ1ToNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.6" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Y"/>
+                <parameters xmi:id="_sq6AgNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.7" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+                <parameters xmi:id="_tBcRMNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.8" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+              </children>
+              <children xsi:type="menu:HandledMenuItem" xmi:id="_fVQqgNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.handledmenuitem.0_1mm.y.front" label="v" command="_KTy44M3dEeWf65rd75VYYA">
+                <parameters xmi:id="_xnTpENc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.9" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Y"/>
+                <parameters xmi:id="_x8wUoNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.10" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+                <parameters xmi:id="_yUCzQNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.11" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+              </children>
+            </children>
+            <children xsi:type="menu:Menu" xmi:id="_in-YcNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.menu.0_1mm.z" label="Z">
+              <children xsi:type="menu:HandledMenuItem" xmi:id="_8maQYNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.handledmenuitem.0_1mm.z.up" label="up" command="_KTy44M3dEeWf65rd75VYYA">
+                <parameters xmi:id="_3z2D0Nc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.12" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Z"/>
+                <parameters xmi:id="_4NRQcNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.13" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+                <parameters xmi:id="_4kqcwNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.14" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+              </children>
+              <children xsi:type="menu:HandledMenuItem" xmi:id="_9EBZcNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.handledmenuitem.0_1mm.z.down" label="down" command="_KTy44M3dEeWf65rd75VYYA">
+                <parameters xmi:id="_8kpgYNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.15" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Z"/>
+                <parameters xmi:id="_9Hu_UNc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.16" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+                <parameters xmi:id="_9elZENc0EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.17" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+              </children>
+            </children>
+          </children>
+          <children xsi:type="menu:Menu" xmi:id="_OaRwENczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.menu.move.1mm" label="1 mm"/>
+          <children xsi:type="menu:Menu" xmi:id="_O2t0cNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.menu.move.10mm" label="10 mm"/>
+        </children>
         <children xsi:type="menu:MenuSeparator" xmi:id="_T-bCwKlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.menuseparator.6"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_6fyHIDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.exit" label="_Exit"/>
       </children>
@@ -279,6 +342,12 @@
   <handlers xmi:id="_5tGfUKuhEeWduZibCJ6agQ" elementId="de.jungierek.grblrunner.handler.grbl.toolchange" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblToolChangeHandler" command="_z96u8KuhEeWduZibCJ6agQ"/>
   <handlers xmi:id="_EHxFAL72EeWcIeDDQpMSug" elementId="de.jungierek.grblrunner.handler.coordinateoffset.set" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.CoordinateOffsetHandler" command="_mXSmML7yEeWcIeDDQpMSug"/>
   <handlers xmi:id="_Jmia0L72EeWcIeDDQpMSug" elementId="de.jungierek.grblrunner.handler.coordinateoffset.reset" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.CoordinateOffsetHandler" command="_KmlC4L7zEeWcIeDDQpMSug"/>
+  <handlers xmi:id="_fy6F0M3dEeWf65rd75VYYA" elementId="de.jungierek.grblrunner.handler.grbl.move" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblMoveCommandHandler" command="_KTy44M3dEeWf65rd75VYYA"/>
+  <handlers xmi:id="_JRWH4NETEeWX7cDkqGQ5EA" elementId="de.jungierek.grblrunner.handler.grbl.movezero" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblMoveZeroCommandHandler" command="_3ZEewNESEeWX7cDkqGQ5EA"/>
+  <handlers xmi:id="_ncDe0NHKEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handler.grbl.spinlde.start" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblSpindleStartCommandHandler" command="_gYWykNHKEeWpCYzupwGxMA"/>
+  <handlers xmi:id="_rvitQNHKEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handler.grbl.spindle.stop" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblSpindleStopCommandHandler" command="_kDOh0NHKEeWpCYzupwGxMA"/>
+  <handlers xmi:id="_WTVIANL2EeWTiYlylhJAxg" elementId="de.jungierek.grblrunner.handler.autolevel.scan" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.ProbeDataScanHandler" command="_wBZ-IHwiEeWvRN9uvDzZzw"/>
+  <handlers xmi:id="_3vY7gNaNEeWeJLULfXZKfg" elementId="de.jungierek.grblrunner.handler.probe" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.ProbeActionCommandHandler" command="_slmjoNaNEeWeJLULfXZKfg"/>
   <bindingTables xmi:id="_JWsysIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.bindingtable.global" bindingContext="_TThFefsBEeSJsKKNyX_1bw">
     <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+O" command="_PP9sEHdmEeW3XImWwiVxiA">
       <tags>type:user</tags>
@@ -309,6 +378,18 @@
     </bindings>
     <bindings xmi:id="_IYB4IKuhEeWduZibCJ6agQ" elementId="de.jungierek.grblrunner.keybinding.grbl.toolchange" keySequence="M3+T" command="_z96u8KuhEeWduZibCJ6agQ">
       <tags>type:user</tags>
+    </bindings>
+    <bindings xmi:id="_EGe6INc1EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.movezero.xy" keySequence="M1+0" command="_3ZEewNESEeWX7cDkqGQ5EA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_71k3ENc4EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.18" name="de.jungierek.grblrunner.commandparameter.grbl.movezero.axis" value="XY"/>
+    </bindings>
+    <bindings xmi:id="_2BFI4Nc4EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.probe" keySequence="M3+ARROW_DOWN" command="_slmjoNaNEeWeJLULfXZKfg">
+      <tags>type:user</tags>
+      <parameters xmi:id="_LR7QUNc5EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.19" name="de.jungierek.grblrunner.commandparameter.probe.depth" value="-3"/>
+    </bindings>
+    <bindings xmi:id="_NZbIUNc5EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.coordinateoffset.z0" keySequence="M3+0" command="_mXSmML7yEeWcIeDDQpMSug">
+      <tags>type:user</tags>
+      <parameters xmi:id="_ZJakkNc5EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.20" name="de.jungierek.grblrunner.commandparameter.coordinateoffset.axis" value="Z"/>
     </bindings>
   </bindingTables>
   <rootContext xmi:id="_TThFefsBEeSJsKKNyX_1bw" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
@@ -357,7 +438,12 @@
   <commands xmi:id="_gieyAHwiEeWvRN9uvDzZzw" elementId="de.jungierek.grblrunner.command.autolevel.load" commandName="Load Probe Data"/>
   <commands xmi:id="_mnlvEHwiEeWvRN9uvDzZzw" elementId="de.jungierek.grblrunner.command.autolevel.save" commandName="Save Probe Data"/>
   <commands xmi:id="_tUCY8HwiEeWvRN9uvDzZzw" elementId="de.jungierek.grblrunner.command.autolevel.clear" commandName="Clear Probe Data"/>
-  <commands xmi:id="_wBZ-IHwiEeWvRN9uvDzZzw" elementId="de.jungierek.grblrunner.command.autolevel.scan" commandName="Scan Probe Data"/>
+  <commands xmi:id="_wBZ-IHwiEeWvRN9uvDzZzw" elementId="de.jungierek.grblrunner.command.autolevel.scan" commandName="Scan Probe Data">
+    <parameters xmi:id="_0A710NL1EeWTiYlylhJAxg" elementId="de.jungierek.grblrunner.commandparameter.autolevel.zmin" name="Autolevel Z-Min"/>
+    <parameters xmi:id="_0mQwcNL1EeWTiYlylhJAxg" elementId="de.jungierek.grblrunner.commandparameter.autolevel.zmax" name="Autolevel Z-Max"/>
+    <parameters xmi:id="_0-S18NL1EeWTiYlylhJAxg" elementId="de.jungierek.grblrunner.commandparameter.autolevel.zclearance" name="Autolevele Z-Clearance"/>
+    <parameters xmi:id="_1emGoNL1EeWTiYlylhJAxg" elementId="de.jungierek.grblrunner.commandparameter.autolevel.probefeedrate" name="Autoelevel Probe Feedrate"/>
+  </commands>
   <commands xmi:id="_aF5nMH4yEeWuY_2UnCduYA" elementId="de.jungierek.grblrunner.command.cycle.start" commandName="Start/Resume Cycle"/>
   <commands xmi:id="_daNQkH4yEeWuY_2UnCduYA" elementId="de.jungierek.grblrunner.command.cycle.pause" commandName="Pause Cycle"/>
   <commands xmi:id="_h_GYEH4yEeWuY_2UnCduYA" elementId="de.jungierek.grblrunner.command.cycle.reset" commandName="Reset Cycle"/>
@@ -379,6 +465,19 @@
   </commands>
   <commands xmi:id="_KmlC4L7zEeWcIeDDQpMSug" elementId="de.jungierek.grblrunner.command.coordinateoffset.reset" commandName="Reset Coordinate Offset">
     <parameters xmi:id="_XTyVUL7zEeWcIeDDQpMSug" elementId="de.jungierek.grblrunner.commandparameter.coordinateoffset.axis" name="Coordinate Offset Axis"/>
+  </commands>
+  <commands xmi:id="_KTy44M3dEeWf65rd75VYYA" elementId="de.jungierek.grblrunner.command.grbl.move" commandName="Grbl Move">
+    <parameters xmi:id="_N-Lf8M3dEeWf65rd75VYYA" elementId="de.jungierek.grblrunner.commandparameter.grbl.move.axis" name="Grbl Move Axis"/>
+    <parameters xmi:id="_WeO1cM3dEeWf65rd75VYYA" elementId="de.jungierek.grblrunner.commandparameter.grbl.move.direction" name="Grbl Move Direction"/>
+    <parameters xmi:id="_bG1YQM3dEeWf65rd75VYYA" elementId="de.jungierek.grblrunner.commandparameter.grbl.move.distance" name="Grbl Move Distance"/>
+  </commands>
+  <commands xmi:id="_3ZEewNESEeWX7cDkqGQ5EA" elementId="de.jungierek.grblrunner.command.grbl.movezero" commandName="Grbl Move Zero">
+    <parameters xmi:id="_-uX4YNESEeWX7cDkqGQ5EA" elementId="de.jungierek.grblrunner.commandparameter.grbl.movezero.axis" name="Grbl Move Zero Axis"/>
+  </commands>
+  <commands xmi:id="_gYWykNHKEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.command.grbl.spindle.start" commandName="Grbl Spindle Start"/>
+  <commands xmi:id="_kDOh0NHKEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.command.grbl.spindle.stop" commandName="Grbl Spinlde Stop"/>
+  <commands xmi:id="_slmjoNaNEeWeJLULfXZKfg" elementId="de.jungierek.grblrunner.command.probe" commandName="Probe">
+    <parameters xmi:id="_xIuwkNaNEeWeJLULfXZKfg" elementId="de.jungierek.grblrunner.commandparameter.probe.depth" name="Probe Depth"/>
   </commands>
   <addons xmi:id="_TThFcvsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_TThFc_sBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>

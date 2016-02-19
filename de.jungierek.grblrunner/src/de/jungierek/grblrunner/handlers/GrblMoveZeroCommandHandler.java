@@ -13,31 +13,24 @@ import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.ICommandID;
 
-public class CoordinateOffsetHandler {
+public class GrblMoveZeroCommandHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger ( CoordinateOffsetHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger ( GrblMoveZeroCommandHandler.class );
 
     @Execute
-    public void execute ( IGcodeService gcodeService, ParameterizedCommand command, @Optional @Named(ICommandID.COORDINATE_OFFSET_PARAMETER) String axis ) {
+    public void execute ( IGcodeService gcodeService, ParameterizedCommand command, @Optional @Named(ICommandID.GRBL_MOVE_ZERO_AXIS_PARAMETER) String axis ) {
 
-        LOG.debug ( "execute: axis=" + axis + " cmd=" + command );
+        LOG.debug ( "execute: axis=" + axis );
 
         if ( command != null ) {
-            String id = command.getId ();
-            String type = id.substring ( id.lastIndexOf ( '.' ) + 1 );
-            switch ( type ) {
-                case "set":
-                    gcodeService.sendCommandSuppressInTerminal ( "G10 L20 " + axis + "0" );
-                    break;
-                case "reset":
-                    gcodeService.sendCommandSuppressInTerminal ( "G10 L2 " + axis + "0" );
-                    break;
 
-                default:
-                    break;
+            String gcode = "G90 G0 ";
+
+            for ( int i = 0; i < axis.length (); i++ ) {
+                gcode += axis.charAt ( i ) + "0";
             }
+            gcodeService.sendCommandSuppressInTerminal ( gcode );
         }
-
 
     }
 

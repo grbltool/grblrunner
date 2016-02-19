@@ -23,15 +23,11 @@ import de.jungierek.grblrunner.parts.groups.StatePlaneGroup;
 import de.jungierek.grblrunner.parts.groups.StateSpindleGroup;
 import de.jungierek.grblrunner.parts.groups.StateToolGroup;
 import de.jungierek.grblrunner.parts.groups.StateUnitGroup;
-import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class StatePart {
 
     private static final Logger LOG = LoggerFactory.getLogger ( StatePart.class );
-
-    @Inject
-    IGcodeService gcode;
 
     @Inject
     @Named(IServiceConstants.ACTIVE_SHELL)
@@ -54,6 +50,8 @@ public class StatePart {
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
+
+        LOG.debug ( "createGui:" );
 
         final int cols = 4;
         parent.setLayout ( new GridLayout ( cols, true ) );

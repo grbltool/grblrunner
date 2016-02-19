@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.CommandTools;
-import de.jungierek.grblrunner.tools.ICommandIDs;
+import de.jungierek.grblrunner.tools.ICommandID;
 
 public class SerialDynMenuHandler {
     
@@ -61,12 +61,12 @@ public class SerialDynMenuHandler {
                 LOG.debug ( "port=" + port );
     
                 MParameter parameter = MCommandsFactory.INSTANCE.createParameter ();
-                parameter.setElementId ( ICommandIDs.PARAMETER_SERIAL_SELECT_PORT + port );
-                parameter.setName ( ICommandIDs.PARAMETER_SERIAL_SELECT_PORT ); // this is the importend "id"
+                parameter.setElementId ( ICommandID.SERIAL_SELECT_PORT_PARAMETER + port );
+                parameter.setName ( ICommandID.SERIAL_SELECT_PORT_PARAMETER ); // this is the importend "id"
                 parameter.setValue ( port );
                 LOG.trace ( "parameter=" + parameter );
     
-                MCommand command = commandTool.findCommand ( ICommandIDs.COMMAND_SERIAL_SELECT_PORT );
+                MCommand command = commandTool.findCommand ( ICommandID.SERIAL_SELECT_PORT );
                 LOG.trace ( "command=" + command );
     
                 MHandledMenuItem item = MMenuFactory.INSTANCE.createHandledMenuItem ();

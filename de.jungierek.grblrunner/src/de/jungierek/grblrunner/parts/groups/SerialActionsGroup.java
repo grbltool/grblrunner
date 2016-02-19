@@ -19,7 +19,7 @@ import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.ICommandIDs;
+import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
@@ -64,9 +64,9 @@ public class SerialActionsGroup {
 
         updateButton = GuiFactory.createPushButton ( group, "update", SWT.FILL, true );
 
-        connectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_SERIAL_CONNECT ) );
-        disconnectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_SERIAL_DISCONNECT ) );
-        updateButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandIDs.COMMAND_SERIAL_UPDATE ) );
+        connectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.SERIAL_CONNECT ) );
+        disconnectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.SERIAL_DISCONNECT ) );
+        updateButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.SERIAL_UPDATE ) );
 
     }
 

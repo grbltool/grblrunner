@@ -45,17 +45,13 @@ public class PartTools {
     @Named(IServiceConstants.ACTIVE_SHELL)
     private Shell shell;
 
-    public void executeCommand ( String commandId ) {
+    public void executeCommand ( String commandId, Map<String, Object> parameter, CommandParameterCallback parameterCallback ) {
 
         LOG.trace ( "executeCommand:id=" + commandId );
-    
-        executeCommand1 ( commandId, null );
-    
-    }
-
-    public void executeCommand ( String commandId, Map<String, Object> parameter ) {
-
-        LOG.trace ( "executeCommand:id=" + commandId );
+        
+        if ( parameter != null && parameterCallback != null ) {
+            parameter.putAll ( parameterCallback.getParameter () );
+        }
 
         executeCommand1 ( commandId, parameter );
 
@@ -109,16 +105,10 @@ public class PartTools {
 
     }
 
-    public void gcodeToText ( Text text, IGcodeProgram gcodeProgram ) {
+    public CommandExecuteSelectionListener createCommandExecuteSelectionListener ( String commandId, Map parameter, CommandParameterCallback parameterCallback ) {
 
-        text.setText ( "" );
-        StringBuilder sb = new StringBuilder ();
+        return new CommandExecuteSelectionListener ( commandId, parameter, parameterCallback );
 
-        for ( IGcodeLine gcodeLine : gcodeProgram.getAllGcodeLines () ) {
-            sb.append ( gcodeLine.getLine () + "\n" );
-        }
-
-        text.setText ( "" + sb );
     }
 
     public CommandExecuteSelectionListener createCommandExecuteSelectionListener ( String commandId, Map parameter ) {
@@ -136,20 +126,28 @@ public class PartTools {
     private class CommandExecuteSelectionListener extends SelectionAdapter {
 
         final String commandId;
-        final Map parameter;
+        final Map<String, Object> parameter;
+        final CommandParameterCallback parameterCallback;
 
-        public CommandExecuteSelectionListener ( String commandId, Map parameter ) {
+        public CommandExecuteSelectionListener ( String commandId, Map<String, Object> parameter, CommandParameterCallback parameterCallback ) {
 
-            LOG.trace ( "CommandExecuteSelectionListener: id=" + commandId + " parameter=" + parameter );
+            LOG.trace ( "CommandExecuteSelectionListener: id=" + commandId + " parameter=" + parameter + " callback=" + parameterCallback );
 
             this.commandId = commandId;
             this.parameter = parameter;
+            this.parameterCallback = parameterCallback;
+
+        }
+
+        public CommandExecuteSelectionListener ( String commandId, Map<String, Object> parameter ) {
+
+            this ( commandId, parameter, null );
 
         }
 
         public CommandExecuteSelectionListener ( String commandId ) {
 
-            this ( commandId, null );
+            this ( commandId, null, null );
 
         }
 
@@ -158,10 +156,22 @@ public class PartTools {
 
             LOG.trace ( "widgetSelected: evt=" + evt );
 
-            executeCommand ( commandId, parameter );
+            executeCommand ( commandId, parameter, parameterCallback );
 
         }
 
+    }
+
+    public void gcodeToText ( Text text, IGcodeProgram gcodeProgram ) {
+    
+        text.setText ( "" );
+        StringBuilder sb = new StringBuilder ();
+    
+        for ( IGcodeLine gcodeLine : gcodeProgram.getAllGcodeLines () ) {
+            sb.append ( gcodeLine.getLine () + "\n" );
+        }
+    
+        text.setText ( "" + sb );
     }
 
     public int parseIntegerField ( Text field, int defaultValue ) {
