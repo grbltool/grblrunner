@@ -227,6 +227,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     }
 
     private boolean ignoreNextProbe = false;
+    private final static String PROBE_PATTERN = "[PRB:";
+    private final static int PROBE_PATTERN_LEN = PROBE_PATTERN.length ();
 
     private void analyseResponse ( String line ) {
 
@@ -259,10 +261,12 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             // System.out.println ( logName () + "receivedNotified: send update probe line=" + line );
             // probe sends all cooridnates in machine system
             GcodePointImpl probePoint = null;
-            if ( line.substring ( 5 ).indexOf ( ':' ) > 0 ) { // test after "[PRB:"
+            final int probePatternLength = "[PRB:".length ();
+            if ( line.substring ( probePatternLength ).indexOf ( ':' ) > 0 ) { // test after "[PRB:"
                 // we are in v0.9j
                 probePoint = parseCoordinates ( line, "PRB:", ':' );
-                char success = line.charAt ( line.indexOf ( ':' ) + 1 );
+                char success = line.charAt ( probePatternLength + line.substring ( probePatternLength ).indexOf ( ':' ) + 1 );
+                ignoreNextProbe = success == '0';
                 LOG.trace ( "analyseResponse: probe detected scanRunning=" + scanRunning + " line=" + line + " probe=" + probePoint + " success=" + success );
             }
             else {
@@ -276,9 +280,13 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
             else {
                 // transfer probe coordinates from machine to working coordinates
-                if ( scanRunning ) gcodeProgram.setProbePoint ( probePoint.sub ( fixtureSshift ) );
-                if ( ignoreNextProbe ) ignoreNextProbe = false;
-                else eventBroker.send ( IEvents.AUTOLEVEL_UPDATE, probePoint );
+                if ( ignoreNextProbe ) {
+                    ignoreNextProbe = false;
+                }
+                else {
+                    if ( scanRunning ) gcodeProgram.setProbePoint ( probePoint.sub ( fixtureSshift ) );
+                    eventBroker.send ( IEvents.AUTOLEVEL_UPDATE, probePoint );
+                }
             }
         }
         else if ( line.startsWith ( "[" + lastCoordSelect ) ) {
@@ -690,20 +698,16 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
                     if ( skipByAlarm ) break;
     
-                    // progressListener.tick ();
-    
                     probePoint = gcodeProgram.getProbePointAt ( i, j );
-    
-                    if ( true ) {
-                        sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
-                        sendCommandSuppressInTerminal ( "G38.2Z" + zMin + "F" + probeFeedrate );
-                        sendCommandSuppressInTerminal ( "G0Z" + zMax );
+
+                    sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
+                    if ( IPreferences.PROBE_WITH_ERROR ) {
+                        sendCommandSuppressInTerminal ( "G38.2Z" + zMin + "F" + probeFeedrate ); // MOTION_MODE_PROBE_TOWARD
                     }
                     else {
-                        sendCommand ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
-                        sendCommand ( "G38.2Z" + zMin + "F" + probeFeedrate );
-                        sendCommand ( "G0Z" + zMax );
+                        sendCommandSuppressInTerminal ( "G38.3Z" + zMin + "F" + probeFeedrate ); // MOTION_MODE_PROBE_TOWARD_NO_ERROR
                     }
+                    sendCommandSuppressInTerminal ( "G0Z" + zMax );
     
                 }
     
