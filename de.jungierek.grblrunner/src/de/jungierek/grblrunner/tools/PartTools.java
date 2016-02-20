@@ -174,15 +174,19 @@ public class PartTools {
         text.setText ( "" + sb );
     }
 
-    public int parseIntegerField ( Text field, int defaultValue ) {
-
+    public int parseInteger ( final String s, int defaultValue ) {
         int result = defaultValue;
         try {
-            result = Integer.parseInt ( field.getText () );
+            result = Integer.parseInt ( s );
         }
         catch ( NumberFormatException exc ) {}
 
         return result;
+    }
+
+    public int parseIntegerField ( Text field, int defaultValue ) {
+
+        return parseInteger ( field.getText (), defaultValue );
 
     }
 

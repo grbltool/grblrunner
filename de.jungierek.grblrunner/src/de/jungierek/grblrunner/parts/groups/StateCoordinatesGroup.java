@@ -1,6 +1,7 @@
 package de.jungierek.grblrunner.parts.groups;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -11,8 +12,6 @@ import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -29,12 +28,13 @@ import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.gcode.IGrblRequest;
 import de.jungierek.grblrunner.service.gcode.IGrblResponse;
+import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
-public class StateCoordinatesGroup {
+public class StateCoordinatesGroup implements CommandParameterCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger ( StateCoordinatesGroup.class );
 
@@ -86,12 +86,13 @@ public class StateCoordinatesGroup {
         coordSystemCombo.select ( 0 ); // G54
         coordSystemCombo.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false, 2, 1 ) );
 
-        coordSystemCombo.addSelectionListener ( new SelectionAdapter () {
-            @Override
-            public void widgetSelected ( SelectionEvent evt ) {
-                gcodeService.sendCommandSuppressInTerminal ( ((CCombo) evt.getSource ()).getText () );
-            }
-        } );
+        coordSystemCombo.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.SET_COORDINATE_SYSTEM, new HashMap<String, Object> (), this ) );
+        // coordSystemCombo.addSelectionListener ( new SelectionAdapter () {
+        // @Override
+        // public void widgetSelected ( SelectionEvent evt ) {
+        // gcodeService.sendCommandSuppressInTerminal ( ((CCombo) evt.getSource ()).getText () );
+        // }
+        // } );
 
         for ( int i = 0; i < AXIS.length; i++ ) {
 
@@ -148,6 +149,16 @@ public class StateCoordinatesGroup {
         for ( int i = 0; i < coords.length; i++ ) {
             labels[i].setText ( String.format ( IGcodePoint.FORMAT_COORDINATE, coords[i] ) );
         }
+
+    }
+
+    @Override
+    public Map<String, Object> getParameter () {
+
+        Map<String, Object> result = new HashMap<String, Object> ();
+        result.put ( ICommandID.SET_COORDINATE_SYSTEM_PARAMETER, "" + (partTools.parseInteger ( coordSystemCombo.getText (), 54 ) - 53) );
+
+        return result;
 
     }
 

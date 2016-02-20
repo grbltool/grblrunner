@@ -348,6 +348,7 @@
   <handlers xmi:id="_rvitQNHKEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.handler.grbl.spindle.stop" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GrblSpindleStopCommandHandler" command="_kDOh0NHKEeWpCYzupwGxMA"/>
   <handlers xmi:id="_WTVIANL2EeWTiYlylhJAxg" elementId="de.jungierek.grblrunner.handler.autolevel.scan" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.ProbeDataScanHandler" command="_wBZ-IHwiEeWvRN9uvDzZzw"/>
   <handlers xmi:id="_3vY7gNaNEeWeJLULfXZKfg" elementId="de.jungierek.grblrunner.handler.probe" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.ProbeActionCommandHandler" command="_slmjoNaNEeWeJLULfXZKfg"/>
+  <handlers xmi:id="_7VqtQNgPEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.handler.gcode.coordinate.system" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeCoordinateCommandHandler" command="_pYG7gNgPEeWrcvb8nXcT5w"/>
   <bindingTables xmi:id="_JWsysIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.bindingtable.global" bindingContext="_TThFefsBEeSJsKKNyX_1bw">
     <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+O" command="_PP9sEHdmEeW3XImWwiVxiA">
       <tags>type:user</tags>
@@ -390,6 +391,138 @@
     <bindings xmi:id="_NZbIUNc5EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.coordinateoffset.z0" keySequence="M3+0" command="_mXSmML7yEeWcIeDDQpMSug">
       <tags>type:user</tags>
       <parameters xmi:id="_ZJakkNc5EeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.20" name="de.jungierek.grblrunner.commandparameter.coordinateoffset.axis" value="Z"/>
+    </bindings>
+    <bindings xmi:id="_RX23ENfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.0" keySequence="M1+ARROW_RIGHT" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_ooxY0NfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.21" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="X"/>
+      <parameters xmi:id="_o4PYMNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.22" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+      <parameters xmi:id="_o-GvoNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.23" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="1.0"/>
+    </bindings>
+    <bindings xmi:id="_SEVikNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.1" keySequence="M1+ARROW_LEFT" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_pweAsNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.24" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="X"/>
+      <parameters xmi:id="_pyO7QNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.25" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+      <parameters xmi:id="_p0I_wNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.26" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="1.0"/>
+    </bindings>
+    <bindings xmi:id="_SZKjENfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.2" keySequence="M1+ARROW_UP" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_qGyO8NfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.27" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Y"/>
+      <parameters xmi:id="_qIZ_kNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.28" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+      <parameters xmi:id="_qKLhMNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.29" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="1.0"/>
+    </bindings>
+    <bindings xmi:id="_SnHfgNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.3" keySequence="M1+ARROW_DOWN" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_q5_NgNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.30" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Y"/>
+      <parameters xmi:id="_q9iQwNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.31" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+      <parameters xmi:id="_rBDe0NfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.32" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="1.0"/>
+    </bindings>
+    <bindings xmi:id="_S38w0NfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.4" keySequence="M1+PAGE_UP" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_rTf5sNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.33" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Z"/>
+      <parameters xmi:id="_rXKRsNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.34" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+      <parameters xmi:id="_raB_gNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.35" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="1.0"/>
+    </bindings>
+    <bindings xmi:id="_THiE8NfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.5" keySequence="M1+PAGE_DOWN" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_rzBuUNfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.36" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Z"/>
+      <parameters xmi:id="_r1cJINfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.37" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+      <parameters xmi:id="_r4TP4NfZEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.38" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="1.0"/>
+    </bindings>
+    <bindings xmi:id="_9kfIUNfaEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.6" keySequence="M1+M2+ARROW_RIGHT" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_Tqn_kNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.40" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="X"/>
+      <parameters xmi:id="_Tx99sNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.41" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+      <parameters xmi:id="_T4xJQNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.42" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+    </bindings>
+    <bindings xmi:id="_-pQYANfaEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.8" keySequence="M1+M2+ARROW_LEFT" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_U3zkYNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.46" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="X"/>
+      <parameters xmi:id="_U94-QNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.47" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+      <parameters xmi:id="_VJqJYNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.48" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+    </bindings>
+    <bindings xmi:id="_-9pToNfaEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.9" keySequence="M1+M2+ARROW_UP" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_VgWyINgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.49" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Y"/>
+      <parameters xmi:id="_VpYLQNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.50" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+      <parameters xmi:id="_VwRdcNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.51" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+    </bindings>
+    <bindings xmi:id="__Q94QNfaEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.10" keySequence="M1+M2+ARROW_DOWN" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_WKdfENgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.52" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Y"/>
+      <parameters xmi:id="_WO7IUNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.53" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+      <parameters xmi:id="_WT0PYNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.54" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+    </bindings>
+    <bindings xmi:id="__iBMANfaEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.11" keySequence="M1+M2+PAGE_UP" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_WqiGQNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.55" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Z"/>
+      <parameters xmi:id="_WvoosNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.56" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+      <parameters xmi:id="_W19TINgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.57" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+    </bindings>
+    <bindings xmi:id="__wDoANfaEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.12" keySequence="M1+M2+PAGE_DOWN" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_XOB04NgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.58" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Z"/>
+      <parameters xmi:id="_XUawwNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.59" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+      <parameters xmi:id="_XaYO0NgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.60" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="0.1"/>
+    </bindings>
+    <bindings xmi:id="_AEyh4NfbEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.13" keySequence="M1+M3+ARROW_RIGHT" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_Xy6DkNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.61" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="X"/>
+      <parameters xmi:id="_X5sBANgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.62" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+      <parameters xmi:id="_YAwSUNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.63" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="10.0"/>
+    </bindings>
+    <bindings xmi:id="_ASu3QNfbEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.14" keySequence="M1+M3+ARROW_LEFT" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_YlA18NgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.64" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="X"/>
+      <parameters xmi:id="_Yrl_ENgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.65" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+      <parameters xmi:id="_YyTrENgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.66" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="10.0"/>
+    </bindings>
+    <bindings xmi:id="_AgrMoNfbEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.15" keySequence="M1+M3+ARROW_UP" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_ZLg1QNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.67" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Y"/>
+      <parameters xmi:id="_ZR5KENgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.68" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+      <parameters xmi:id="_ZXzk0NgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.69" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="10.0"/>
+    </bindings>
+    <bindings xmi:id="_AwWAUNfbEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.16" keySequence="M1+M3+ARROW_DOWN" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_Zw5aQNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.70" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Y"/>
+      <parameters xmi:id="_Z25UkNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.71" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+      <parameters xmi:id="_Z9QbQNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.72" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="10.0"/>
+    </bindings>
+    <bindings xmi:id="_NU5GANfbEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.17" keySequence="M1+M3+PAGE_UP" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_asGeQNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.73" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Z"/>
+      <parameters xmi:id="_axAzcNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.74" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+      <parameters xmi:id="_a2fJUNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.75" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="10.0"/>
+    </bindings>
+    <bindings xmi:id="_NoUYUNfbEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.18" keySequence="M1+M3+PAGE_DOWN" command="_KTy44M3dEeWf65rd75VYYA">
+      <tags>type:user</tags>
+      <parameters xmi:id="_bYSO0NgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.76" name="de.jungierek.grblrunner.commandparameter.grbl.move.axis" value="Z"/>
+      <parameters xmi:id="_beN3sNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.77" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+      <parameters xmi:id="_bkA9sNgIEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.78" name="de.jungierek.grblrunner.commandparameter.grbl.move.distance" value="10.0"/>
+    </bindings>
+    <bindings xmi:id="_YXfBMNgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.gcode.coordinate.system.g54" keySequence="M3+1" command="_pYG7gNgPEeWrcvb8nXcT5w">
+      <tags>type:user</tags>
+      <parameters xmi:id="_dE814NgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.39" name="de.jungierek.grblrunner.commandparameter.gcode.coordinate.system" value="1"/>
+    </bindings>
+    <bindings xmi:id="_ePogUNgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.gcode.coordinate.system.g55" keySequence="M3+2" command="_pYG7gNgPEeWrcvb8nXcT5w">
+      <tags>type:user</tags>
+      <parameters xmi:id="_-XDvwNgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.43" name="de.jungierek.grblrunner.commandparameter.gcode.coordinate.system" value="2"/>
+    </bindings>
+    <bindings xmi:id="_ew4MMNgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.gcode.coordinate.system.g56" keySequence="M3+3" command="_pYG7gNgPEeWrcvb8nXcT5w">
+      <tags>type:user</tags>
+      <parameters xmi:id="__KuBUNgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.44" name="de.jungierek.grblrunner.commandparameter.gcode.coordinate.system" value="3"/>
+    </bindings>
+    <bindings xmi:id="_fb10wNgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.gcode.coordinate.system.g57" keySequence="M3+4" command="_pYG7gNgPEeWrcvb8nXcT5w">
+      <tags>type:user</tags>
+      <parameters xmi:id="__si8ANgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.45" name="de.jungierek.grblrunner.commandparameter.gcode.coordinate.system" value="4"/>
+    </bindings>
+    <bindings xmi:id="_gEuZsNgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.gcode.coordinate.system.g58" keySequence="M3+5" command="_pYG7gNgPEeWrcvb8nXcT5w">
+      <tags>type:user</tags>
+      <parameters xmi:id="_AaQ9oNgSEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.79" name="de.jungierek.grblrunner.commandparameter.gcode.coordinate.system" value="5"/>
+    </bindings>
+    <bindings xmi:id="_go6E0NgREeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.keybinding.gcode.coordinate.system.g59" keySequence="M3+6" command="_pYG7gNgPEeWrcvb8nXcT5w">
+      <tags>type:user</tags>
+      <parameters xmi:id="_A5RN0NgSEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.parameter.80" name="de.jungierek.grblrunner.commandparameter.gcode.coordinate.system" value="6"/>
     </bindings>
   </bindingTables>
   <rootContext xmi:id="_TThFefsBEeSJsKKNyX_1bw" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
@@ -478,6 +611,9 @@
   <commands xmi:id="_kDOh0NHKEeWpCYzupwGxMA" elementId="de.jungierek.grblrunner.command.grbl.spindle.stop" commandName="Grbl Spinlde Stop"/>
   <commands xmi:id="_slmjoNaNEeWeJLULfXZKfg" elementId="de.jungierek.grblrunner.command.probe" commandName="Probe">
     <parameters xmi:id="_xIuwkNaNEeWeJLULfXZKfg" elementId="de.jungierek.grblrunner.commandparameter.probe.depth" name="Probe Depth"/>
+  </commands>
+  <commands xmi:id="_pYG7gNgPEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.command.gcode.coordinate.system" commandName="Set Coordinate System">
+    <parameters xmi:id="_tO3xsNgPEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.commandparameter.gcode.coordinate.system" name="Number Coordinate System"/>
   </commands>
   <addons xmi:id="_TThFcvsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_TThFc_sBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>

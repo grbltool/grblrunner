@@ -61,4 +61,7 @@ public interface ICommandID {
     public static final String PROBE_ACTION = "de.jungierek.grblrunner.command.probe";
     public static final String PROBE_ACTION_DEPTH_PARAMETER = "de.jungierek.grblrunner.commandparameter.probe.depth";
 
+    public static final String SET_COORDINATE_SYSTEM = "de.jungierek.grblrunner.command.gcode.coordinate.system";
+    public static final String SET_COORDINATE_SYSTEM_PARAMETER = "de.jungierek.grblrunner.commandparameter.gcode.coordinate.system";
+
 }
