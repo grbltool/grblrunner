@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -52,7 +53,7 @@ public class GcodeEditorPart {
     private Text gcodeText;
     
 	@PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context, Display display, MPart part ) {
+    public void createGui ( Composite parent, IEclipseContext context, Display display, MPart part, EPartService partService ) {
 	    
         LOG.debug ( "createGui: program=" + gcodeProgram );
 
@@ -77,6 +78,8 @@ public class GcodeEditorPart {
         if ( path != null ) {
             gcodeProgram.loadGcodeProgram ( new File ( path ) );
         }
+        
+        partService.activate ( part );
 
 	}
 	
