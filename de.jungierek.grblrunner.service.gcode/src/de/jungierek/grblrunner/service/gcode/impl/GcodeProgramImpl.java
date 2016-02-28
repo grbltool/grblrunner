@@ -438,11 +438,11 @@ public class GcodeProgramImpl implements IGcodeProgram {
         final GcodePointImpl p = (GcodePointImpl) probe;
 
         final double distx = p.x - min.x;
-        final double ii = distx / this.xStepWidth + EPSILON;
+        final double ii = distx / this.xStepWidth + IConstants.EPSILON;
         int i = (int) ii;
 
         final double disty = p.y - min.y;
-        final double jj = disty / this.yStepWidth + EPSILON;
+        final double jj = disty / this.yStepWidth + IConstants.EPSILON;
         int j = (int) jj;
 
         LOG.debug ( "setProbePoint: dx=" + distx + " dy=" + disty + "  ii=" + ii + " i=" + i + " jj=" + jj + " j=" + j );
@@ -505,12 +505,12 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         double result = p.z; // the interpolated z for the point
 
-        double ii = (p.x - min.x) / xStepWidth + EPSILON;
+        double ii = (p.x - min.x) / xStepWidth + IConstants.EPSILON;
         int i = (int) ii;
         if ( i < 0 ) i = 0;
         if ( i >= xSteps ) i = xSteps - 1;
 
-        double jj = (p.y - min.y) / yStepWidth + EPSILON;
+        double jj = (p.y - min.y) / yStepWidth + IConstants.EPSILON;
         int j = (int) jj;
         if ( j < 0 ) j = 0;
         if ( j >= ySteps ) j = ySteps - 1;
@@ -533,7 +533,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private double subDouble ( double d1, double d2 ) {
 
         double result = d1 - d2;
-        if ( Math.abs ( result ) <= EPSILON ) {
+        if ( Math.abs ( result ) <= IConstants.EPSILON ) {
             result = 0.0;
         }
 
@@ -556,24 +556,24 @@ public class GcodeProgramImpl implements IGcodeProgram {
         final double dy = subDouble ( p2.y, p1.y );
         final double dz = subDouble ( p2.z, p1.z );
 
-        if ( dx == 0.0 && dy == 0 ) {
+        if ( dx == 0.0 && dy == 0 ) { // only a z move
             result.add ( interpolate ( p2 ) );
-            return result.toArray ( new IGcodePoint [0] );
+            return result.toArray ( new IGcodePoint [2] );
         }
 
-        double ii1 = (p1.x - min.x + EPSILON) / xStepWidth;
+        double ii1 = (p1.x - min.x + IConstants.EPSILON) / xStepWidth;
         final int i1 = (int) ii1;
         ii1 -= i1;
 
-        double jj1 = (p1.y - min.y + EPSILON) / yStepWidth;
+        double jj1 = (p1.y - min.y + IConstants.EPSILON) / yStepWidth;
         final int j1 = (int) jj1;
         jj1 -= j1;
 
-        double ii2 = (p2.x - min.x + EPSILON) / xStepWidth;
+        double ii2 = (p2.x - min.x + IConstants.EPSILON) / xStepWidth;
         int i2 = (int) ii2;
         ii2 -= i2;
 
-        double jj2 = (p2.y - min.y + EPSILON) / yStepWidth;
+        double jj2 = (p2.y - min.y + IConstants.EPSILON) / yStepWidth;
         int j2 = (int) jj2;
         jj2 -= j2;
 
@@ -583,8 +583,8 @@ public class GcodeProgramImpl implements IGcodeProgram {
         double llXYZ = llXY + dz * dz;
         double distXYZ = Math.sqrt ( llXYZ );
 
-        double cosX = dx / distXY; // cos
-        double cosY = dy / distXY; // cos
+        final double cosX = dx / distXY;
+        final double cosY = dy / distXY;
         final double cosZ = dz * distXY / distXYZ; // correction for the slope in z vs. the travel in xy
 
         // if ( Math.abs ( dx ) < 1e-10 ) dx = 0.0;
@@ -592,27 +592,24 @@ public class GcodeProgramImpl implements IGcodeProgram {
         // if ( Math.abs ( dx ) <= EPSILON ) {cosX = 0.0;
         // if ( Math.abs ( dy ) <= EPSILON ) cosY = 0.0;
 
-        // next intersection
+        // potential next intersection
+        // i and j are the indices of the cross left down from p1
         int i = i1;
         if ( dx > 0.0 ) {
             i++;
-            // if ( ii2 != 0.0 ) i2++;
-            if ( Math.abs ( ii2 ) > EPSILON ) i2++;
+            if ( Math.abs ( ii2 ) > IConstants.EPSILON ) i2++;
         }
         else if ( dx < 0.0 ) {
-            // if ( ii1 == 0.0 ) i--;
-            if ( i > 0 && Math.abs ( ii1 ) <= EPSILON ) i--;
+            if ( Math.abs ( ii1 ) <= IConstants.EPSILON ) i--;
         }
 
         int j = j1;
         if ( dy > 0.0 ) {
             j++;
-            // if ( jj2 != 0.0 ) j2++;
-            if ( Math.abs ( jj2 ) > EPSILON ) j2++;
+            if ( Math.abs ( jj2 ) > IConstants.EPSILON ) j2++;
         }
         else if ( dy < 0.0 ) {
-            // if ( jj1 == 0.0 ) j--;
-            if ( j > 0 && Math.abs ( jj1 ) <= EPSILON ) j--;
+            if ( Math.abs ( jj1 ) <= IConstants.EPSILON ) j--;
         }
 
         double x = p1.x;
@@ -625,12 +622,12 @@ public class GcodeProgramImpl implements IGcodeProgram {
         double tx = 1e10;
         double ty = 1e10;
 
-        while ( isInsideArea ( dx, i, i2 ) || isInsideArea ( dy, j, j2 ) ) {
+        while ( isInsideArea ( dx, i, i1, i2 ) && isInsideArea ( dy, j, j1, j2 ) ) {
 
             // HACK delete later
             // if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) return null;
             if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) {
-                System.out.println ( "i=" + i + " j=" + j + " p1=" + p1 + " p2=" + p2 );
+                System.out.println ( "dx=" + dx + " i=" + i + " i2=" + i2 + " dy=" + dy + " j=" + j + " j2=" + j2 + " p1=" + p1 + " p2=" + p2 );
                 break; // HACK HACK
             }
 
@@ -682,13 +679,13 @@ public class GcodeProgramImpl implements IGcodeProgram {
         //
         // }
 
-        return result.toArray ( new IGcodePoint [0] );
+        return result.toArray ( new IGcodePoint [result.size ()] );
 
     }
 
-    private boolean isInsideArea ( double delta, int index, int maxIndex ) {
+    private boolean isInsideArea ( double delta, int index, int minIndex, int maxIndex ) {
 
-        return delta == 0.0 && index != maxIndex || delta < 0.0 && index > 0 || delta > 0.0 && index < maxIndex;
+        return delta == 0.0 && index != minIndex && index != maxIndex || delta < 0.0 && index > minIndex || delta > 0.0 && index < maxIndex;
 
     }
 

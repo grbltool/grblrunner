@@ -4,8 +4,6 @@ import java.io.File;
 
 public interface IGcodeProgram {
 
-    public static final double EPSILON = 0.001;
-
     IGcodeLine [] getAllGcodeLines ();
 
     public File getGcodeProgramFile ();

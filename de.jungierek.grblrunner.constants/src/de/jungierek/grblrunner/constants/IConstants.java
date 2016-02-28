@@ -31,4 +31,6 @@ public interface IConstants {
 
     public static final String NO_OVERLAY = "NO OVERLAY";
 
+    public static final double EPSILON = 0.001; // never adjust this lesser, because of grid calculation ccordinates vs. indices
+
 }
