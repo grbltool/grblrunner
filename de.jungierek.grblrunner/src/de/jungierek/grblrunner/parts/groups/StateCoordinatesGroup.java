@@ -156,7 +156,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
     public Map<String, Object> getParameter () {
 
         Map<String, Object> result = new HashMap<String, Object> ();
-        result.put ( ICommandID.SET_COORDINATE_SYSTEM_PARAMETER, "" + (partTools.parseInteger ( coordSystemCombo.getText (), 54 ) - 53) );
+        result.put ( ICommandID.SET_COORDINATE_SYSTEM_PARAMETER, "" + (partTools.parseInteger ( coordSystemCombo.getText ().substring ( 1 ), 54 ) - 53) );
 
         return result;
 
