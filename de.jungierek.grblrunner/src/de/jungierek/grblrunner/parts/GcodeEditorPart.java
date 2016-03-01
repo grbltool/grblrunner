@@ -79,6 +79,7 @@ public class GcodeEditorPart {
             gcodeProgram.loadGcodeProgram ( new File ( path ) );
         }
         
+        part.getTags ().add ( EPartService.REMOVE_ON_HIDE_TAG );
         partService.activate ( part );
 
 	}
