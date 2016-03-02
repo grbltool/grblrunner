@@ -354,6 +354,7 @@
   <handlers xmi:id="_7VqtQNgPEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.handler.gcode.coordinate.system" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeCoordinateCommandHandler" command="_pYG7gNgPEeWrcvb8nXcT5w"/>
   <handlers xmi:id="_9UsigNjPEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.handler.editor.next" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.EditorSwitchHandler" command="_wG7gsNjPEeWQKJAzQgCBeQ"/>
   <handlers xmi:id="_CrirYNjQEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.handler.editor.previous" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.EditorSwitchHandler" command="_12frkNjPEeWQKJAzQgCBeQ"/>
+  <handlers xmi:id="_2Q_WwOBEEeWXitAFTaNkpw" elementId="de.jungierek.grblrunner.handler.gcode.optimize" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeOptimizeCommandHandler" command="_vAbTMOBEEeWXitAFTaNkpw"/>
   <bindingTables xmi:id="_JWsysIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.bindingtable.global" bindingContext="_TThFefsBEeSJsKKNyX_1bw">
     <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+O" command="_PP9sEHdmEeW3XImWwiVxiA">
       <tags>type:user</tags>
@@ -549,6 +550,7 @@
     <toolbar xmi:id="_2Iz88JE5EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.toolbar.5">
       <children xsi:type="menu:HandledToolItem" xmi:id="_jGv2sJE4EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.handledtoolitem.editor.play" iconURI="platform:/plugin/de.jungierek.grblrunner/run.gif" command="_dBKgMHdoEeW3XImWwiVxiA"/>
       <children xsi:type="menu:HandledToolItem" xmi:id="_q-yJ8JE4EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.handledtoolitem.editor.refresh" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/refresh.gif" command="_bf5LoHdxEeW3XImWwiVxiA"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_zkWgcOA7EeWXitAFTaNkpw" elementId="de.jungierek.grblrunner.handledtoolitem.editor.optimize" label="Opt" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/optimize.gif" command="_vAbTMOBEEeWXitAFTaNkpw"/>
       <children xsi:type="menu:DirectToolItem" xmi:id="_FDF4AJFHEeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.directtoolitem.editor.view" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/gcode.gif" tooltip="view gcode" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorDirectToolItem"/>
       <children xsi:type="menu:ToolControl" xmi:id="_SkX2QJFIEeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.toolcontrol.editor" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorToolControl"/>
       <children xsi:type="menu:HandledToolItem" xmi:id="_1Bx84JXuEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handledtoolitem.editor.close" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/delete.gif" command="_0fevEJVUEeWjToG7KvW0lw"/>
@@ -631,6 +633,7 @@
   </commands>
   <commands xmi:id="_wG7gsNjPEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.command.editor.next" commandName="Next Editor"/>
   <commands xmi:id="_12frkNjPEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.command.editor.previous" commandName="Previous Editor"/>
+  <commands xmi:id="_vAbTMOBEEeWXitAFTaNkpw" elementId="de.jungierek.grblrunner.command.gcode.optimize" commandName="Gcode Optimize"/>
   <addons xmi:id="_TThFcvsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_TThFc_sBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_TThFdPsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

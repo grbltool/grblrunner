@@ -75,8 +75,8 @@ public class GcodeEditorDirectToolItem {
                     IGcodePoint start = gcodeLine.getStart ();
                     IGcodePoint end = gcodeLine.getEnd ();
 
-                    int col = 30;
-                    sb.append ( JUSTIFY_PLACE.substring ( 0, col - sb.length () ) );
+                    int col = 40;
+                    sb.append ( JUSTIFY_PLACE.substring ( 0, Math.max ( col - sb.length (), 0 ) ) );
                     sb.append ( String.format ( "%5s:  ", gcodeLine.getLineNo () ) );
                     sb.append ( String.format ( "%3s   ", gcodeLine.getGcodeMode ().getCommand () ) );
 

@@ -29,7 +29,6 @@ public interface IEvents {
 
     // *********************************************************************************************
 
-    // rename to grbl
     public static final String GRBL_BASE = BASE + SEPARATOR + "grbl";
     public static final String GRBL_ALL = GRBL_BASE + SEPARATOR + "*";
 
@@ -91,6 +90,7 @@ public interface IEvents {
     public static final String GCODE_ALL = GCODE_BASE + SEPARATOR + "*";
 
     public static final String GCODE_PROGRAM_LOADED = GCODE_BASE + SEPARATOR + "loaded";
+    public static final String GCODE_PROGRAM_OPTIMIZED = GCODE_BASE + SEPARATOR + "optimized";
     public static final String GCODE_MACRO_GENERATED = GCODE_BASE + SEPARATOR + "generated";
     public static final String GCODE_CLOSED = GCODE_BASE + SEPARATOR + "closed";
 

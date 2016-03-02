@@ -91,4 +91,14 @@ public class GcodeFileGroup {
 
     }
 
+    @Inject
+    @Optional
+    public void programOptimizedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_OPTIMIZED) String fileName ) {
+
+        LOG.debug ( "programLoadedNotified: fileName=" + fileName );
+
+        refreshGuiData ();
+
+    }
+
 }

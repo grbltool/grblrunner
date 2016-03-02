@@ -119,11 +119,7 @@ public class GcodeEditorPart {
 
     }
 
-    @Inject
-    @Optional
-    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
-
-        LOG.debug ( "programLoadedNotified: fileName=" + fileName );
+    private void fillGcodeText ( String fileName ) {
 
         File gcodeProgramFile = gcodeProgram.getGcodeProgramFile ();
         if ( gcodeProgramFile != null && gcodeProgramFile.getPath ().equals ( fileName ) ) {
@@ -131,6 +127,26 @@ public class GcodeEditorPart {
             partTools.gcodeToText ( gcodeText, gcodeProgram );
 
         }
+
+    }
+
+    @Inject
+    @Optional
+    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
+
+        LOG.debug ( "programLoadedNotified: fileName=" + fileName );
+
+        fillGcodeText ( fileName );
+
+    }
+
+    @Inject
+    @Optional
+    public void programOptimizedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_OPTIMIZED) String fileName ) {
+
+        LOG.debug ( "programOptimizedNotified: fileName=" + fileName );
+
+        fillGcodeText ( fileName );
 
     }
 

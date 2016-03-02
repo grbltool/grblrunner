@@ -58,6 +58,8 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private boolean playing;
     private boolean scanning;
 
+    boolean optimized;
+
     public GcodeProgramImpl () {}
 
     @Inject
@@ -93,7 +95,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     @Override
     public IGcodeLine [] getAllGcodeLines () {
 
-        return gcodeLines.toArray ( new IGcodeLine [0] );
+        return gcodeLines.toArray ( new IGcodeLine [gcodeLines.size ()] );
 
     }
 
@@ -146,6 +148,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         gcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
 
         rotationAngle = 0.0;
+        optimized = false;
 
         clearAutolevelData ();
 
@@ -171,6 +174,168 @@ public class GcodeProgramImpl implements IGcodeProgram {
         for ( IGcodeLine gcodeLine : getAllGcodeLines () ) {
             gcodeLine.setProcessed ( false );
         }
+
+    }
+
+    // Ein Segemnt beginnt mit einem GO move in xy
+    // dann kommt ein G1 z move mit Ziel <=0
+    // danach g1 moves in xy
+    // letzter move in z nach >0
+
+    // auf jeden fall prefix und suffix segemnt merken
+
+    private class GcodeSegment {
+
+        public final List<GcodeLineImpl> gcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
+
+        public final double x;
+        public final double y;
+
+        public GcodeSegment ( double x, double y ) {
+
+            this.x = x;
+            this.y = y;
+
+        }
+        
+        public void append ( GcodeLineImpl line ) {
+
+            gcodeLines.add ( line );
+
+        }
+
+        private void append ( GcodeSegment segment ) {
+
+            this.gcodeLines.addAll ( segment.gcodeLines );
+
+        }
+
+    }
+
+    @Override
+    public boolean isOptimized () {
+
+        return optimized;
+
+    }
+
+    @Override
+    public void optimize () {
+
+        LOG.debug ( "optimize:" );
+
+        final boolean firstAndLastinSegments = true;
+
+        // 1) divide gcode in segments, each segment ends at the same point as it starts
+        List<GcodeSegment> segments = new ArrayList<GcodeSegment> ( 100 );
+        GcodeSegment segment = new GcodeSegment ( 0.0, 0.0 ); // TODO start to pref
+        GcodeSegment firstSegment = null;
+        GcodeSegment lastSegment = null;
+
+        for ( GcodeLineImpl line : gcodeLines ) {
+            
+            LOG.trace ( "optimize: line=" + line );
+
+            if ( line.isMotionModeSeek () ) {
+
+                final double x = line.getEnd ().getX ();
+                final double y = line.getEnd ().getY ();
+
+                if ( line.isMoveInZ () && firstSegment != null ) {
+                    final double z = line.getEnd ().getZ ();
+                    if ( z > 5.0 ) {
+                        LOG.trace ( "optimize: last segment z=" + z );
+                        // segment.append ( new GcodeLineImpl ( -1, "(-------------------)" ) );
+                        segments.add ( segment );
+                        segment = new GcodeSegment ( x, y );
+                        lastSegment = segment;
+                    }
+                }
+                else {
+                    if ( segment.x != x || segment.y != y ) {
+                        LOG.trace ( "optimize: segment (" + x + "," + y + ")" );
+                        // segment.append ( new GcodeLineImpl ( -1, "(-------------------)" ) );
+                        if ( firstSegment == null ) {
+                            firstSegment = segment;
+                            if ( firstAndLastinSegments ) segments.add ( segment );
+                        }
+                        else {
+                            segments.add ( segment );
+                        }
+                        segment = new GcodeSegment ( x, y );
+                    }
+                }
+            }
+
+            segment.append ( line );
+
+        }
+
+        if ( firstAndLastinSegments ) segments.add ( segment );
+
+        // algorithm from https://hackaday.io/project/4955-g-code-optimization
+
+        // 2) optimze path
+        int cities = segments.size ();
+        GcodeSegment [] segmentArray = segments.toArray ( new GcodeSegment [cities] );
+
+        double [][] distance = new double [cities] [cities];
+        for ( int i = 0; i < cities; i++ ) {
+            for ( int j = 0; j < cities; j++ ) {
+                final double dx = segmentArray[i].x - segmentArray[j].x; // no abs necessary
+                final double dy = segmentArray[i].y - segmentArray[j].y; // no abs necessary
+                final double dist = Math.sqrt ( dx * dx + dy * dy );
+                // final double dist = dx * dx + dy * dy;
+                distance[i][j] = dist; // TODO sqrt???
+            }
+        }
+        
+        int [] path = new int [cities];
+        for ( int i = 0; i < cities; i++ ) {
+            path[i] = i;
+        }
+
+        boolean lookForBetterPath = true;
+        while ( lookForBetterPath ) {
+
+            lookForBetterPath = false;
+
+            START: for ( int i = 0; i < cities - 3; i++ ) {
+                for ( int j = i + 2; j < cities - 1; j++ ) {
+                    // System.out.println ( "i=" + i + " j=" + j );
+                    double oldLength = distance[path[i]][path[i + 1]] + distance[path[j]][path[j + 1]];
+                    double newLength = distance[path[i]][path[j]] + distance[path[i + 1]][path[j + 1]];
+                    if ( newLength < oldLength ) {
+                        // reorganize path by inverting the order between i+1 and j
+                        for ( int x = 0; x < (j - i) / 2; x++ ) {
+                            int temp = path[i + 1 + x];
+                            path[i + 1 + x] = path[j - x];
+                            path[j - x] = temp;
+                        }
+                        lookForBetterPath = true;
+                        break START;
+                    }
+                }
+            }
+
+        }
+
+        // 3) flatenize all segments
+        List<GcodeLineImpl> optimizedGcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
+        if ( !firstAndLastinSegments ) optimizedGcodeLines.addAll ( firstSegment.gcodeLines );
+        for ( int i = 0; i < cities; i++ ) {
+            LOG.trace ( "optimize: path[" + i + "]=" + path[i] );
+            optimizedGcodeLines.addAll ( segmentArray[path[i]].gcodeLines );
+        }
+        if ( !firstAndLastinSegments ) optimizedGcodeLines.addAll ( lastSegment.gcodeLines );
+        gcodeLines = optimizedGcodeLines;
+
+        // 4) adjust start end points of every line
+        parse ();
+
+        // 5) some administration
+        optimized = true;
+        eventBroker.send ( IEvents.GCODE_PROGRAM_OPTIMIZED, gcodeFile.getPath () );
 
     }
 

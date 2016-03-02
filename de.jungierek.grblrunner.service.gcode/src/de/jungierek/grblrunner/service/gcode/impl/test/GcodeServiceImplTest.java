@@ -624,6 +624,18 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
             return false;
         }
 
+        @Override
+        public void optimize () {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public boolean isOptimized () {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
     }
 
     @Override

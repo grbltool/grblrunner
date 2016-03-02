@@ -121,18 +121,30 @@ public class GcodeLineImpl implements IGcodeLine {
     }
 
     @Override
+    public boolean isMotionModeSeek () {
+
+        return mode != null && mode.isMotionModeSeek ();
+
+    }
+
+    @Override
+    public boolean isMotionModeLinear () {
+
+        return mode != null && mode.isMotionModeLinear ();
+
+    }
+
+    @Override
     public boolean isMotionMode () {
 
-        // return mode == EGcodeMode.MOTION_MODE_SEEK || mode == EGcodeMode.MOTION_MODE_LINEAR;
-        return mode.isMotionMode ();
+        return mode != null && mode.isMotionMode ();
 
     }
 
     @Override
     public boolean isArcMode () {
 
-        // return mode == EGcodeMode.MOTION_MODE_SEEK || mode == EGcodeMode.MOTION_MODE_LINEAR;
-        return mode.isArcMode ();
+        return mode != null && mode.isArcMode ();
 
     }
 

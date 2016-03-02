@@ -591,67 +591,69 @@ public class GcodeViewGroup {
 
                 EGcodeMode gcodeMode = gcodeLine.getGcodeMode ();
 
-                if ( gcodeMode == null ) return;
+                if ( gcodeMode != null ) {
 
-                Color color;
+                    Color color;
 
-                switch ( gcodeMode ) {
+                    switch ( gcodeMode ) {
 
-                // line attributes to preference
+                    // TODO line attributes to preference
 
-                    case MOTION_MODE_SEEK:
-                        gc.setLineStyle ( SWT.LINE_SOLID );
-                        gc.setLineWidth ( 1 );
-                        color = getColor ( SWT.COLOR_GRAY );
-                        if ( gcodeLine.isProcessed () ) {
-                            color = getColor ( SWT.COLOR_GREEN );
-                        }
-                        gc.setForeground ( color );
-                        drawLine ( gc, gcodeLine );
-                        break;
-                    case MOTION_MODE_LINEAR:
-                        gc.setLineStyle ( SWT.LINE_SOLID );
-                        gc.setLineWidth ( 1 );
-                        color = getColor ( SWT.COLOR_BLUE );
-                        if ( gcodeLine.isProcessed () ) {
-                            color = getColor ( SWT.COLOR_GREEN );
-                        }
-                        gc.setForeground ( color );
-                        drawLine ( gc, gcodeLine );
-                        break;
-                    case MOTION_MODE_CW_ARC:
-                        gc.setLineStyle ( SWT.LINE_SOLID );
-                        gc.setLineWidth ( 1 );
-                        color = getColor ( SWT.COLOR_BLUE );
-                        if ( gcodeLine.isProcessed () ) {
-                            color = getColor ( SWT.COLOR_GREEN );
-                        }
-                        gc.setForeground ( color );
-                        drawCircle ( gc, +1, gcodeLine );
-                        break;
-                    case MOTION_MODE_CCW_ARC:
-                        gc.setLineStyle ( SWT.LINE_SOLID );
-                        gc.setLineWidth ( 1 );
-                        color = getColor ( SWT.COLOR_BLUE );
-                        if ( gcodeLine.isProcessed () ) {
-                            color = getColor ( SWT.COLOR_GREEN );
-                        }
-                        gc.setForeground ( color );
-                        drawCircle ( gc, -1, gcodeLine );
-                        break;
-                    case MOTION_MODE_PROBE:
-                        gc.setLineStyle ( SWT.LINE_DASH );
-                        gc.setLineWidth ( 1 );
-                        gc.setForeground ( getColor ( SWT.COLOR_RED ) );
-                        drawLine ( gc, gcodeLine );
-                        break;
+                        case MOTION_MODE_SEEK:
+                            gc.setLineStyle ( SWT.LINE_SOLID );
+                            gc.setLineWidth ( 1 );
+                            color = getColor ( SWT.COLOR_GRAY );
+                            if ( gcodeLine.isProcessed () ) {
+                                color = getColor ( SWT.COLOR_GREEN );
+                            }
+                            gc.setForeground ( color );
+                            drawLine ( gc, gcodeLine );
+                            break;
+                        case MOTION_MODE_LINEAR:
+                            gc.setLineStyle ( SWT.LINE_SOLID );
+                            gc.setLineWidth ( 1 );
+                            color = getColor ( SWT.COLOR_BLUE );
+                            if ( gcodeLine.isProcessed () ) {
+                                color = getColor ( SWT.COLOR_GREEN );
+                            }
+                            gc.setForeground ( color );
+                            drawLine ( gc, gcodeLine );
+                            break;
+                        case MOTION_MODE_CW_ARC:
+                            gc.setLineStyle ( SWT.LINE_SOLID );
+                            gc.setLineWidth ( 1 );
+                            color = getColor ( SWT.COLOR_BLUE );
+                            if ( gcodeLine.isProcessed () ) {
+                                color = getColor ( SWT.COLOR_GREEN );
+                            }
+                            gc.setForeground ( color );
+                            drawCircle ( gc, +1, gcodeLine );
+                            break;
+                        case MOTION_MODE_CCW_ARC:
+                            gc.setLineStyle ( SWT.LINE_SOLID );
+                            gc.setLineWidth ( 1 );
+                            color = getColor ( SWT.COLOR_BLUE );
+                            if ( gcodeLine.isProcessed () ) {
+                                color = getColor ( SWT.COLOR_GREEN );
+                            }
+                            gc.setForeground ( color );
+                            drawCircle ( gc, -1, gcodeLine );
+                            break;
+                        case MOTION_MODE_PROBE:
+                            gc.setLineStyle ( SWT.LINE_DASH );
+                            gc.setLineWidth ( 1 );
+                            gc.setForeground ( getColor ( SWT.COLOR_RED ) );
+                            drawLine ( gc, gcodeLine );
+                            break;
 
-                    case COMMENT:
-                        break;
+                        case COMMENT:
+                            break;
 
-                    default:
-                        // do nothing
-                        break;
+                        default:
+                            // do nothing
+                            break;
+                    }
+
                 }
 
             }
@@ -1136,6 +1138,16 @@ public class GcodeViewGroup {
     public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
+
+        redraw ();
+
+    }
+
+    @Inject
+    @Optional
+    public void programOptimizedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_OPTIMIZED) String fileName ) {
+
+        LOG.debug ( "programOptimizedNotified: fileName=" + fileName );
 
         redraw ();
 

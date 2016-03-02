@@ -33,6 +33,9 @@ public interface IGcodeProgram {
     public void rotate ( double angle );
     double getRotationAngle ();
 
+    void optimize ();
+    boolean isOptimized ();
+
     // ---------------------------------------------------------------------
 
     public File getAutolevelDataFile ();
