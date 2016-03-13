@@ -58,7 +58,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private boolean playing;
     private boolean scanning;
 
-    boolean optimized;
+    boolean optimized = false;
 
     public GcodeProgramImpl () {}
 
