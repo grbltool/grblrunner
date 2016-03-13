@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
@@ -25,7 +26,6 @@ import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class ProgressGroup {
 
@@ -50,8 +50,8 @@ public class ProgressGroup {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_COLS )).intValue ();
+        int partCols = ((Integer) context.get ( IContextKey.KEY_PART_COLS )).intValue ();
+        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, 1, true );
 
         final int cols = 1;

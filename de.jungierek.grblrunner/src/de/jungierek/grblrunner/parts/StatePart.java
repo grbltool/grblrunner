@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.parts.groups.StateCoolantGroup;
 import de.jungierek.grblrunner.parts.groups.StateCoordinatesGroup;
 import de.jungierek.grblrunner.parts.groups.StateDistanceGroup;
@@ -23,7 +24,6 @@ import de.jungierek.grblrunner.parts.groups.StatePlaneGroup;
 import de.jungierek.grblrunner.parts.groups.StateSpindleGroup;
 import de.jungierek.grblrunner.parts.groups.StateToolGroup;
 import de.jungierek.grblrunner.parts.groups.StateUnitGroup;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class StatePart {
 
@@ -57,20 +57,20 @@ public class StatePart {
         parent.setLayout ( new GridLayout ( cols, true ) );
 
         // collect groups
-        context.set ( IPersistenceKeys.KEY_PART_COLS, cols );
+        context.set ( IContextKey.KEY_PART_COLS, cols );
 
         // state
-        context.set ( IPersistenceKeys.KEY_PART_GROUP_COLS, cols );
-        context.set ( IPersistenceKeys.KEY_PART_GROUP_ROWS, 1 );
+        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols );
+        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 );
         stateGroup = ContextInjectionFactory.make ( StateGroup.class, context );
 
         // coordinates
-        context.set ( IPersistenceKeys.KEY_PART_GROUP_COLS, cols );
-        context.set ( IPersistenceKeys.KEY_PART_GROUP_ROWS, 3 );
+        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols );
+        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 3 );
         stateCoordinatesGroup = ContextInjectionFactory.make ( StateCoordinatesGroup.class, context );
 
         // all following groups allocating only 1 column
-        context.set ( IPersistenceKeys.KEY_PART_GROUP_COLS, 1 );
+        context.set ( IContextKey.KEY_PART_GROUP_COLS, 1 );
 
         // feedrate
         stateFeedrateGroup = ContextInjectionFactory.make ( StateFeedrateGroup.class, context );

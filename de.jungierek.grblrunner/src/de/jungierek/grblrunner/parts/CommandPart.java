@@ -10,8 +10,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.parts.groups.CommandGroup;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class CommandPart {
 
@@ -33,8 +33,8 @@ public class CommandPart {
 
         final int cols = 4;
         parent.setLayout ( new GridLayout ( cols, false ) );
-        context.set ( IPersistenceKeys.KEY_PART_COLS, cols );
-        context.set ( IPersistenceKeys.KEY_PART_GROUP_COLS, cols ); // all groups have a width of 1 column
+        context.set ( IContextKey.KEY_PART_COLS, cols );
+        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols ); // all groups have a width of 1 column
 
         // collect groups
         commandGroup = ContextInjectionFactory.make ( CommandGroup.class, context );

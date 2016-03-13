@@ -24,13 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.parts.groups.GcodeFileGroup;
 import de.jungierek.grblrunner.parts.groups.MacroGroup;
 import de.jungierek.grblrunner.parts.groups.MacroHobbedBoltGroup;
 import de.jungierek.grblrunner.parts.groups.MacroPocketGroup;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class MacroPart {
@@ -64,16 +64,16 @@ public class MacroPart {
 
         final int cols = 1;
         parent.setLayout ( new GridLayout ( cols, false ) );
-        context.set ( IPersistenceKeys.KEY_PART_COLS, cols );
-        context.set ( IPersistenceKeys.KEY_PART_GROUP_COLS, cols ); // all groups have a width of 1 column
+        context.set ( IContextKey.KEY_PART_COLS, cols );
+        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols ); // all groups have a width of 1 column
 
         context.set ( IGcodeProgram.class, gcodeProgram );
 
         // collect groups
         gcodeFileGroup = ContextInjectionFactory.make ( GcodeFileGroup.class, context );
-        macroType = part.getPersistedState ().get ( IPersistenceKeys.KEY_MACRO_TYPE );
+        macroType = part.getPersistedState ().get ( IContextKey.KEY_MACRO_TYPE );
         if ( macroType == null ) {
-            macroType = (String) context.get ( IPersistenceKeys.KEY_MACRO_TYPE );
+            macroType = (String) context.get ( IContextKey.KEY_MACRO_TYPE );
         }
         switch ( macroType ) {
 
@@ -111,7 +111,7 @@ public class MacroPart {
 
         LOG.debug ( "persistState:" );
 
-        part.getPersistedState ().put ( IPersistenceKeys.KEY_MACRO_TYPE, macroType );
+        part.getPersistedState ().put ( IContextKey.KEY_MACRO_TYPE, macroType );
 
     }
 

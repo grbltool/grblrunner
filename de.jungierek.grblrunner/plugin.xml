@@ -28,5 +28,14 @@
             <element id="de.jungierek.grblrunner.window.main"/>
       </processor>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <scope
+      		name="default">
+      </scope>
+      <initializer
+            class="de.jungierek.grblrunner.preference.PreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

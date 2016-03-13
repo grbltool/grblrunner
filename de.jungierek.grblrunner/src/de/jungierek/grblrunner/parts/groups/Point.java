@@ -1,4 +1,4 @@
-package de.jungierek.grblrunner.parts;
+package de.jungierek.grblrunner.parts.groups;
 
 public class Point {
 

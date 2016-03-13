@@ -14,9 +14,9 @@ import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class StateDistanceGroup {
 
@@ -31,7 +31,7 @@ public class StateDistanceGroup {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int groupCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_COLS )).intValue ();
+        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, 1, true );
 
         group.setLayout ( new GridLayout ( 1, false ) );

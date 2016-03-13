@@ -12,9 +12,6 @@ public interface IPreferences {
     public static final String [] GCODE_FILE_EXTENSIONS = new String [] { "*.ngc" };
     public static final String AUTOLEVEL_DATA_FILE_EXTENSION = ".probe";
 
-    public static final double WORK_AREA_X = 107.5;
-    public static final double WORK_AREA_Y = 84.3;
-
     public static final int SPINDLE_MIN_RPM = 0;
     public static final int SPINDLE_MAX_RPM = 12000;
 
@@ -53,9 +50,6 @@ public interface IPreferences {
     public static final boolean INITIAL_VIEW_GCODE = true;
     public static final boolean INITIAL_VIEW_GRID = true;
     public static final boolean INITIAL_VIEW_WORKAREA = true;
-
-    public static final double FIT_TO_SIZE_MARGIN = 20.0;
-    public static final boolean FIT_TO_SIZE_WITH_Z = false;
 
     public static final int GCODE_LARGE_FONT_SIZE = 20;
     public static final int GCODE_LARGE_FONT_STYLE = SWT.BOLD;

@@ -18,13 +18,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.parts.groups.CommandGroup;
 import de.jungierek.grblrunner.parts.groups.GcodeLargeGroup;
 import de.jungierek.grblrunner.parts.groups.ProgressGroup;
 import de.jungierek.grblrunner.parts.groups.StatusLineGroup;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class StatusLinePart {
 
@@ -59,8 +59,8 @@ public class StatusLinePart {
 
         final int cols = 4;
         parent.setLayout ( new GridLayout ( cols, true ) );
-        context.set ( IPersistenceKeys.KEY_PART_COLS, cols );
-        context.set ( IPersistenceKeys.KEY_PART_GROUP_COLS, 1 ); // all groups have a width of 1 column
+        context.set ( IContextKey.KEY_PART_COLS, cols );
+        context.set ( IContextKey.KEY_PART_GROUP_COLS, 1 ); // all groups have a width of 1 column
 
         // collect groups and hold reference to prevent garbage collection
         gcodeLargeGroup = ContextInjectionFactory.make ( GcodeLargeGroup.class, context );

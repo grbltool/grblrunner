@@ -27,10 +27,11 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPersistenceKeys;
 import de.jungierek.grblrunner.parts.groups.GcodeFileGroup;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class GcodeEditorPart {
@@ -59,8 +60,8 @@ public class GcodeEditorPart {
 
         final int cols = 1;
         parent.setLayout ( new GridLayout ( cols, false ) );
-        context.set ( IPersistenceKeys.KEY_PART_COLS, cols );
-        context.set ( IPersistenceKeys.KEY_PART_GROUP_COLS, cols ); // all groups have a width of 1 column
+        context.set ( IContextKey.KEY_PART_COLS, cols );
+        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols ); // all groups have a width of 1 column
         
         context.set ( IGcodeProgram.class, gcodeProgram );
 

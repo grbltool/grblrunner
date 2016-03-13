@@ -19,13 +19,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandID;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class ControlProbeGroup implements CommandParameterCallback {
@@ -48,8 +48,8 @@ public class ControlProbeGroup implements CommandParameterCallback {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int groupCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_ROWS )).intValue ();
+        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
+        int groupRows = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         group.setLayout ( new GridLayout ( 3, false ) );

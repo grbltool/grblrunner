@@ -75,6 +75,7 @@
       <children xsi:type="menu:Menu" xmi:id="_sXTwkDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menu.gcode" label="Gcode" mnemonics="G">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_xTHjQDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.load" label="Load" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/open_file.gif" mnemonics="L" command="_PP9sEHdmEeW3XImWwiVxiA"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_X2p0EHdxEeW3XImWwiVxiA" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.refresh" label="Refresh" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/refresh.gif" command="_bf5LoHdxEeW3XImWwiVxiA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_EM4YEOiDEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.optimize" label="Optimize" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/optimize.gif" command="_vAbTMOBEEeWXitAFTaNkpw"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_QmptUEBfEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.play" label="Run" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/run.gif" command="_dBKgMHdoEeW3XImWwiVxiA"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_Y3LrcJVWEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handledmenuitem.gcode.close" label="Close" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/delete.gif" command="_0fevEJVUEeWjToG7KvW0lw"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_bC_6sDmsEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menuseparator.1"/>
@@ -207,7 +208,7 @@
       <children xsi:type="menu:Menu" xmi:id="_QJo9AHYcEeWpMYWBxJNtEA" elementId="de.jungierek.grblrunner.menu.window" label="Window">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_14i0kBFOEeWhXb_CmI9f3g" elementId="de.jungierek.grblrunner.handledmenuitem.switchtheme" toBeRendered="false" visible="false" label="Switch Theme" enabled="false" command="_a_xtQBFMEeWhXb_CmI9f3g"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_y2KmcHYcEeWpMYWBxJNtEA" elementId="de.jungierek.grblrunner.handledmenuitem.perspective" label="Switch Perspective" enabled="false" command="_qi7KQHXiEeW-v4gJsYES7Q"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_41qcwDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.preferences" label="Preferences"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_41qcwDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.preferences" label="Preferences" command="_2niMwOIsEeWx3dCuCzksUg"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_3re6IHYdEeWpMYWBxJNtEA" elementId="de.jungierek.grblrunner.menu.help" label="Help">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_JNWOYHYeEeWpMYWBxJNtEA" elementId="de.jungierek.grblrunner.handledmenuitem.about" label="_About"/>
@@ -270,6 +271,7 @@
         <children xsi:type="menu:DirectToolItem" xmi:id="_eX1R4IVCEeWQwsnzcia1Gg" elementId="de.jungierek.grblrunner.directtoolitem.view.fittosize" label="fit to size" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/fit_to_size.png" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">
           <persistedState key="type" value="fittosize"/>
         </children>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_KYE2YOiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.handledtoolitem.fittosize" toBeRendered="false" visible="false" label="fit to size" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/fit_to_size.png" command="_UdSy4OiAEeWwz-taqm-HEQ"/>
         <children xsi:type="menu:ToolBarSeparator" xmi:id="_yTmnQIYHEeWmorqqLo61Ew" elementId="de.jungierek.grblrunner.toolbarseparator.6"/>
         <children xsi:type="menu:ToolControl" xmi:id="_8x1M0JZyEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.toolcontrol.view.overlay" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewToolControl"/>
       </toolbar>
@@ -355,8 +357,10 @@
   <handlers xmi:id="_9UsigNjPEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.handler.editor.next" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.EditorSwitchHandler" command="_wG7gsNjPEeWQKJAzQgCBeQ"/>
   <handlers xmi:id="_CrirYNjQEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.handler.editor.previous" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.EditorSwitchHandler" command="_12frkNjPEeWQKJAzQgCBeQ"/>
   <handlers xmi:id="_2Q_WwOBEEeWXitAFTaNkpw" elementId="de.jungierek.grblrunner.handler.gcode.optimize" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeOptimizeCommandHandler" command="_vAbTMOBEEeWXitAFTaNkpw"/>
+  <handlers xmi:id="_-U0BgOIsEeWx3dCuCzksUg" elementId="de.jungierek.grblrunner.handler.preferences" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.PreferencesCommandHandler" command="_2niMwOIsEeWx3dCuCzksUg"/>
+  <handlers xmi:id="_bozXUOiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.handler.fittosize" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeViewFitToSizeCommandHandler" command="_UdSy4OiAEeWwz-taqm-HEQ"/>
   <bindingTables xmi:id="_JWsysIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.bindingtable.global" bindingContext="_TThFefsBEeSJsKKNyX_1bw">
-    <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+O" command="_PP9sEHdmEeW3XImWwiVxiA">
+    <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+G" command="_PP9sEHdmEeW3XImWwiVxiA">
       <tags>type:user</tags>
     </bindings>
     <bindings xmi:id="_37dOYIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.autolevel.load" keySequence="M1+P" command="_gieyAHwiEeWvRN9uvDzZzw">
@@ -536,6 +540,15 @@
     <bindings xmi:id="_YCEx0NjVEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.keybinding.editor.previous" keySequence="M1+M2+TAB" command="_12frkNjPEeWQKJAzQgCBeQ">
       <tags>type:user</tags>
     </bindings>
+    <bindings xmi:id="_OD2QwOIuEeWx3dCuCzksUg" elementId="de.jungierek.grblrunner.keybinding.preferences" keySequence="M3+ENTER" command="_2niMwOIsEeWx3dCuCzksUg">
+      <tags>type:user</tags>
+    </bindings>
+    <bindings xmi:id="_1R34sOh_EeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.keybinding.gcode.optimize" keySequence="M1+O" command="_vAbTMOBEEeWXitAFTaNkpw">
+      <tags>type:user</tags>
+    </bindings>
+    <bindings xmi:id="_5jOjsOiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.keybinding.fittosize" keySequence="M1+F" command="_UdSy4OiAEeWwz-taqm-HEQ">
+      <tags>type:user</tags>
+    </bindings>
   </bindingTables>
   <bindingTables xmi:id="_g0ji0NjPEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.bindingtable.0" bindingContext="_Wr0YQNjPEeWQKJAzQgCBeQ"/>
   <rootContext xmi:id="_TThFefsBEeSJsKKNyX_1bw" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
@@ -634,6 +647,8 @@
   <commands xmi:id="_wG7gsNjPEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.command.editor.next" commandName="Next Editor"/>
   <commands xmi:id="_12frkNjPEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.command.editor.previous" commandName="Previous Editor"/>
   <commands xmi:id="_vAbTMOBEEeWXitAFTaNkpw" elementId="de.jungierek.grblrunner.command.gcode.optimize" commandName="Gcode Optimize"/>
+  <commands xmi:id="_2niMwOIsEeWx3dCuCzksUg" elementId="de.jungierek.grblrunner.command.preferences" commandName="Preferences"/>
+  <commands xmi:id="_UdSy4OiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.command.fittosize" commandName="Fit To Size"/>
   <addons xmi:id="_TThFcvsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_TThFc_sBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_TThFdPsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

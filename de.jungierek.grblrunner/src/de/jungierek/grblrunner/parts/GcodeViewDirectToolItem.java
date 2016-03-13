@@ -1,9 +1,6 @@
 package de.jungierek.grblrunner.parts;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectToolItem;
 import org.slf4j.Logger;
@@ -14,9 +11,6 @@ import de.jungierek.grblrunner.parts.groups.GcodeViewGroup;
 public class GcodeViewDirectToolItem {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeViewDirectToolItem.class );
-
-    @Inject
-    private IEventBroker eventBroker;
 
     // toolbar items
     @Execute

@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
+import de.jungierek.grblrunner.constants.IContextKey;
 
 public class GcodeMarcoHandler {
 
@@ -74,7 +74,7 @@ public class GcodeMarcoHandler {
             MPartStack partStack = (MPartStack) modelService.find ( IConstants.EDITOR_PARTSTACK_ID, application );
             partStack.getChildren ().add ( part );
             // HACK
-            application.getContext ().set ( IPersistenceKeys.KEY_MACRO_TYPE, selectedMacro.contextValue );
+            application.getContext ().set ( IContextKey.KEY_MACRO_TYPE, selectedMacro.contextValue );
 
             // it instanciates also the part object class
             part.setLabel ( "Macro: " + selectedMacro.listItem );

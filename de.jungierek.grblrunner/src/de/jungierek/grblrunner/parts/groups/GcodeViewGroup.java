@@ -6,12 +6,13 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -37,9 +38,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPersistenceKeys;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.constants.IPreferences;
-import de.jungierek.grblrunner.parts.Point;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
@@ -47,7 +50,6 @@ import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class GcodeViewGroup {
@@ -71,7 +73,7 @@ public class GcodeViewGroup {
     private IGcodeProgram gcodeProgram;
     private IGcodeProgram overlayGcodeProgram;
 
-    private Rectangle canvasArea; // TODO check for this global var
+    private Rectangle canvasArea;
 
     private IGcodeGrblState gcodeState;
 
@@ -81,8 +83,25 @@ public class GcodeViewGroup {
     private double rotZ = 0.0 * IConstants.ONE_DEGREE;
     private double scale = 5.0;
 
-    private final double workAreaMaxX = IPreferences.WORK_AREA_X; // TODO_PREF preferences
-    private final double workAreaMaxY = IPreferences.WORK_AREA_Y; // TODO_PREF preferences
+    private double workAreaMaxX; // set from preferences
+    private double workAreaMaxY; // set from preferences
+
+    private double fitToSizeMargin; // set from preferences
+
+    private Color autolevelGridColor; // set from preferences
+    private Color gantryColor; // set from preferences
+    private Color gcodeProcessedColor; // set from preferences
+    private Color gcodeMotionModeSeekColor; // set from preferences
+    private Color gcodeMotionModeLinearColor; // set from preferences
+    private Color gcodeMotionModeArcColor; // set from preferences
+    private Color gcodeMotionModeProbeColor; // set from preferences
+    private Color machineOriginColor; // set from preferences
+    private Color workOriginColor; // set from preferences
+    private Color workareaBorderColor; // set from preferences
+    private Color workareaMidcrossColor; // set from preferences
+
+    private boolean fitToSizeWithZ; // set from preferences
+
     private IGcodePoint [] workAreaPoints;
     private final int workAreaCenterCrossLength = 3; // its only the half length, like a radius
     private IGcodePoint [] workAreaCenterCrossEndPoints;
@@ -198,8 +217,6 @@ public class GcodeViewGroup {
 
         if ( gcodeProgram == null ) return;
 
-        final double margin = IPreferences.FIT_TO_SIZE_MARGIN; // TODO Pref
-
         if ( gcodeProgram.isLoaded () ) {
 
             LOG.debug ( "fitToSize: ----------------------------------------------------" );
@@ -208,7 +225,7 @@ public class GcodeViewGroup {
             IGcodePoint max = gcodeProgram.getMax ();
             LOG.debug ( "fitToSize 1: min=" + min + " max=" + max );
 
-            if ( !IPreferences.FIT_TO_SIZE_WITH_Z ) {
+            if ( !fitToSizeWithZ ) {
                 min = min.zeroAxis ( 'Z' );
                 max = max.zeroAxis ( 'Z' );
                 LOG.debug ( "fitToSize 2: min=" + min + " max=" + max );
@@ -235,8 +252,8 @@ public class GcodeViewGroup {
             LOG.debug ( "fitToSize: canvas x=" + clientArea.x + " y =" + clientArea.y + " w=" + clientArea.width + " h=" + clientArea.height );
             LOG.debug ( "fitToSize: minPixel=" + minPixel + " maxPixel=" + maxPixel );
 
-            double zoomX = (clientArea.width - 2.0 * margin) / (maxPixel.x - minPixel.x);
-            double zoomY = (clientArea.height - 2.0 * margin) / (maxPixel.y - minPixel.y);
+            double zoomX = (clientArea.width - 2.0 * fitToSizeMargin) / (maxPixel.x - minPixel.x);
+            double zoomY = (clientArea.height - 2.0 * fitToSizeMargin) / (maxPixel.y - minPixel.y);
             double zoom = Math.min ( zoomX, zoomY );
             if ( zoom < 1.0 ) {
                 zoom = 1.0;
@@ -254,7 +271,7 @@ public class GcodeViewGroup {
             // maxPixel = p00Pixel.max ( p10Pixel.max ( p01Pixel.max ( p11Pixel ) ) );
             LOG.debug ( "fitToSize: min=" + minPixel );
 
-            canvasShift = new Point ( margin, margin ).sub ( minPixel );
+            canvasShift = new Point ( fitToSizeMargin, fitToSizeMargin ).sub ( minPixel );
             LOG.debug ( "fitToSize: canvasShift=" + canvasShift );
 
             redraw ();
@@ -266,13 +283,133 @@ public class GcodeViewGroup {
 
     }
 
+    @Inject
+    public void setWorkAreaX ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.WORK_AREA_MAX_X) double maxX ) {
+
+        workAreaMaxX = maxX;
+        initWorkAreaPoints ();
+        redraw ();
+
+    }
+
+    @Inject
+    public void setWorkAreaY ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.WORK_AREA_MAX_Y) double maxY ) {
+
+        workAreaMaxY = maxY;
+        initWorkAreaPoints ();
+        redraw ();
+
+    }
+    
+    @Inject
+    public void setFitToSizeMargin ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.FIT_TO_SIZE_MARGIN) double margin ) {
+
+        fitToSizeMargin = margin;
+        fitToSize ();
+
+    }
+    
+    @Inject
+    public void setAutolevelGridColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_AUTOLEVEL_GRID) String rgbText ) {
+
+        autolevelGridColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setGantryColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GANTRY) String rgbText ) {
+
+        gantryColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setMachineOriginColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_MACHINE_ORIGIN) String rgbText ) {
+
+        machineOriginColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setWorkOriginColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_WORK_ORIGIN) String rgbText ) {
+
+        workOriginColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setWorkareaBorderColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_WORKAREA_BORDER) String rgbText ) {
+
+        workareaBorderColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setWorkareaMidcrossColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_WORKAREA_MIDCROSS) String rgbText ) {
+
+        workareaMidcrossColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setMotionModeSeekColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_SEEK) String rgbText ) {
+
+        gcodeMotionModeSeekColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setMotionModeLinearColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_LINEAR) String rgbText ) {
+
+        gcodeMotionModeLinearColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setMotionModeArcColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ARC) String rgbText ) {
+
+        gcodeMotionModeArcColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setMotionModeProbeColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_PROBE) String rgbText ) {
+
+        gcodeMotionModeProbeColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setGcodeProcessedColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_PROCESSED) String rgbText ) {
+
+        gcodeProcessedColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setFitToSizeWithZ ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.FIT_TO_SIZE_WITH_Z) boolean flag ) {
+
+        fitToSizeWithZ = flag;
+        redraw ();
+
+    }
+
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.KEY_PART_COLS) int partCols, @Named(IContextKey.KEY_PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_COLS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, "", groupCols, 1, true, true );
 
         final int cols = 9 + 3;
@@ -304,17 +441,19 @@ public class GcodeViewGroup {
         canvas.addMouseWheelListener ( mouseDetector );
         canvas.addKeyListener ( mouseDetector );
 
-        redraw ();
-
         // create arrays here, because we need injected gcode service for this
         initWorkAreaPoints ();
 
         restorePersistedState ();
 
+        redraw ();
+
     }
 
     private void redraw () {
+
         if ( canvas != null && !canvas.isDisposed () ) canvas.redraw ();
+
     }
 
     private void restorePersistedState () {
@@ -427,6 +566,7 @@ public class GcodeViewGroup {
 
     }
 
+    @SuppressWarnings("unused")
     private Point canvasToPixel ( int x, int y ) {
 
         // return new Point ( x - canvasArea.x - pixelShift.x, -y + canvasArea.y + canvasArea.height - pixelShift.y );
@@ -468,18 +608,15 @@ public class GcodeViewGroup {
             Image bufferImage = new Image ( display, w, h );
             GC gc = new GC ( bufferImage );
 
-            // gc.setBackground ( display.getSystemColor ( SWT.COLOR_GRAY ) );
-            // gc.fillRectangle ( 0, 0, w, h );
-
-            draw3DCross ( gc );
-            // drawMidCross ( w, h, evt.display.getSystemColor ( SWT.COLOR_RED ), gc );
-            // drawWorkArea ( gc, 'M' ); // TODO_PREF preference
+            drawCooridnateSystemArrows ( gc );
+            // drawWorkArea ( gc, 'M' ); // TODO to decide: control this by a preference?
             if ( viewWorkarea ) drawWorkArea ( gc, 'W' );
             drawOrigign ( gc, 'M' );
             drawOrigign ( gc, 'W' );
             if ( gcodeProgram != null && viewGrid ) drawGrid ( gc );
             if ( gcodeProgram != null && viewGcode ) {
                 drawGcode ( gc, gcodeProgram );
+                // TODO different color for overlay
                 if ( gcodeProgram != overlayGcodeProgram && overlayGcodeProgram != null ) {
                     drawGcode ( gc, overlayGcodeProgram );
                 }
@@ -498,7 +635,7 @@ public class GcodeViewGroup {
 
         }
 
-        private void draw3DCross ( GC gc ) {
+        private void drawCooridnateSystemArrows ( GC gc ) {
 
             final IGcodePoint origin = gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 );
             final double factor = 30.0;
@@ -510,8 +647,6 @@ public class GcodeViewGroup {
                     gcodeService.createGcodePoint ( 0.0, 0.0, 1.0 ) 
             };
             // TODO_PREF make it static
-            final int color [] = new int [] { SWT.COLOR_RED, SWT.COLOR_GREEN, SWT.COLOR_BLUE };
-            final String [] axis = new String [] { "x", "y", "z" };
             /* @formatter:on */
 
             gc.setLineStyle ( SWT.LINE_SOLID );
@@ -520,12 +655,12 @@ public class GcodeViewGroup {
             Point p0 = gcodeToCanvas ( factor, shift, origin );
 
             for ( int i = 0; i < v.length; i++ ) {
-                gc.setForeground ( getColor ( color[i] ) );
+                gc.setForeground ( getColor ( IConstants.COORDINATE_SYSTEM_ARROW_COLORS[i + 1] ) );
                 drawLine ( gc, p0, gcodeToCanvas ( factor, shift, v[i] ) );
                 Point p = gcodeToCanvas ( 1.3 * factor, shift, v[i] );
-                gc.setForeground ( display.getSystemColor ( SWT.COLOR_BLACK ) );
-                org.eclipse.swt.graphics.Point extent = gc.textExtent ( axis[i] );
-                gc.drawString ( axis[i], (int) p.x - extent.x / 2, (int) p.y - extent.y / 2, true );
+                gc.setForeground ( display.getSystemColor ( IConstants.COORDINATE_SYSTEM_ARROW_COLORS[0] ) );
+                org.eclipse.swt.graphics.Point extent = gc.textExtent ( IConstants.AXIS[i] );
+                gc.drawString ( IConstants.AXIS[i], (int) p.x - extent.x / 2, (int) p.y - extent.y / 2, true );
             }
 
         }
@@ -538,7 +673,7 @@ public class GcodeViewGroup {
 
             gc.setLineStyle ( SWT.LINE_SOLID );
             gc.setLineWidth ( 1 );
-            gc.setForeground ( getColor ( SWT.COLOR_MAGENTA ) );
+            gc.setForeground ( autolevelGridColor );
 
             IGcodePoint gcodeShift = gcodeService.getFixtureShift ();
 
@@ -575,10 +710,10 @@ public class GcodeViewGroup {
 
                 gc.setLineStyle ( SWT.LINE_SOLID );
                 gc.setLineWidth ( 3 );
-                gc.setForeground ( getColor ( SWT.COLOR_RED ) );
+                gc.setForeground ( gantryColor );
 
                 Point p = gcodeToCanvas ( gcodeState.getMachineCoordindates () );
-                final int r = 2; // radius in pixel TODO_PREF preferences
+                final int r = 2; // radius in pixel
                 gc.drawOval ( (int) p.x - r, (int) p.y - r, 2 * r, 2 * r );
 
             }
@@ -593,56 +728,36 @@ public class GcodeViewGroup {
 
                 if ( gcodeMode != null ) {
 
-                    Color color;
-
                     switch ( gcodeMode ) {
-
-                    // TODO line attributes to preference
 
                         case MOTION_MODE_SEEK:
                             gc.setLineStyle ( SWT.LINE_SOLID );
                             gc.setLineWidth ( 1 );
-                            color = getColor ( SWT.COLOR_GRAY );
-                            if ( gcodeLine.isProcessed () ) {
-                                color = getColor ( SWT.COLOR_GREEN );
-                            }
-                            gc.setForeground ( color );
+                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : gcodeMotionModeSeekColor );
                             drawLine ( gc, gcodeLine );
                             break;
                         case MOTION_MODE_LINEAR:
                             gc.setLineStyle ( SWT.LINE_SOLID );
                             gc.setLineWidth ( 1 );
-                            color = getColor ( SWT.COLOR_BLUE );
-                            if ( gcodeLine.isProcessed () ) {
-                                color = getColor ( SWT.COLOR_GREEN );
-                            }
-                            gc.setForeground ( color );
+                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : gcodeMotionModeLinearColor );
                             drawLine ( gc, gcodeLine );
                             break;
                         case MOTION_MODE_CW_ARC:
                             gc.setLineStyle ( SWT.LINE_SOLID );
                             gc.setLineWidth ( 1 );
-                            color = getColor ( SWT.COLOR_BLUE );
-                            if ( gcodeLine.isProcessed () ) {
-                                color = getColor ( SWT.COLOR_GREEN );
-                            }
-                            gc.setForeground ( color );
+                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : gcodeMotionModeArcColor );
                             drawCircle ( gc, +1, gcodeLine );
                             break;
                         case MOTION_MODE_CCW_ARC:
                             gc.setLineStyle ( SWT.LINE_SOLID );
                             gc.setLineWidth ( 1 );
-                            color = getColor ( SWT.COLOR_BLUE );
-                            if ( gcodeLine.isProcessed () ) {
-                                color = getColor ( SWT.COLOR_GREEN );
-                            }
-                            gc.setForeground ( color );
+                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : gcodeMotionModeArcColor );
                             drawCircle ( gc, -1, gcodeLine );
                             break;
                         case MOTION_MODE_PROBE:
                             gc.setLineStyle ( SWT.LINE_DASH );
                             gc.setLineWidth ( 1 );
-                            gc.setForeground ( getColor ( SWT.COLOR_RED ) );
+                            gc.setForeground ( gcodeMotionModeProbeColor );
                             drawLine ( gc, gcodeLine );
                             break;
 
@@ -660,31 +775,16 @@ public class GcodeViewGroup {
 
         }
 
-        @SuppressWarnings("unused")
-        private void drawMidCross ( GC gc, final int w, final int h, final Color color ) {
-            // paint a cross in the mid
-            if ( true ) {
-                gc.setLineStyle ( SWT.LINE_DASH );
-                gc.setLineWidth ( 1 );
-                gc.setForeground ( color );
-                int r = 10;
-                int x = canvasArea.x + w / 2;
-                int y = canvasArea.y + h / 2;
-                gc.drawLine ( x - r, y, x + r, y );
-                gc.drawLine ( x, y - r, x, y + r );
-            }
-        }
-
         private void drawOrigign ( GC gc, char type ) {
 
             final double r = 0.5;
 
             IGcodePoint zero = gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 );
 
-            int color = SWT.COLOR_MAGENTA;
+            Color color = machineOriginColor;
             if ( type == 'W' ) {
                 zero = zero.add ( gcodeService.getFixtureShift () );
-                color = SWT.COLOR_CYAN;
+                color = workOriginColor;
             }
 
             IGcodePoint xDist = gcodeService.createGcodePoint ( r, 0.0, 0.0 );
@@ -697,7 +797,7 @@ public class GcodeViewGroup {
 
             gc.setLineStyle ( SWT.LINE_SOLID );
             gc.setLineWidth ( 2 );
-            gc.setForeground ( getColor ( color ) );
+            gc.setForeground ( color  );
 
             drawLine ( gc, p1, p2 );
             drawLine ( gc, p2, p3 );
@@ -707,7 +807,7 @@ public class GcodeViewGroup {
             if ( type == 'M' ) {
                 gc.setLineStyle ( SWT.LINE_DOT );
                 gc.setLineWidth ( 1 );
-                gc.setForeground ( getColor ( color ) );
+                gc.setForeground ( color  );
                 drawLine ( gc, zero, zero.addAxis ( 'Z', gcodeService.getFixtureShift () ) );
             }
 
@@ -715,22 +815,17 @@ public class GcodeViewGroup {
 
         private void drawWorkArea ( GC gc, char type ) {
 
-            // print work area
-            gc.setForeground ( getColor ( SWT.COLOR_DARK_RED ) );
+            // draw work area
             gc.setLineStyle ( SWT.LINE_DOT );
-            gc.setLineWidth ( 1 ); // TODO_PREF prefrences
+            gc.setLineWidth ( 1 );
+            gc.setForeground ( workareaBorderColor );
 
             IGcodePoint p1 = workAreaPoints[workAreaPoints.length - 1];
-            if ( type == 'W' ) {
-                // p1 = p1.add ( gcodeModel.getShift () );
-                p1 = p1.addAxis ( 'Z', gcodeService.getFixtureShift () );
-            }
+            if ( type == 'W' ) p1 = p1.addAxis ( 'Z', gcodeService.getFixtureShift () );
 
             for ( int i = 0; i < workAreaPoints.length; i++ ) {
                 IGcodePoint p2 = workAreaPoints[i];
-                if ( type == 'W' ) {
-                    p2 = p2.addAxis ( 'Z', gcodeService.getFixtureShift () );
-                }
+                if ( type == 'W' ) p2 = p2.addAxis ( 'Z', gcodeService.getFixtureShift () );
                 drawLine ( gc, p1, p2 );
                 p1 = p2;
             }
@@ -738,7 +833,7 @@ public class GcodeViewGroup {
             // cross in the middle of work area
             gc.setLineStyle ( SWT.LINE_DASH );
             gc.setLineWidth ( 1 );
-            gc.setForeground ( getColor ( SWT.COLOR_RED ) );
+            gc.setForeground ( workareaMidcrossColor );
             drawLine ( gc, workAreaCenterCrossEndPoints[0].addAxis ( 'Z', gcodeService.getFixtureShift () ),
                     workAreaCenterCrossEndPoints[1].addAxis ( 'Z', gcodeService.getFixtureShift () ) );
             drawLine ( gc, workAreaCenterCrossEndPoints[2].addAxis ( 'Z', gcodeService.getFixtureShift () ),
@@ -753,7 +848,6 @@ public class GcodeViewGroup {
 
             if ( start.equals ( end ) ) return;
 
-            // if ( viewAltitude && gcodeProgram.isAutolevelScanComplete () && gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) {
             if ( viewAltitude && gcodeProgram.isAutolevelScanComplete () ) {
                 IGcodePoint [] path = gcodeProgram.interpolateLine ( start, end );
                 for ( int i = 0; i < path.length - 1; i++ ) {
@@ -828,17 +922,17 @@ public class GcodeViewGroup {
             // from grbl code
             double x = end.getX () - start.getX ();
             double y = end.getY () - start.getY ();
-            
-            final double dd = x*x + y*y;
+
+            final double dd = x * x + y * y;
             double d = Math.sqrt ( dd );
             double h = Math.sqrt ( r * r - dd / 4 );
-            
+
             // G2, bei G3 + und - vor h alternieren
             double i = start.getX () + x / 2 + mult * h / d * y;
             double j = start.getY () + y / 2 - mult * h / d * x;
             // LOG.debug ( "drawCircle: dd=" + dd + " d=" + d + " h=" + h + " i=" + i + " j=" + j );
             IGcodePoint center = gcodeService.createGcodePoint ( i, j, 0.0 );
-            
+
             double startAngle = computeAngle ( start, center, r );
             double endAngle = computeAngle ( end, center, r );
             double arcAngle = endAngle - startAngle;
@@ -847,7 +941,7 @@ public class GcodeViewGroup {
             else if ( Math.abs ( mult * arcAngle - 180 ) < 0.0001 ) arcAngle = -arcAngle;
             else if ( arcAngle > 180 ) arcAngle -= 360;
             // LOG.debug ( "drawCircle: startAngle=" + startAngle + " endAngle=" + endAngle + " arcAngle=" + arcAngle );
-            
+
             // rotate all points by z angle
             // the 4 tangential points: north, west, south, east
             IGcodePoint north = gcodeService.createGcodePoint ( i, j + r, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
@@ -873,12 +967,12 @@ public class GcodeViewGroup {
             // position. A positive value indicates a counter-clockwise rotation while a negative value indicates a clockwise rotation.
             // The center of the arc is the center of the rectangle whose origin is (x, y) and whose size is specified by the width and height arguments.
             // The resulting arc covers an area width + 1 pixels wide by height + 1 pixels tall.
-            
+
             int w = (int) (pE.x - pW.x);
             int h = (int) (pS.y - pN.y);
             int x = (int) pN.x - w / 2;
             int y = (int) pW.y - h / 2;
-            
+
             // LOG.debug ( "drawCircle: x=" + x + " y=" + y + " h=" + h + " w=" + w );
 
             gc.drawArc ( x, y, w, h, startAngle, arcAngle );

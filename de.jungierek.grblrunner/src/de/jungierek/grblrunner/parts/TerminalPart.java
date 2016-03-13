@@ -7,28 +7,33 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IPersistenceKeys;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.gcode.IGrblRequest;
 import de.jungierek.grblrunner.service.gcode.IGrblResponse;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class TerminalPart {
@@ -46,41 +51,154 @@ public class TerminalPart {
     @Inject
     private PartTools partTools;
 
-    private Color WHITE, RED, GREEN, GRAY, LIGHT_GREEN, LIGHT_GRAY, YELLOW;
-
-    // private Text terminalText;
     private StyledText terminalText;
 
     private boolean showSuppressedLines = false;
-
     private boolean showGrblStateLines = true;
     private boolean showGcodeModeLines = true;
+
+    // set from preferences
+    private Font terminalFont;
+    private Color terminalForegroundColor;
+    private Color terminalBackgroundColor;
+    private Color alarmForegroundColor;
+    private Color alarmBackgroundColor;
+    private Color timestampBackgroundColor;
+    private Color suppressedLineForegroundColor;
+    private Color okForegroundColor;
+    private Color errorForegroundColor;
+    private Color grblForegroundColor;
+    private Color grblBackgroundColor;
+    private Color suppressedOkForegroundColor;
+    private Color supppressedErrorForegroundColor;
+    private Color suppressedGrblForegroundColor;
+    private Color suppressedGrblBackgroundColor;
+
+    @Inject
+    public void setTerminalFontData ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.TERMINAL_FONT_DATA) String fontDataString ) {
+    
+        LOG.debug ( "setFontData: fontDataString=" + fontDataString );
+    
+        terminalFont = new Font ( display, new FontData ( fontDataString ) );
+        if ( terminalText != null ) {
+            terminalText.setFont ( terminalFont );
+            LOG.info ( "setFontData: fontdata=" + fontDataString );
+        }
+    
+    }
+
+    @Inject
+    public void setTerminalForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TERMINAL_FOREGROUND) String rgbText ) {
+
+        terminalForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        if ( terminalText != null ) terminalText.setForeground ( terminalForegroundColor );
+
+    }
+
+    @Inject
+    public void setTerminalBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TERMINAL_BACKGROUND) String rgbText ) {
+
+        terminalBackgroundColor= new Color ( display, StringConverter.asRGB ( rgbText ) );
+        if ( terminalText != null ) terminalText.setBackground ( terminalBackgroundColor );
+
+    }
+
+    @Inject
+    public void setAlarmForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ALARM_FOREGROUND) String rgbText ) {
+
+        alarmForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setAlarmBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ALARM_BACKGROUND) String rgbText ) {
+
+        alarmBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setTimestampBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TIMESTAMP_BACKGROUND) String rgbText ) {
+
+        timestampBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setSuppressedLineForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_SUPPRESSED_LINE_FOREGROUND) String rgbText ) {
+
+        suppressedLineForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setOkForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_OK_FOREGROUND) String rgbText ) {
+
+        okForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setErrorForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ERROR_FOREGROUND) String rgbText ) {
+
+        errorForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setGrblForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_FOREGROUND) String rgbText ) {
+
+        grblForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setGrblBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_BACKGROUND) String rgbText ) {
+
+        grblBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setSuppressedOkForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_OK_SUPPRESSED_FOREGROUND) String rgbText ) {
+
+        suppressedOkForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setSuppressedErrorForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ERROR_SUPPRESSED_FOREGROUND) String rgbText ) {
+
+        supppressedErrorForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setSuppressedGrblForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_SUPPRESSED_FOREGROUND) String rgbText ) {
+
+        suppressedGrblForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setSuppressedGrblBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_SUPPRESSED_BACKGROUND) String rgbText ) {
+
+        suppressedGrblBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context, MApplication application ) {
 
-        WHITE = display.getSystemColor ( SWT.COLOR_WHITE );
-        RED = display.getSystemColor ( SWT.COLOR_RED );
-        GREEN = display.getSystemColor ( SWT.COLOR_DARK_GREEN );
-        LIGHT_GREEN = display.getSystemColor ( SWT.COLOR_GREEN );
-        GRAY = display.getSystemColor ( SWT.COLOR_DARK_GRAY );
-        LIGHT_GRAY = display.getSystemColor ( SWT.COLOR_GRAY );
-        YELLOW = display.getSystemColor ( SWT.COLOR_YELLOW );
+        LOG.debug ( "createGui:" );
 
-
-        // terminalText = new Text ( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
-        // terminalText = new Text ( parent, SWT.MULTI | SWT.V_SCROLL );
         terminalText = new StyledText ( parent, SWT.MULTI | SWT.V_SCROLL );
-        // TODO_PREF to pref
-        terminalText.setFont ( new Font ( display, "Courier", 10, SWT.NONE ) );
         terminalText.setEditable ( false );
-        terminalText.setBackground ( display.getSystemColor ( SWT.COLOR_WHITE ) );
+        terminalText.setForeground ( terminalForegroundColor );
+        terminalText.setBackground ( terminalBackgroundColor );
+        terminalText.setFont ( terminalFont );
 
-        final Map<String, String> persistedState = application.getPersistedState ();
-        showSuppressedLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_SUPPRESS_LINES ) );
-        showGrblStateLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_STATE ) );
-        showGcodeModeLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_MODES ) );
-        // LOG.info ( "createGui: lines=" + showSuppressedLines + " state=" + showGrblStateLines + " gcode=" + showGcodeModeLines );
+        restorePersistedState ( application );
 
     }
 
@@ -113,8 +231,28 @@ public class TerminalPart {
     
     }
 
+    @Inject
+    private EModelService modelService;
+
+    private void restorePersistedState ( MApplication application ) {
+
+        final Map<String, String> persistedState = application.getPersistedState ();
+        showSuppressedLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_SUPPRESS_LINES ) );
+        showGrblStateLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_STATE ) );
+        showGcodeModeLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_MODES ) );
+
+        // TODO set the state of the direct menu items according to persisted state
+        // List<MDirectMenuItem> elements = modelService.findElements ( application, "de.jungierek.grblrunner.directmenuitem.togglesuppresslines.grblstate", MDirectMenuItem.class,
+        // null );
+        // LOG.info ( "restorePersistedState: size=" + elements.size () );
+        // if ( elements.size () > 0 ) LOG.info ( "restorePersistedState: elem[0]=" + elements.get ( 0 ) );
+        // de.jungierek.grblrunner.directmenuitem.togglesuppresslines.grblstate
+        // de.jungierek.grblrunner.directmenuitem.togglesuppresslines.gcodestate
+
+    }
+
     @PersistState
-    public void persistState ( MApplication application ) {
+    public void savePersistState ( MApplication application ) {
         
         LOG.debug ( "persistState:" );
 
@@ -132,7 +270,8 @@ public class TerminalPart {
         
         LOG.trace ( "alarmNotified: line=" + line );
 
-        appendText ( line, WHITE, RED, SWT.BOLD );
+        // appendText ( line, WHITE, RED, SWT.BOLD );
+        appendText ( line, alarmForegroundColor, alarmBackgroundColor, SWT.BOLD );
 
     }
 
@@ -142,7 +281,8 @@ public class TerminalPart {
 
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
-        appendText ( "Gcode Player started at " + timestamp + "\n", null, YELLOW );
+        // appendText ( "Gcode Player started at " + timestamp + "\n", null, YELLOW );
+        appendText ( "Gcode Player started at " + timestamp + "\n", null, timestampBackgroundColor );
     
     }
 
@@ -186,7 +326,8 @@ public class TerminalPart {
 
         LOG.trace ( "playerStopNotified: timestamp=" + timestamp );
 
-        appendText ( "Gcode Player stopped at " + timestamp + "\n", null, YELLOW );
+        // appendText ( "Gcode Player stopped at " + timestamp + "\n", null, YELLOW );
+        appendText ( "Gcode Player stopped at " + timestamp + "\n", null, timestampBackgroundColor );
         terminalText.append ( "-------------------------------------------------------------------------------------\n" );
         scrollToEnd ();
 
@@ -216,7 +357,8 @@ public class TerminalPart {
 
             if ( line.startsWith ( "$G" ) ) show = showGcodeModeLines;
 
-            if ( show ) appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
+            // if ( show ) appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
+            if ( show ) appendText ( line, suppressedLineForegroundColor, null, SWT.BOLD );
 
         }
 
@@ -236,13 +378,16 @@ public class TerminalPart {
 
         if ( !response.isSuppressInTerminal () ) {
             if ( line.startsWith ( "ok" ) ) {
-                appendText ( line, GREEN, null, SWT.BOLD );
+                // appendText ( line, GREEN, null, SWT.BOLD );
+                appendText ( line, okForegroundColor, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "error" ) ) {
-                appendText ( line, RED, null, SWT.BOLD );
+                // appendText ( line, RED, null, SWT.BOLD );
+                appendText ( line, errorForegroundColor, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "Grbl" ) ) {
-                appendText ( line, WHITE, GRAY );
+                // appendText ( line, WHITE, GRAY );
+                appendText ( line, grblForegroundColor, grblBackgroundColor );
             }
             else {
                 terminalText.append ( line );
@@ -252,13 +397,16 @@ public class TerminalPart {
         else if ( showSuppressedLines ) {
             if ( line.startsWith ( "ok" ) ) {
                 if ( ignoreNextOk ) ignoreNextOk = false;
-                else appendText ( line, LIGHT_GREEN, null, SWT.BOLD );
+                // else appendText ( line, LIGHT_GREEN, null, SWT.BOLD );
+                else appendText ( line, suppressedOkForegroundColor, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "error" ) ) {
-                appendText ( line, RED, null, SWT.BOLD );
+                // appendText ( line, RED, null, SWT.BOLD );
+                appendText ( line, supppressedErrorForegroundColor, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "Grbl" ) ) {
-                appendText ( line, WHITE, LIGHT_GRAY );
+                // appendText ( line, WHITE, LIGHT_GRAY );
+                appendText ( line, suppressedGrblForegroundColor, suppressedGrblBackgroundColor );
             }
             else {
 
@@ -279,7 +427,8 @@ public class TerminalPart {
                     if ( !show ) ignoreNextOk = true;
                 }
 
-                if ( show ) appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
+                // if ( show ) appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
+                if ( show ) appendText ( line, suppressedLineForegroundColor, null, SWT.BOLD );
 
             }
         }
@@ -292,7 +441,7 @@ public class TerminalPart {
 
         LOG.trace ( "scanStartNotified:" );
 
-        appendText ( "Probe Scanning started at " + timestamp + "\n", null, YELLOW );
+        appendText ( "Probe Scanning started at " + timestamp + "\n", null, timestampBackgroundColor );
 
     }
 
@@ -316,7 +465,7 @@ public class TerminalPart {
 
         LOG.trace ( "scanStopNotified:" );
 
-        appendText ( "Probe Scanning stopped at " + timestamp + "\n", null, YELLOW );
+        appendText ( "Probe Scanning stopped at " + timestamp + "\n", null, timestampBackgroundColor );
 
     }
 

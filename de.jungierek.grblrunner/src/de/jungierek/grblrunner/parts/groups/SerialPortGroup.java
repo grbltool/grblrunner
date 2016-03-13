@@ -2,8 +2,8 @@ package de.jungierek.grblrunner.parts.groups;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
@@ -17,11 +17,10 @@ import org.eclipse.swt.widgets.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class SerialPortGroup {
 
@@ -42,13 +41,10 @@ public class SerialPortGroup {
     // }
     //
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context, ISerialService serialService, IGcodeService gcodeService ) {
+    public void createGui ( Composite parent, @Named(IContextKey.KEY_PART_COLS) int partCols, @Named(IContextKey.KEY_PART_GROUP_COLS) int groupCols, @Named(IContextKey.KEY_PART_GROUP_ROWS) int groupRows ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         final int cols = 1;

@@ -21,11 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public abstract class MacroGroup {
@@ -49,8 +49,8 @@ public abstract class MacroGroup {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_COLS )).intValue ();
+        int partCols = ((Integer) context.get ( IContextKey.KEY_PART_COLS )).intValue ();
+        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, getGroupName (), groupCols, 1, true );
 
         final int cols = getGridLayoutColumns ();

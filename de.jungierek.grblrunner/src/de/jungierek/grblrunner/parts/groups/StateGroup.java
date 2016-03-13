@@ -19,11 +19,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class StateGroup {
 
@@ -57,9 +57,9 @@ public class StateGroup {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IPersistenceKeys.KEY_PART_GROUP_ROWS )).intValue ();
+        int partCols = ((Integer) context.get ( IContextKey.KEY_PART_COLS )).intValue ();
+        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
+        int groupRows = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         group.setLayout ( new FillLayout () );

@@ -21,10 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IPersistenceKeys;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
-import de.jungierek.grblrunner.tools.IPersistenceKeys;
 
 public class GcodeLoadHandler {
 
