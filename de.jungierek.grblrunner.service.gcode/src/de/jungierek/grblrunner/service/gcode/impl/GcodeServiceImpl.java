@@ -689,14 +689,12 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
             sendCommandSuppressInTerminal ( "G0Z" + zMax );
 
-            for ( int i = 0; i < xlength; i++ ) {
+            LOOP: for ( int i = 0; i < xlength; i++ ) {
     
-                if ( skipByAlarm ) break;
-
                 // TODO implement mäander
                 for ( int j = 0; j < ylength; j++ ) {
 
-                    if ( skipByAlarm ) break;
+                    if ( skipByAlarm ) break LOOP;
     
                     probePoint = gcodeProgram.getProbePointAt ( i, j );
 
@@ -716,7 +714,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             gcodeProgram.setAutolevelStop ();
             sendCommand ( IConstants.GCODE_SCAN_END );
     
-            LOG.debug ( "stopped" );
+            LOG.debug ( THREAD_NAME + ": stopped" );
     
         }
     }
@@ -807,7 +805,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             playRunning = false;
 
-            LOG.debug ( "stopped" );
+            LOG.debug ( THREAD_NAME + ": stopped" );
 
         }
 
@@ -843,7 +841,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     }
 
                     GrblRequestImpl cmd = queue.take ();
-                    if ( !skipByAlarm || cmd.isReset () || cmd.isHome () || cmd.isUnlock () ) {
+                    if ( !skipByAlarm || cmd.isReset () || cmd.isHome () || cmd.isUnlock () || cmd.message.startsWith ( IConstants.GCODE_SCAN_END ) ) {
 
                         if ( cmd.message.startsWith ( IConstants.GCODE_SCAN_START ) ) {
                             scanRunning = true;
@@ -851,8 +849,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         }
                         else if ( cmd.message.startsWith ( IConstants.GCODE_SCAN_END ) ) {
                             scanRunning = false;
-                            // TODO think about this
-                            gcodeProgram.setAutolevelScanCompleted ();
+                            if ( !skipByAlarm ) gcodeProgram.setAutolevelScanCompleted ();
                             eventBroker.send ( IEvents.AUTOLEVEL_STOP, getTimestamp () ); //
                         }
                         else {
@@ -877,7 +874,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             }
 
-            LOG.debug ( "stopped" );
+            LOG.debug ( THREAD_NAME + ": stopped" );
 
         }
 
@@ -915,7 +912,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 // TODO catch throwable and restart (if necesarry a new thread (robust implementation)
             }
 
-            LOG.debug ( "stopped" );
+            LOG.debug ( THREAD_NAME + ": stopped" );
 
         }
 
@@ -953,7 +950,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 // TODO catch throwable and restart (if necesarry a new thread (robust implementation)
             }
 
-            LOG.debug ( "stopped" );
+            LOG.debug ( THREAD_NAME + ": stopped" );
 
         }
     }
