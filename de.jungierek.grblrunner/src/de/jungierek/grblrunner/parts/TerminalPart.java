@@ -1,5 +1,6 @@
 package de.jungierek.grblrunner.parts;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -11,6 +12,13 @@ import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
@@ -80,7 +88,7 @@ public class TerminalPart {
         LOG.debug ( "setFontData: fontDataString=" + fontDataString );
     
         terminalFont = new Font ( display, new FontData ( fontDataString ) );
-        if ( terminalText != null ) {
+        if ( terminalText != null && !terminalText.isDisposed () ) {
             terminalText.setFont ( terminalFont );
             LOG.info ( "setFontData: fontdata=" + fontDataString );
         }
@@ -91,7 +99,7 @@ public class TerminalPart {
     public void setTerminalForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TERMINAL_FOREGROUND) String rgbText ) {
 
         terminalForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
-        if ( terminalText != null ) terminalText.setForeground ( terminalForegroundColor );
+        if ( terminalText != null && !terminalText.isDisposed () ) terminalText.setForeground ( terminalForegroundColor );
 
     }
 
@@ -99,7 +107,7 @@ public class TerminalPart {
     public void setTerminalBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TERMINAL_BACKGROUND) String rgbText ) {
 
         terminalBackgroundColor= new Color ( display, StringConverter.asRGB ( rgbText ) );
-        if ( terminalText != null ) terminalText.setBackground ( terminalBackgroundColor );
+        if ( terminalText != null && !terminalText.isDisposed () ) terminalText.setBackground ( terminalBackgroundColor );
 
     }
 
@@ -188,7 +196,7 @@ public class TerminalPart {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context, MApplication application ) {
+    public void createGui ( Composite parent, MPart part, IEclipseContext context, MApplication application ) {
 
         LOG.debug ( "createGui:" );
 
@@ -198,7 +206,7 @@ public class TerminalPart {
         terminalText.setBackground ( terminalBackgroundColor );
         terminalText.setFont ( terminalFont );
 
-        restorePersistedState ( application );
+        restorePersistedState ( application, part );
 
     }
 
@@ -231,23 +239,41 @@ public class TerminalPart {
     
     }
 
-    @Inject
-    private EModelService modelService;
-
-    private void restorePersistedState ( MApplication application ) {
+    private void restorePersistedState ( MApplication application, MPart part ) {
 
         final Map<String, String> persistedState = application.getPersistedState ();
         showSuppressedLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_SUPPRESS_LINES ) );
         showGrblStateLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_STATE ) );
         showGcodeModeLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_MODES ) );
 
-        // TODO set the state of the direct menu items according to persisted state
-        // List<MDirectMenuItem> elements = modelService.findElements ( application, "de.jungierek.grblrunner.directmenuitem.togglesuppresslines.grblstate", MDirectMenuItem.class,
-        // null );
-        // LOG.info ( "restorePersistedState: size=" + elements.size () );
-        // if ( elements.size () > 0 ) LOG.info ( "restorePersistedState: elem[0]=" + elements.get ( 0 ) );
-        // de.jungierek.grblrunner.directmenuitem.togglesuppresslines.grblstate
-        // de.jungierek.grblrunner.directmenuitem.togglesuppresslines.gcodestate
+        // set the state of the direct menu items according to persisted state
+        // find the two direct menu items
+        final MToolBar toolbar = part.getToolbar ();
+        List<MToolBarElement> toolBarChildren = toolbar.getChildren ();
+        for ( MToolBarElement child : toolBarChildren ) {
+            if ( child instanceof MHandledToolItem && child.getElementId ().equals ( "de.jungierek.grblrunner.handledtoolitem.terminal.togglesuppresslines" ) ) {
+                LOG.debug ( "restorePersistedState: child=" + child.getElementId () + " class=" + child.getClass () );
+                MMenu menu = ((MHandledToolItem) child).getMenu ();
+                if ( menu != null ) {
+                    List<MMenuElement> items = menu.getChildren ();
+                    for ( MMenuElement item : items ) {
+                        LOG.debug ( "restorePersistedState: item=" + item.getElementId () + "class=" + child.getClass () );
+                        switch ( item.getElementId () ) {
+                            case "de.jungierek.grblrunner.directmenuitem.togglesuppresslines.grblstate":
+                                ((MMenuItem) item).setSelected ( showGrblStateLines );
+                                break;
+                            case "de.jungierek.grblrunner.directmenuitem.togglesuppresslines.gcodestate":
+                                ((MMenuItem) item).setSelected ( showGcodeModeLines );
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+            }
+        }
+
 
     }
 
