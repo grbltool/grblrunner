@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
-import de.jungierek.grblrunner.service.gcode.IGcodeService;
 
 public class GcodeRefreshHandler {
 
@@ -25,11 +24,11 @@ public class GcodeRefreshHandler {
     }
 
     @CanExecute
-    public boolean canExecute ( IGcodeService gcodeService, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
+    public boolean canExecute ( @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
 
-        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isAutolevelScan () );
+        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeProgram.isPlaying () + " isscanning=" + gcodeProgram.isAutolevelScan () );
 
-        return gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeService.isPlaying () && !gcodeService.isAutolevelScan ()
+        return gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeProgram.isPlaying () && !gcodeProgram.isAutolevelScan ()
                 && gcodeProgram.getGcodeProgramFile ().isFile ();
 
     }
