@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.parts.GcodeEditorPart;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.serial.ISerialService;
@@ -104,7 +103,7 @@ public class StartupAddon {
     
         if ( window == null ) return;
 
-        String msg = IPreferences.APPLICATION_TITILE;
+        String msg = IConstants.APPLICATION_TITILE;
     
         if ( serial.isOpen () ) {
             msg += " " + serial.getPortName ();

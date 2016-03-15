@@ -82,13 +82,13 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
         group.setLayout ( new GridLayout ( cols, false ) );
 
         GuiFactory.createHeadingLabel ( group, "X Steps", 1, false );
-        scanStepXText = GuiFactory.createIntegerText ( group, "" + IPreferences.INITIAL_XSTEPS, 1, true, 0 );
+        scanStepXText = GuiFactory.createIntegerText ( group, "" + IConstants.INITIAL_XSTEPS, 1, true, 0 );
         scanStepWidthXLabel = GuiFactory.createCoordinateLabel ( group );
         GuiFactory.createHeadingLabel ( group, "Z clear", 1, false );
         scanClearanceZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, IPreferences.Z_CLEARANCE ), 1, true );
 
         GuiFactory.createHeadingLabel ( group, "Y Steps", 1, false );
-        scanStepYText = GuiFactory.createIntegerText ( group, "" + IPreferences.INITIAL_YSTEPS, 1, true, 0 );
+        scanStepYText = GuiFactory.createIntegerText ( group, "" + IConstants.INITIAL_YSTEPS, 1, true, 0 );
         scanStepWidthYLabel = GuiFactory.createCoordinateLabel ( group );
         GuiFactory.createHeadingLabel ( group, "Z max", 1, false );
         scanMaxZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, IPreferences.PROBE_Z_MAX ), 1, true );

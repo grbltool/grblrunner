@@ -42,7 +42,6 @@ import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPersistenceKeys;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
-import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
@@ -108,10 +107,10 @@ public class GcodeViewGroup {
 
     private Canvas canvas;
 
-    private volatile boolean viewGrid = IPreferences.INITIAL_VIEW_GRID;
-    private volatile boolean viewGcode = IPreferences.INITIAL_VIEW_GCODE;
-    private volatile boolean viewAltitude = IPreferences.INITIAL_VIEW_ALTITUDE;
-    private volatile boolean viewWorkarea = IPreferences.INITIAL_VIEW_WORKAREA;
+    private volatile boolean viewGrid = IConstants.INITIAL_VIEW_GRID;
+    private volatile boolean viewGcode = IConstants.INITIAL_VIEW_GCODE;
+    private volatile boolean viewAltitude = IConstants.INITIAL_VIEW_ALTITUDE;
+    private volatile boolean viewWorkarea = IConstants.INITIAL_VIEW_WORKAREA;
     private volatile boolean viewAltitudeLabel;
 
     private Label scaleLabel;

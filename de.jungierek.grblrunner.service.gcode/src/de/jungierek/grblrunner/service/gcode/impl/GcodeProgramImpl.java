@@ -46,8 +46,8 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private double durationInMinutes;
 
     private GcodePointImpl matrix [][];
-    private int xSteps = IPreferences.INITIAL_XSTEPS;
-    private int ySteps = IPreferences.INITIAL_YSTEPS;
+    private int xSteps = IConstants.INITIAL_XSTEPS;
+    private int ySteps = IConstants.INITIAL_YSTEPS;
     private double xStepWidth, yStepWidth;
     private int numProbePoints;
 
@@ -980,7 +980,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
                 reader.close ();
 
                 parse ();
-                prepareAutolevelScan ( IPreferences.INITIAL_XSTEPS, IPreferences.INITIAL_YSTEPS );
+                prepareAutolevelScan ( IConstants.INITIAL_XSTEPS, IConstants.INITIAL_YSTEPS );
 
                 eventBroker.send ( IEvents.GCODE_PROGRAM_LOADED, file.getPath () );
 

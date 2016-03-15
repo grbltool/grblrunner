@@ -5,13 +5,15 @@ import org.eclipse.swt.SWT;
 
 public interface IConstants {
     
+    // public static final String APPLICATION_TITILE = "GrblRunner";
+    public static final String APPLICATION_TITILE = "grbl_runner";
+
     public static final String KEY_BASE = "de.jungierek.grblrunner";
 
     public static final String MAIN_WINDOW_ID = KEY_BASE + ".window.main";
     public static final String EDITOR_PARTSTACK_ID = KEY_BASE + ".partstack.editors";
     public static final String EDITOR_PARTDESCRIPTOR_ID = KEY_BASE + ".partdescriptor.gcode.editor";
     public static final String MACRO_PARTDESCRIPTOR_ID = KEY_BASE + ".partdescriptor.gcode.macro";;
-
     public static final String MACRO_TEXT_ID = KEY_BASE + ".gcode.text";
 
     public static final String FORMAT_COORDINATE = "%.3f";
@@ -41,5 +43,13 @@ public interface IConstants {
 
     // index 0 is the color for the axis label
     public static final int COORDINATE_SYSTEM_ARROW_COLORS [] = new int [] { SWT.COLOR_BLACK, SWT.COLOR_RED, SWT.COLOR_GREEN, SWT.COLOR_BLUE };
+
+    public static final int INITIAL_XSTEPS = 1;
+    public static final int INITIAL_YSTEPS = 1;
+
+    public static final boolean INITIAL_VIEW_ALTITUDE = true;
+    public static final boolean INITIAL_VIEW_GCODE = true;
+    public static final boolean INITIAL_VIEW_GRID = true;
+    public static final boolean INITIAL_VIEW_WORKAREA = true;
 
 }

@@ -6,8 +6,6 @@ import org.eclipse.swt.SWT;
 // TODO_PREF refactor to preferences
 public interface IPreferences {
 
-    public static final String APPLICATION_TITILE = "GrblRunner";
-
     public static final String INITIAL_GCODE_PATH = "C:\\Users\\Andreas\\Documents\\eagle";
     public static final String [] GCODE_FILE_EXTENSIONS = new String [] { "*.ngc" };
     public static final String AUTOLEVEL_DATA_FILE_EXTENSION = ".probe";
@@ -22,6 +20,7 @@ public interface IPreferences {
     public static final double PROBE_Z_MAX = +3.0;
 
     public static final double PROBE_DEPTH = -3.0;
+    public static final boolean PROBE_WITH_ERROR = false;
 
     public static final int MACRO_SPINDLE_SPEED = 7000;
     public static final double MACRO_Z_LIFTUP = 2.0;
@@ -41,16 +40,6 @@ public interface IPreferences {
     public static final double POCKET_MILL_Z_DEPTH = -1.4;
     public static final int POCKET_MILL_OVERLAP = 30;
 
-    public static final int INITIAL_XSTEPS = 1;
-    public static final int INITIAL_YSTEPS = 1;
-
-    public static final boolean SHOW_GCODE_LINE = false;
-
-    public static final boolean INITIAL_VIEW_ALTITUDE = true;
-    public static final boolean INITIAL_VIEW_GCODE = true;
-    public static final boolean INITIAL_VIEW_GRID = true;
-    public static final boolean INITIAL_VIEW_WORKAREA = true;
-
     public static final int GCODE_LARGE_FONT_SIZE = 20;
     public static final int GCODE_LARGE_FONT_STYLE = SWT.BOLD;
 
@@ -61,7 +50,5 @@ public interface IPreferences {
 
     public static final int MAX_SEEK_FEEDRATE = 600; // mm/min, 10 mm/sec
     public static final int AVG_SEEK_FEEDRATE = MAX_SEEK_FEEDRATE / 12; // mm/min, factor is determined experimentally
-
-    public static final boolean PROBE_WITH_ERROR = false;
 
 }

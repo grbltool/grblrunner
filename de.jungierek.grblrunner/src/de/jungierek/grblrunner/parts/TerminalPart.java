@@ -36,7 +36,6 @@ import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
 import de.jungierek.grblrunner.constants.IPersistenceKeys;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
-import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
@@ -331,17 +330,7 @@ public class TerminalPart {
 
         if ( gcodeLine == null ) return;
 
-        String terminalLine = gcodeLine.getLine ();
-
-        if ( IPreferences.SHOW_GCODE_LINE ) {
-            int alignLength = JUSTIFY_PLACE.length () - terminalLine.length ();
-            if ( alignLength > 0 ) {
-                terminalLine += JUSTIFY_PLACE.substring ( 0, alignLength );
-            }
-            terminalLine += gcodeLine;
-        }
-
-        terminalText.append ( terminalLine + "\n" );
+        terminalText.append ( gcodeLine.getLine () + "\n" );
         scrollToEnd ();
     
     }
