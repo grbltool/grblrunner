@@ -106,8 +106,9 @@ public class StartupAddon {
         String msg = IConstants.APPLICATION_TITILE;
     
         if ( serial.isOpen () ) {
-            msg += " " + serial.getPortName ();
-            if ( grblVersion != null ) msg += " " + grblVersion;
+            msg += " on " + serial.getPortName ();
+            msg += "@" + serial.getBaudrate () + " Baud";
+            if ( grblVersion != null ) msg += " - " + grblVersion;
         }
     
         if ( gcodeProgram != null ) {
