@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
+import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class GcodeViewPreferencePage extends FieldEditorPreferencePage {
 
@@ -27,11 +28,9 @@ public class GcodeViewPreferencePage extends FieldEditorPreferencePage {
     @Override
     protected void createFieldEditors () {
 
-        addField ( new DoubleFieldEditor ( IPreferenceKey.WORK_AREA_MAX_X, "Work Area X", 0.0, 999.9, getFieldEditorParent () ) );
-        addField ( new DoubleFieldEditor ( IPreferenceKey.WORK_AREA_MAX_Y, "Work Area Y", 0.0, 999.9, getFieldEditorParent () ) );
-
         addField ( new DoubleFieldEditor ( IPreferenceKey.FIT_TO_SIZE_MARGIN, "Fit to Size Margin", 0.0, 100.0, getFieldEditorParent () ) );
         addField ( new BooleanFieldEditor ( IPreferenceKey.FIT_TO_SIZE_WITH_Z, "Fit to Size with Z", getFieldEditorParent () ) );
+        GuiFactory.createHiddenLabel ( getFieldEditorParent (), 2, true );
 
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_AUTOLEVEL_GRID, "Autolevel Grid", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_GANTRY, "Gantry", getFieldEditorParent () ) );

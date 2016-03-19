@@ -5,10 +5,12 @@ import javax.inject.Named;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IPreferences;
+import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.ICommandID;
@@ -18,16 +20,16 @@ public class ProbeActionCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger ( ProbeActionCommandHandler.class );
 
     @Execute
-    public void execute ( IGcodeService gcodeService, ParameterizedCommand command, @Named(ICommandID.PROBE_ACTION_DEPTH_PARAMETER) String depth ) {
+    public void execute ( IGcodeService gcodeService, ParameterizedCommand command, @Named(ICommandID.PROBE_ACTION_DEPTH_PARAMETER) String probeDepth, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_FEEDRATE)double probeFeedrate, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_WITH_ERROR)boolean probeWithError ) {
 
-        LOG.debug ( "execute: depth=" + depth );
+        LOG.debug ( "execute: depth=" + probeDepth );
 
         if ( command != null ) {
-            if ( IPreferences.PROBE_WITH_ERROR ) {
-                gcodeService.sendCommandSuppressInTerminal ( "G90G38.2Z" + depth + "F" + IPreferences.PROBE_FEEDRATE );
+            if ( probeWithError ) {
+                gcodeService.sendCommandSuppressInTerminal ( "G90G38.2Z" + probeDepth + "F" + probeFeedrate );
             }
             else {
-                gcodeService.sendCommandSuppressInTerminal ( "G90G38.3Z" + depth + "F" + IPreferences.PROBE_FEEDRATE );
+                gcodeService.sendCommandSuppressInTerminal ( "G90G38.3Z" + probeDepth + "F" + probeFeedrate );
             }
         }
 

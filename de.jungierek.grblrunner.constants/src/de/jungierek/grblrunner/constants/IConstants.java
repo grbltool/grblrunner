@@ -40,6 +40,8 @@ public interface IConstants {
     public static final double EPSILON = 0.001; // never adjust this lesser, because of grid calculation ccordinates vs. indices
     
     public static final String PREFERENCE_NODE = KEY_BASE;
+    public static final double PREFERENCE_DOUBLE_MIN = -999.9;
+    public static final double PREFERENCE_DOUBLE_MAX = +999.9;
 
     // index 0 is the color for the axis label
     public static final int COORDINATE_SYSTEM_ARROW_COLORS [] = new int [] { SWT.COLOR_BLACK, SWT.COLOR_RED, SWT.COLOR_GREEN, SWT.COLOR_BLUE };
@@ -51,5 +53,13 @@ public interface IConstants {
     public static final boolean INITIAL_VIEW_GCODE = true;
     public static final boolean INITIAL_VIEW_GRID = true;
     public static final boolean INITIAL_VIEW_WORKAREA = true;
+
+    public static final String [] GCODE_FILE_EXTENSIONS = new String [] { "*.ngc" };
+    public static final String AUTOLEVEL_DATA_FILE_EXTENSION = ".probe";
+
+    public static final int SERIAL_MAX_WAIT_MS = 2000;
+
+    public static final boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = false;
+    public static final boolean AUTOLEVEL_SLOW_Z_SIMULATION = false;
 
 }

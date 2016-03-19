@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -23,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPreferences;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.PartTools;
@@ -43,6 +44,32 @@ public abstract class MacroGroup {
 
     @Inject
     private IEclipseContext context;
+
+    // preferences
+    protected int spindle_min_rpm;
+    protected int spindle_max_rpm;
+    protected double zClearance;
+
+    @Inject
+    public void setSpindleMinRpm ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.SPINDLE_MIN) int min ) {
+
+        spindle_min_rpm = min;
+
+    }
+
+    @Inject
+    public void setSpindleMaxRpm ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.SPINDLE_MAX) int max ) {
+
+        spindle_max_rpm = max;
+
+    }
+
+    @Inject
+    public void setZClearance ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.Z_CLEARANCE) double value ) {
+
+        zClearance = value;
+
+    }
 
     @PostConstruct
     public void createGui ( Composite parent ) {
@@ -90,7 +117,7 @@ public abstract class MacroGroup {
 
         generateGcodeCore ( gcodeProgram );
 
-        gcodeProgram.appendLine ( "G0 Z" + String.format ( IConstants.FORMAT_COORDINATE, IPreferences.Z_CLEARANCE ) );
+        gcodeProgram.appendLine ( "G0 Z" + String.format ( IConstants.FORMAT_COORDINATE, zClearance ) );
         gcodeProgram.appendLine ( "M5" );
 
         gcodeProgram.parse ();

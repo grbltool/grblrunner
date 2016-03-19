@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
+import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class TerminalPreferencePage extends FieldEditorPreferencePage {
 
@@ -28,7 +29,7 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage {
     protected void createFieldEditors () {
 
         addField ( new FontFieldEditor ( IPreferenceKey.TERMINAL_FONT_DATA, "Font", getFieldEditorParent () ) );
-
+        GuiFactory.createHiddenLabel ( getFieldEditorParent (), 3, true );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_TERMINAL_FOREGROUND, "Terminal Foreground", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_TERMINAL_BACKGROUND, "Terminal Background", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_ALARM_FOREGROUND, "Alarm Foreground", getFieldEditorParent () ) );
@@ -43,6 +44,7 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage {
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_ERROR_SUPPRESSED_FOREGROUND, "Suppressed Error Message Foreground", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_GRBL_SUPPRESSED_FOREGROUND, "Suppressed Grbl Message Foreground", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_GRBL_SUPPRESSED_BACKGROUND, "Suppressed Grbl Message Background", getFieldEditorParent () ) );
+        GuiFactory.createHiddenLabel ( getFieldEditorParent (), 3, true );
 
     }
 

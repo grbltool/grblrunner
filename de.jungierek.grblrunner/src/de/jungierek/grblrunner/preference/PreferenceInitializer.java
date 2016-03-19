@@ -27,10 +27,18 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
         IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode ( IConstants.PREFERENCE_NODE );
         
-        // --- GcodeViewGroup ---
+        // --- Mill ---
+        defaults.put ( IPreferenceKey.GCODE_PATH, "C:\\Users\\Andreas\\Documents\\eagle" );
         defaults.putDouble ( IPreferenceKey.WORK_AREA_MAX_X, 107.5 );
         defaults.putDouble ( IPreferenceKey.WORK_AREA_MAX_Y, 84.3 );
+        defaults.putInt ( IPreferenceKey.SPINDLE_MIN, 0 );
+        defaults.putInt ( IPreferenceKey.SPINDLE_MAX, 12000 );
+        defaults.putInt ( IPreferenceKey.MAX_SEEK_FEEDRATE, 600 );
+        defaults.putDouble ( IPreferenceKey.Z_CLEARANCE, 15.0 );
+
+        // --- GcodeViewGroup ---
         defaults.putDouble ( IPreferenceKey.FIT_TO_SIZE_MARGIN, 20.0 );
+        defaults.putBoolean ( IPreferenceKey.FIT_TO_SIZE_WITH_Z, false );
 
         defaults.put ( IPreferenceKey.COLOR_AUTOLEVEL_GRID, "255,0,255" ); // magenta
         defaults.put ( IPreferenceKey.COLOR_GANTRY, "255,0,0" ); // red
@@ -46,8 +54,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         // defaults.put ( IPreferenceKey.COLOR_WORKAREA_BORDER, "128,0,0" ); // dark red
         defaults.put ( IPreferenceKey.COLOR_WORKAREA_BORDER, "200,0,0" ); // dark red
         defaults.put ( IPreferenceKey.COLOR_WORKAREA_MIDCROSS, "255,0,0" ); // red
-
-        defaults.putBoolean ( IPreferenceKey.FIT_TO_SIZE_WITH_Z, false );
 
         // --- SerialActionsGroup ---
         defaults.put ( IPreferenceKey.COLOR_CONNECT, "0,255,0" ); // green
@@ -71,6 +77,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.put ( IPreferenceKey.COLOR_ERROR_SUPPRESSED_FOREGROUND, "255,0,0" ); // red
         defaults.put ( IPreferenceKey.COLOR_GRBL_SUPPRESSED_FOREGROUND, "0,0,0" ); // white
         defaults.put ( IPreferenceKey.COLOR_GRBL_SUPPRESSED_BACKGROUND, "192,192,192" ); // gray
+
+        // --- Probe ---
+        defaults.putInt ( IPreferenceKey.PROBE_FEEDRATE, 40 );
+        defaults.putDouble ( IPreferenceKey.PROBE_Z_MAX, +3.0 );
+        defaults.putDouble ( IPreferenceKey.PROBE_DEPTH, -3.0 );
+        defaults.putBoolean ( IPreferenceKey.PROBE_WITH_ERROR, false );
 
         // -------------------------------
 

@@ -63,11 +63,11 @@ public class MacroPocketGroup extends MacroGroup {
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm" );
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "z clearance", 1 );
-        zClearanceText = GuiFactory.createDoubleText ( group, formatCoordinate ( IPreferences.Z_CLEARANCE ), 1, true, 0.0 );
+        zClearanceText = GuiFactory.createDoubleText ( group, formatCoordinate ( zClearance ), 1, true, 0.0 );
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm" );
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "spindle speed", 1 );
-        spindleSpeedText = GuiFactory.createIntegerText ( group, "" + IPreferences.MACRO_SPINDLE_SPEED, 1, true, IPreferences.SPINDLE_MIN_RPM, IPreferences.SPINDLE_MAX_RPM );
+        spindleSpeedText = GuiFactory.createIntegerText ( group, "" + IPreferences.MACRO_SPINDLE_SPEED, 1, true, spindle_min_rpm, spindle_max_rpm );
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "rpm" );
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mill diameter", 1 );
@@ -128,7 +128,7 @@ public class MacroPocketGroup extends MacroGroup {
         double xDimension = partTools.parseDoubleField ( xDimensionText, IPreferences.POCKET_MILL_DIMENSION );
         double yDimension = partTools.parseDoubleField ( yDimensionText, IPreferences.POCKET_MILL_DIMENSION );
         double millDiameter = partTools.parseDoubleField ( millDiameterText, IPreferences.POCKET_MILL_DIAMETER );
-        double zClearance = partTools.parseDoubleField ( zClearanceText, IPreferences.Z_CLEARANCE );
+        double zClearance = partTools.parseDoubleField ( zClearanceText, super.zClearance );
         double zLiftup = partTools.parseDoubleField ( zLiftupText, IPreferences.MACRO_Z_LIFTUP );
         double zDepth = partTools.parseDoubleField ( zDepthText, IPreferences.POCKET_MILL_Z_DEPTH );
         double overlap = partTools.parseIntegerField ( overlapText, IPreferences.POCKET_MILL_OVERLAP ) / 100.0;
@@ -235,7 +235,7 @@ public class MacroPocketGroup extends MacroGroup {
         double xDimension = partTools.parseDoubleField ( xDimensionText, IPreferences.POCKET_MILL_DIMENSION );
         double yDimension = partTools.parseDoubleField ( yDimensionText, IPreferences.POCKET_MILL_DIMENSION );
         double millDiameter = partTools.parseDoubleField ( millDiameterText, IPreferences.POCKET_MILL_DIAMETER );
-        double zClearance = partTools.parseDoubleField ( zClearanceText, IPreferences.Z_CLEARANCE );
+        double zClearance = partTools.parseDoubleField ( zClearanceText, super.zClearance );
         double zLiftup = partTools.parseDoubleField ( zLiftupText, IPreferences.MACRO_Z_LIFTUP );
         double zDepth = partTools.parseDoubleField ( zDepthText, IPreferences.POCKET_MILL_Z_DEPTH );
         double overlap = partTools.parseIntegerField ( overlapText, IPreferences.POCKET_MILL_OVERLAP ) / 100.0;

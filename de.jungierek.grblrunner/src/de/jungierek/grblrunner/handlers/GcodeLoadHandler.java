@@ -7,6 +7,7 @@ import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IPersistenceKeys;
-import de.jungierek.grblrunner.constants.IPreferences;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 
@@ -37,15 +38,15 @@ public class GcodeLoadHandler {
     private EModelService modelService;
 
     @Execute
-    public void execute ( MApplication application, Shell shell ) {
+    public void execute ( MApplication application, Shell shell, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.GCODE_PATH) String gcodePath ) {
 
         LOG.debug ( "execute:" );
 
         FileDialog dialog = new FileDialog ( shell, SWT.OPEN );
-        dialog.setFilterExtensions ( IPreferences.GCODE_FILE_EXTENSIONS );
+        dialog.setFilterExtensions ( IConstants.GCODE_FILE_EXTENSIONS );
 
         String filterPath = application.getPersistedState ().get ( IPersistenceKeys.KEY_GCODE_PATH );
-        if ( filterPath == null ) filterPath = IPreferences.INITIAL_GCODE_PATH;
+        if ( filterPath == null ) filterPath = gcodePath;
         dialog.setFilterPath ( filterPath );
 
         String result = dialog.open ();

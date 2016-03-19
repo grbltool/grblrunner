@@ -26,7 +26,7 @@ public class SerialPreferencePage extends FieldEditorPreferencePage {
     @Override
     protected void createFieldEditors () {
 
-        addField ( new IntegerFieldEditor ( IPreferenceKey.BAUDRATE, "Baudrate", getFieldEditorParent () ) );
+        // addField ( new IntegerFieldEditor ( IPreferenceKey.BAUDRATE, "Baudrate", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_CONNECT, "Connect", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_DISCONNECT, "Disconnect", getFieldEditorParent () ) );
 

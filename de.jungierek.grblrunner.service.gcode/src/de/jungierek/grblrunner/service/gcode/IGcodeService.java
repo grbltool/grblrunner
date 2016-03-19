@@ -15,7 +15,7 @@ public interface IGcodeService {
     public IGcodePoint getFixtureShift ();
 
     public void playGcodeProgram ( IGcodeProgram program );
-    public void scanAutolevelData ( IGcodeProgram program, double zMin, double zMax, double zClearance, double probeFedrate );
+    public void scanAutolevelData ( IGcodeProgram program, double zMin, double zMax, double zClearance, double probeFedrate, boolean withError );
 
     public boolean isAutolevelScan ();
     public boolean isPlaying ();

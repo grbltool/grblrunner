@@ -9,6 +9,7 @@ import javax.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -27,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPreferences;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
@@ -69,13 +70,22 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
     private Text scanClearanceZText;
     private Text scanFeedrateText;
 
+// @formatter:off
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( 
+            Composite parent, 
+            IEclipseContext context,
+            @Named(IContextKey.KEY_PART_GROUP_COLS) int groupCols,
+            @Named(IContextKey.KEY_PART_GROUP_ROWS) int groupRows,
+            @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.Z_CLEARANCE) double zClearance,
+            @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepth, 
+            @Preference (nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_Z_MAX) double probeMaxZ, 
+            @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_FEEDRATE) double probeFeedrate 
+    ) {
+// @formatter:on
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         int cols = 5;
@@ -85,21 +95,21 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
         scanStepXText = GuiFactory.createIntegerText ( group, "" + IConstants.INITIAL_XSTEPS, 1, true, 0 );
         scanStepWidthXLabel = GuiFactory.createCoordinateLabel ( group );
         GuiFactory.createHeadingLabel ( group, "Z clear", 1, false );
-        scanClearanceZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, IPreferences.Z_CLEARANCE ), 1, true );
+        scanClearanceZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, zClearance ), 1, true );
 
         GuiFactory.createHeadingLabel ( group, "Y Steps", 1, false );
         scanStepYText = GuiFactory.createIntegerText ( group, "" + IConstants.INITIAL_YSTEPS, 1, true, 0 );
         scanStepWidthYLabel = GuiFactory.createCoordinateLabel ( group );
         GuiFactory.createHeadingLabel ( group, "Z max", 1, false );
-        scanMaxZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, IPreferences.PROBE_Z_MAX ), 1, true );
+        scanMaxZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, probeMaxZ ), 1, true );
 
         GuiFactory.createHiddenLabel ( group, 3, true );
         GuiFactory.createHeadingLabel ( group, "Z min", 1, false );
-        scanMinZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, IPreferences.PROBE_Z_MIN ), 1, true );
+        scanMinZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, probeDepth ), 1, true );
 
         GuiFactory.createHiddenLabel ( group, 3, true );
         GuiFactory.createHeadingLabel ( group, "feedrate", 1, false );
-        scanFeedrateText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, IPreferences.PROBE_FEEDRATE ), 1, true );
+        scanFeedrateText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, probeFeedrate ), 1, true );
 
         GuiFactory.createHiddenLabel ( group, cols, true );
 

@@ -5,6 +5,7 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -18,9 +19,10 @@ import org.eclipse.swt.widgets.Slider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPreferences;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandID;
@@ -42,7 +44,25 @@ public class ControlSpindleGroup {
     private Button spindleStartButton;
     private Button spindleStopButton;
 
+    // preferences
+    private int spindle_min_rpm;
+    private int spindle_max_rpm;
+
     private boolean ignoreSpindleSpeedUpdate = false;
+    
+    @Inject
+    public void setSpindleMinRpm ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.SPINDLE_MIN) int min ) {
+
+        spindle_min_rpm = min;
+
+    }
+
+    @Inject
+    public void setSpindleMaxRpm ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.SPINDLE_MAX) int max ) {
+
+        spindle_max_rpm = max;
+
+    }
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
@@ -58,9 +78,10 @@ public class ControlSpindleGroup {
         spindleVelocitySlider = new Slider ( group, SWT.HORIZONTAL );
         spindleVelocitySlider.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false ) );
         spindleVelocitySlider.setEnabled ( false );
-        spindleVelocitySlider.setMinimum ( IPreferences.SPINDLE_MIN_RPM );
-        spindleVelocitySlider.setMaximum ( IPreferences.SPINDLE_MAX_RPM );
+        spindleVelocitySlider.setMinimum ( spindle_min_rpm );
+        spindleVelocitySlider.setMaximum ( spindle_max_rpm + 10 ); // why ever?
         spindleVelocitySlider.setIncrement ( 1000 );
+        spindleVelocitySlider.setPageIncrement ( 100 );
         spindleStartButton = GuiFactory.createPushButton ( group, "start", SWT.CENTER, false );
         spindleStopButton = GuiFactory.createPushButton ( group, "stop", SWT.CENTER, false );
 

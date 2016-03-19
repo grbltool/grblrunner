@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
@@ -475,13 +474,13 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
     // TODO eliminiate extra parameters, hold this in the service as gui model
     @Override
-    public void scanAutolevelData ( IGcodeProgram program, double zMin, double zMax, double zClearance, double probeFeedrate ) {
+    public void scanAutolevelData ( IGcodeProgram program, double zMin, double zMax, double zClearance, double probeFeedrate, boolean withError ) {
 
         if ( isPlaying () || isAutolevelScan () ) return;
 
         gcodeProgram = program;
 
-        if ( IPreferences.AUTOLEVEL_USE_RANDOM_Z_SIMULATION ) {
+        if ( IConstants.AUTOLEVEL_USE_RANDOM_Z_SIMULATION ) {
             
             gcodeProgram.prepareAutolevelScan ();
 
@@ -498,7 +497,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
                 for ( int i = 0; i < xlength; i++ ) {
                     for ( int j = 0; j < ylength; j++ ) {
-                        if ( IPreferences.AUTOLEVEL_SLOW_Z_SIMULATION ) {
+                        if ( IConstants.AUTOLEVEL_SLOW_Z_SIMULATION ) {
                             try {
                                 Thread.sleep ( 100 );
                             }
@@ -522,7 +521,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         else {
 
             // decouple from UI thread
-            new ProbeScannerThread ( zMin, zMax, zClearance, probeFeedrate ).start ();
+            new ProbeScannerThread ( zMin, zMax, zClearance, probeFeedrate, withError ).start ();
 
         }
 
@@ -652,8 +651,9 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         private double zMax;
         private double zClearance;
         private double probeFeedrate;
+        private boolean withError;
     
-        public ProbeScannerThread ( double zMin, double zMax, double zClearance, double probeFeedrate ) {
+        public ProbeScannerThread ( double zMin, double zMax, double zClearance, double probeFeedrate, boolean withError ) {
     
             super ( THREAD_NAME );
     
@@ -661,6 +661,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             this.zMax = zMax;
             this.zClearance = zClearance;
             this.probeFeedrate = probeFeedrate;
+            this.withError = withError;
     
         }
     
@@ -699,7 +700,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     probePoint = gcodeProgram.getProbePointAt ( i, j );
 
                     sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
-                    if ( IPreferences.PROBE_WITH_ERROR ) {
+                    if ( withError ) {
                         sendCommandSuppressInTerminal ( "G38.2Z" + zMin + "F" + probeFeedrate ); // MOTION_MODE_PROBE_TOWARD
                     }
                     else {

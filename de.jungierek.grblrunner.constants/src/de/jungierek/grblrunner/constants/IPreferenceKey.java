@@ -3,11 +3,20 @@ package de.jungierek.grblrunner.constants;
 
 public interface IPreferenceKey {
 
-    // --- GcodeViewGroup ---
+    // --- Mill ---
+    public static final String GCODE_PATH = IConstants.KEY_BASE + ".gcode.path";
+    public static final String BAUDRATE = IConstants.KEY_BASE + ".baudrate";
     public static final String WORK_AREA_MAX_X = IConstants.KEY_BASE + ".workarea.max.x";
     public static final String WORK_AREA_MAX_Y = IConstants.KEY_BASE + ".workarea.max.y";
+    public static final String SPINDLE_MIN = IConstants.KEY_BASE + ".spindle.min";
+    public static final String SPINDLE_MAX = IConstants.KEY_BASE + ".spindle.max";
+    public static final String MAX_SEEK_FEEDRATE = IConstants.KEY_BASE + ".seekrate.max";
+    public static final String AVG_SEEK_FEEDRATE_CORRECTOR = IConstants.KEY_BASE + ".seekrate.avg.corrector";
+    public static final String Z_CLEARANCE = IConstants.KEY_BASE + ".clearance.z";
 
+    // --- GcodeViewGroup ---
     public static final String FIT_TO_SIZE_MARGIN = IConstants.KEY_BASE + ".fittosize.margin";
+    public static final String FIT_TO_SIZE_WITH_Z = IConstants.KEY_BASE + ".fittosize.withz";
 
     public static final String COLOR_AUTOLEVEL_GRID = IConstants.KEY_BASE + ".autolevel.grid.color";
     public static final String COLOR_GANTRY = IConstants.KEY_BASE + ".gantry.color";
@@ -21,12 +30,9 @@ public interface IPreferenceKey {
     public static final String COLOR_WORKAREA_BORDER = IConstants.KEY_BASE + ".workarea.border.color";
     public static final String COLOR_WORKAREA_MIDCROSS = IConstants.KEY_BASE + ".workarea.midcross.color";
 
-    public static final String FIT_TO_SIZE_WITH_Z = IConstants.KEY_BASE + ".fittosize.withz";
-
     // --- SerialPart ---
     public static final String COLOR_CONNECT = IConstants.KEY_BASE + ".connect.color";
     public static final String COLOR_DISCONNECT = IConstants.KEY_BASE + ".disconnect.color";
-    public static final String BAUDRATE = IConstants.KEY_BASE + ".baudrate";
 
     // --- TerminalPart ---
     public static final String COLOR_TERMINAL_FOREGROUND = IConstants.KEY_BASE + ".terminal.foreground.color";
@@ -44,5 +50,11 @@ public interface IPreferenceKey {
     public static final String COLOR_GRBL_SUPPRESSED_FOREGROUND = IConstants.KEY_BASE + ".grbl.suppressed.foreground.color";
     public static final String COLOR_GRBL_SUPPRESSED_BACKGROUND = IConstants.KEY_BASE + ".grbl.suppressed.background.color";
     public static final String TERMINAL_FONT_DATA = IConstants.KEY_BASE + ".terminal.fontdata";
+
+    // --- Probe/Autolevel ---
+    public static final String PROBE_FEEDRATE = IConstants.KEY_BASE + ".probe.feedrate";
+    public static final String PROBE_DEPTH = IConstants.KEY_BASE + ".probe.depth";
+    public static final String PROBE_WITH_ERROR = IConstants.KEY_BASE + ".probe.witherror";
+    public static final String PROBE_Z_MAX = IConstants.KEY_BASE + ".probe.zmax";
 
 }

@@ -18,8 +18,8 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.service.serial.ISerialServiceReceiver;
 
@@ -282,7 +282,7 @@ public class SerialServiceImpl implements ISerialService {
         try {
 
             commPortIdentifier = CommPortIdentifier.getPortIdentifier ( portName );
-            serialPort = (SerialPort) commPortIdentifier.open ( "grbl-runner", IPreferences.SERIAL_MAX_WAIT_MS );
+            serialPort = (SerialPort) commPortIdentifier.open ( "grbl-runner", IConstants.SERIAL_MAX_WAIT_MS );
             serialPort.setSerialPortParams ( baudrate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE );
             in = new RXTXInputStream ( serialPort );
             out = serialPort.getOutputStream ();

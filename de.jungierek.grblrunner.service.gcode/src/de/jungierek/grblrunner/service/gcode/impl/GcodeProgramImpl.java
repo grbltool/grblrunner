@@ -13,13 +13,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPreferences;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
@@ -59,8 +60,18 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private boolean scanning;
 
     boolean optimized = false;
+    
+    // preference
+    private double seekFeedrate;
 
     public GcodeProgramImpl () {}
+    
+    @Inject
+    public void setSeekFeedrate ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.MAX_SEEK_FEEDRATE) int feedrate ) {
+        
+        seekFeedrate = feedrate;
+        
+    }
 
     @Inject
     public GcodeProgramImpl ( IEventBroker eventBroker ) {
@@ -125,7 +136,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         this.gcodeFile = gcodeFile;
         String fileName = gcodeFile.getPath ();
-        probeDataFile = new File ( fileName.substring ( 0, fileName.lastIndexOf ( '.' ) ) + IPreferences.AUTOLEVEL_DATA_FILE_EXTENSION );
+        probeDataFile = new File ( fileName.substring ( 0, fileName.lastIndexOf ( '.' ) ) + IConstants.AUTOLEVEL_DATA_FILE_EXTENSION );
 
         // decouple from UI thread
         new GcodeLoaderThread ( gcodeFile ).start ();
@@ -436,7 +447,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         final double dist = Math.sqrt ( dx * dx + dy * dy + dz * dz );
 
         // double feedrate = IPreferences.MAX_SEEK_FEEDRATE;
-        double feedrate = IPreferences.AVG_SEEK_FEEDRATE;
+        double feedrate = seekFeedrate;
         if ( gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR || gcodeLine.isArcMode () ) {
             feedrate = gcodeLine.getFeedrate ();
         }

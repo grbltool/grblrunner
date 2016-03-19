@@ -252,16 +252,16 @@
           <persistedState key="type" value="yz"/>
         </children>
         <children xsi:type="menu:ToolBarSeparator" xmi:id="_1A3ewIYHEeWmorqqLo61Ew" elementId="de.jungierek.grblrunner.toolbarseparator.7"/>
-        <children xsi:type="menu:DirectToolItem" xmi:id="_DUtXUITVEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.directtoolitem.view.grid" label="grid" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/grid.gif" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">
+        <children xsi:type="menu:DirectToolItem" xmi:id="_DUtXUITVEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.directtoolitem.view.grid" label="grid" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/grid.gif" selected="true" type="Check" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">
           <persistedState key="type" value="grid"/>
         </children>
-        <children xsi:type="menu:DirectToolItem" xmi:id="_9FXgMITUEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.directtoolitem.view:gcode" label="G" selected="true" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">
+        <children xsi:type="menu:DirectToolItem" xmi:id="_9FXgMITUEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.directtoolitem.view:gcode" label="G" selected="true" type="Check" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">
           <persistedState key="type" value="gcode"/>
         </children>
-        <children xsi:type="menu:DirectToolItem" xmi:id="_DwmCEITVEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.directtoolitem.view.altitude" label="alt" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/altitude.gif" selected="true" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">
+        <children xsi:type="menu:DirectToolItem" xmi:id="_DwmCEITVEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.directtoolitem.view.altitude" label="alt" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/altitude.gif" selected="true" type="Check" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">
           <persistedState key="type" value="altitude"/>
         </children>
-        <children xsi:type="menu:DirectToolItem" xmi:id="_FvsMAITVEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.directtoolitem.view.workarea" label="workarea" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/workarea.gif" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">
+        <children xsi:type="menu:DirectToolItem" xmi:id="_FvsMAITVEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.directtoolitem.view.workarea" label="workarea" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/workarea.gif" selected="true" type="Check" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">
           <persistedState key="type" value="workarea"/>
         </children>
         <children xsi:type="menu:DirectToolItem" xmi:id="_tTAocITZEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.directtoolitem.view.label" toBeRendered="false" visible="false" label="label" enabled="false" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeViewDirectToolItem">

@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -21,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IConstants;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPreferences;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
@@ -44,7 +45,7 @@ public class ControlProbeGroup implements CommandParameterCallback {
     private Text probeDepthText;
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, IEclipseContext context, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepth ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
@@ -55,7 +56,7 @@ public class ControlProbeGroup implements CommandParameterCallback {
         group.setLayout ( new GridLayout ( 3, false ) );
 
         GuiFactory.createHeadingLabel ( group, "Depth", 1 );
-        probeDepthText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, IPreferences.PROBE_DEPTH ), 1, true );
+        probeDepthText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, probeDepth ), 1, true );
         probeStartButton = GuiFactory.createArrowButton ( group, SWT.DOWN );
 
         probeStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.PROBE_ACTION, new HashMap<String, Object> (), this ) );
