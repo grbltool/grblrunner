@@ -66,11 +66,41 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     public GcodeProgramImpl () {}
     
+    private double accelaration; // mm / s^2
+    private double timeToFeedrate; // mm / s
+    double distanceToFeedrate; // mm
+
     @Inject
     public void setSeekFeedrate ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.MAX_SEEK_FEEDRATE) int feedrate ) {
-        
+
+        LOG.debug ( "setSeekFeedrate: feedrate=" + feedrate );
+
         seekFeedrate = feedrate;
-        
+        calculateDurationVars ();
+
+    }
+
+    @Inject
+    public void setAccelaration ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.ACCELARATION) double accelaration ) {
+
+        LOG.debug ( "setAccelaration: accelaration=" + accelaration );
+
+        this.accelaration = accelaration;
+        calculateDurationVars ();
+
+    }
+
+    private void calculateDurationVars () {
+
+        timeToFeedrate = seekFeedrate / 60 / accelaration; // sec
+
+        // s = a/2 *t^2
+        // t = sqrt ( s / a/2 ) = sqrt ( 2s / a ) with s = dist/2
+        distanceToFeedrate = 0.5 * accelaration * timeToFeedrate * timeToFeedrate; // mm
+
+        LOG.debug ( "calculateDurationVars: seekFeedrate=" + seekFeedrate + "mm/min accelaration=" + accelaration + "mm/s^2 timeToFeedrate=" + timeToFeedrate
+                + "s distanceToFeedrate="
+                + distanceToFeedrate + "mm" );
     }
 
     @Inject
@@ -414,8 +444,9 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     private void initMinMax () {
 
-        min = new GcodePointImpl ( +999.0, +999.0, +999.0 );
-        max = new GcodePointImpl ( -999.0, -999.0, -999.0 );
+        min = new GcodePointImpl ( IConstants.PREFERENCE_DOUBLE_MAX, IConstants.PREFERENCE_DOUBLE_MAX, IConstants.PREFERENCE_DOUBLE_MAX );
+        max = new GcodePointImpl ( IConstants.PREFERENCE_DOUBLE_MIN, IConstants.PREFERENCE_DOUBLE_MIN, IConstants.PREFERENCE_DOUBLE_MIN );
+
         durationInMinutes = 0;
 
     }
@@ -447,12 +478,23 @@ public class GcodeProgramImpl implements IGcodeProgram {
         final double dist = Math.sqrt ( dx * dx + dy * dy + dz * dz );
 
         // double feedrate = IPreferences.MAX_SEEK_FEEDRATE;
-        double feedrate = seekFeedrate;
-        if ( gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR || gcodeLine.isArcMode () ) {
-            feedrate = gcodeLine.getFeedrate ();
-        }
         double time = 0.0;
-        if ( feedrate != 0 ) time = dist / feedrate;
+        if ( gcodeLine.isMotionModeLinear () || gcodeLine.isArcMode () ) {
+            final double feedrate = gcodeLine.getFeedrate ();
+            if ( feedrate != 0 ) time = dist / feedrate;
+        }
+        else if ( gcodeLine.isMotionModeSeek () ) {
+
+            if ( 2 * distanceToFeedrate < dist ) {
+                time = 2 * timeToFeedrate / 60.0 + (dist - 2 * distanceToFeedrate) / seekFeedrate;
+            }
+            else {
+                time = 2 * Math.sqrt ( dist / accelaration ) / 60.0;
+            }
+            // LOG.info ( "computeDuration: dist=" + dist + " time=" + time + "min" );
+            // if ( dist == 12.0 ) LOG.info ( "computeDuration: dist=" + dist + " time=" + 60 * time + "s" );
+
+        }
 
         // LOG.info ( "computeDuration: l=" + gcodeLine + " s=" + start + " e=" + end + " d=" + dist + " t=" + time );
         return time;

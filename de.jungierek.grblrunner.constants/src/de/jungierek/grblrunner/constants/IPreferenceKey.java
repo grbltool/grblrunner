@@ -11,6 +11,7 @@ public interface IPreferenceKey {
     public static final String SPINDLE_MIN = IConstants.KEY_BASE + ".spindle.min";
     public static final String SPINDLE_MAX = IConstants.KEY_BASE + ".spindle.max";
     public static final String MAX_SEEK_FEEDRATE = IConstants.KEY_BASE + ".seekrate.max";
+    public static final String ACCELARATION = IConstants.KEY_BASE + ".accelaration";
     public static final String AVG_SEEK_FEEDRATE_CORRECTOR = IConstants.KEY_BASE + ".seekrate.avg.corrector";
     public static final String Z_CLEARANCE = IConstants.KEY_BASE + ".clearance.z";
 

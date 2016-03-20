@@ -46,6 +46,7 @@ public class MillPreferencePage extends FieldEditorPreferencePage {
         GuiFactory.createHiddenLabel ( getFieldEditorParent (), cols, true );
 
         addField ( new IntegerFieldEditor ( IPreferenceKey.MAX_SEEK_FEEDRATE, "seek feedrate (mm/min)", getFieldEditorParent () ) );
+        addField ( new DoubleFieldEditor ( IPreferenceKey.ACCELARATION, "accelaration (mm/s^2)", getFieldEditorParent () ) );
         GuiFactory.createHiddenLabel ( getFieldEditorParent (), cols, true );
 
         addField ( new DoubleFieldEditor ( IPreferenceKey.Z_CLEARANCE, "z clearance (mm)", 0.0, IConstants.PREFERENCE_DOUBLE_MAX, getFieldEditorParent () ) );

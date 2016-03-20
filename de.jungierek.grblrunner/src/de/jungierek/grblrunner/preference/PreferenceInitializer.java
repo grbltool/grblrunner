@@ -34,6 +34,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.putInt ( IPreferenceKey.SPINDLE_MIN, 0 );
         defaults.putInt ( IPreferenceKey.SPINDLE_MAX, 12000 );
         defaults.putInt ( IPreferenceKey.MAX_SEEK_FEEDRATE, 600 );
+        defaults.putDouble ( IPreferenceKey.ACCELARATION, 20.0 );
         defaults.putDouble ( IPreferenceKey.Z_CLEARANCE, 15.0 );
 
         // --- GcodeViewGroup ---
