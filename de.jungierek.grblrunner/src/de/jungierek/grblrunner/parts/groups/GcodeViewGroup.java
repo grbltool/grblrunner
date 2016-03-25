@@ -237,40 +237,43 @@ public class GcodeViewGroup {
             IGcodePoint p11 = max;
             LOG.debug ( "fitToSize 3: p00=" + p00 + " p10=" + p10 + " p01=" + p01 + " p11=" + p11 );
 
+            // transform to pixel coordinates, no zoom but with rotation
             Point p00Pixel = gcodeToPixel ( 1.0, p00 );
             Point p10Pixel = gcodeToPixel ( 1.0, p10 );
             Point p01Pixel = gcodeToPixel ( 1.0, p01 );
             Point p11Pixel = gcodeToPixel ( 1.0, p11 );
             LOG.debug ( "fitToSize 4: p00Pixel=" + p00Pixel + " p10Pixel=" + p10Pixel + " p01Pixel=" + p01Pixel + " p11Pixel=" + p11Pixel );
 
-            Point minPixel = p00Pixel.min ( p10Pixel.min ( p01Pixel.min ( p11Pixel ) ) );
-            Point maxPixel = p00Pixel.max ( p10Pixel.max ( p01Pixel.max ( p11Pixel ) ) );
+            // determine pixel area
+            final Point minPixel = p00Pixel.min ( p10Pixel.min ( p01Pixel.min ( p11Pixel ) ) );
+            final Point maxPixel = p00Pixel.max ( p10Pixel.max ( p01Pixel.max ( p11Pixel ) ) );
             LOG.debug ( "fitToSize 5: min=" + minPixel + " max=" + maxPixel );
 
+            // compute zoom
             Rectangle clientArea = canvas.getClientArea ();
             LOG.debug ( "fitToSize: canvas x=" + clientArea.x + " y =" + clientArea.y + " w=" + clientArea.width + " h=" + clientArea.height );
             LOG.debug ( "fitToSize: minPixel=" + minPixel + " maxPixel=" + maxPixel );
-
-            double zoomX = (clientArea.width - 2.0 * fitToSizeMargin) / (maxPixel.x - minPixel.x);
-            double zoomY = (clientArea.height - 2.0 * fitToSizeMargin) / (maxPixel.y - minPixel.y);
+            double zoomX = (clientArea.width - clientArea.x - 2.0 * fitToSizeMargin) / (maxPixel.x - minPixel.x);
+            double zoomY = (clientArea.height - clientArea.y - 2.0 * fitToSizeMargin) / (maxPixel.y - minPixel.y);
             double zoom = Math.min ( zoomX, zoomY );
             if ( zoom < 1.0 ) {
                 zoom = 1.0;
             }
             scale = Math.floor ( zoom );
-            LOG.debug ( "fitToSize: scale=" + scale + " x=" + zoomX + " y=" + zoomY );
+            LOG.debug ( "fitToSize: zoom=" + scale + " x=" + zoomX + " y=" + zoomY );
 
-            p00Pixel = gcodeToPixel ( p00.add ( gcodeService.getFixtureShift () ) );
-            p10Pixel = gcodeToPixel ( p10.add ( gcodeService.getFixtureShift () ) );
-            p01Pixel = gcodeToPixel ( p01.add ( gcodeService.getFixtureShift () ) );
-            p11Pixel = gcodeToPixel ( p11.add ( gcodeService.getFixtureShift () ) );
+            // compute scale
+            final IGcodePoint fixtureShift = gcodeService.getFixtureShift ();
+            p00Pixel = gcodeToPixel ( p00.add ( fixtureShift ) );
+            p10Pixel = gcodeToPixel ( p10.add ( fixtureShift ) );
+            p01Pixel = gcodeToPixel ( p01.add ( fixtureShift ) );
+            p11Pixel = gcodeToPixel ( p11.add ( fixtureShift ) );
             LOG.debug ( "fitToSize: p00Pixel=" + p00Pixel + " p10Pixel=" + p10Pixel + " p01Pixel=" + p01Pixel + " p11Pixel=" + p11Pixel );
 
-            minPixel = p00Pixel.min ( p10Pixel.min ( p01Pixel.min ( p11Pixel ) ) );
-            // maxPixel = p00Pixel.max ( p10Pixel.max ( p01Pixel.max ( p11Pixel ) ) );
-            LOG.debug ( "fitToSize: min=" + minPixel );
+            final Point pixelShift = p00Pixel.min ( p10Pixel.min ( p01Pixel.min ( p11Pixel ) ) );
+            LOG.debug ( "fitToSize: pixelShift=" + pixelShift );
 
-            canvasShift = new Point ( fitToSizeMargin, fitToSizeMargin ).sub ( minPixel );
+            canvasShift = new Point ( fitToSizeMargin, fitToSizeMargin ).sub ( pixelShift );
             LOG.debug ( "fitToSize: canvasShift=" + canvasShift );
 
             redraw ();
