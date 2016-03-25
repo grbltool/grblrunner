@@ -75,8 +75,8 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
     public void createGui ( 
             Composite parent, 
             IEclipseContext context,
-            @Named(IContextKey.KEY_PART_GROUP_COLS) int groupCols,
-            @Named(IContextKey.KEY_PART_GROUP_ROWS) int groupRows,
+            @Named(IContextKey.PART_GROUP_COLS) int groupCols,
+            @Named(IContextKey.PART_GROUP_ROWS) int groupRows,
             @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.Z_CLEARANCE) double zClearance,
             @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepth, 
             @Preference (nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_Z_MAX) double probeMaxZ, 

@@ -57,20 +57,20 @@ public class StatePart {
         parent.setLayout ( new GridLayout ( cols, true ) );
 
         // collect groups
-        context.set ( IContextKey.KEY_PART_COLS, cols );
+        context.set ( IContextKey.PART_COLS, cols );
 
         // state
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
         stateGroup = ContextInjectionFactory.make ( StateGroup.class, context );
 
         // coordinates
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 3 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ROWS, 3 );
         stateCoordinatesGroup = ContextInjectionFactory.make ( StateCoordinatesGroup.class, context );
 
         // all following groups allocating only 1 column
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, 1 );
 
         // feedrate
         stateFeedrateGroup = ContextInjectionFactory.make ( StateFeedrateGroup.class, context );

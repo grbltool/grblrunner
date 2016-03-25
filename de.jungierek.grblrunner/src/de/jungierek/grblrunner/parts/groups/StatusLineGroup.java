@@ -32,8 +32,8 @@ public class StatusLineGroup {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IContextKey.KEY_PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
+        int partCols = ((Integer) context.get ( IContextKey.PART_COLS )).intValue ();
+        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, 1, true );
 
         final int cols = 1;

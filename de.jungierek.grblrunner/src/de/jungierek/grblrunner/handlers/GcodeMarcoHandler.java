@@ -74,7 +74,7 @@ public class GcodeMarcoHandler {
             MPartStack partStack = (MPartStack) modelService.find ( IConstants.EDITOR_PARTSTACK_ID, application );
             partStack.getChildren ().add ( part );
             // HACK
-            application.getContext ().set ( IContextKey.KEY_MACRO_TYPE, selectedMacro.contextValue );
+            application.getContext ().set ( IContextKey.MACRO_TYPE, selectedMacro.contextValue );
 
             // it instanciates also the part object class
             part.setLabel ( "Macro: " + selectedMacro.listItem );

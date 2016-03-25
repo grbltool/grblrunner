@@ -51,41 +51,41 @@ public class ControlPart {
         parent.setLayout ( new GridLayout ( cols, true ) ); // equal width column
         
         // collect groups
-        context.set ( IContextKey.KEY_PART_COLS, cols );
+        context.set ( IContextKey.PART_COLS, cols );
 
         // settings $$, parameters $#, parser $G, build $I, startup $N
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
         controlInfoGroup = ContextInjectionFactory.make ( ControlInfoGroup.class, context );
         
         // cycle start, feed hold, reset
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols / 4 );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 2 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols / 4 );
+        context.set ( IContextKey.PART_GROUP_ROWS, 2 );
         controlCycleGroup = ContextInjectionFactory.make ( ControlCycleGroup.class, context );
 
         // XY
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols / 2 );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 2 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols / 2 );
+        context.set ( IContextKey.PART_GROUP_ROWS, 2 );
         controlMoveGroup = ContextInjectionFactory.make ( ControlMoveGroup.class, context );
         
         // home $H, unlock $X, check $C
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols / 4 );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 2 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols / 4 );
+        context.set ( IContextKey.PART_GROUP_ROWS, 2 );
         controlBasicsGroup = ContextInjectionFactory.make ( ControlGrblGroup.class, context );
 
         // spindle
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, 5 );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, 5 );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
         controlSpindleGroup = ContextInjectionFactory.make ( ControlSpindleGroup.class, context );
         
         // probe
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, 3 );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, 3 );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
         controlProbeGroup = ContextInjectionFactory.make ( ControlProbeGroup.class, context );
         
         // scan
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
         controlAutolevelGroup = ContextInjectionFactory.make ( ControlAutolevelGroup.class, context );
 
     }

@@ -46,8 +46,8 @@ public class GcodeLargeGroup {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IContextKey.KEY_PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
+        int partCols = ((Integer) context.get ( IContextKey.PART_COLS )).intValue ();
+        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
         // Group group = GuiFactory.createGroup ( parent, "", groupCols, 1, true, true );
         Composite group = new Composite ( parent, SWT.NONE );
         group.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );

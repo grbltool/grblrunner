@@ -62,7 +62,7 @@ public class SerialActionsGroup {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, @Named(IContextKey.KEY_PART_COLS) int partCols, @Named(IContextKey.KEY_PART_GROUP_COLS) int groupCols, @Named(IContextKey.KEY_PART_GROUP_ROWS) int groupRows, @Named(IContextKey.KEY_PART_GROUP_ORIENTATION) int orientation ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_ORIENTATION) int orientation ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 

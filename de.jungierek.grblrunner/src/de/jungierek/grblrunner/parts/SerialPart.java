@@ -57,17 +57,17 @@ public class SerialPart {
         final int cols = 3;
         parent.setLayout ( new GridLayout ( cols, true ) );
 
-        context.set ( IContextKey.KEY_PART_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 ); // for all groups
+        context.set ( IContextKey.PART_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 ); // for all groups
 
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols - 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols - 1 );
         serialPortGroup = ContextInjectionFactory.make ( SerialPortGroup.class, context );
 
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, 1 );
         serialAutoConnectGroup = ContextInjectionFactory.make ( SerialAutoConnectGroup.class, context );
 
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_ORIENTATION, SWT.HORIZONTAL );
+        context.set ( IContextKey.PART_GROUP_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ORIENTATION, SWT.HORIZONTAL );
         serialActionsGroup = ContextInjectionFactory.make ( SerialActionsGroup.class, context );
 
     }
@@ -77,17 +77,17 @@ public class SerialPart {
         final int cols = 3;
         parent.setLayout ( new GridLayout ( cols, true ) );
 
-        context.set ( IContextKey.KEY_PART_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 ); // for all groups
+        context.set ( IContextKey.PART_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 ); // for all groups
 
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_ORIENTATION, SWT.HORIZONTAL );
+        context.set ( IContextKey.PART_GROUP_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ORIENTATION, SWT.HORIZONTAL );
         serialActionsGroup = ContextInjectionFactory.make ( SerialActionsGroup.class, context );
 
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols - 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols - 1 );
         serialPortGroup = ContextInjectionFactory.make ( SerialPortGroup.class, context );
 
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, 1 );
         serialAutoConnectGroup = ContextInjectionFactory.make ( SerialAutoConnectGroup.class, context );
 
     }
@@ -97,21 +97,21 @@ public class SerialPart {
         final int cols = 4;
         parent.setLayout ( new GridLayout ( cols, true ) );
 
-        context.set ( IContextKey.KEY_PART_COLS, cols );
+        context.set ( IContextKey.PART_COLS, cols );
 
         // collect groups
 
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols - 1 );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols - 1 );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
         serialPortGroup = ContextInjectionFactory.make ( SerialPortGroup.class, context );
 
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, 1 );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 2 );
-        context.set ( IContextKey.KEY_PART_GROUP_ORIENTATION, SWT.VERTICAL );
+        context.set ( IContextKey.PART_GROUP_COLS, 1 );
+        context.set ( IContextKey.PART_GROUP_ROWS, 2 );
+        context.set ( IContextKey.PART_GROUP_ORIENTATION, SWT.VERTICAL );
         serialActionsGroup = ContextInjectionFactory.make ( SerialActionsGroup.class, context );
 
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols - 1 );
-        context.set ( IContextKey.KEY_PART_GROUP_ROWS, 1 );
+        context.set ( IContextKey.PART_GROUP_COLS, cols - 1 );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
         serialAutoConnectGroup = ContextInjectionFactory.make ( SerialAutoConnectGroup.class, context );
 
     }

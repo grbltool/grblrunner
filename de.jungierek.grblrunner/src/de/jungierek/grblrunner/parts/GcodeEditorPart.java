@@ -60,8 +60,8 @@ public class GcodeEditorPart {
 
         final int cols = 1;
         parent.setLayout ( new GridLayout ( cols, false ) );
-        context.set ( IContextKey.KEY_PART_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, cols ); // all groups have a width of 1 column
+        context.set ( IContextKey.PART_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_COLS, cols ); // all groups have a width of 1 column
         
         context.set ( IGcodeProgram.class, gcodeProgram );
 

@@ -52,7 +52,7 @@ public abstract class MacroGroup {
     private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode ( IConstants.PREFERENCE_NODE );
 
     @PostConstruct
-    public void createGui ( Composite parent, @Named(IContextKey.KEY_PART_COLS) int partCols, @Named(IContextKey.KEY_PART_GROUP_COLS) int groupCols ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 

@@ -31,8 +31,8 @@ public class GcodeViewPart {
 
         final int cols = 1;
         parent.setLayout ( new GridLayout ( cols, true ) );
-        context.set ( IContextKey.KEY_PART_COLS, cols );
-        context.set ( IContextKey.KEY_PART_GROUP_COLS, 1 ); // all groups have a width of 1 column
+        context.set ( IContextKey.PART_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_COLS, 1 ); // all groups have a width of 1 column
 
         // collect groups
         gcodeViewGroup = ContextInjectionFactory.make ( GcodeViewGroup.class, context );

@@ -69,8 +69,8 @@ public class ControlSpindleGroup {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_ROWS )).intValue ();
+        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
+        int groupRows = ((Integer) context.get ( IContextKey.PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         group.setLayout ( new GridLayout ( 3, false ) );
