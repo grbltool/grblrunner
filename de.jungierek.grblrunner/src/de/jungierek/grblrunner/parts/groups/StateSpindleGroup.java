@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StateSpindleGroup {
@@ -45,7 +45,7 @@ public class StateSpindleGroup {
 
     @Inject
     @Optional
-    public void updateSpindleModeNotified ( @UIEventTopic(IEvents.UPDATE_SPINDLE_MODE) String spindleMode ) {
+    public void updateSpindleModeNotified ( @UIEventTopic(IEvent.UPDATE_SPINDLE_MODE) String spindleMode ) {
 
         LOG.trace ( "updateSpindleModeNotified: tool=" + spindleMode );
 
@@ -55,7 +55,7 @@ public class StateSpindleGroup {
 
     @Inject
     @Optional
-    public void updateSpindlespeedNotified ( @UIEventTopic(IEvents.UPDATE_SPINDLESPEED) String spindlespeed ) {
+    public void updateSpindlespeedNotified ( @UIEventTopic(IEvent.UPDATE_SPINDLESPEED) String spindlespeed ) {
 
         LOG.trace ( "updateSpindlespeedNotified: spindlespeed=" + spindlespeed );
         spindlespeedLabel.setText ( spindlespeed );

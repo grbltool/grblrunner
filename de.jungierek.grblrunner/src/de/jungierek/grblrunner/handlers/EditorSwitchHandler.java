@@ -20,7 +20,7 @@ import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
@@ -35,7 +35,7 @@ public class EditorSwitchHandler {
 
         LOG.debug ( "execute: cmd=" + command.getId () + " part=" + part.getElementId () );
 
-        MPartStack partStack = (MPartStack) modelService.find ( IConstants.EDITOR_PARTSTACK_ID, application );
+        MPartStack partStack = (MPartStack) modelService.find ( IConstant.EDITOR_PARTSTACK_ID, application );
         List<MStackElement> children = partStack.getChildren ();
         MPart [] editors = children.toArray ( new MPart [children.size ()] );
 

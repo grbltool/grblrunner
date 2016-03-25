@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.parts.groups.CommandGroup;
 import de.jungierek.grblrunner.parts.groups.GcodeLargeGroup;
 import de.jungierek.grblrunner.parts.groups.ProgressGroup;
@@ -72,7 +72,7 @@ public class StatusLinePart {
 
     @Inject
     @Optional
-    public void msgErrorNotified ( @UIEventTopic(IEvents.MESSAGE_ERROR) String msg ) {
+    public void msgErrorNotified ( @UIEventTopic(IEvent.MESSAGE_ERROR) String msg ) {
 
         LOG.trace ( "msgErrorNotified: msg=" + msg );
 

@@ -15,8 +15,8 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IConstant;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 
@@ -28,7 +28,7 @@ public class QuitProcessor {
     private final IEventBroker eventBroker;
 
     @Inject
-    public QuitProcessor ( @Named(IConstants.MAIN_WINDOW_ID) MWindow window, IEventBroker eventBroker ) {
+    public QuitProcessor ( @Named(IConstant.MAIN_WINDOW_ID) MWindow window, IEventBroker eventBroker ) {
 
         LOG.debug ( "QuitProcessor: window=" + window );
 
@@ -90,7 +90,7 @@ public class QuitProcessor {
             IGcodeService gcodeService = window.getContext ().get ( IGcodeService.class );
             if ( gcodeService.isPlaying () || gcodeService.isAutolevelScan () ) {
                 LOG.warn ( "close: job is runnung" );
-                eventBroker.post ( IEvents.MESSAGE_ERROR, "Closing application is not possible! Job is running!" );
+                eventBroker.post ( IEvent.MESSAGE_ERROR, "Closing application is not possible! Job is running!" );
                 return false;
             }
 

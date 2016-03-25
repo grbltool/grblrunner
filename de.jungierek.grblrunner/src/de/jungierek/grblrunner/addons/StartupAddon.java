@@ -21,8 +21,8 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IConstant;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.parts.GcodeEditorPart;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.serial.ISerialService;
@@ -81,7 +81,7 @@ public class StartupAddon {
 
         serial.detectSerialPortsAsync ();
         
-        window = (MWindow) modelService.find ( IConstants.MAIN_WINDOW_ID, application );
+        window = (MWindow) modelService.find ( IConstant.MAIN_WINDOW_ID, application );
         LOG.debug ( "processAddon: window=" + window );
 
         setWindowLabel ();
@@ -103,7 +103,7 @@ public class StartupAddon {
     
         if ( window == null ) return;
 
-        String msg = IConstants.APPLICATION_TITILE;
+        String msg = IConstant.APPLICATION_TITILE;
     
         if ( serial.isOpen () ) {
             msg += " on " + serial.getPortName ();
@@ -158,7 +158,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void grblRestartedNotified ( @UIEventTopic(IEvents.GRBL_RESTARTED) String line ) {
+    public void grblRestartedNotified ( @UIEventTopic(IEvent.GRBL_RESTARTED) String line ) {
 
         LOG.trace ( "grblRestartedNotified: line=" + line );
 
@@ -169,7 +169,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_LOADED) String fileName ) {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
@@ -179,7 +179,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void serialDisconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String port ) {
+    public void serialDisconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String port ) {
 
         LOG.trace ( "serialEventNotified:" );
 
@@ -195,7 +195,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void grblRestartedNotified ( @UIEventTopic(IEvents.GRBL_RESTARTED) Object data ) {
+    public void grblRestartedNotified ( @UIEventTopic(IEvent.GRBL_RESTARTED) Object data ) {
 
         LOG.trace ( "grblRestartedNotified: data=" + data );
         updateToolbarState ();
@@ -204,7 +204,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void gcodeEventNotified ( @UIEventTopic(IEvents.GCODE_ALL) Object data ) {
+    public void gcodeEventNotified ( @UIEventTopic(IEvent.GCODE_ALL) Object data ) {
 
         LOG.trace ( "gcodeEventNotified: data=" + data );
         updateToolbarState ();
@@ -213,7 +213,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void playerEventNotified ( @UIEventTopic(IEvents.PLAYER_ALL) Object data ) {
+    public void playerEventNotified ( @UIEventTopic(IEvent.PLAYER_ALL) Object data ) {
 
         LOG.trace ( "playerEventNotified: data=" + data );
         updateToolbarState ();
@@ -222,7 +222,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void autolevelEventNotified ( @UIEventTopic(IEvents.AUTOLEVEL_ALL) Object data ) {
+    public void autolevelEventNotified ( @UIEventTopic(IEvent.AUTOLEVEL_ALL) Object data ) {
 
         LOG.trace ( "autolevelEventNotified: data=" + data );
         updateToolbarState ();
@@ -231,7 +231,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void serialEventNotified ( @UIEventTopic(IEvents.SERIAL_ALL) Object data ) {
+    public void serialEventNotified ( @UIEventTopic(IEvent.SERIAL_ALL) Object data ) {
 
         LOG.trace ( "serialEventNotified: data=" + data );
         updateToolbarState ();
@@ -240,7 +240,7 @@ public class StartupAddon {
 
     @Inject
     @Optional
-    public void serialPortsDetectedNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTED) String [] portNames ) {
+    public void serialPortsDetectedNotified ( @UIEventTopic(IEvent.SERIAL_PORTS_DETECTED) String [] portNames ) {
 
         LOG.trace ( "serialPortsDetectedNotified:" );
 

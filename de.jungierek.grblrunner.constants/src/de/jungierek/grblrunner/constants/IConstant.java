@@ -3,7 +3,7 @@ package de.jungierek.grblrunner.constants;
 import org.eclipse.swt.SWT;
 
 
-public interface IConstants {
+public interface IConstant {
     
     // public static final String APPLICATION_TITILE = "GrblRunner";
     public static final String APPLICATION_TITILE = "grbl_runner";

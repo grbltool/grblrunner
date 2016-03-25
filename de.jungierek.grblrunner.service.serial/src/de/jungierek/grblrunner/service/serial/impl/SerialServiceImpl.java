@@ -18,8 +18,8 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IConstant;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.service.serial.ISerialServiceReceiver;
 
@@ -79,7 +79,7 @@ public class SerialServiceImpl implements ISerialService {
 
         detectingSerialPortsIsRunning = true;
 
-        eventBroker.send ( IEvents.SERIAL_PORTS_DETECTING, null );
+        eventBroker.send ( IEvent.SERIAL_PORTS_DETECTING, null );
 
         portName = null; // deselect
 
@@ -107,7 +107,7 @@ public class SerialServiceImpl implements ISerialService {
         detectingSerialPortsIsRunning = false;
 
         LOG.debug ( "detectSerialPorts: posting event" );
-        if ( eventBroker != null ) eventBroker.send ( IEvents.SERIAL_PORTS_DETECTED, cachedPorts );
+        if ( eventBroker != null ) eventBroker.send ( IEvent.SERIAL_PORTS_DETECTED, cachedPorts );
 
     }
 
@@ -138,7 +138,7 @@ public class SerialServiceImpl implements ISerialService {
             this.portName = portName;
 
             LOG.debug ( "setPortName: posting event" );
-            eventBroker.post ( IEvents.SERIAL_PORT_SELECTED, portName );
+            eventBroker.post ( IEvent.SERIAL_PORT_SELECTED, portName );
 
         }
 
@@ -267,7 +267,7 @@ public class SerialServiceImpl implements ISerialService {
         sb.append ( "Cause:\n" );
         sb.append ( exc + "\n\n" );
 
-        eventBroker.send ( IEvents.MESSAGE_ERROR, "" + sb );
+        eventBroker.send ( IEvent.MESSAGE_ERROR, "" + sb );
 
     }
 
@@ -282,7 +282,7 @@ public class SerialServiceImpl implements ISerialService {
         try {
 
             commPortIdentifier = CommPortIdentifier.getPortIdentifier ( portName );
-            serialPort = (SerialPort) commPortIdentifier.open ( "grbl-runner", IConstants.SERIAL_MAX_WAIT_MS );
+            serialPort = (SerialPort) commPortIdentifier.open ( "grbl-runner", IConstant.SERIAL_MAX_WAIT_MS );
             serialPort.setSerialPortParams ( baudrate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE );
             in = new RXTXInputStream ( serialPort );
             out = serialPort.getOutputStream ();
@@ -291,7 +291,7 @@ public class SerialServiceImpl implements ISerialService {
             serialReceiverThread.start ();
 
             LOG.trace ( "connect: posting event" );
-            eventBroker.post ( IEvents.SERIAL_CONNECTED, portName );
+            eventBroker.post ( IEvent.SERIAL_CONNECTED, portName );
 
             // a little bit later
             send ( new byte [] { ISerialService.GRBL_RESET_CODE } );
@@ -336,7 +336,7 @@ public class SerialServiceImpl implements ISerialService {
             }
 
             LOG.debug ( "close: posting event" );
-            eventBroker.send ( IEvents.SERIAL_DISCONNECTED, "-" );
+            eventBroker.send ( IEvent.SERIAL_DISCONNECTED, "-" );
 
         } ).start ();
 

@@ -18,9 +18,9 @@ import org.eclipse.swt.widgets.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandID;
@@ -46,7 +46,7 @@ public class SerialActionsGroup {
     private Color disconnectButtonColor; // from prefrerences
     
     @Inject
-    public void setConnectButtonColor ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_CONNECT) String rgbText ) {
+    public void setConnectButtonColor ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_CONNECT) String rgbText ) {
         
         connectButtonColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         if ( connectButton != null ) connectButton.setBackground ( connectButtonColor );
@@ -54,7 +54,7 @@ public class SerialActionsGroup {
     }
 
     @Inject
-    public void setDisconnectButtonColor ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_DISCONNECT) String rgbText ) {
+    public void setDisconnectButtonColor ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_DISCONNECT) String rgbText ) {
 
         disconnectButtonColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         if ( disconnectButton != null ) disconnectButton.setBackground ( disconnectButtonColor );
@@ -90,7 +90,7 @@ public class SerialActionsGroup {
 
     @Inject
     @Optional
-    public void portsDetectingNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTING) Object dummy ) {
+    public void portsDetectingNotified ( @UIEventTopic(IEvent.SERIAL_PORTS_DETECTING) Object dummy ) {
 
         LOG.debug ( "portsDetectedNotified:" );
 
@@ -101,7 +101,7 @@ public class SerialActionsGroup {
 
     @Inject
     @Optional
-    public void portsDetectedNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTED) String [] ports ) {
+    public void portsDetectedNotified ( @UIEventTopic(IEvent.SERIAL_PORTS_DETECTED) String [] ports ) {
 
         LOG.debug ( "portsDetectedNotified: ports=" + ports );
 
@@ -111,7 +111,7 @@ public class SerialActionsGroup {
 
     @Inject
     @Optional
-    public void portSelectedNotified ( @UIEventTopic(IEvents.SERIAL_PORT_SELECTED) String port ) {
+    public void portSelectedNotified ( @UIEventTopic(IEvent.SERIAL_PORT_SELECTED) String port ) {
 
         LOG.debug ( "portSelectedNotified: port=" + port );
 
@@ -122,7 +122,7 @@ public class SerialActionsGroup {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
+    public void connectedNotified ( @UIEventTopic(IEvent.SERIAL_CONNECTED) String portName ) {
 
         LOG.debug ( "connectedNotified: portName=" + portName );
 
@@ -134,7 +134,7 @@ public class SerialActionsGroup {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String param ) {
 
         LOG.debug ( "disconnectedNotified: param=" + param );
 

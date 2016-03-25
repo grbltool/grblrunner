@@ -1,6 +1,6 @@
 package de.jungierek.grblrunner.service.gcode.impl;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.service.gcode.IGrblRequest;
 
 public class GrblRequestImpl extends GrblMessage implements IGrblRequest {
@@ -14,7 +14,7 @@ public class GrblRequestImpl extends GrblMessage implements IGrblRequest {
     @Override
     public boolean isReset () {
 
-        return message != null && message.length () == 1 && message.charAt ( 0 ) == IConstants.GRBL_RESET_CODE;
+        return message != null && message.length () == 1 && message.charAt ( 0 ) == IConstant.GRBL_RESET_CODE;
 
     }
 

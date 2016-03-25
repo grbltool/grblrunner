@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StateDistanceGroup {
@@ -41,7 +41,7 @@ public class StateDistanceGroup {
 
     @Inject
     @Optional
-    public void updateDistanceModeNotified ( @UIEventTopic(IEvents.UPDATE_DISTANCE_MODE) String distanceMode ) {
+    public void updateDistanceModeNotified ( @UIEventTopic(IEvent.UPDATE_DISTANCE_MODE) String distanceMode ) {
 
         LOG.trace ( "updateDistanceModeNotified: distanceMode=" + distanceMode );
         distanceModeLabel.setText ( distanceMode );

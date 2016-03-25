@@ -28,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPersistenceKeys;
+import de.jungierek.grblrunner.constants.IEvent;
+import de.jungierek.grblrunner.constants.IPersistenceKey;
 import de.jungierek.grblrunner.parts.groups.GcodeFileGroup;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.PartTools;
@@ -75,7 +75,7 @@ public class GcodeEditorPart {
         // ).createFont ( gcodeModeLabel.getDisplay () );
         gcodeText.setEditable ( false );
 
-        String path = part.getPersistedState ().get ( IPersistenceKeys.EDITOR_PATH );
+        String path = part.getPersistedState ().get ( IPersistenceKey.EDITOR_PATH );
         if ( path != null ) {
             gcodeProgram.loadGcodeProgram ( new File ( path ) );
         }
@@ -116,7 +116,7 @@ public class GcodeEditorPart {
         
         LOG.debug ( "persistState:" );
 
-        part.getPersistedState ().put ( IPersistenceKeys.EDITOR_PATH, gcodeProgram.getGcodeProgramFile ().getPath () );
+        part.getPersistedState ().put ( IPersistenceKey.EDITOR_PATH, gcodeProgram.getGcodeProgramFile ().getPath () );
 
     }
 
@@ -133,7 +133,7 @@ public class GcodeEditorPart {
 
     @Inject
     @Optional
-    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_LOADED) String fileName ) {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
@@ -143,7 +143,7 @@ public class GcodeEditorPart {
 
     @Inject
     @Optional
-    public void programOptimizedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_OPTIMIZED) String fileName ) {
+    public void programOptimizedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_OPTIMIZED) String fileName ) {
 
         LOG.debug ( "programOptimizedNotified: fileName=" + fileName );
 

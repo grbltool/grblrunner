@@ -19,8 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPersistenceKeys;
+import de.jungierek.grblrunner.constants.IEvent;
+import de.jungierek.grblrunner.constants.IPersistenceKey;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
@@ -44,8 +44,8 @@ public class SerialAutoConnectGroup {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        String autoConnect = application.getPersistedState ().get ( IPersistenceKeys.AUTO_CONNECT );
-        String autoConnectPort = application.getPersistedState ().get ( IPersistenceKeys.AUTO_CONNECT_PORT );
+        String autoConnect = application.getPersistedState ().get ( IPersistenceKey.AUTO_CONNECT );
+        String autoConnectPort = application.getPersistedState ().get ( IPersistenceKey.AUTO_CONNECT_PORT );
         // autoConnectPort = "COMX"; // for Design View
         LOG.debug ( "createGui: auto=" + autoConnect + " port=" + autoConnectPort );
 
@@ -55,7 +55,7 @@ public class SerialAutoConnectGroup {
         group.setLayout ( new GridLayout ( cols, false ) );
 
         autoConnectCheckButton = GuiFactory.createButton ( group, SWT.CHECK, null, SWT.FILL, SWT.CENTER, false, false );
-        if ( IPersistenceKeys.AUTO_CONNECT_ON.equals ( autoConnect ) ) autoConnectCheckButton.setSelection ( true );
+        if ( IPersistenceKey.AUTO_CONNECT_ON.equals ( autoConnect ) ) autoConnectCheckButton.setSelection ( true );
         autoConnectPortLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, autoConnectPort );
 
         autoConnectCheckButton.addSelectionListener ( new SelectionAdapter () {
@@ -65,13 +65,13 @@ public class SerialAutoConnectGroup {
 
                 // auto connect check box goes on and connection is established
                 final boolean autoConnect = ((Button) evt.getSource ()).getSelection ();
-                application.getPersistedState ().put ( IPersistenceKeys.AUTO_CONNECT, autoConnect ? IPersistenceKeys.AUTO_CONNECT_ON : null );
+                application.getPersistedState ().put ( IPersistenceKey.AUTO_CONNECT, autoConnect ? IPersistenceKey.AUTO_CONNECT_ON : null );
                 // if ( autoConnect && !connectButton.isEnabled () ) {
                 if ( autoConnect && serial.isOpen () ) {
                     String port = serial.getPortName ();
                     if ( port != null && !port.equals ( "" ) ) {
                         autoConnectPortLabel.setText ( port );
-                        application.getPersistedState ().put ( IPersistenceKeys.AUTO_CONNECT_PORT, port );
+                        application.getPersistedState ().put ( IPersistenceKey.AUTO_CONNECT_PORT, port );
                     }
                 }
 
@@ -83,7 +83,7 @@ public class SerialAutoConnectGroup {
 
     @Inject
     @Optional
-    public void portsDetectingNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTING) Object dummy ) {
+    public void portsDetectingNotified ( @UIEventTopic(IEvent.SERIAL_PORTS_DETECTING) Object dummy ) {
 
         LOG.debug ( "portsDetectedNotified:" );
 
@@ -93,7 +93,7 @@ public class SerialAutoConnectGroup {
 
     @Inject
     @Optional
-    public void portsDetectedNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTED) String [] ports ) {
+    public void portsDetectedNotified ( @UIEventTopic(IEvent.SERIAL_PORTS_DETECTED) String [] ports ) {
 
         LOG.debug ( "portsDetectedNotified: ports=" + ports );
 

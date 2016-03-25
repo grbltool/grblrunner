@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory.IntegerVerifyer;
 import de.jungierek.grblrunner.tools.PartTools;
@@ -67,7 +67,7 @@ public class GcodeEditorToolControl {
                 gcodeProgram.rotate ( partTools.parseIntegerField ( gcodeRotationText, 0 ) );
                 gcodeProgram.prepareAutolevelScan ();
 
-                eventBroker.send ( IEvents.REDRAW, null );
+                eventBroker.send ( IEvent.REDRAW, null );
 
             }
 
@@ -77,7 +77,7 @@ public class GcodeEditorToolControl {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
+    public void connectedNotified ( @UIEventTopic(IEvent.SERIAL_CONNECTED) String portName ) {
 
         LOG.trace ( "connectedNotified: portName=" + portName );
 
@@ -87,7 +87,7 @@ public class GcodeEditorToolControl {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String param ) {
 
         LOG.trace ( "connectedNotified: param=" + param );
 
@@ -97,7 +97,7 @@ public class GcodeEditorToolControl {
 
     @Inject
     @Optional
-    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_LOADED) String fileName ) {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
@@ -111,7 +111,7 @@ public class GcodeEditorToolControl {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
 
         LOG.trace ( "alarmNotified: line=" + line );
 
@@ -121,7 +121,7 @@ public class GcodeEditorToolControl {
 
     @Inject
     @Optional
-    public void grblRestartedNotified ( @UIEventTopic(IEvents.GRBL_RESTARTED) String line ) {
+    public void grblRestartedNotified ( @UIEventTopic(IEvent.GRBL_RESTARTED) String line ) {
 
         LOG.trace ( "grblRestartedNotified: line=" + line );
 
@@ -131,7 +131,7 @@ public class GcodeEditorToolControl {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) Object dummy ) {
+    public void scanStartNotified ( @UIEventTopic(IEvent.AUTOLEVEL_START) Object dummy ) {
 
         LOG.debug ( "scanStopNotified:" );
 
@@ -141,7 +141,7 @@ public class GcodeEditorToolControl {
 
     @Inject
     @Optional
-    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) Object dummy ) {
+    public void scanStopNotified ( @UIEventTopic(IEvent.AUTOLEVEL_STOP) Object dummy ) {
 
         LOG.debug ( "scanStopNotified:" );
 
@@ -151,7 +151,7 @@ public class GcodeEditorToolControl {
 
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String fileName ) {
+    public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String fileName ) {
 
         LOG.trace ( "playerStartNotified: fileName=" + fileName );
 
@@ -161,7 +161,7 @@ public class GcodeEditorToolControl {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String fileName ) {
+    public void playerStopNotified ( @UIEventTopic(IEvent.PLAYER_STOP) String fileName ) {
 
         LOG.trace ( "playerStopNotified: fileName=" + fileName );
 

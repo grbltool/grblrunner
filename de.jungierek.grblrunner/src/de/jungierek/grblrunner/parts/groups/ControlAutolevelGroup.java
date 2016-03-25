@@ -25,9 +25,9 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.serial.ISerialService;
@@ -77,10 +77,10 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
             IEclipseContext context,
             @Named(IContextKey.PART_GROUP_COLS) int groupCols,
             @Named(IContextKey.PART_GROUP_ROWS) int groupRows,
-            @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.Z_CLEARANCE) double zClearance,
-            @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepth, 
-            @Preference (nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_Z_MAX) double probeMaxZ, 
-            @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_FEEDRATE) double probeFeedrate 
+            @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.Z_CLEARANCE) double zClearance,
+            @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepth, 
+            @Preference (nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_Z_MAX) double probeMaxZ, 
+            @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_FEEDRATE) double probeFeedrate 
     ) {
 // @formatter:on
 
@@ -92,24 +92,24 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
         group.setLayout ( new GridLayout ( cols, false ) );
 
         GuiFactory.createHeadingLabel ( group, "X Steps", 1, false );
-        scanStepXText = GuiFactory.createIntegerText ( group, "" + IConstants.INITIAL_XSTEPS, 1, true, 0 );
+        scanStepXText = GuiFactory.createIntegerText ( group, "" + IConstant.INITIAL_XSTEPS, 1, true, 0 );
         scanStepWidthXLabel = GuiFactory.createCoordinateLabel ( group );
         GuiFactory.createHeadingLabel ( group, "Z clear", 1, false );
-        scanClearanceZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, zClearance ), 1, true );
+        scanClearanceZText = GuiFactory.createDoubleText ( group, String.format ( IConstant.FORMAT_HEIGHT, zClearance ), 1, true );
 
         GuiFactory.createHeadingLabel ( group, "Y Steps", 1, false );
-        scanStepYText = GuiFactory.createIntegerText ( group, "" + IConstants.INITIAL_YSTEPS, 1, true, 0 );
+        scanStepYText = GuiFactory.createIntegerText ( group, "" + IConstant.INITIAL_YSTEPS, 1, true, 0 );
         scanStepWidthYLabel = GuiFactory.createCoordinateLabel ( group );
         GuiFactory.createHeadingLabel ( group, "Z max", 1, false );
-        scanMaxZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, probeMaxZ ), 1, true );
+        scanMaxZText = GuiFactory.createDoubleText ( group, String.format ( IConstant.FORMAT_HEIGHT, probeMaxZ ), 1, true );
 
         GuiFactory.createHiddenLabel ( group, 3, true );
         GuiFactory.createHeadingLabel ( group, "Z min", 1, false );
-        scanMinZText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, probeDepth ), 1, true );
+        scanMinZText = GuiFactory.createDoubleText ( group, String.format ( IConstant.FORMAT_HEIGHT, probeDepth ), 1, true );
 
         GuiFactory.createHiddenLabel ( group, 3, true );
         GuiFactory.createHeadingLabel ( group, "feedrate", 1, false );
-        scanFeedrateText = GuiFactory.createDoubleText ( group, String.format ( IConstants.FORMAT_HEIGHT, probeFeedrate ), 1, true );
+        scanFeedrateText = GuiFactory.createDoubleText ( group, String.format ( IConstant.FORMAT_HEIGHT, probeFeedrate ), 1, true );
 
         GuiFactory.createHiddenLabel ( group, cols, true );
 
@@ -138,8 +138,8 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
         if ( !scanStepYText.isDisposed () ) scanStepYText.setText ( "" + gcodeProgram.getYSteps () );
         ignoreStepTextModifyListener = false;
 
-        if ( !scanStepWidthXLabel.isDisposed () ) scanStepWidthXLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );
-        if ( !scanStepWidthYLabel.isDisposed () ) scanStepWidthYLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthY () ) );
+        if ( !scanStepWidthXLabel.isDisposed () ) scanStepWidthXLabel.setText ( String.format ( IConstant.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );
+        if ( !scanStepWidthYLabel.isDisposed () ) scanStepWidthYLabel.setText ( String.format ( IConstant.FORMAT_COORDINATE, gcodeProgram.getStepWidthY () ) );
 
     }
 
@@ -167,8 +167,8 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
             int ySteps = partTools.parseIntegerField ( scanStepYText, 1 );
 
             gcodeProgram.prepareAutolevelScan ( xSteps, ySteps ); // resets scan completed
-            scanStepWidthXLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );
-            scanStepWidthYLabel.setText ( String.format ( IConstants.FORMAT_COORDINATE, gcodeProgram.getStepWidthY () ) );
+            scanStepWidthXLabel.setText ( String.format ( IConstant.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );
+            scanStepWidthYLabel.setText ( String.format ( IConstant.FORMAT_COORDINATE, gcodeProgram.getStepWidthY () ) );
 
         }
 
@@ -178,7 +178,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     private void redrawGcode () {
 
-        eventBroker.send ( IEvents.REDRAW, null );
+        eventBroker.send ( IEvent.REDRAW, null );
 
     }
 
@@ -249,7 +249,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
 
         LOG.info ( "alarmNotified: line=" + line );
 
@@ -259,7 +259,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void grblRestartedNotified ( @UIEventTopic(IEvents.GRBL_RESTARTED) String line ) {
+    public void grblRestartedNotified ( @UIEventTopic(IEvent.GRBL_RESTARTED) String line ) {
 
         LOG.trace ( "grblRestartedNotified: line=" + line );
 
@@ -269,7 +269,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
+    public void connectedNotified ( @UIEventTopic(IEvent.SERIAL_CONNECTED) String portName ) {
 
         LOG.trace ( "connectedNotified: portName=" + portName );
 
@@ -279,7 +279,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String param ) {
 
         LOG.trace ( "connectedNotified: param=" + param );
 
@@ -289,7 +289,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_LOADED) String fileName ) {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
@@ -299,7 +299,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String fileName ) {
+    public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String fileName ) {
 
         LOG.trace ( "playerStartNotified: fileName=" + fileName );
 
@@ -309,7 +309,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String fileName ) {
+    public void playerStopNotified ( @UIEventTopic(IEvent.PLAYER_STOP) String fileName ) {
 
         LOG.trace ( "playerStopNotified: fileName=" + fileName );
 
@@ -319,7 +319,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void probeDataLoadedNotified ( @UIEventTopic(IEvents.AUTOLEVEL_DATA_LOADED) String fileName ) {
+    public void probeDataLoadedNotified ( @UIEventTopic(IEvent.AUTOLEVEL_DATA_LOADED) String fileName ) {
 
         LOG.trace ( "probeDataloadedNotified: fileName=" + fileName );
 
@@ -332,7 +332,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void probeDataSavedNotified ( @UIEventTopic(IEvents.AUTOLEVEL_DATA_SAVED) String fileName ) {
+    public void probeDataSavedNotified ( @UIEventTopic(IEvent.AUTOLEVEL_DATA_SAVED) String fileName ) {
 
         LOG.trace ( "probeDataSavedNotified: fileName=" + fileName );
 
@@ -340,7 +340,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void probeDataClearedNotified ( @UIEventTopic(IEvents.AUTOLEVEL_DATA_CLEARED) String fileName ) {
+    public void probeDataClearedNotified ( @UIEventTopic(IEvent.AUTOLEVEL_DATA_CLEARED) String fileName ) {
 
         LOG.trace ( "probeDataClearedNotified: fileName=" + fileName );
 
@@ -352,7 +352,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) Object dummy ) {
+    public void scanStartNotified ( @UIEventTopic(IEvent.AUTOLEVEL_START) Object dummy ) {
 
         LOG.trace ( "scanStartNotified:" );
 
@@ -362,7 +362,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) Object dummy ) {
+    public void scanStopNotified ( @UIEventTopic(IEvent.AUTOLEVEL_STOP) Object dummy ) {
 
         LOG.trace ( "scanStopNotified:" );
 

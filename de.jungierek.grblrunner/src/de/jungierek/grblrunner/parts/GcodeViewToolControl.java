@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IConstant;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 
 public class GcodeViewToolControl {
@@ -87,7 +87,7 @@ public class GcodeViewToolControl {
         String text = cCombo.getText ();
 
         ArrayList<String> itemList = new ArrayList<String> ( 10 );
-        itemList.add ( IConstants.NO_OVERLAY );
+        itemList.add ( IConstant.NO_OVERLAY );
 
         Collection<MPart> parts = partService.getParts ();
         for ( MPart part : parts ) {
@@ -118,13 +118,13 @@ public class GcodeViewToolControl {
     private boolean isOverlayPart ( MPart part ) {
 
         final String id = part.getElementId ();
-        return IConstants.EDITOR_PARTDESCRIPTOR_ID.equals ( id ) || IConstants.MACRO_PARTDESCRIPTOR_ID.equals ( id );
+        return IConstant.EDITOR_PARTDESCRIPTOR_ID.equals ( id ) || IConstant.MACRO_PARTDESCRIPTOR_ID.equals ( id );
 
     }
 
     @Inject
     @Optional
-    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_LOADED) String fileName ) {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
@@ -134,7 +134,7 @@ public class GcodeViewToolControl {
 
     @Inject
     @Optional
-    public void macroGeneratedNotified ( @UIEventTopic(IEvents.GCODE_MACRO_GENERATED) Object dummy ) {
+    public void macroGeneratedNotified ( @UIEventTopic(IEvent.GCODE_MACRO_GENERATED) Object dummy ) {
 
         LOG.debug ( "macroGneratedNotified:" );
 
@@ -144,7 +144,7 @@ public class GcodeViewToolControl {
 
     @Inject
     @Optional
-    public void gcodeClosedNotified ( @UIEventTopic(IEvents.GCODE_CLOSED) Object dummy ) {
+    public void gcodeClosedNotified ( @UIEventTopic(IEvent.GCODE_CLOSED) Object dummy ) {
 
         LOG.debug ( "gcodeClosedNotified:" );
 

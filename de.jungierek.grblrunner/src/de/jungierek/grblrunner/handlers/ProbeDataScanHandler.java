@@ -9,7 +9,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
@@ -31,11 +31,11 @@ public class ProbeDataScanHandler {
             @Named(ICommandID.AUTOLEVEL_ZMAX_PARAMETER) String zMax, 
             @Named(ICommandID.AUTOLEVEL_ZCLEARANCE_PARAMETER) String zClearance, 
             @Named(ICommandID.AUTOLEVEL_PROBEFEEDRATE_PARAMETER) String probeFeedrate, 
-            @Preference( nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.Z_CLEARANCE) double zClearancePref,
-            @Preference( nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_Z_MAX) double probeZMaxPref, 
-            @Preference( nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepthPref, 
-            @Preference( nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_FEEDRATE) double probeFeedratePref, 
-            @Preference( nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.PROBE_WITH_ERROR) boolean probeWithErrorPref 
+            @Preference( nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.Z_CLEARANCE) double zClearancePref,
+            @Preference( nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_Z_MAX) double probeZMaxPref, 
+            @Preference( nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepthPref, 
+            @Preference( nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_FEEDRATE) double probeFeedratePref, 
+            @Preference( nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_WITH_ERROR) boolean probeWithErrorPref 
         ) {
         // @formatter:on
 

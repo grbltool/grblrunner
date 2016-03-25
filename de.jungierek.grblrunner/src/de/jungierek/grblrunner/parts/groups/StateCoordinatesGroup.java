@@ -21,10 +21,10 @@ import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPersistenceKeys;
+import de.jungierek.grblrunner.constants.IEvent;
+import de.jungierek.grblrunner.constants.IPersistenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
@@ -83,7 +83,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
         coordSystemCombo = new CCombo ( group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER | SWT.CENTER );
         coordSystemCombo.setEnabled ( false );
-        coordSystemCombo.setItems ( IConstants.COORDINATE_SYSTEMS );
+        coordSystemCombo.setItems ( IConstant.COORDINATE_SYSTEMS );
         coordSystemCombo.select ( 0 ); // G54
         coordSystemCombo.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false, 2, 1 ) );
 
@@ -131,13 +131,13 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     private void saveCoordinateSystem ( String coordSelect ) {
 
-        application.getPersistedState ().put ( IPersistenceKeys.LAST_COORDINATE_SYSTEM, coordSelect );
+        application.getPersistedState ().put ( IPersistenceKey.LAST_COORDINATE_SYSTEM, coordSelect );
 
     }
 
     private void restoreCoordinateSystem () {
 
-        String coordSelect = application.getPersistedState ().get ( IPersistenceKeys.LAST_COORDINATE_SYSTEM );
+        String coordSelect = application.getPersistedState ().get ( IPersistenceKey.LAST_COORDINATE_SYSTEM );
         if ( coordSelect != null && coordSelect.length () == 3 ) {
             gcodeService.sendCommandSuppressInTerminal ( coordSelect );
             // gcode.sendCommand ( coordSelect );
@@ -165,7 +165,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
+    public void connectedNotified ( @UIEventTopic(IEvent.SERIAL_CONNECTED) String portName ) {
 
         LOG.debug ( "connectedNotified: portName=" + portName );
 
@@ -177,7 +177,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String param ) {
 
         LOG.debug ( "disconnectedNotified: param=" + param );
 
@@ -187,7 +187,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void updateCoordSelectNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE) String coordSelect ) {
+    public void updateCoordSelectNotified ( @UIEventTopic(IEvent.UPDATE_FIXTURE) String coordSelect ) {
 
         LOG.trace ( "updateCoordSelectNotified: coordSelect=" + coordSelect );
         coordSystemCombo.select ( coordSelect.charAt ( 2 ) - '4' );
@@ -197,7 +197,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void updateStateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState grblState ) {
+    public void updateStateNotified ( @UIEventTopic(IEvent.UPDATE_STATE) IGcodeGrblState grblState ) {
 
         LOG.debug ( "updateStateNotified: grblState=" + grblState );
 
@@ -208,7 +208,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String fileName ) {
+    public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String fileName ) {
 
         LOG.trace ( "playerStartNotified: fileName=" + fileName );
         setControlsEnabled ( false );
@@ -217,7 +217,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String fileName ) {
+    public void playerStopNotified ( @UIEventTopic(IEvent.PLAYER_STOP) String fileName ) {
 
         LOG.trace ( "playerStopNotified: fileName=" + fileName );
         setControlsEnabled ( true );
@@ -226,7 +226,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) Object dummy ) {
+    public void scanStartNotified ( @UIEventTopic(IEvent.AUTOLEVEL_START) Object dummy ) {
 
         LOG.trace ( "scanStartNotified:" );
         setControlsEnabled ( false );
@@ -235,7 +235,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) Object dummy ) {
+    public void scanStopNotified ( @UIEventTopic(IEvent.AUTOLEVEL_STOP) Object dummy ) {
 
         LOG.trace ( "scanStopNotified:" );
         setControlsEnabled ( true );
@@ -248,7 +248,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGrblRequest command ) {
+    public void sentNotified ( @UIEventTopic(IEvent.GRBL_SENT) IGrblRequest command ) {
 
         LOG.trace ( "sentNotified: command=" + command );
 
@@ -260,7 +260,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void receivedNotified ( @UIEventTopic(IEvents.GRBL_RECEIVED) IGrblResponse response ) {
+    public void receivedNotified ( @UIEventTopic(IEvent.GRBL_RECEIVED) IGrblResponse response ) {
 
         if ( response == null ) {
             LOG.warn ( "receivedNotified: response == null" );

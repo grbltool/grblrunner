@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferences;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
@@ -72,7 +72,7 @@ public class GcodeLargeGroup {
 
     @Inject
     @Optional
-    public void stateUpdateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState state ) {
+    public void stateUpdateNotified ( @UIEventTopic(IEvent.UPDATE_STATE) IGcodeGrblState state ) {
 
         LOG.debug ( "stateUpdateNotified: state="+state);
         
@@ -87,7 +87,7 @@ public class GcodeLargeGroup {
 
     @Inject
     @Optional
-    public void updateCoordSelectNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE) String coordSelect ) {
+    public void updateCoordSelectNotified ( @UIEventTopic(IEvent.UPDATE_FIXTURE) String coordSelect ) {
 
         LOG.debug ( "updateCoordSelectNotified: coordSelect=" + coordSelect );
 
@@ -103,7 +103,7 @@ public class GcodeLargeGroup {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String param ) {
 
         LOG.trace ( "disconnectedNotified: param=" + param );
 

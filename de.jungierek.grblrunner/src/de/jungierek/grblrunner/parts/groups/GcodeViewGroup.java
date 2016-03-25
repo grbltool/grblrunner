@@ -37,10 +37,10 @@ import org.eclipse.swt.widgets.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPersistenceKeys;
+import de.jungierek.grblrunner.constants.IEvent;
+import de.jungierek.grblrunner.constants.IPersistenceKey;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
@@ -77,9 +77,9 @@ public class GcodeViewGroup {
     private IGcodeGrblState gcodeState;
 
     private Point canvasShift = new Point ();
-    private double rotX = 0.0 * IConstants.ONE_DEGREE;
-    private double rotY = 0.0 * IConstants.ONE_DEGREE;
-    private double rotZ = 0.0 * IConstants.ONE_DEGREE;
+    private double rotX = 0.0 * IConstant.ONE_DEGREE;
+    private double rotY = 0.0 * IConstant.ONE_DEGREE;
+    private double rotZ = 0.0 * IConstant.ONE_DEGREE;
     private double scale = 5.0;
 
     private double workAreaMaxX; // set from preferences
@@ -107,10 +107,10 @@ public class GcodeViewGroup {
 
     private Canvas canvas;
 
-    private volatile boolean viewGrid = IConstants.INITIAL_VIEW_GRID;
-    private volatile boolean viewGcode = IConstants.INITIAL_VIEW_GCODE;
-    private volatile boolean viewAltitude = IConstants.INITIAL_VIEW_ALTITUDE;
-    private volatile boolean viewWorkarea = IConstants.INITIAL_VIEW_WORKAREA;
+    private volatile boolean viewGrid = IConstant.INITIAL_VIEW_GRID;
+    private volatile boolean viewGcode = IConstant.INITIAL_VIEW_GCODE;
+    private volatile boolean viewAltitude = IConstant.INITIAL_VIEW_ALTITUDE;
+    private volatile boolean viewWorkarea = IConstant.INITIAL_VIEW_WORKAREA;
     private volatile boolean viewAltitudeLabel;
 
     private Label scaleLabel;
@@ -174,9 +174,9 @@ public class GcodeViewGroup {
 
     public void viewPlaneXY () {
 
-        rotX = 0.0 * IConstants.ONE_DEGREE;
-        rotY = 0.0 * IConstants.ONE_DEGREE;
-        rotZ = 0.0 * IConstants.ONE_DEGREE;
+        rotX = 0.0 * IConstant.ONE_DEGREE;
+        rotY = 0.0 * IConstant.ONE_DEGREE;
+        rotZ = 0.0 * IConstant.ONE_DEGREE;
 
         redraw ();
 
@@ -184,9 +184,9 @@ public class GcodeViewGroup {
 
     public void viewPlaneXZ () {
 
-        rotX = 90.0 * IConstants.ONE_DEGREE;
-        rotY = 0.0 * IConstants.ONE_DEGREE;
-        rotZ = 0.0 * IConstants.ONE_DEGREE;
+        rotX = 90.0 * IConstant.ONE_DEGREE;
+        rotY = 0.0 * IConstant.ONE_DEGREE;
+        rotZ = 0.0 * IConstant.ONE_DEGREE;
 
         redraw ();
 
@@ -194,9 +194,9 @@ public class GcodeViewGroup {
 
     public void viewPlaneYZ () {
 
-        rotX = 90.0 * IConstants.ONE_DEGREE;
-        rotY = 0.0 * IConstants.ONE_DEGREE;
-        rotZ = 90.0 * IConstants.ONE_DEGREE;
+        rotX = 90.0 * IConstant.ONE_DEGREE;
+        rotY = 0.0 * IConstant.ONE_DEGREE;
+        rotZ = 90.0 * IConstant.ONE_DEGREE;
 
         redraw ();
 
@@ -204,9 +204,9 @@ public class GcodeViewGroup {
 
     public void viewIso () {
 
-        rotX = 60.0 * IConstants.ONE_DEGREE;
-        rotY = 0.0 * IConstants.ONE_DEGREE;
-        rotZ = -35.264 * IConstants.ONE_DEGREE;
+        rotX = 60.0 * IConstant.ONE_DEGREE;
+        rotY = 0.0 * IConstant.ONE_DEGREE;
+        rotZ = -35.264 * IConstant.ONE_DEGREE;
 
         redraw ();
 
@@ -280,13 +280,13 @@ public class GcodeViewGroup {
 
         }
         else {
-            eventBroker.send ( IEvents.MESSAGE_ERROR, "no gcode program loaded!" );
+            eventBroker.send ( IEvent.MESSAGE_ERROR, "no gcode program loaded!" );
         }
 
     }
 
     @Inject
-    public void setWorkAreaX ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.WORK_AREA_MAX_X) double maxX ) {
+    public void setWorkAreaX ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.WORK_AREA_MAX_X) double maxX ) {
 
         workAreaMaxX = maxX;
         initWorkAreaPoints ();
@@ -295,7 +295,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setWorkAreaY ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.WORK_AREA_MAX_Y) double maxY ) {
+    public void setWorkAreaY ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.WORK_AREA_MAX_Y) double maxY ) {
 
         workAreaMaxY = maxY;
         initWorkAreaPoints ();
@@ -304,7 +304,7 @@ public class GcodeViewGroup {
     }
     
     @Inject
-    public void setFitToSizeMargin ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.FIT_TO_SIZE_MARGIN) double margin ) {
+    public void setFitToSizeMargin ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.FIT_TO_SIZE_MARGIN) double margin ) {
 
         fitToSizeMargin = margin;
         fitToSize ();
@@ -312,7 +312,7 @@ public class GcodeViewGroup {
     }
     
     @Inject
-    public void setAutolevelGridColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_AUTOLEVEL_GRID) String rgbText ) {
+    public void setAutolevelGridColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_AUTOLEVEL_GRID) String rgbText ) {
 
         autolevelGridColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -320,7 +320,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setGantryColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GANTRY) String rgbText ) {
+    public void setGantryColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GANTRY) String rgbText ) {
 
         gantryColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -328,7 +328,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setMachineOriginColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_MACHINE_ORIGIN) String rgbText ) {
+    public void setMachineOriginColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_MACHINE_ORIGIN) String rgbText ) {
 
         machineOriginColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -336,7 +336,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setWorkOriginColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_WORK_ORIGIN) String rgbText ) {
+    public void setWorkOriginColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_WORK_ORIGIN) String rgbText ) {
 
         workOriginColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -344,7 +344,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setWorkareaBorderColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_WORKAREA_BORDER) String rgbText ) {
+    public void setWorkareaBorderColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_WORKAREA_BORDER) String rgbText ) {
 
         workareaBorderColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -352,7 +352,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setWorkareaMidcrossColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_WORKAREA_MIDCROSS) String rgbText ) {
+    public void setWorkareaMidcrossColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_WORKAREA_MIDCROSS) String rgbText ) {
 
         workareaMidcrossColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -360,7 +360,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setMotionModeSeekColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_SEEK) String rgbText ) {
+    public void setMotionModeSeekColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_SEEK) String rgbText ) {
 
         gcodeMotionModeSeekColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -368,7 +368,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setMotionModeLinearColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_LINEAR) String rgbText ) {
+    public void setMotionModeLinearColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_LINEAR) String rgbText ) {
 
         gcodeMotionModeLinearColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -376,7 +376,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setMotionModeArcColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ARC) String rgbText ) {
+    public void setMotionModeArcColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ARC) String rgbText ) {
 
         gcodeMotionModeArcColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -384,7 +384,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setMotionModeProbeColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_PROBE) String rgbText ) {
+    public void setMotionModeProbeColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_PROBE) String rgbText ) {
 
         gcodeMotionModeProbeColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -392,7 +392,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setGcodeProcessedColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_PROCESSED) String rgbText ) {
+    public void setGcodeProcessedColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_PROCESSED) String rgbText ) {
 
         gcodeProcessedColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         redraw ();
@@ -400,7 +400,7 @@ public class GcodeViewGroup {
     }
 
     @Inject
-    public void setFitToSizeWithZ ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.FIT_TO_SIZE_WITH_Z) boolean flag ) {
+    public void setFitToSizeWithZ ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.FIT_TO_SIZE_WITH_Z) boolean flag ) {
 
         fitToSizeWithZ = flag;
         redraw ();
@@ -462,15 +462,15 @@ public class GcodeViewGroup {
 
         final Map<String, String> persistedState = application.getPersistedState ();
 
-        scale = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_SCALE ), 5.0 );
+        scale = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_SCALE ), 5.0 );
 
-        double x = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_PIXEL_SHIFT + "X" ), 0.0 );
-        double y = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_PIXEL_SHIFT + "Y" ), 0.0 );
+        double x = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_PIXEL_SHIFT + "X" ), 0.0 );
+        double y = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_PIXEL_SHIFT + "Y" ), 0.0 );
         canvasShift = new Point ( x, y );
 
-        rotX = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_ROTATION + "X" ), 0.0 );
-        rotY = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_ROTATION + "Y" ), 0.0 );
-        rotZ = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_ROTATION + "Z" ), 0.0 );
+        rotX = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_ROTATION + "X" ), 0.0 );
+        rotY = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_ROTATION + "Y" ), 0.0 );
+        rotZ = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_ROTATION + "Z" ), 0.0 );
 
     }
 
@@ -478,14 +478,14 @@ public class GcodeViewGroup {
 
         final Map<String, String> persistedState = application.getPersistedState ();
 
-        persistedState.put ( IPersistenceKeys.VIEW_SCALE, String.format ( IConstants.FORMAT_COORDINATE, scale ) );
+        persistedState.put ( IPersistenceKey.VIEW_SCALE, String.format ( IConstant.FORMAT_COORDINATE, scale ) );
 
-        persistedState.put ( IPersistenceKeys.VIEW_PIXEL_SHIFT + "X", String.format ( IConstants.FORMAT_COORDINATE, canvasShift.x ) );
-        persistedState.put ( IPersistenceKeys.VIEW_PIXEL_SHIFT + "Y", String.format ( IConstants.FORMAT_COORDINATE, canvasShift.y ) );
+        persistedState.put ( IPersistenceKey.VIEW_PIXEL_SHIFT + "X", String.format ( IConstant.FORMAT_COORDINATE, canvasShift.x ) );
+        persistedState.put ( IPersistenceKey.VIEW_PIXEL_SHIFT + "Y", String.format ( IConstant.FORMAT_COORDINATE, canvasShift.y ) );
 
-        persistedState.put ( IPersistenceKeys.VIEW_ROTATION + "X", String.format ( IConstants.FORMAT_COORDINATE, rotX ) );
-        persistedState.put ( IPersistenceKeys.VIEW_ROTATION + "Y", String.format ( IConstants.FORMAT_COORDINATE, rotY ) );
-        persistedState.put ( IPersistenceKeys.VIEW_ROTATION + "Z", String.format ( IConstants.FORMAT_COORDINATE, rotZ ) );
+        persistedState.put ( IPersistenceKey.VIEW_ROTATION + "X", String.format ( IConstant.FORMAT_COORDINATE, rotX ) );
+        persistedState.put ( IPersistenceKey.VIEW_ROTATION + "Y", String.format ( IConstant.FORMAT_COORDINATE, rotY ) );
+        persistedState.put ( IPersistenceKey.VIEW_ROTATION + "Z", String.format ( IConstant.FORMAT_COORDINATE, rotZ ) );
 
     }
 
@@ -600,9 +600,9 @@ public class GcodeViewGroup {
 
             scaleLabel.setText ( String.format ( "%.1f", scale ) );
             pixelShiftLabel.setText ( "" + canvasShift );
-            String rotXs = String.format ( "%.1f", rotX / IConstants.ONE_DEGREE );
-            String rotYs = String.format ( "%.1f", rotY / IConstants.ONE_DEGREE );
-            String rotZs = String.format ( "%.1f", rotZ / IConstants.ONE_DEGREE );
+            String rotXs = String.format ( "%.1f", rotX / IConstant.ONE_DEGREE );
+            String rotYs = String.format ( "%.1f", rotY / IConstant.ONE_DEGREE );
+            String rotZs = String.format ( "%.1f", rotZ / IConstant.ONE_DEGREE );
             rotationLabel.setText ( "[" + rotXs + "," + rotYs + "," + rotZs + "]" );
 
             // Double Buffering
@@ -657,12 +657,12 @@ public class GcodeViewGroup {
             Point p0 = gcodeToCanvas ( factor, shift, origin );
 
             for ( int i = 0; i < v.length; i++ ) {
-                gc.setForeground ( getColor ( IConstants.COORDINATE_SYSTEM_ARROW_COLORS[i + 1] ) );
+                gc.setForeground ( getColor ( IConstant.COORDINATE_SYSTEM_ARROW_COLORS[i + 1] ) );
                 drawLine ( gc, p0, gcodeToCanvas ( factor, shift, v[i] ) );
                 Point p = gcodeToCanvas ( 1.3 * factor, shift, v[i] );
-                gc.setForeground ( display.getSystemColor ( IConstants.COORDINATE_SYSTEM_ARROW_COLORS[0] ) );
-                org.eclipse.swt.graphics.Point extent = gc.textExtent ( IConstants.AXIS[i] );
-                gc.drawString ( IConstants.AXIS[i], (int) p.x - extent.x / 2, (int) p.y - extent.y / 2, true );
+                gc.setForeground ( display.getSystemColor ( IConstant.COORDINATE_SYSTEM_ARROW_COLORS[0] ) );
+                org.eclipse.swt.graphics.Point extent = gc.textExtent ( IConstant.AXIS[i] );
+                gc.drawString ( IConstant.AXIS[i], (int) p.x - extent.x / 2, (int) p.y - extent.y / 2, true );
             }
 
         }
@@ -886,7 +886,7 @@ public class GcodeViewGroup {
         private double computeAngle ( IGcodePoint p, IGcodePoint center, double radius ) {
 
             double cosAngle = (p.getX () - center.getX ()) / radius;
-            double angle = Math.acos ( cosAngle ) / IConstants.ONE_DEGREE;
+            double angle = Math.acos ( cosAngle ) / IConstant.ONE_DEGREE;
 
             if ( p.getY () < center.getY () ) {
                 angle = 360 - angle;
@@ -904,7 +904,7 @@ public class GcodeViewGroup {
             final double y2 = p2.getY () - center.getY ();
 
             double cosAngle = (x1 * x2 + y1 * y2) / radius * radius;
-            double angle = Math.acos ( cosAngle ) / IConstants.ONE_DEGREE;
+            double angle = Math.acos ( cosAngle ) / IConstant.ONE_DEGREE;
 
             return angle;
 
@@ -951,7 +951,7 @@ public class GcodeViewGroup {
             IGcodePoint south = gcodeService.createGcodePoint ( i, j - r, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
             IGcodePoint east = gcodeService.createGcodePoint ( i + r, j, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
 
-            drawCircle ( gc, north, west, south, east, (int) (startAngle - (rotZ / IConstants.ONE_DEGREE)), (int) arcAngle );
+            drawCircle ( gc, north, west, south, east, (int) (startAngle - (rotZ / IConstant.ONE_DEGREE)), (int) arcAngle );
             // LOG.debug ( "drawCircle: ====================================" );
 
         }
@@ -1099,8 +1099,8 @@ public class GcodeViewGroup {
             }
             else if ( rotate ) {
                 Point p = canvasToPixelIncludingGcodeShift ( evt.x, evt.y );
-                rotX += -(lastPoint.y - p.y) * IConstants.ONE_DEGREE / 4;
-                rotZ += -(lastPoint.x - p.x) * IConstants.ONE_DEGREE / 4;
+                rotX += -(lastPoint.y - p.y) * IConstant.ONE_DEGREE / 4;
+                rotZ += -(lastPoint.x - p.x) * IConstant.ONE_DEGREE / 4;
                 lastPoint = p;
 
                 redraw ();
@@ -1220,7 +1220,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void stateUpdateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState state ) {
+    public void stateUpdateNotified ( @UIEventTopic(IEvent.UPDATE_STATE) IGcodeGrblState state ) {
 
         // System.out.println ( logName () + "stateUpdateNotified: state=" + state );
 
@@ -1231,7 +1231,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_LOADED) String fileName ) {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
@@ -1241,7 +1241,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void programOptimizedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_OPTIMIZED) String fileName ) {
+    public void programOptimizedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_OPTIMIZED) String fileName ) {
 
         LOG.debug ( "programOptimizedNotified: fileName=" + fileName );
 
@@ -1251,7 +1251,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void redrawNotified ( @UIEventTopic(IEvents.REDRAW) Object dummy ) {
+    public void redrawNotified ( @UIEventTopic(IEvent.REDRAW) Object dummy ) {
 
         LOG.debug ( "redrawScanGridNotified: dummy=" + dummy );
 
@@ -1261,7 +1261,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void updateCoordSelectOffsetsNotified ( @UIEventTopic(IEvents.UPDATE_FIXTURE_OFFSET) IGcodePoint fixtureOffset ) {
+    public void updateCoordSelectOffsetsNotified ( @UIEventTopic(IEvent.UPDATE_FIXTURE_OFFSET) IGcodePoint fixtureOffset ) {
 
         LOG.debug ( "updateCoordSelectOffsetsNotified: fixtureOffset=" + fixtureOffset );
 
@@ -1271,7 +1271,7 @@ public class GcodeViewGroup {
 
     @Inject
     @Optional
-    public void updateProbeNotified ( @UIEventTopic(IEvents.AUTOLEVEL_UPDATE) IGcodePoint probe ) {
+    public void updateProbeNotified ( @UIEventTopic(IEvent.AUTOLEVEL_UPDATE) IGcodePoint probe ) {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 

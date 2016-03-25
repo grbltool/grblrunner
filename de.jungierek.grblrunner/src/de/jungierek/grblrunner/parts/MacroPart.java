@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.parts.groups.GcodeFileGroup;
 import de.jungierek.grblrunner.parts.groups.MacroGroup;
 import de.jungierek.grblrunner.parts.groups.MacroHobbedBoltGroup;
@@ -97,12 +97,12 @@ public class MacroPart {
         // ).createFont ( gcodeModeLabel.getDisplay () );
         gcodeText.setEditable ( false );
 
-        context.set ( IConstants.MACRO_TEXT_ID, gcodeText );
+        context.set ( IConstant.MACRO_TEXT_ID, gcodeText );
 
         partTools.gcodeToText ( gcodeText, gcodeProgram );
 
         // TODO reload parameters
-        // String path = part.getPersistedState ().get ( IPersistenceKeys.EDITOR_PATH );
+        // String path = part.getPersistedState ().get ( IPersistenceKey.EDITOR_PATH );
 
     }
 
@@ -143,7 +143,7 @@ public class MacroPart {
     
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String timestamp ) {
+    public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String timestamp ) {
 
         LOG.debug ( "playerStartNotified: isPlaying=" + gcodeProgram.isPlaying () );
 
@@ -155,7 +155,7 @@ public class MacroPart {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String timestamp ) {
+    public void playerStopNotified ( @UIEventTopic(IEvent.PLAYER_STOP) String timestamp ) {
 
         LOG.debug ( "playerStartNotified: isPlaying=" + gcodeProgram.isPlaying () );
 

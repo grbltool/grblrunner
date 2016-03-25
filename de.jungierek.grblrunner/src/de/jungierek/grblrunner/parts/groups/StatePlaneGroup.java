@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StatePlaneGroup {
@@ -41,7 +41,7 @@ public class StatePlaneGroup {
 
     @Inject
     @Optional
-    public void updatePlaneNotified ( @UIEventTopic(IEvents.UPDATE_PLANE) String plane ) {
+    public void updatePlaneNotified ( @UIEventTopic(IEvent.UPDATE_PLANE) String plane ) {
 
         LOG.trace ( "updatePlaneNotified: plane=" + plane );
         planeLabel.setText ( plane );

@@ -7,7 +7,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
@@ -16,7 +16,7 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage {
     private static final Logger LOG = LoggerFactory.getLogger ( TerminalPreferencePage.class );
 
     private static final String PAGE_NAME = "Terminal";
-    public static final String ID = IConstants.KEY_BASE + ".terminal";
+    public static final String ID = IConstant.KEY_BASE + ".terminal";
 
     public TerminalPreferencePage ( IPreferenceStore preferenceStore ) {
 

@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
-import de.jungierek.grblrunner.constants.IPersistenceKeys;
+import de.jungierek.grblrunner.constants.IConstant;
+import de.jungierek.grblrunner.constants.IPersistenceKey;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
@@ -38,23 +38,23 @@ public class GcodeLoadHandler {
     private EModelService modelService;
 
     @Execute
-    public void execute ( MApplication application, Shell shell, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.GCODE_PATH) String gcodePath ) {
+    public void execute ( MApplication application, Shell shell, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.GCODE_PATH) String gcodePath ) {
 
         LOG.debug ( "execute:" );
 
         FileDialog dialog = new FileDialog ( shell, SWT.OPEN );
-        dialog.setFilterExtensions ( IConstants.GCODE_FILE_EXTENSIONS );
+        dialog.setFilterExtensions ( IConstant.GCODE_FILE_EXTENSIONS );
 
-        String filterPath = application.getPersistedState ().get ( IPersistenceKeys.GCODE_PATH );
+        String filterPath = application.getPersistedState ().get ( IPersistenceKey.GCODE_PATH );
         if ( filterPath == null ) filterPath = gcodePath;
         dialog.setFilterPath ( filterPath );
 
         String result = dialog.open ();
         if ( result != null ) {
             
-            MPart part = partService.createPart ( IConstants.EDITOR_PARTDESCRIPTOR_ID );
+            MPart part = partService.createPart ( IConstant.EDITOR_PARTDESCRIPTOR_ID );
 
-            MPartStack partStack = (MPartStack) modelService.find ( IConstants.EDITOR_PARTSTACK_ID, application );
+            MPartStack partStack = (MPartStack) modelService.find ( IConstant.EDITOR_PARTSTACK_ID, application );
             partStack.getChildren ().add ( part );
 
             // it instanciates also the part object class
@@ -64,7 +64,7 @@ public class GcodeLoadHandler {
             gcodeProgram.loadGcodeProgram ( new File ( result ) );
             part.setLabel ( gcodeProgram.getGcodeProgramName () );
 
-            application.getPersistedState ().put ( IPersistenceKeys.GCODE_PATH, filterPath );
+            application.getPersistedState ().put ( IPersistenceKey.GCODE_PATH, filterPath );
 
         }
 

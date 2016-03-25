@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
@@ -84,7 +84,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
 
         LOG.debug ( "alarmNotified: line=" + line );
 
@@ -94,7 +94,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void updateStateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState grblState ) {
+    public void updateStateNotified ( @UIEventTopic(IEvent.UPDATE_STATE) IGcodeGrblState grblState ) {
 
         LOG.trace ( "updateStateNotified: grblState=" + grblState );
 
@@ -123,7 +123,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String port ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String port ) {
 
         LOG.trace ( "connectedNotified: port=" + port );
 
@@ -133,7 +133,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String timestamp, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
+    public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String timestamp, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
 
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
@@ -146,7 +146,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void playerLineNotified ( @UIEventTopic(IEvents.PLAYER_LINE) IGcodeLine line ) {
+    public void playerLineNotified ( @UIEventTopic(IEvent.PLAYER_LINE) IGcodeLine line ) {
 
         LOG.trace ( "gcodePlayerLineNotified: line=" + line );
 
@@ -156,7 +156,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) String timestamp, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
+    public void scanStartNotified ( @UIEventTopic(IEvent.AUTOLEVEL_START) String timestamp, @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
 
         LOG.trace ( "scanStartNotified:" );
 
@@ -169,7 +169,7 @@ public class ProgressGroup {
 
     @Inject
     @Optional
-    public void updateProbeNotified ( @UIEventTopic(IEvents.AUTOLEVEL_UPDATE) IGcodePoint probe ) {
+    public void updateProbeNotified ( @UIEventTopic(IEvent.AUTOLEVEL_UPDATE) IGcodePoint probe ) {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 

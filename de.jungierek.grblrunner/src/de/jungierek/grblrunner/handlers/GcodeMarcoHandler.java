@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 
 public class GcodeMarcoHandler {
@@ -69,9 +69,9 @@ public class GcodeMarcoHandler {
         int open = dialog.open ();
         if ( open == 0 ) { // 1: cancel
 
-            MPart part = partService.createPart ( IConstants.MACRO_PARTDESCRIPTOR_ID );
+            MPart part = partService.createPart ( IConstant.MACRO_PARTDESCRIPTOR_ID );
 
-            MPartStack partStack = (MPartStack) modelService.find ( IConstants.EDITOR_PARTSTACK_ID, application );
+            MPartStack partStack = (MPartStack) modelService.find ( IConstant.EDITOR_PARTSTACK_ID, application );
             partStack.getChildren ().add ( part );
             // HACK
             application.getContext ().set ( IContextKey.MACRO_TYPE, selectedMacro.contextValue );

@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StateUnitGroup {
@@ -41,7 +41,7 @@ public class StateUnitGroup {
 
     @Inject
     @Optional
-    public void updateMetricModeNotified ( @UIEventTopic(IEvents.UPDATE_METRIC_MODE) String metricMode ) {
+    public void updateMetricModeNotified ( @UIEventTopic(IEvent.UPDATE_METRIC_MODE) String metricMode ) {
 
         LOG.trace ( "updateMetricModeNotified: metricMode=" + metricMode );
         unitLabel.setText ( metricMode );

@@ -10,7 +10,7 @@ import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.parts.GcodeEditorPart;
 import de.jungierek.grblrunner.parts.MacroPart;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
@@ -29,7 +29,7 @@ public class GcodeCloseHandler {
         selectionService.setSelection ( null );
         partService.hidePart ( part );
         
-        eventBroker.send ( IEvents.GCODE_CLOSED, null );
+        eventBroker.send ( IEvent.GCODE_CLOSED, null );
 		
 	}
 	

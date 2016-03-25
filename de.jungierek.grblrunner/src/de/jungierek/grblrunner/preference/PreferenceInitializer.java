@@ -7,7 +7,7 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
@@ -25,7 +25,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
         LOG.debug ( "initializeDefaultPreferences:" );
 
-        IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode ( IConstants.PREFERENCE_NODE );
+        IEclipsePreferences defaults = DefaultScope.INSTANCE.getNode ( IConstant.PREFERENCE_NODE );
         
         // --- Mill ---
         defaults.put ( IPreferenceKey.GCODE_PATH, "C:\\Users\\Andreas\\Documents\\eagle" );

@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.preference.ColorsAndFontsPreferencePage;
 import de.jungierek.grblrunner.preference.GcodeViewPreferencePage;
 import de.jungierek.grblrunner.preference.MacroHobbedBoltPreferencePage;
@@ -37,7 +37,7 @@ public class PreferencesCommandHandler {
 
         PreferenceManager preferenceManager = new PreferenceManager ( '/' );
         
-        IPreferenceStore preferenceStore = new ScopedPreferenceStore ( InstanceScope.INSTANCE, IConstants.PREFERENCE_NODE );
+        IPreferenceStore preferenceStore = new ScopedPreferenceStore ( InstanceScope.INSTANCE, IConstant.PREFERENCE_NODE );
         
 
         preferenceManager.addToRoot ( new PreferenceNode ( MillPreferencePage.ID, new MillPreferencePage ( preferenceStore ) ) );

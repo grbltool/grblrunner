@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StateFeedrateGroup {
@@ -42,7 +42,7 @@ public class StateFeedrateGroup {
 
     @Inject
     @Optional
-    public void updateFeedrateNotified ( @UIEventTopic(IEvents.UPDATE_FEEDRATE) String feedrate ) {
+    public void updateFeedrateNotified ( @UIEventTopic(IEvent.UPDATE_FEEDRATE) String feedrate ) {
 
         LOG.trace ( "updateFeedrateNotified: feedrate=" + feedrate );
         feedrateLabel.setText ( feedrate );

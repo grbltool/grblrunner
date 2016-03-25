@@ -32,9 +32,9 @@ import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
-import de.jungierek.grblrunner.constants.IEvents;
-import de.jungierek.grblrunner.constants.IPersistenceKeys;
+import de.jungierek.grblrunner.constants.IConstant;
+import de.jungierek.grblrunner.constants.IEvent;
+import de.jungierek.grblrunner.constants.IPersistenceKey;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
@@ -82,7 +82,7 @@ public class TerminalPart {
     private Color suppressedGrblBackgroundColor;
 
     @Inject
-    public void setTerminalFontData ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.TERMINAL_FONT_DATA) String fontDataString ) {
+    public void setTerminalFontData ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.TERMINAL_FONT_DATA) String fontDataString ) {
     
         LOG.debug ( "setFontData: fontDataString=" + fontDataString );
     
@@ -95,7 +95,7 @@ public class TerminalPart {
     }
 
     @Inject
-    public void setTerminalForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TERMINAL_FOREGROUND) String rgbText ) {
+    public void setTerminalForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TERMINAL_FOREGROUND) String rgbText ) {
 
         terminalForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
         if ( terminalText != null && !terminalText.isDisposed () ) terminalText.setForeground ( terminalForegroundColor );
@@ -103,7 +103,7 @@ public class TerminalPart {
     }
 
     @Inject
-    public void setTerminalBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TERMINAL_BACKGROUND) String rgbText ) {
+    public void setTerminalBackgroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TERMINAL_BACKGROUND) String rgbText ) {
 
         terminalBackgroundColor= new Color ( display, StringConverter.asRGB ( rgbText ) );
         if ( terminalText != null && !terminalText.isDisposed () ) terminalText.setBackground ( terminalBackgroundColor );
@@ -111,84 +111,84 @@ public class TerminalPart {
     }
 
     @Inject
-    public void setAlarmForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ALARM_FOREGROUND) String rgbText ) {
+    public void setAlarmForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ALARM_FOREGROUND) String rgbText ) {
 
         alarmForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setAlarmBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ALARM_BACKGROUND) String rgbText ) {
+    public void setAlarmBackgroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ALARM_BACKGROUND) String rgbText ) {
 
         alarmBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setTimestampBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TIMESTAMP_BACKGROUND) String rgbText ) {
+    public void setTimestampBackgroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_TIMESTAMP_BACKGROUND) String rgbText ) {
 
         timestampBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setSuppressedLineForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_SUPPRESSED_LINE_FOREGROUND) String rgbText ) {
+    public void setSuppressedLineForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_SUPPRESSED_LINE_FOREGROUND) String rgbText ) {
 
         suppressedLineForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setOkForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_OK_FOREGROUND) String rgbText ) {
+    public void setOkForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_OK_FOREGROUND) String rgbText ) {
 
         okForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setErrorForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ERROR_FOREGROUND) String rgbText ) {
+    public void setErrorForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ERROR_FOREGROUND) String rgbText ) {
 
         errorForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setGrblForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_FOREGROUND) String rgbText ) {
+    public void setGrblForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_FOREGROUND) String rgbText ) {
 
         grblForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setGrblBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_BACKGROUND) String rgbText ) {
+    public void setGrblBackgroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_BACKGROUND) String rgbText ) {
 
         grblBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setSuppressedOkForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_OK_SUPPRESSED_FOREGROUND) String rgbText ) {
+    public void setSuppressedOkForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_OK_SUPPRESSED_FOREGROUND) String rgbText ) {
 
         suppressedOkForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setSuppressedErrorForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ERROR_SUPPRESSED_FOREGROUND) String rgbText ) {
+    public void setSuppressedErrorForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_ERROR_SUPPRESSED_FOREGROUND) String rgbText ) {
 
         supppressedErrorForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setSuppressedGrblForegroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_SUPPRESSED_FOREGROUND) String rgbText ) {
+    public void setSuppressedGrblForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_SUPPRESSED_FOREGROUND) String rgbText ) {
 
         suppressedGrblForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setSuppressedGrblBackgroundColor ( Display display, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_SUPPRESSED_BACKGROUND) String rgbText ) {
+    public void setSuppressedGrblBackgroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_SUPPRESSED_BACKGROUND) String rgbText ) {
 
         suppressedGrblBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
@@ -241,9 +241,9 @@ public class TerminalPart {
     private void restorePersistedState ( MApplication application, MPart part ) {
 
         final Map<String, String> persistedState = application.getPersistedState ();
-        showSuppressedLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.TERMINAL_SUPPRESS_LINES ) );
-        showGrblStateLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.TERMINAL_GRBL_STATE ) );
-        showGcodeModeLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.TERMINAL_GRBL_MODES ) );
+        showSuppressedLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKey.TERMINAL_SUPPRESS_LINES ) );
+        showGrblStateLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKey.TERMINAL_GRBL_STATE ) );
+        showGcodeModeLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKey.TERMINAL_GRBL_MODES ) );
 
         // set the state of the direct menu items according to persisted state
         // find the two direct menu items
@@ -283,15 +283,15 @@ public class TerminalPart {
 
         final Map<String, String> persistedState = application.getPersistedState ();
 
-        persistedState.put ( IPersistenceKeys.TERMINAL_SUPPRESS_LINES, "" + showSuppressedLines );
-        persistedState.put ( IPersistenceKeys.TERMINAL_GRBL_STATE, "" + showGrblStateLines );
-        persistedState.put ( IPersistenceKeys.TERMINAL_GRBL_MODES, "" + showGcodeModeLines );
+        persistedState.put ( IPersistenceKey.TERMINAL_SUPPRESS_LINES, "" + showSuppressedLines );
+        persistedState.put ( IPersistenceKey.TERMINAL_GRBL_STATE, "" + showGrblStateLines );
+        persistedState.put ( IPersistenceKey.TERMINAL_GRBL_MODES, "" + showGcodeModeLines );
 
     }
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
         
         LOG.trace ( "alarmNotified: line=" + line );
 
@@ -302,7 +302,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String timestamp ) {
+    public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String timestamp ) {
 
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
@@ -313,7 +313,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void playerLineSegmentNotified ( @UIEventTopic(IEvents.PLAYER_SEGMENT) String gcodeSegment ) {
+    public void playerLineSegmentNotified ( @UIEventTopic(IEvent.PLAYER_SEGMENT) String gcodeSegment ) {
 
         LOG.trace ( "playerLineNotified: gcodeSegment=" + gcodeSegment );
 
@@ -324,7 +324,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void playerLineNotified ( @UIEventTopic(IEvents.PLAYER_LINE) IGcodeLine gcodeLine ) {
+    public void playerLineNotified ( @UIEventTopic(IEvent.PLAYER_LINE) IGcodeLine gcodeLine ) {
     
         LOG.trace ( "playerLineNotified: gcodeLine=" + gcodeLine );
 
@@ -337,7 +337,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String timestamp ) {
+    public void playerStopNotified ( @UIEventTopic(IEvent.PLAYER_STOP) String timestamp ) {
 
         LOG.trace ( "playerStopNotified: timestamp=" + timestamp );
 
@@ -350,7 +350,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void sentNotified ( @UIEventTopic(IEvents.GRBL_SENT) IGrblRequest command, EModelService modelService, MApplication application ) {
+    public void sentNotified ( @UIEventTopic(IEvent.GRBL_SENT) IGrblRequest command, EModelService modelService, MApplication application ) {
 
         LOG.trace ( "sentNotified: command=" + command );
 
@@ -383,7 +383,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void receivedNotified ( @UIEventTopic(IEvents.GRBL_RECEIVED) IGrblResponse response ) {
+    public void receivedNotified ( @UIEventTopic(IEvent.GRBL_RECEIVED) IGrblResponse response ) {
 
         LOG.trace ( "receivedNotified: response=" + response );
 
@@ -452,7 +452,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) String timestamp ) {
+    public void scanStartNotified ( @UIEventTopic(IEvent.AUTOLEVEL_START) String timestamp ) {
 
         LOG.trace ( "scanStartNotified:" );
 
@@ -462,7 +462,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void updateProbeNotified ( @UIEventTopic(IEvents.AUTOLEVEL_UPDATE) IGcodePoint probe ) {
+    public void updateProbeNotified ( @UIEventTopic(IEvent.AUTOLEVEL_UPDATE) IGcodePoint probe ) {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
@@ -476,7 +476,7 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) String timestamp ) {
+    public void scanStopNotified ( @UIEventTopic(IEvent.AUTOLEVEL_STOP) String timestamp ) {
 
         LOG.trace ( "scanStopNotified:" );
 

@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StatusLineGroup {
@@ -55,7 +55,7 @@ public class StatusLineGroup {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
 
         LOG.debug ( "alarmNotified: line=" + line );
 
@@ -65,7 +65,7 @@ public class StatusLineGroup {
 
     @Inject
     @Optional
-    public void portsDetectedNotified ( @UIEventTopic(IEvents.SERIAL_PORTS_DETECTED) String [] ports ) {
+    public void portsDetectedNotified ( @UIEventTopic(IEvent.SERIAL_PORTS_DETECTED) String [] ports ) {
 
         LOG.trace ( "portsDetectedNotified: ports=" + ports );
 
@@ -75,7 +75,7 @@ public class StatusLineGroup {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String port ) {
+    public void connectedNotified ( @UIEventTopic(IEvent.SERIAL_CONNECTED) String port ) {
 
         LOG.trace ( "connectedNotified: port=" + port );
 
@@ -85,7 +85,7 @@ public class StatusLineGroup {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String port ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String port ) {
 
         LOG.trace ( "connectedNotified: port=" + port );
 
@@ -98,7 +98,7 @@ public class StatusLineGroup {
     @SuppressWarnings("deprecation")
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String timestamp ) {
+    public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String timestamp ) {
 
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
@@ -109,7 +109,7 @@ public class StatusLineGroup {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String timestamp ) {
+    public void playerStopNotified ( @UIEventTopic(IEvent.PLAYER_STOP) String timestamp ) {
 
         LOG.trace ( "playerStopNotified: timestamp=" + timestamp );
 
@@ -120,7 +120,7 @@ public class StatusLineGroup {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) String timestamp ) {
+    public void scanStartNotified ( @UIEventTopic(IEvent.AUTOLEVEL_START) String timestamp ) {
 
         LOG.trace ( "scanStartNotified:" );
 
@@ -131,7 +131,7 @@ public class StatusLineGroup {
 
     @Inject
     @Optional
-    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) String timestamp ) {
+    public void scanStopNotified ( @UIEventTopic(IEvent.AUTOLEVEL_STOP) String timestamp ) {
 
         LOG.trace ( "scanStopNotified: " );
 

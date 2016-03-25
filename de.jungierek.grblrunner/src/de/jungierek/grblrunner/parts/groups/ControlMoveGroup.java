@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
 import de.jungierek.grblrunner.tools.ICommandID;
@@ -196,7 +196,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
 
         LOG.trace ( "alarmNotified: line=" + line );
 
@@ -206,7 +206,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void grblRestartedNotified ( @UIEventTopic(IEvents.GRBL_RESTARTED) String line ) {
+    public void grblRestartedNotified ( @UIEventTopic(IEvent.GRBL_RESTARTED) String line ) {
 
         LOG.trace ( "grblRestartedNotified: line=" + line );
 
@@ -216,7 +216,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void connectedNotified ( @UIEventTopic(IEvents.SERIAL_CONNECTED) String portName ) {
+    public void connectedNotified ( @UIEventTopic(IEvent.SERIAL_CONNECTED) String portName ) {
 
         LOG.trace ( "connectedNotified: portName=" + portName );
 
@@ -226,7 +226,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String param ) {
 
         LOG.trace ( "connectedNotified: param=" + param );
 
@@ -236,7 +236,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void playerStartNotified ( @UIEventTopic(IEvents.PLAYER_START) String fileName ) {
+    public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String fileName ) {
 
         LOG.trace ( "playerStartNotified: fileName=" + fileName );
 
@@ -246,7 +246,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void playerStopNotified ( @UIEventTopic(IEvents.PLAYER_STOP) String fileName ) {
+    public void playerStopNotified ( @UIEventTopic(IEvent.PLAYER_STOP) String fileName ) {
 
         LOG.trace ( "playerStopNotified: fileName=" + fileName );
 
@@ -256,7 +256,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void scanStartNotified ( @UIEventTopic(IEvents.AUTOLEVEL_START) Object dummy ) {
+    public void scanStartNotified ( @UIEventTopic(IEvent.AUTOLEVEL_START) Object dummy ) {
 
         LOG.trace ( "scanStartNotified:" );
 
@@ -266,7 +266,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
     @Inject
     @Optional
-    public void scanStopNotified ( @UIEventTopic(IEvents.AUTOLEVEL_STOP) Object dummy ) {
+    public void scanStopNotified ( @UIEventTopic(IEvent.AUTOLEVEL_STOP) Object dummy ) {
 
         LOG.trace ( "scanStopNotified:" );
 

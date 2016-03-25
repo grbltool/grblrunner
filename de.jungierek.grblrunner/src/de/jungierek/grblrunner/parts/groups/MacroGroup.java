@@ -24,9 +24,9 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory;
@@ -48,8 +48,8 @@ public abstract class MacroGroup {
     @Inject
     private IEclipseContext context;
 
-    private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode ( IConstants.PREFERENCE_NODE );
-    private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode ( IConstants.PREFERENCE_NODE );
+    private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode ( IConstant.PREFERENCE_NODE );
+    private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode ( IConstant.PREFERENCE_NODE );
 
     @PostConstruct
     public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
@@ -94,16 +94,16 @@ public abstract class MacroGroup {
 
         generateGcodeCore ( gcodeProgram );
 
-        gcodeProgram.appendLine ( "G0 Z" + String.format ( IConstants.FORMAT_COORDINATE, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) ) );
+        gcodeProgram.appendLine ( "G0 Z" + String.format ( IConstant.FORMAT_COORDINATE, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) ) );
         gcodeProgram.appendLine ( "M5" );
 
         gcodeProgram.parse ();
 
-        Text gcodeText = (Text) context.get ( IConstants.MACRO_TEXT_ID );
+        Text gcodeText = (Text) context.get ( IConstant.MACRO_TEXT_ID );
         if ( gcodeText != null ) partTools.gcodeToText ( gcodeText, gcodeProgram );
 
-        eventBroker.send ( IEvents.GCODE_MACRO_GENERATED, null );
-        eventBroker.send ( IEvents.REDRAW, null );
+        eventBroker.send ( IEvent.GCODE_MACRO_GENERATED, null );
+        eventBroker.send ( IEvent.REDRAW, null );
 
     }
 
@@ -125,7 +125,7 @@ public abstract class MacroGroup {
 
     protected String formatCoordinate ( double value ) {
 
-        return String.format ( IConstants.FORMAT_COORDINATE, value );
+        return String.format ( IConstant.FORMAT_COORDINATE, value );
         
     }
 

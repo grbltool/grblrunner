@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StateModalModeGroup {
@@ -41,7 +41,7 @@ public class StateModalModeGroup {
 
     @Inject
     @Optional
-    public void updateModalModeNotified ( @UIEventTopic(IEvents.UPDATE_MODAL_MODE) String modalMode ) {
+    public void updateModalModeNotified ( @UIEventTopic(IEvent.UPDATE_MODAL_MODE) String modalMode ) {
 
         LOG.trace ( "updateModalModeNotified: modalMode=" + modalMode );
         modalModeLabel.setText ( modalMode );

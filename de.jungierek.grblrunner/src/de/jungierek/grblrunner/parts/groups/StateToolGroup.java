@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StateToolGroup {
@@ -40,7 +40,7 @@ public class StateToolGroup {
 
     @Inject
     @Optional
-    public void updateToolNotified ( @UIEventTopic(IEvents.UPDATE_TOOL) String tool ) {
+    public void updateToolNotified ( @UIEventTopic(IEvent.UPDATE_TOOL) String tool ) {
 
         LOG.trace ( "updateToolNotified: tool=" + tool );
         toolLabel.setText ( tool );

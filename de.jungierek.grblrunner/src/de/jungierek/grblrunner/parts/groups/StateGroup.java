@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.tools.GuiFactory;
@@ -82,7 +82,7 @@ public class StateGroup {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvents.GRBL_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
 
         LOG.debug ( "alarmNotified: start" );
         setStateLabel ( EGrblState.ALARM );
@@ -93,7 +93,7 @@ public class StateGroup {
 
     @Inject
     @Optional
-    public void disconnectedNotified ( @UIEventTopic(IEvents.SERIAL_DISCONNECTED) String param ) {
+    public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String param ) {
 
         LOG.debug ( "disconnectedNotified: param=" + param );
         stateLabel.setText ( UNCONNECTED_TEXT );
@@ -102,7 +102,7 @@ public class StateGroup {
 
     @Inject
     @Optional
-    public void updateStateNotified ( @UIEventTopic(IEvents.UPDATE_STATE) IGcodeGrblState grblState ) {
+    public void updateStateNotified ( @UIEventTopic(IEvent.UPDATE_STATE) IGcodeGrblState grblState ) {
 
         LOG.debug ( "updateStateNotified: grblState=" + grblState );
         setStateLabel ( grblState.getGrblState () );

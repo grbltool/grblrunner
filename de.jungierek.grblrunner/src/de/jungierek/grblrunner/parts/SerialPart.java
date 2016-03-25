@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.parts.groups.SerialActionsGroup;
@@ -36,7 +36,7 @@ public class SerialPart {
     private SerialAutoConnectGroup serialAutoConnectGroup;
     
     @Inject
-    public void setBaudrate ( ISerialService serialService, @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.BAUDRATE) int baudrate ) {
+    public void setBaudrate ( ISerialService serialService, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.BAUDRATE) int baudrate ) {
 
         LOG.info ( "setBaudrate : " + baudrate );
         serialService.setBaudrate ( baudrate );

@@ -7,7 +7,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
@@ -16,7 +16,7 @@ public class GcodeViewPreferencePage extends FieldEditorPreferencePage {
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeViewPreferencePage.class );
 
     private static final String PAGE_NAME = "Gcode View";
-    public static final String ID = IConstants.KEY_BASE + ".gcodeview";
+    public static final String ID = IConstant.KEY_BASE + ".gcodeview";
 
     public GcodeViewPreferencePage ( IPreferenceStore preferenceStore ) {
 

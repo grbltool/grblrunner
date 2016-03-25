@@ -1,6 +1,6 @@
 package de.jungierek.grblrunner.constants;
 
-public interface IEvents {
+public interface IEvent {
     
     // *********************************************************************************************
 

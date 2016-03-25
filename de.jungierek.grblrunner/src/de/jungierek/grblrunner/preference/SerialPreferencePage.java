@@ -6,7 +6,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 
 public class SerialPreferencePage extends FieldEditorPreferencePage {
@@ -14,7 +14,7 @@ public class SerialPreferencePage extends FieldEditorPreferencePage {
     private static final Logger LOG = LoggerFactory.getLogger ( SerialPreferencePage.class );
 
     private static final String PAGE_NAME = "Serial";
-    public static final String ID = IConstants.KEY_BASE + ".serial";
+    public static final String ID = IConstant.KEY_BASE + ".serial";
 
     public SerialPreferencePage ( IPreferenceStore preferenceStore ) {
 

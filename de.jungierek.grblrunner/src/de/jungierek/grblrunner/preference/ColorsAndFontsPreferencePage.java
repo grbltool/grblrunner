@@ -5,14 +5,14 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 
 public class ColorsAndFontsPreferencePage extends FieldEditorPreferencePage {
 
     private static final Logger LOG = LoggerFactory.getLogger ( ColorsAndFontsPreferencePage.class );
 
     private static final String PAGE_NAME = "Colors and Fonts";
-    public static final String ID = IConstants.KEY_BASE + ".colors";
+    public static final String ID = IConstant.KEY_BASE + ".colors";
 
     public ColorsAndFontsPreferencePage ( IPreferenceStore preferenceStore ) {
 

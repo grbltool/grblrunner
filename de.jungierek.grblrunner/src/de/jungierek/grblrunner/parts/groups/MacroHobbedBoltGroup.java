@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory;
@@ -121,8 +121,8 @@ public class MacroHobbedBoltGroup extends MacroGroup {
         // motionSeekXY ( 0.0, y );
         spindleOn ( spindleSpeed );
         motionSeekXY ( -xClearance, y );
-        motionSeekZ ( -boltRadius * (1 - Math.sin ( angle * IConstants.ONE_DEGREE )) );
-        final double x = -boltRadius * Math.cos ( angle * IConstants.ONE_DEGREE );
+        motionSeekZ ( -boltRadius * (1 - Math.sin ( angle * IConstant.ONE_DEGREE )) );
+        final double x = -boltRadius * Math.cos ( angle * IConstant.ONE_DEGREE );
         for ( int i = 0; i < countRetraction; i++ ) {
             motionLinearXY ( x, y, feedrate );
             wait ( waitAtTarget );

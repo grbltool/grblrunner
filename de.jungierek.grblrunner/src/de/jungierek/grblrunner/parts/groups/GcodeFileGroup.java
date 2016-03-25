@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
@@ -73,7 +73,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void macroGeneratedNotified ( @UIEventTopic(IEvents.GCODE_MACRO_GENERATED) Object dummy ) {
+    public void macroGeneratedNotified ( @UIEventTopic(IEvent.GCODE_MACRO_GENERATED) Object dummy ) {
 
         LOG.debug ( "macroGeneratedNotified:" );
 
@@ -83,7 +83,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void programLoadedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_LOADED) String fileName ) {
+    public void programLoadedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_LOADED) String fileName ) {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
@@ -93,7 +93,7 @@ public class GcodeFileGroup {
 
     @Inject
     @Optional
-    public void programOptimizedNotified ( @UIEventTopic(IEvents.GCODE_PROGRAM_OPTIMIZED) String fileName ) {
+    public void programOptimizedNotified ( @UIEventTopic(IEvent.GCODE_PROGRAM_OPTIMIZED) String fileName ) {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 

@@ -18,8 +18,8 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jungierek.grblrunner.constants.IConstants;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IConstant;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
@@ -47,8 +47,8 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private double durationInMinutes;
 
     private GcodePointImpl matrix [][];
-    private int xSteps = IConstants.INITIAL_XSTEPS;
-    private int ySteps = IConstants.INITIAL_YSTEPS;
+    private int xSteps = IConstant.INITIAL_XSTEPS;
+    private int ySteps = IConstant.INITIAL_YSTEPS;
     private double xStepWidth, yStepWidth;
     private int numProbePoints;
 
@@ -71,7 +71,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     double distanceToFeedrate; // mm
 
     @Inject
-    public void setSeekFeedrate ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.MAX_SEEK_FEEDRATE) int feedrate ) {
+    public void setSeekFeedrate ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.MAX_SEEK_FEEDRATE) int feedrate ) {
 
         LOG.debug ( "setSeekFeedrate: feedrate=" + feedrate );
 
@@ -81,7 +81,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     }
 
     @Inject
-    public void setAccelaration ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.ACCELARATION) double accelaration ) {
+    public void setAccelaration ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.ACCELARATION) double accelaration ) {
 
         LOG.debug ( "setAccelaration: accelaration=" + accelaration );
 
@@ -166,7 +166,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         this.gcodeFile = gcodeFile;
         String fileName = gcodeFile.getPath ();
-        probeDataFile = new File ( fileName.substring ( 0, fileName.lastIndexOf ( '.' ) ) + IConstants.AUTOLEVEL_DATA_FILE_EXTENSION );
+        probeDataFile = new File ( fileName.substring ( 0, fileName.lastIndexOf ( '.' ) ) + IConstant.AUTOLEVEL_DATA_FILE_EXTENSION );
 
         // decouple from UI thread
         new GcodeLoaderThread ( gcodeFile ).start ();
@@ -198,7 +198,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     @Override
     public double getRotationAngle () {
 
-        return rotationAngle / IConstants.ONE_DEGREE;
+        return rotationAngle / IConstant.ONE_DEGREE;
 
     }
 
@@ -376,7 +376,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         // 5) some administration
         optimized = true;
-        eventBroker.send ( IEvents.GCODE_PROGRAM_OPTIMIZED, gcodeFile.getPath () );
+        eventBroker.send ( IEvent.GCODE_PROGRAM_OPTIMIZED, gcodeFile.getPath () );
 
     }
 
@@ -385,9 +385,9 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         LOG.debug ( "rotate: angle=" + angle );
 
-        if ( this.rotationAngle == angle * IConstants.ONE_DEGREE ) return;
+        if ( this.rotationAngle == angle * IConstant.ONE_DEGREE ) return;
 
-        this.rotationAngle = angle * IConstants.ONE_DEGREE;
+        this.rotationAngle = angle * IConstant.ONE_DEGREE;
 
         parse (); // reset line vars
 
@@ -444,8 +444,8 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     private void initMinMax () {
 
-        min = new GcodePointImpl ( IConstants.PREFERENCE_DOUBLE_MAX, IConstants.PREFERENCE_DOUBLE_MAX, IConstants.PREFERENCE_DOUBLE_MAX );
-        max = new GcodePointImpl ( IConstants.PREFERENCE_DOUBLE_MIN, IConstants.PREFERENCE_DOUBLE_MIN, IConstants.PREFERENCE_DOUBLE_MIN );
+        min = new GcodePointImpl ( IConstant.PREFERENCE_DOUBLE_MAX, IConstant.PREFERENCE_DOUBLE_MAX, IConstant.PREFERENCE_DOUBLE_MAX );
+        max = new GcodePointImpl ( IConstant.PREFERENCE_DOUBLE_MIN, IConstant.PREFERENCE_DOUBLE_MIN, IConstant.PREFERENCE_DOUBLE_MIN );
 
         durationInMinutes = 0;
 
@@ -570,7 +570,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         matrix = null;
 
         if ( probeDataFile != null ) {
-            eventBroker.send ( IEvents.AUTOLEVEL_DATA_CLEARED, probeDataFile.getPath () );
+            eventBroker.send ( IEvent.AUTOLEVEL_DATA_CLEARED, probeDataFile.getPath () );
         }
 
     }
@@ -656,11 +656,11 @@ public class GcodeProgramImpl implements IGcodeProgram {
         final GcodePointImpl p = (GcodePointImpl) probe;
 
         final double distx = p.x - min.x;
-        final double ii = distx / this.xStepWidth + IConstants.EPSILON;
+        final double ii = distx / this.xStepWidth + IConstant.EPSILON;
         int i = (int) ii;
 
         final double disty = p.y - min.y;
-        final double jj = disty / this.yStepWidth + IConstants.EPSILON;
+        final double jj = disty / this.yStepWidth + IConstant.EPSILON;
         int j = (int) jj;
 
         LOG.debug ( "setProbePoint: dx=" + distx + " dy=" + disty + "  ii=" + ii + " i=" + i + " jj=" + jj + " j=" + j );
@@ -723,12 +723,12 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         double result = p.z; // the interpolated z for the point
 
-        double ii = (p.x - min.x) / xStepWidth + IConstants.EPSILON;
+        double ii = (p.x - min.x) / xStepWidth + IConstant.EPSILON;
         int i = (int) ii;
         if ( i < 0 ) i = 0;
         if ( i >= xSteps ) i = xSteps - 1;
 
-        double jj = (p.y - min.y) / yStepWidth + IConstants.EPSILON;
+        double jj = (p.y - min.y) / yStepWidth + IConstant.EPSILON;
         int j = (int) jj;
         if ( j < 0 ) j = 0;
         if ( j >= ySteps ) j = ySteps - 1;
@@ -751,7 +751,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private double subDouble ( double d1, double d2 ) {
 
         double result = d1 - d2;
-        if ( Math.abs ( result ) <= IConstants.EPSILON ) {
+        if ( Math.abs ( result ) <= IConstant.EPSILON ) {
             result = 0.0;
         }
 
@@ -779,19 +779,19 @@ public class GcodeProgramImpl implements IGcodeProgram {
             return result.toArray ( new IGcodePoint [2] );
         }
 
-        double ii1 = (p1.x - min.x + IConstants.EPSILON) / xStepWidth;
+        double ii1 = (p1.x - min.x + IConstant.EPSILON) / xStepWidth;
         final int i1 = (int) ii1;
         ii1 -= i1;
 
-        double jj1 = (p1.y - min.y + IConstants.EPSILON) / yStepWidth;
+        double jj1 = (p1.y - min.y + IConstant.EPSILON) / yStepWidth;
         final int j1 = (int) jj1;
         jj1 -= j1;
 
-        double ii2 = (p2.x - min.x + IConstants.EPSILON) / xStepWidth;
+        double ii2 = (p2.x - min.x + IConstant.EPSILON) / xStepWidth;
         int i2 = (int) ii2;
         ii2 -= i2;
 
-        double jj2 = (p2.y - min.y + IConstants.EPSILON) / yStepWidth;
+        double jj2 = (p2.y - min.y + IConstant.EPSILON) / yStepWidth;
         int j2 = (int) jj2;
         jj2 -= j2;
 
@@ -815,19 +815,19 @@ public class GcodeProgramImpl implements IGcodeProgram {
         int i = i1;
         if ( dx > 0.0 ) {
             i++;
-            if ( Math.abs ( ii2 ) > IConstants.EPSILON ) i2++;
+            if ( Math.abs ( ii2 ) > IConstant.EPSILON ) i2++;
         }
         else if ( dx < 0.0 ) {
-            if ( Math.abs ( ii1 ) <= IConstants.EPSILON ) i--;
+            if ( Math.abs ( ii1 ) <= IConstant.EPSILON ) i--;
         }
 
         int j = j1;
         if ( dy > 0.0 ) {
             j++;
-            if ( Math.abs ( jj2 ) > IConstants.EPSILON ) j2++;
+            if ( Math.abs ( jj2 ) > IConstant.EPSILON ) j2++;
         }
         else if ( dy < 0.0 ) {
-            if ( Math.abs ( jj1 ) <= IConstants.EPSILON ) j--;
+            if ( Math.abs ( jj1 ) <= IConstant.EPSILON ) j--;
         }
 
         double x = p1.x;
@@ -939,14 +939,14 @@ public class GcodeProgramImpl implements IGcodeProgram {
         sb.append ( "Cause:\n" );
         sb.append ( exc + "\n\n" );
 
-        eventBroker.send ( IEvents.MESSAGE_ERROR, "" + sb );
+        eventBroker.send ( IEvent.MESSAGE_ERROR, "" + sb );
 
     }
 
     // TODO eliminate double impl
     private GcodePointImpl parseCoordinates ( String line, String intro, char closingChar ) {
 
-        return new GcodePointImpl ( parseVector ( line, IConstants.AXIS.length, intro, closingChar ) );
+        return new GcodePointImpl ( parseVector ( line, IConstant.AXIS.length, intro, closingChar ) );
 
     }
 
@@ -1033,9 +1033,9 @@ public class GcodeProgramImpl implements IGcodeProgram {
                 reader.close ();
 
                 parse ();
-                prepareAutolevelScan ( IConstants.INITIAL_XSTEPS, IConstants.INITIAL_YSTEPS );
+                prepareAutolevelScan ( IConstant.INITIAL_XSTEPS, IConstant.INITIAL_YSTEPS );
 
-                eventBroker.send ( IEvents.GCODE_PROGRAM_LOADED, file.getPath () );
+                eventBroker.send ( IEvent.GCODE_PROGRAM_LOADED, file.getPath () );
 
             }
             catch ( IOException | RuntimeException exc ) { // including FileNotFoundException
@@ -1111,7 +1111,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
                         }
                         else {
                             LOG.error ( "gcode area differs" );
-                            eventBroker.send ( IEvents.MESSAGE_ERROR, "GCODE area differs!\nmin1=" + min + " min2=" + getMin () + "\nmax1=" + max + " max2=" + getMax () );
+                            eventBroker.send ( IEvent.MESSAGE_ERROR, "GCODE area differs!\nmin1=" + min + " min2=" + getMin () + "\nmax1=" + max + " max2=" + getMax () );
                             return;
                         }
                     }
@@ -1127,7 +1127,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
                 reader.close ();
 
-                eventBroker.send ( IEvents.AUTOLEVEL_DATA_LOADED, file.getPath () );
+                eventBroker.send ( IEvent.AUTOLEVEL_DATA_LOADED, file.getPath () );
 
             }
             catch ( IOException exc ) {
@@ -1199,7 +1199,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
                 writer.write ( "end of data" );
                 // writer.newLine ();
 
-                eventBroker.send ( IEvents.AUTOLEVEL_DATA_SAVED, file.getPath () );
+                eventBroker.send ( IEvent.AUTOLEVEL_DATA_SAVED, file.getPath () );
 
             }
             catch ( IOException exc ) {

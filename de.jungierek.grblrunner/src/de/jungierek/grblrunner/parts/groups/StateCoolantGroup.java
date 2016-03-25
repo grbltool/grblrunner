@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
-import de.jungierek.grblrunner.constants.IEvents;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StateCoolantGroup {
@@ -40,7 +40,7 @@ public class StateCoolantGroup {
 
     @Inject
     @Optional
-    public void updateCoolantModeNotified ( @UIEventTopic(IEvents.UPDATE_COOLANT_MODE) String coolantMode ) {
+    public void updateCoolantModeNotified ( @UIEventTopic(IEvent.UPDATE_COOLANT_MODE) String coolantMode ) {
 
         LOG.trace ( "updateCoolantModeNotified: coolantMode=" + coolantMode );
         coolantLabel.setText ( coolantMode );
