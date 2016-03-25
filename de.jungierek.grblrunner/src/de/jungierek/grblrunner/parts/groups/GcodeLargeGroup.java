@@ -4,24 +4,26 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
-import de.jungierek.grblrunner.constants.IPreferences;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.tools.GuiFactory;
@@ -34,21 +36,44 @@ public class GcodeLargeGroup {
     @Named(IServiceConstants.ACTIVE_SHELL)
     Shell shell;
 
+    @Inject
+    private Display display;
+
     private Label gcodeModeLabel;
     private Label gcodeXLabel;
     private Label gcodeYLabel;
     private Label gcodeZLabel;
 
-    Font largeFont;
+    // preferences
+    private Font coordinateFont;
+    
+    @Inject
+    public void setTerminalFontData ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.GCODE_LARGE_FONT_DATA) String fontDataString ) {
+    
+        LOG.debug ( "setFontData: fontDataString=" + fontDataString );
+    
+        coordinateFont = new Font ( display, new FontData ( fontDataString ) );
+        if ( gcodeModeLabel != null && !gcodeModeLabel.isDisposed () ) {
+            setLabelFont ();
+        }
+    
+    }
+
+
+    private void setLabelFont () {
+
+        gcodeModeLabel.setFont ( coordinateFont );
+        gcodeXLabel.setFont ( coordinateFont );
+        gcodeYLabel.setFont ( coordinateFont );
+        gcodeZLabel.setFont ( coordinateFont );
+
+    }
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IContextKey.PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
-        // Group group = GuiFactory.createGroup ( parent, "", groupCols, 1, true, true );
         Composite group = new Composite ( parent, SWT.NONE );
         group.setLayoutData ( new GridData ( SWT.FILL, SWT.FILL, true, true, 1, 1 ) );
 
@@ -56,17 +81,11 @@ public class GcodeLargeGroup {
         group.setLayout ( new GridLayout ( cols, true ) );
 
         gcodeModeLabel = GuiFactory.createHeadingLabel ( group, "" );
-        largeFont = FontDescriptor.createFrom ( gcodeModeLabel.getFont () ).setStyle ( IPreferences.GCODE_LARGE_FONT_STYLE ).setHeight ( IPreferences.GCODE_LARGE_FONT_SIZE ).createFont ( gcodeModeLabel.getDisplay () );
-        gcodeModeLabel.setFont ( largeFont );
-
         gcodeXLabel = GuiFactory.createHeadingLabel ( group, "", 2 );
-        gcodeXLabel.setFont ( largeFont );
-
         gcodeYLabel = GuiFactory.createHeadingLabel ( group, "", 2 );
-        gcodeYLabel.setFont ( largeFont );
-
         gcodeZLabel = GuiFactory.createHeadingLabel ( group, "", 2 );
-        gcodeZLabel.setFont ( largeFont );
+
+        setLabelFont ();
 
     }
 

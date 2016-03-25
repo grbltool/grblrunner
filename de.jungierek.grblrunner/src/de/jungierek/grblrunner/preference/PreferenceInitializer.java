@@ -103,6 +103,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.putDouble ( IPreferenceKey.POCKET_MILL_DIMENSION, 10.0 );
         defaults.putDouble ( IPreferenceKey.POCKET_MILL_Z_DEPTH, -1.4 );
         defaults.putInt ( IPreferenceKey.POCKET_MILL_OVERLAP, 30 );
+        
+        // --- Large Gcode Coordinates
+        defaults.put ( IPreferenceKey.GCODE_LARGE_FONT_DATA, "1|Segoe UI|24.75|1|WINDOWS|1|-33|0|0|0|700|0|0|0|1|0|0|0|0|Segoe UI;" ); // Segoe UI 25pt
 
         // -------------------------------
 

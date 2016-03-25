@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.preference.ColorsAndFontsPreferencePage;
+import de.jungierek.grblrunner.preference.GcodeLargePreferencePage;
 import de.jungierek.grblrunner.preference.GcodeViewPreferencePage;
 import de.jungierek.grblrunner.preference.MacroHobbedBoltPreferencePage;
 import de.jungierek.grblrunner.preference.MacroPocketPreferencePage;
@@ -46,6 +47,7 @@ public class PreferencesCommandHandler {
         preferenceManager.addTo ( colorsAndFontsNode.getId (), new PreferenceNode ( GcodeViewPreferencePage.ID, new GcodeViewPreferencePage ( preferenceStore ) ) );
         preferenceManager.addTo ( colorsAndFontsNode.getId (), new PreferenceNode ( SerialPreferencePage.ID, new SerialPreferencePage ( preferenceStore ) ) );
         preferenceManager.addTo ( colorsAndFontsNode.getId (), new PreferenceNode ( TerminalPreferencePage.ID, new TerminalPreferencePage ( preferenceStore ) ) );
+        preferenceManager.addTo ( colorsAndFontsNode.getId (), new PreferenceNode ( GcodeLargePreferencePage.ID, new GcodeLargePreferencePage ( preferenceStore ) ) );
         preferenceManager.addToRoot ( new PreferenceNode ( ProbePreferencePage.ID, new ProbePreferencePage ( preferenceStore ) ) );
         final PreferenceNode macroNode = new PreferenceNode ( MacroPreferencPage.ID, new MacroPreferencPage ( preferenceStore ) );
         preferenceManager.addToRoot ( macroNode );

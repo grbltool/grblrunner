@@ -77,4 +77,7 @@ public interface IPreferenceKey {
     public static final String POCKET_MILL_Z_DEPTH = IConstant.KEY_BASE + ".macro.pocket.zdepth";
     public static final String POCKET_MILL_OVERLAP = IConstant.KEY_BASE + ".macro.pocket.overlap";
 
+    // --- Large Gcode Coordinates
+    public static final String GCODE_LARGE_FONT_DATA = IConstant.KEY_BASE + ".gcode.large.fontdata";
+
 }
