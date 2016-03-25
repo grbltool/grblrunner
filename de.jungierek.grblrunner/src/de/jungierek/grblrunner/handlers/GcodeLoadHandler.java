@@ -45,7 +45,7 @@ public class GcodeLoadHandler {
         FileDialog dialog = new FileDialog ( shell, SWT.OPEN );
         dialog.setFilterExtensions ( IConstants.GCODE_FILE_EXTENSIONS );
 
-        String filterPath = application.getPersistedState ().get ( IPersistenceKeys.KEY_GCODE_PATH );
+        String filterPath = application.getPersistedState ().get ( IPersistenceKeys.GCODE_PATH );
         if ( filterPath == null ) filterPath = gcodePath;
         dialog.setFilterPath ( filterPath );
 
@@ -64,7 +64,7 @@ public class GcodeLoadHandler {
             gcodeProgram.loadGcodeProgram ( new File ( result ) );
             part.setLabel ( gcodeProgram.getGcodeProgramName () );
 
-            application.getPersistedState ().put ( IPersistenceKeys.KEY_GCODE_PATH, filterPath );
+            application.getPersistedState ().put ( IPersistenceKeys.GCODE_PATH, filterPath );
 
         }
 

@@ -75,7 +75,7 @@ public class GcodeEditorPart {
         // ).createFont ( gcodeModeLabel.getDisplay () );
         gcodeText.setEditable ( false );
 
-        String path = part.getPersistedState ().get ( IPersistenceKeys.KEY_EDITOR_PATH );
+        String path = part.getPersistedState ().get ( IPersistenceKeys.EDITOR_PATH );
         if ( path != null ) {
             gcodeProgram.loadGcodeProgram ( new File ( path ) );
         }
@@ -116,7 +116,7 @@ public class GcodeEditorPart {
         
         LOG.debug ( "persistState:" );
 
-        part.getPersistedState ().put ( IPersistenceKeys.KEY_EDITOR_PATH, gcodeProgram.getGcodeProgramFile ().getPath () );
+        part.getPersistedState ().put ( IPersistenceKeys.EDITOR_PATH, gcodeProgram.getGcodeProgramFile ().getPath () );
 
     }
 

@@ -102,7 +102,7 @@ public class MacroPart {
         partTools.gcodeToText ( gcodeText, gcodeProgram );
 
         // TODO reload parameters
-        // String path = part.getPersistedState ().get ( IPersistenceKeys.KEY_EDITOR_PATH );
+        // String path = part.getPersistedState ().get ( IPersistenceKeys.EDITOR_PATH );
 
     }
 

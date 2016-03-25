@@ -44,8 +44,8 @@ public class SerialAutoConnectGroup {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        String autoConnect = application.getPersistedState ().get ( IPersistenceKeys.KEY_AUTO_CONNECT );
-        String autoConnectPort = application.getPersistedState ().get ( IPersistenceKeys.KEY_AUTO_CONNECT_PORT );
+        String autoConnect = application.getPersistedState ().get ( IPersistenceKeys.AUTO_CONNECT );
+        String autoConnectPort = application.getPersistedState ().get ( IPersistenceKeys.AUTO_CONNECT_PORT );
         // autoConnectPort = "COMX"; // for Design View
         LOG.debug ( "createGui: auto=" + autoConnect + " port=" + autoConnectPort );
 
@@ -65,13 +65,13 @@ public class SerialAutoConnectGroup {
 
                 // auto connect check box goes on and connection is established
                 final boolean autoConnect = ((Button) evt.getSource ()).getSelection ();
-                application.getPersistedState ().put ( IPersistenceKeys.KEY_AUTO_CONNECT, autoConnect ? IPersistenceKeys.AUTO_CONNECT_ON : null );
+                application.getPersistedState ().put ( IPersistenceKeys.AUTO_CONNECT, autoConnect ? IPersistenceKeys.AUTO_CONNECT_ON : null );
                 // if ( autoConnect && !connectButton.isEnabled () ) {
                 if ( autoConnect && serial.isOpen () ) {
                     String port = serial.getPortName ();
                     if ( port != null && !port.equals ( "" ) ) {
                         autoConnectPortLabel.setText ( port );
-                        application.getPersistedState ().put ( IPersistenceKeys.KEY_AUTO_CONNECT_PORT, port );
+                        application.getPersistedState ().put ( IPersistenceKeys.AUTO_CONNECT_PORT, port );
                     }
                 }
 

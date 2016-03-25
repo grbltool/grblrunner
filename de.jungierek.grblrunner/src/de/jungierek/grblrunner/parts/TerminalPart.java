@@ -241,9 +241,9 @@ public class TerminalPart {
     private void restorePersistedState ( MApplication application, MPart part ) {
 
         final Map<String, String> persistedState = application.getPersistedState ();
-        showSuppressedLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_SUPPRESS_LINES ) );
-        showGrblStateLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_STATE ) );
-        showGcodeModeLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.KEY_TERMINAL_GRBL_MODES ) );
+        showSuppressedLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.TERMINAL_SUPPRESS_LINES ) );
+        showGrblStateLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.TERMINAL_GRBL_STATE ) );
+        showGcodeModeLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKeys.TERMINAL_GRBL_MODES ) );
 
         // set the state of the direct menu items according to persisted state
         // find the two direct menu items
@@ -283,9 +283,9 @@ public class TerminalPart {
 
         final Map<String, String> persistedState = application.getPersistedState ();
 
-        persistedState.put ( IPersistenceKeys.KEY_TERMINAL_SUPPRESS_LINES, "" + showSuppressedLines );
-        persistedState.put ( IPersistenceKeys.KEY_TERMINAL_GRBL_STATE, "" + showGrblStateLines );
-        persistedState.put ( IPersistenceKeys.KEY_TERMINAL_GRBL_MODES, "" + showGcodeModeLines );
+        persistedState.put ( IPersistenceKeys.TERMINAL_SUPPRESS_LINES, "" + showSuppressedLines );
+        persistedState.put ( IPersistenceKeys.TERMINAL_GRBL_STATE, "" + showGrblStateLines );
+        persistedState.put ( IPersistenceKeys.TERMINAL_GRBL_MODES, "" + showGcodeModeLines );
 
     }
 

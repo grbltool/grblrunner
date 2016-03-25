@@ -462,15 +462,15 @@ public class GcodeViewGroup {
 
         final Map<String, String> persistedState = application.getPersistedState ();
 
-        scale = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.KEY_VIEW_SCALE ), 5.0 );
+        scale = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_SCALE ), 5.0 );
 
-        double x = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.KEY_VIEW_PIXEL_SHIFT + "X" ), 0.0 );
-        double y = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.KEY_VIEW_PIXEL_SHIFT + "Y" ), 0.0 );
+        double x = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_PIXEL_SHIFT + "X" ), 0.0 );
+        double y = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_PIXEL_SHIFT + "Y" ), 0.0 );
         canvasShift = new Point ( x, y );
 
-        rotX = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.KEY_VIEW_ROTATION + "X" ), 0.0 );
-        rotY = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.KEY_VIEW_ROTATION + "Y" ), 0.0 );
-        rotZ = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.KEY_VIEW_ROTATION + "Z" ), 0.0 );
+        rotX = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_ROTATION + "X" ), 0.0 );
+        rotY = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_ROTATION + "Y" ), 0.0 );
+        rotZ = partTools.parseDouble ( persistedState.get ( IPersistenceKeys.VIEW_ROTATION + "Z" ), 0.0 );
 
     }
 
@@ -478,14 +478,14 @@ public class GcodeViewGroup {
 
         final Map<String, String> persistedState = application.getPersistedState ();
 
-        persistedState.put ( IPersistenceKeys.KEY_VIEW_SCALE, String.format ( IConstants.FORMAT_COORDINATE, scale ) );
+        persistedState.put ( IPersistenceKeys.VIEW_SCALE, String.format ( IConstants.FORMAT_COORDINATE, scale ) );
 
-        persistedState.put ( IPersistenceKeys.KEY_VIEW_PIXEL_SHIFT + "X", String.format ( IConstants.FORMAT_COORDINATE, canvasShift.x ) );
-        persistedState.put ( IPersistenceKeys.KEY_VIEW_PIXEL_SHIFT + "Y", String.format ( IConstants.FORMAT_COORDINATE, canvasShift.y ) );
+        persistedState.put ( IPersistenceKeys.VIEW_PIXEL_SHIFT + "X", String.format ( IConstants.FORMAT_COORDINATE, canvasShift.x ) );
+        persistedState.put ( IPersistenceKeys.VIEW_PIXEL_SHIFT + "Y", String.format ( IConstants.FORMAT_COORDINATE, canvasShift.y ) );
 
-        persistedState.put ( IPersistenceKeys.KEY_VIEW_ROTATION + "X", String.format ( IConstants.FORMAT_COORDINATE, rotX ) );
-        persistedState.put ( IPersistenceKeys.KEY_VIEW_ROTATION + "Y", String.format ( IConstants.FORMAT_COORDINATE, rotY ) );
-        persistedState.put ( IPersistenceKeys.KEY_VIEW_ROTATION + "Z", String.format ( IConstants.FORMAT_COORDINATE, rotZ ) );
+        persistedState.put ( IPersistenceKeys.VIEW_ROTATION + "X", String.format ( IConstants.FORMAT_COORDINATE, rotX ) );
+        persistedState.put ( IPersistenceKeys.VIEW_ROTATION + "Y", String.format ( IConstants.FORMAT_COORDINATE, rotY ) );
+        persistedState.put ( IPersistenceKeys.VIEW_ROTATION + "Z", String.format ( IConstants.FORMAT_COORDINATE, rotZ ) );
 
     }
 

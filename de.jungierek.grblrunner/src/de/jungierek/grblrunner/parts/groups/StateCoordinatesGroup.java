@@ -131,13 +131,13 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
     private void saveCoordinateSystem ( String coordSelect ) {
 
-        application.getPersistedState ().put ( IPersistenceKeys.KEY_LAST_COORDINATE_SYSTEM, coordSelect );
+        application.getPersistedState ().put ( IPersistenceKeys.LAST_COORDINATE_SYSTEM, coordSelect );
 
     }
 
     private void restoreCoordinateSystem () {
 
-        String coordSelect = application.getPersistedState ().get ( IPersistenceKeys.KEY_LAST_COORDINATE_SYSTEM );
+        String coordSelect = application.getPersistedState ().get ( IPersistenceKeys.LAST_COORDINATE_SYSTEM );
         if ( coordSelect != null && coordSelect.length () == 3 ) {
             gcodeService.sendCommandSuppressInTerminal ( coordSelect );
             // gcode.sendCommand ( coordSelect );
