@@ -85,6 +85,25 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.putDouble ( IPreferenceKey.PROBE_DEPTH, -3.0 );
         defaults.putBoolean ( IPreferenceKey.PROBE_WITH_ERROR, false );
 
+        // --- Macro ---
+        defaults.putInt ( IPreferenceKey.MACRO_SPINDLE_SPEED, 7000 );
+        defaults.putDouble ( IPreferenceKey.MACRO_Z_LIFTUP, +2.0 );
+
+        defaults.putInt ( IPreferenceKey.HOBBED_BOLT_FEEDRATE, 10 );
+        defaults.putInt ( IPreferenceKey.HOBBED_BOLT_ANGLE, 30 );
+        defaults.putInt ( IPreferenceKey.HOBBED_BOLT_BOLT_DIAMETER, 8 );
+        defaults.putDouble ( IPreferenceKey.HOBBED_BOLT_X_CLEARANCE, 7.0 );
+        defaults.putInt ( IPreferenceKey.HOBBED_BOLT_COUNT_RETRACTION, 3 );
+        defaults.putDouble ( IPreferenceKey.HOBBED_BOLT_RETRACTION, 1.0 );
+        defaults.putInt ( IPreferenceKey.HOBBED_BOLT_WAIT_AT_TARGET, 5 );
+        
+        defaults.putInt ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE, 50 );
+        defaults.putInt ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE, 150 );
+        defaults.putDouble ( IPreferenceKey.POCKET_MILL_DIAMETER, 3.0 );
+        defaults.putDouble ( IPreferenceKey.POCKET_MILL_DIMENSION, 10.0 );
+        defaults.putDouble ( IPreferenceKey.POCKET_MILL_Z_DEPTH, -1.4 );
+        defaults.putInt ( IPreferenceKey.POCKET_MILL_OVERLAP, 30 );
+
         // -------------------------------
 
         try {

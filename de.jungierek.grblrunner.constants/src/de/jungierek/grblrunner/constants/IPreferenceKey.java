@@ -58,4 +58,23 @@ public interface IPreferenceKey {
     public static final String PROBE_WITH_ERROR = IConstants.KEY_BASE + ".probe.witherror";
     public static final String PROBE_Z_MAX = IConstants.KEY_BASE + ".probe.zmax";
 
+    // --- Macro ---
+    public static final String MACRO_SPINDLE_SPEED = IConstants.KEY_BASE + ".macro.spindlespeed";
+    public static final String MACRO_Z_LIFTUP = IConstants.KEY_BASE + ".macro.zliftup";
+
+    public static final String HOBBED_BOLT_FEEDRATE = IConstants.KEY_BASE + ".macro.hobbedbolt.feedrate";
+    public static final String HOBBED_BOLT_ANGLE = IConstants.KEY_BASE + ".macro.hobbedbolt.angle";
+    public static final String HOBBED_BOLT_BOLT_DIAMETER = IConstants.KEY_BASE + ".macro.hobbedbolt.boltdiameter";
+    public static final String HOBBED_BOLT_X_CLEARANCE = IConstants.KEY_BASE + ".macro.hobbedbolt.xclearance";
+    public static final String HOBBED_BOLT_COUNT_RETRACTION = IConstants.KEY_BASE + ".macro.hobbedbolt.countretraction";
+    public static final String HOBBED_BOLT_RETRACTION = IConstants.KEY_BASE + ".macro.hobbedbolt.retraction";
+    public static final String HOBBED_BOLT_WAIT_AT_TARGET = IConstants.KEY_BASE + ".macro.hobbedbolt.waitattarget";
+
+    public static final String POCKET_MILL_Z_FEEDRATE = IConstants.KEY_BASE + ".macro.pocket.zfeedrate";
+    public static final String POCKET_MILL_XY_FEEDRATE = IConstants.KEY_BASE + ".macro.pocket.xyfeedrate";
+    public static final String POCKET_MILL_DIAMETER = IConstants.KEY_BASE + ".macro.pocket.milldiameter";
+    public static final String POCKET_MILL_DIMENSION = IConstants.KEY_BASE + ".macro.pocket.milldimension";
+    public static final String POCKET_MILL_Z_DEPTH = IConstants.KEY_BASE + ".macro.pocket.zdepth";
+    public static final String POCKET_MILL_OVERLAP = IConstants.KEY_BASE + ".macro.pocket.overlap";
+
 }

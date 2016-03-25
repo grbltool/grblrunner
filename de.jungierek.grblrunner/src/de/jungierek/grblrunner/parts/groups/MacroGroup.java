@@ -5,9 +5,12 @@ import java.util.Date;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.core.contexts.IEclipseContext;
-import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -45,41 +48,15 @@ public abstract class MacroGroup {
     @Inject
     private IEclipseContext context;
 
-    // preferences
-    protected int spindle_min_rpm;
-    protected int spindle_max_rpm;
-    protected double zClearance;
-
-    @Inject
-    public void setSpindleMinRpm ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.SPINDLE_MIN) int min ) {
-
-        spindle_min_rpm = min;
-
-    }
-
-    @Inject
-    public void setSpindleMaxRpm ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.SPINDLE_MAX) int max ) {
-
-        spindle_max_rpm = max;
-
-    }
-
-    @Inject
-    public void setZClearance ( @Preference(nodePath = IConstants.PREFERENCE_NODE, value = IPreferenceKey.Z_CLEARANCE) double value ) {
-
-        zClearance = value;
-
-    }
+    private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode ( IConstants.PREFERENCE_NODE );
+    private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode ( IConstants.PREFERENCE_NODE );
 
     @PostConstruct
-    public void createGui ( Composite parent ) {
+    public void createGui ( Composite parent, @Named(IContextKey.KEY_PART_COLS) int partCols, @Named(IContextKey.KEY_PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IContextKey.KEY_PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IContextKey.KEY_PART_GROUP_COLS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, getGroupName (), groupCols, 1, true );
-
         final int cols = getGridLayoutColumns ();
         group.setLayout ( new GridLayout ( cols, true ) );
 
@@ -117,7 +94,7 @@ public abstract class MacroGroup {
 
         generateGcodeCore ( gcodeProgram );
 
-        gcodeProgram.appendLine ( "G0 Z" + String.format ( IConstants.FORMAT_COORDINATE, zClearance ) );
+        gcodeProgram.appendLine ( "G0 Z" + String.format ( IConstants.FORMAT_COORDINATE, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) ) );
         gcodeProgram.appendLine ( "M5" );
 
         gcodeProgram.parse ();
@@ -192,6 +169,18 @@ public abstract class MacroGroup {
     protected void wait ( int sec ) {
 
         gcodeProgram.appendLine ( "G4 P" + sec );
+
+    }
+
+    protected int getIntPreference ( String key ) {
+
+        return preferences.getInt ( key, defaultPreferences.getInt ( key, 0 ) );
+
+    }
+
+    protected double getDoublePreference ( String key ) {
+
+        return preferences.getDouble ( key, defaultPreferences.getDouble ( key, 0.0 ) );
 
     }
 
