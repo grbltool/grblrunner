@@ -80,4 +80,8 @@ public interface IPreferenceKey {
     // --- Large Gcode Coordinates
     public static final String GCODE_LARGE_FONT_DATA = IConstant.KEY_BASE + ".gcode.large.fontdata";
 
+    // --- Command History ---
+    public static final String COMMAND_HISTORY_DEPTH = IConstant.KEY_BASE + ".command.history.depth";
+    public static final String COMMAND_HISTORY_WITHNOWERROR = IConstant.KEY_BASE + ".command.history.withnoerror";
+
 }

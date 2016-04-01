@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.preference.ColorsAndFontsPreferencePage;
+import de.jungierek.grblrunner.preference.CommandHistoryPreferencPage;
 import de.jungierek.grblrunner.preference.GcodeLargePreferencePage;
 import de.jungierek.grblrunner.preference.GcodeViewPreferencePage;
 import de.jungierek.grblrunner.preference.MacroHobbedBoltPreferencePage;
@@ -53,6 +54,7 @@ public class PreferencesCommandHandler {
         preferenceManager.addToRoot ( macroNode );
         preferenceManager.addTo ( macroNode.getId (), new PreferenceNode ( MacroHobbedBoltPreferencePage.ID, new MacroHobbedBoltPreferencePage ( preferenceStore ) ) );
         preferenceManager.addTo ( macroNode.getId (), new PreferenceNode ( MacroPocketPreferencePage.ID, new MacroPocketPreferencePage ( preferenceStore ) ) );
+        preferenceManager.addToRoot ( new PreferenceNode ( CommandHistoryPreferencPage.ID, new CommandHistoryPreferencPage ( preferenceStore ) ) );
 
         new PreferenceDialog ( shell, preferenceManager ).open ();
 

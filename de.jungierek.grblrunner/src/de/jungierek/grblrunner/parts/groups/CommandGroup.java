@@ -1,10 +1,13 @@
 package de.jungierek.grblrunner.parts.groups;
 
+import java.util.ArrayList;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -20,21 +23,33 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
-import de.jungierek.grblrunner.service.serial.ISerialService;
+import de.jungierek.grblrunner.service.gcode.IGrblResponse;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
-// TODO annotation for group @PartGroup
 public class CommandGroup {
 
     private static final Logger LOG = LoggerFactory.getLogger ( CommandGroup.class );
 
     private static final String GROUP_NAME = "Command";
 
+    @Inject
+    private IGcodeService gcodeService;
+
     private Text commandText;
     private Button commandSendButton;
+
+    private CommandProcessor commandHistory;
+    private Command currentCommand;
+    private Command lastExecutedCommand;
+
+    // preference
+    private int historyDepth = 20;
+    private boolean historyWithNoError = true;
 
     public void setFocus () {
 
@@ -42,8 +57,25 @@ public class CommandGroup {
 
     }
 
+    @Inject
+    void setHistoryDepth ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COMMAND_HISTORY_DEPTH) int historyDepth ) {
+
+        LOG.debug ( "setHistoryDepth: depth=" + historyDepth + " history=" + commandHistory );
+
+        this.historyDepth = historyDepth;
+        if ( commandHistory != null ) commandHistory.adjustDepth ();
+
+    }
+
+    @Inject
+    public void setHistoryWithNoError ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COMMAND_HISTORY_WITHNOWERROR) boolean historyWithNoErrir ) {
+
+        historyWithNoError = historyWithNoErrir;
+
+    }
+
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context, ISerialService serialService, IGcodeService gcodeService ) {
+    public void createGui ( Composite parent, IEclipseContext context ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
@@ -59,16 +91,39 @@ public class CommandGroup {
         commandText.setEnabled ( false );
         commandSendButton = GuiFactory.createPushButton ( group, "send", SWT.FILL, true );
 
+        commandHistory = new CommandProcessor ();
+
         commandText.addTraverseListener ( new TraverseListener () {
 
             @Override
             public void keyTraversed ( TraverseEvent evt ) {
+
+                // LOG.info ( "keyTraversed: evt.detail=" +/ evt.detail + " evt.keyCode=" + evt.keyCode + "swt=" + SWT.ARROW_RIGHT );
+
                 if ( evt.detail == SWT.TRAVERSE_RETURN ) {
-                    gcodeService.sendCommand ( commandText.getText () );
-                    commandText.setText ( "" );
+                    final String line = commandText.getText ().trim ();
+                    if ( !line.isEmpty () ) {
+                        lastExecutedCommand = new Command ( line );
+                        commandHistory.append ( lastExecutedCommand ); // append executes command
+                        commandText.setText ( "" );
+                        currentCommand = null;
+                    }
                 }
                 else if ( evt.detail == SWT.TRAVERSE_ESCAPE ) {
                     commandText.setText ( "" );
+                    currentCommand = null;
+                }
+                else if ( evt.detail == SWT.TRAVERSE_ARROW_PREVIOUS && evt.keyCode == SWT.ARROW_UP ) {
+                    currentCommand = commandHistory.getPrevious ( currentCommand );
+                    if ( currentCommand == null ) commandText.setText ( "" );
+                    else commandText.setText ( currentCommand.getCommand () );
+                    evt.doit = false;
+                }
+                else if ( evt.detail == SWT.TRAVERSE_ARROW_NEXT && evt.keyCode == SWT.ARROW_DOWN ) {
+                    currentCommand = commandHistory.getNext ( currentCommand );
+                    if ( currentCommand == null ) commandText.setText ( "" );
+                    else commandText.setText ( currentCommand.getCommand () );
+                    evt.doit = false;
                 }
             }
 
@@ -77,8 +132,13 @@ public class CommandGroup {
         commandSendButton.addSelectionListener ( new SelectionAdapter () {
             @Override
             public void widgetSelected ( SelectionEvent evt ) {
-                gcodeService.sendCommand ( commandText.getText () );
-                commandText.setText ( "" );
+                final String line = commandText.getText ().trim ();
+                if ( !line.isEmpty () ) {
+                    lastExecutedCommand = new Command ( line );
+                    commandHistory.append ( lastExecutedCommand ); // append executes command
+                    commandText.setText ( "" );
+                    currentCommand = null;
+                }
                 commandText.setFocus ();
             }
         } );
@@ -89,6 +149,27 @@ public class CommandGroup {
 
         commandSendButton.setEnabled ( enabled );
         commandText.setEnabled ( enabled );
+
+    }
+
+    @Inject
+    @Optional
+    public void receivedNotified ( @UIEventTopic(IEvent.GRBL_RECEIVED) IGrblResponse response ) {
+
+        LOG.trace ( "receivedNotified: response=" + response );
+
+        if ( response == null || response.getMessage () == null ) return;
+
+        if ( lastExecutedCommand != null ) {
+            String line = response.getMessage ();
+            if ( line.startsWith ( "ok" ) ) {
+                lastExecutedCommand = null;
+            }
+            else if ( line.startsWith ( "error" ) ) {
+                if ( historyWithNoError ) commandHistory.remove ( lastExecutedCommand );
+                lastExecutedCommand = null;
+            }
+        }
 
     }
 
@@ -169,6 +250,123 @@ public class CommandGroup {
         LOG.trace ( "scanStopNotified: " );
 
         setControlsEnabled ( true );
+
+    }
+
+    private class Command {
+
+        private final Logger LOG = LoggerFactory.getLogger ( CommandGroup.Command.class );
+
+        private String command;
+
+        public Command ( String command ) {
+
+            this.command = command;
+
+        }
+
+        public void execute () {
+            
+            gcodeService.sendCommand ( command );
+
+        }
+
+        public String getCommand () {
+
+            return command;
+
+        }
+
+    }
+
+    private class CommandProcessor {
+
+        private ArrayList<Command> history = new ArrayList<CommandGroup.Command> ( historyDepth );
+
+        public CommandProcessor () {}
+
+        public void append ( Command command ) {
+
+            if ( history.size () >= historyDepth ) {
+                history.remove ( 0 );
+            }
+            history.add ( command );
+
+            command.execute ();
+
+        }
+        
+        public void adjustDepth () {
+
+            while ( history.size () > historyDepth )
+                history.remove ( 0 );
+
+        }
+
+        public String [] list () {
+            
+            String [] result = new String [history.size ()];
+            
+            Command [] h = history.toArray ( new Command[history.size ()] );
+
+            for ( int i = 0; i < h.length; i++ ) {
+                result[i] = h[i].getCommand ();
+            }
+
+            return result;
+
+        }
+
+        public String dump () {
+
+            String result = "|";
+
+            for ( String s : list () ) {
+                result += s + "|";
+            }
+
+            return result;
+
+        }
+
+        public Command get ( int index ) {
+
+            return history.get ( index );
+
+        }
+
+        public Command getPrevious ( Command command ) {
+
+            if ( history.size () == 0 ) return null;
+            if ( command == null ) return history.get ( history.size () - 1 ); // last
+
+            int i = history.indexOf ( command );
+            if ( i == -1 ) return null;
+
+            if ( i > 0 ) i--;
+            return history.get ( i );
+
+        }
+
+        public Command getNext ( Command command ) {
+
+            if ( command == null || history.size () == 0 ) return null;
+
+            int i = history.indexOf ( command );
+            if ( i == -1 ) return null;
+
+            if ( i < history.size () - 1 ) i++;
+            return history.get ( i );
+
+        }
+
+        public void remove ( Command command ) {
+
+            if ( command == null ) return;
+
+            history.remove ( command );
+
+        }
 
     }
 

@@ -107,6 +107,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         // --- Large Gcode Coordinates
         defaults.put ( IPreferenceKey.GCODE_LARGE_FONT_DATA, "1|Segoe UI|24.75|1|WINDOWS|1|-33|0|0|0|700|0|0|0|1|0|0|0|0|Segoe UI;" ); // Segoe UI 25pt
 
+        // --- Command History ---
+        defaults.putInt ( IPreferenceKey.COMMAND_HISTORY_DEPTH, 20 );
+        defaults.putBoolean ( IPreferenceKey.COMMAND_HISTORY_WITHNOWERROR, false );
+
         // -------------------------------
 
         try {
