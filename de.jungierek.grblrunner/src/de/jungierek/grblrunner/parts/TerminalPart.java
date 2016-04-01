@@ -295,7 +295,6 @@ public class TerminalPart {
         
         LOG.trace ( "alarmNotified: line=" + line );
 
-        // appendText ( line, WHITE, RED, SWT.BOLD );
         appendText ( line, alarmForegroundColor, alarmBackgroundColor, SWT.BOLD );
 
     }
@@ -306,7 +305,6 @@ public class TerminalPart {
 
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
-        // appendText ( "Gcode Player started at " + timestamp + "\n", null, YELLOW );
         appendText ( "Gcode Player started at " + timestamp + "\n", null, timestampBackgroundColor );
     
     }
@@ -341,7 +339,6 @@ public class TerminalPart {
 
         LOG.trace ( "playerStopNotified: timestamp=" + timestamp );
 
-        // appendText ( "Gcode Player stopped at " + timestamp + "\n", null, YELLOW );
         appendText ( "Gcode Player stopped at " + timestamp + "\n", null, timestampBackgroundColor );
         terminalText.append ( "-------------------------------------------------------------------------------------\n" );
         scrollToEnd ();
@@ -372,7 +369,6 @@ public class TerminalPart {
 
             if ( line.startsWith ( "$G" ) ) show = showGcodeModeLines;
 
-            // if ( show ) appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
             if ( show ) appendText ( line, suppressedLineForegroundColor, null, SWT.BOLD );
 
         }
@@ -393,15 +389,12 @@ public class TerminalPart {
 
         if ( !response.isSuppressInTerminal () ) {
             if ( line.startsWith ( "ok" ) ) {
-                // appendText ( line, GREEN, null, SWT.BOLD );
                 appendText ( line, okForegroundColor, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "error" ) ) {
-                // appendText ( line, RED, null, SWT.BOLD );
                 appendText ( line, errorForegroundColor, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "Grbl" ) ) {
-                // appendText ( line, WHITE, GRAY );
                 appendText ( line, grblForegroundColor, grblBackgroundColor );
             }
             else {
@@ -412,15 +405,12 @@ public class TerminalPart {
         else if ( showSuppressedLines ) {
             if ( line.startsWith ( "ok" ) ) {
                 if ( ignoreNextOk ) ignoreNextOk = false;
-                // else appendText ( line, LIGHT_GREEN, null, SWT.BOLD );
                 else appendText ( line, suppressedOkForegroundColor, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "error" ) ) {
-                // appendText ( line, RED, null, SWT.BOLD );
                 appendText ( line, supppressedErrorForegroundColor, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "Grbl" ) ) {
-                // appendText ( line, WHITE, LIGHT_GRAY );
                 appendText ( line, suppressedGrblForegroundColor, suppressedGrblBackgroundColor );
             }
             else {
@@ -442,7 +432,6 @@ public class TerminalPart {
                     if ( !show ) ignoreNextOk = true;
                 }
 
-                // if ( show ) appendText ( line, LIGHT_GRAY, null, SWT.BOLD );
                 if ( show ) appendText ( line, suppressedLineForegroundColor, null, SWT.BOLD );
 
             }
