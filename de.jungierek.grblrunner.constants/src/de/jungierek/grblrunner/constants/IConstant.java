@@ -17,6 +17,7 @@ public interface IConstant {
     public static final String MACRO_TEXT_ID = KEY_BASE + ".gcode.text";
 
     public static final String FORMAT_COORDINATE = "%.3f";
+    public static final String FORMAT_SCALE = "%.1f";
     public static final String FORMAT_HEIGHT = "%+.1f";
     public static final String FORMAT_FEEDRATE = "%.0f";
 
@@ -49,6 +50,7 @@ public interface IConstant {
     public static final int INITIAL_XSTEPS = 1;
     public static final int INITIAL_YSTEPS = 1;
 
+    public static final double INITIAL_SCALE = 5.0;
     public static final boolean INITIAL_VIEW_ALTITUDE = true;
     public static final boolean INITIAL_VIEW_GCODE = true;
     public static final boolean INITIAL_VIEW_GRID = true;
@@ -61,5 +63,6 @@ public interface IConstant {
 
     public static final boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = false;
     public static final boolean AUTOLEVEL_SLOW_Z_SIMULATION = false;
+
 
 }

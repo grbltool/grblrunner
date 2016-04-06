@@ -49,6 +49,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.put ( IPreferenceKey.COLOR_SEEK, "128,128,128" ); // gray
         defaults.put ( IPreferenceKey.COLOR_LINEAR, "0,0,255" ); // blue
         defaults.put ( IPreferenceKey.COLOR_ARC, "0,0,255" ); // blue
+        defaults.put ( IPreferenceKey.COLOR_OVERLAY_SEEK, "220,220,220" ); // gray
+        defaults.put ( IPreferenceKey.COLOR_OVERLAY_LINEAR, "170,170,255" ); // blue
+        defaults.put ( IPreferenceKey.COLOR_OVERLAY_ARC, "170,170,255" ); // blue
         defaults.put ( IPreferenceKey.COLOR_PROBE, "255,0,0" ); // red
         defaults.put ( IPreferenceKey.COLOR_MACHINE_ORIGIN, "255,0,255" ); // magenta
         defaults.put ( IPreferenceKey.COLOR_WORK_ORIGIN, "0,255,255" ); // cyan

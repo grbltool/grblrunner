@@ -25,6 +25,9 @@ public interface IPreferenceKey {
     public static final String COLOR_SEEK = IConstant.KEY_BASE + ".seek.color";
     public static final String COLOR_LINEAR = IConstant.KEY_BASE + ".linear.color";
     public static final String COLOR_ARC = IConstant.KEY_BASE + ".arc.color";
+    public static final String COLOR_OVERLAY_SEEK = IConstant.KEY_BASE + ".overlay.seek.color";
+    public static final String COLOR_OVERLAY_LINEAR = IConstant.KEY_BASE + ".overlay.linear.color";
+    public static final String COLOR_OVERLAY_ARC = IConstant.KEY_BASE + ".overlay.arc.color";
     public static final String COLOR_PROBE = IConstant.KEY_BASE + ".probe.color";
     public static final String COLOR_MACHINE_ORIGIN = IConstant.KEY_BASE + ".origin.machine.color";
     public static final String COLOR_WORK_ORIGIN = IConstant.KEY_BASE + ".origin.work.color";

@@ -41,6 +41,9 @@ public class GcodeViewPreferencePage extends FieldEditorPreferencePage {
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_SEEK, "Gcode Motion Mode Seek", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_LINEAR, "Gcode Motion Mode Linear", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_ARC, "Gcode Motion Mode Arc", getFieldEditorParent () ) );
+        addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_OVERLAY_SEEK, "Overlay Gcode Motion Mode Seek", getFieldEditorParent () ) );
+        addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_OVERLAY_LINEAR, "Overlay Gcode Motion Mode Linear", getFieldEditorParent () ) );
+        addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_OVERLAY_ARC, "Overlay Gcode Motion Mode Arc", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_PROBE, "Gcode Probe ", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_PROCESSED, "Gcode Processed", getFieldEditorParent () ) );
 

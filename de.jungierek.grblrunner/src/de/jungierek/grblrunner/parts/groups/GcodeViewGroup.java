@@ -80,8 +80,9 @@ public class GcodeViewGroup {
     private double rotX = 0.0 * IConstant.ONE_DEGREE;
     private double rotY = 0.0 * IConstant.ONE_DEGREE;
     private double rotZ = 0.0 * IConstant.ONE_DEGREE;
-    private double scale = 5.0;
+    private double scale = IConstant.INITIAL_SCALE;
 
+    // preferences
     private double workAreaMaxX; // set from preferences
     private double workAreaMaxY; // set from preferences
 
@@ -100,6 +101,10 @@ public class GcodeViewGroup {
     private Color workareaMidcrossColor; // set from preferences
 
     private boolean fitToSizeWithZ; // set from preferences
+
+    private Color overlayGcodeMotionModeSeekColor; // set from preferences
+    private Color overlayGcodeMotionModeLinearColor; // set from preferences
+    private Color overlayGcodeMotionModeArcColor; // set from preferences
 
     private IGcodePoint [] workAreaPoints;
     private final int workAreaCenterCrossLength = 3; // its only the half length, like a radius
@@ -407,6 +412,30 @@ public class GcodeViewGroup {
 
     }
 
+    @Inject
+    public void setOverlayGcodeMotionModeSeekColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_OVERLAY_SEEK) String rgbText ) {
+
+        overlayGcodeMotionModeSeekColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setOverlayGcodeMotionModeLinearColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_OVERLAY_LINEAR) String rgbText ) {
+
+        overlayGcodeMotionModeLinearColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
+    @Inject
+    public void setOverlayGcodeMotionModeArcColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_OVERLAY_ARC) String rgbText ) {
+
+        overlayGcodeMotionModeArcColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        redraw ();
+
+    }
+
     @PostConstruct
     public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
@@ -598,11 +627,11 @@ public class GcodeViewGroup {
 
             display = evt.display;
 
-            scaleLabel.setText ( String.format ( "%.1f", scale ) );
+            scaleLabel.setText ( String.format ( IConstant.FORMAT_SCALE, scale ) );
             pixelShiftLabel.setText ( "" + canvasShift );
-            String rotXs = String.format ( "%.1f", rotX / IConstant.ONE_DEGREE );
-            String rotYs = String.format ( "%.1f", rotY / IConstant.ONE_DEGREE );
-            String rotZs = String.format ( "%.1f", rotZ / IConstant.ONE_DEGREE );
+            String rotXs = String.format ( IConstant.FORMAT_SCALE, rotX / IConstant.ONE_DEGREE );
+            String rotYs = String.format ( IConstant.FORMAT_SCALE, rotY / IConstant.ONE_DEGREE );
+            String rotZs = String.format ( IConstant.FORMAT_SCALE, rotZ / IConstant.ONE_DEGREE );
             rotationLabel.setText ( "[" + rotXs + "," + rotYs + "," + rotZs + "]" );
 
             // Double Buffering
@@ -618,9 +647,8 @@ public class GcodeViewGroup {
             if ( gcodeProgram != null && viewGrid ) drawGrid ( gc );
             if ( gcodeProgram != null && viewGcode ) {
                 drawGcode ( gc, gcodeProgram );
-                // TODO different color for overlay
-                if ( gcodeProgram != overlayGcodeProgram && overlayGcodeProgram != null ) {
-                    drawGcode ( gc, overlayGcodeProgram );
+                if ( overlayGcodeProgram != null && gcodeProgram != overlayGcodeProgram ) {
+                    drawOverlayGcode ( gc, overlayGcodeProgram );
                 }
             }
             drawGantry ( gc );
@@ -724,6 +752,18 @@ public class GcodeViewGroup {
 
         private void drawGcode ( GC gc, IGcodeProgram program ) {
 
+            drawGcode ( gc, program, false );
+
+        }
+
+        private void drawOverlayGcode ( GC gc, IGcodeProgram program ) {
+
+            drawGcode ( gc, program, true );
+
+        }
+
+        private void drawGcode ( GC gc, IGcodeProgram program, boolean isOverlay ) {
+
             for ( IGcodeLine gcodeLine : program.getAllGcodeLines () ) {
 
                 EGcodeMode gcodeMode = gcodeLine.getGcodeMode ();
@@ -735,25 +775,25 @@ public class GcodeViewGroup {
                         case MOTION_MODE_SEEK:
                             gc.setLineStyle ( SWT.LINE_SOLID );
                             gc.setLineWidth ( 1 );
-                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : gcodeMotionModeSeekColor );
+                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeSeekColor : gcodeMotionModeSeekColor );
                             drawLine ( gc, gcodeLine );
                             break;
                         case MOTION_MODE_LINEAR:
                             gc.setLineStyle ( SWT.LINE_SOLID );
                             gc.setLineWidth ( 1 );
-                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : gcodeMotionModeLinearColor );
+                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeLinearColor : gcodeMotionModeLinearColor );
                             drawLine ( gc, gcodeLine );
                             break;
                         case MOTION_MODE_CW_ARC:
                             gc.setLineStyle ( SWT.LINE_SOLID );
                             gc.setLineWidth ( 1 );
-                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : gcodeMotionModeArcColor );
+                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeArcColor : gcodeMotionModeArcColor );
                             drawCircle ( gc, +1, gcodeLine );
                             break;
                         case MOTION_MODE_CCW_ARC:
                             gc.setLineStyle ( SWT.LINE_SOLID );
                             gc.setLineWidth ( 1 );
-                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : gcodeMotionModeArcColor );
+                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeArcColor : gcodeMotionModeArcColor );
                             drawCircle ( gc, -1, gcodeLine );
                             break;
                         case MOTION_MODE_PROBE:
