@@ -63,7 +63,7 @@ public class MacroPocketGroup extends MacroGroup {
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm" );
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "z clearance", 1 );
-        zClearanceText = GuiFactory.createDoubleText ( group, formatCoordinate ( getIntPreference ( IPreferenceKey.Z_CLEARANCE ) ), 1, true, 0.0 );
+        zClearanceText = GuiFactory.createDoubleText ( group, formatCoordinate ( getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) ), 1, true, 0.0 );
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm" );
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "spindle speed", 1 );
@@ -114,12 +114,12 @@ public class MacroPocketGroup extends MacroGroup {
 
     @Override
     public void restorePreferenceData () {
-
+        
         // xDimensionText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) ) );
         zLiftupText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) ) );
         xyFeedrateText.setText ( "" + getIntPreference ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE ) );
         // yDimensionText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) ) );
-        zClearanceText.setText ( formatCoordinate ( getIntPreference ( IPreferenceKey.Z_CLEARANCE ) ) );
+        zClearanceText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) ) );
         spindleSpeedText.setText ( "" + getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
         millDiameterText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIAMETER ) ) );
         zDepthText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ) ) );
