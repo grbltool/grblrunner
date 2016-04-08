@@ -93,6 +93,23 @@ public class MacroHobbedBoltGroup extends MacroGroup {
     }
 
     @Override
+    public void restorePreferenceData () {
+
+        LOG.info ( "restorePreferenceData:" );
+
+        angleText.setText ( "" + getIntPreference ( IPreferenceKey.HOBBED_BOLT_ANGLE ) );
+        zClearanceText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) ) );
+        feedrateText.setText ( "" + getIntPreference ( IPreferenceKey.HOBBED_BOLT_FEEDRATE ) );
+        boltDiameterText.setText ( "" + getIntPreference ( IPreferenceKey.HOBBED_BOLT_BOLT_DIAMETER ) );
+        xClearanceText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.HOBBED_BOLT_X_CLEARANCE ) ) );
+        spindleSpeedText.setText ( "" + getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
+        countRetractionText.setText ( "" + getIntPreference ( IPreferenceKey.HOBBED_BOLT_COUNT_RETRACTION ) );
+        retractionText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.HOBBED_BOLT_RETRACTION ) ) );
+        waitAtTargetText.setText ( "" + getIntPreference ( IPreferenceKey.HOBBED_BOLT_WAIT_AT_TARGET ) );
+
+    }
+
+    @Override
     protected String getTitle () {
 
         return "milling hoobed bolts for a 3D printer";

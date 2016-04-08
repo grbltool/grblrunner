@@ -361,6 +361,7 @@
   <handlers xmi:id="_2Q_WwOBEEeWXitAFTaNkpw" elementId="de.jungierek.grblrunner.handler.gcode.optimize" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeOptimizeCommandHandler" command="_vAbTMOBEEeWXitAFTaNkpw"/>
   <handlers xmi:id="_-U0BgOIsEeWx3dCuCzksUg" elementId="de.jungierek.grblrunner.handler.preferences" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.PreferencesCommandHandler" command="_2niMwOIsEeWx3dCuCzksUg"/>
   <handlers xmi:id="_bozXUOiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.handler.fittosize" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeViewFitToSizeCommandHandler" command="_UdSy4OiAEeWwz-taqm-HEQ"/>
+  <handlers xmi:id="_W7bd4Pw3EeWF4-1h_SKR5Q" elementId="de.jungierek.grblrunner.handler.macro.restore" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.MacroRestoreCommandHandler" command="_A7ZVMPw3EeWF4-1h_SKR5Q"/>
   <bindingTables xmi:id="_JWsysIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.bindingtable.global" bindingContext="_TThFefsBEeSJsKKNyX_1bw">
     <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+G" command="_PP9sEHdmEeW3XImWwiVxiA">
       <tags>type:user</tags>
@@ -576,6 +577,7 @@
     <handlers xmi:id="_bR2u0JxAEeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handler.macro.play" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodePlayInPartHandler" command="_dBKgMHdoEeW3XImWwiVxiA"/>
     <toolbar xmi:id="_X5YzoJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.toolbar.1">
       <children xsi:type="menu:HandledToolItem" xmi:id="_3blPEJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handledtoolitem.macro.play" iconURI="platform:/plugin/de.jungierek.grblrunner/run.gif" command="_dBKgMHdoEeW3XImWwiVxiA"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_23-IcPw2EeWF4-1h_SKR5Q" elementId="de.jungierek.grblrunner.handledtoolitem.macro.restore" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/undo.gif" command="_A7ZVMPw3EeWF4-1h_SKR5Q"/>
       <children xsi:type="menu:DirectToolItem" xmi:id="_5Uf4gJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.directtoolitem.macro.view" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/gcode.gif" tooltip="view gcode" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorDirectToolItem"/>
       <children xsi:type="menu:HandledToolItem" xmi:id="_9v2pgJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handledtoolitem.macro.close" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/delete.gif" command="_0fevEJVUEeWjToG7KvW0lw"/>
     </toolbar>
@@ -652,6 +654,7 @@
   <commands xmi:id="_vAbTMOBEEeWXitAFTaNkpw" elementId="de.jungierek.grblrunner.command.gcode.optimize" commandName="Gcode Optimize"/>
   <commands xmi:id="_2niMwOIsEeWx3dCuCzksUg" elementId="de.jungierek.grblrunner.command.preferences" commandName="Preferences"/>
   <commands xmi:id="_UdSy4OiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.command.fittosize" commandName="Fit To Size"/>
+  <commands xmi:id="_A7ZVMPw3EeWF4-1h_SKR5Q" elementId="de.jungierek.grblrunner.command.macro.restore" commandName="Macro Restore"/>
   <addons xmi:id="_TThFcvsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_TThFc_sBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_TThFdPsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

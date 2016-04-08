@@ -74,6 +74,8 @@ public abstract class MacroGroup {
 
     abstract protected String getTitle ();
     abstract protected void generateGcodeCore ( IGcodeProgram gcodeProgram );
+    
+    abstract public void restorePreferenceData ();
 
     private String getTimestamp () {
 
@@ -116,7 +118,7 @@ public abstract class MacroGroup {
 
     protected final SelectionListener buttonSelectionListener = new SelectionAdapter () {
         @Override
-        public void widgetSelected ( SelectionEvent e ) {
+        public void widgetSelected ( SelectionEvent evt ) {
             generateGcodeProgram ();
         }
     };

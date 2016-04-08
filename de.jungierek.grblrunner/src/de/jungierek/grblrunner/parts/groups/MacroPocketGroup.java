@@ -84,7 +84,7 @@ public class MacroPocketGroup extends MacroGroup {
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm/min" );
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "overlap", 1 );
-        overlapText = GuiFactory.createIntegerText ( group, "" + getIntPreference ( IPreferenceKey.POCKET_MILL_OVERLAP ), 1, true, 0, 49 );
+        overlapText = GuiFactory.createIntegerText ( group, "" + getIntPreference ( IPreferenceKey.POCKET_MILL_OVERLAP ), 1, true, 0, 99 );
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "%" );
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "corner comp.", 1 );
@@ -109,6 +109,24 @@ public class MacroPocketGroup extends MacroGroup {
         overlapText.addModifyListener ( textFieldModifyListener );
         cornerCompensationCheckButton.addSelectionListener ( buttonSelectionListener );
         climbCheckButton.addSelectionListener ( buttonSelectionListener );
+
+    }
+
+    @Override
+    public void restorePreferenceData () {
+
+        // xDimensionText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) ) );
+        zLiftupText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) ) );
+        xyFeedrateText.setText ( "" + getIntPreference ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE ) );
+        // yDimensionText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) ) );
+        zClearanceText.setText ( formatCoordinate ( getIntPreference ( IPreferenceKey.Z_CLEARANCE ) ) );
+        spindleSpeedText.setText ( "" + getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
+        millDiameterText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIAMETER ) ) );
+        zDepthText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ) ) );
+        zFeedrateText.setText ( "" + getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ) );
+        overlapText.setText ( "" + getIntPreference ( IPreferenceKey.POCKET_MILL_OVERLAP ) );
+        // cornerCompensationCheckButton.setSelection ( true );
+        // climbCheckButton.setSelection ( true );
 
     }
 

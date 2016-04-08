@@ -2,7 +2,6 @@ package de.jungierek.grblrunner.preference;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,14 +27,12 @@ public class MacroPocketPreferencePage extends FieldEditorPreferencePage {
 
         final int cols = 2;
 
-        addField ( new IntegerFieldEditor ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE, "z feedrate (mm/min)", getFieldEditorParent () ) );
-        addField ( new IntegerFieldEditor ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE, "xy feedrate (mm/min)", getFieldEditorParent () ) );
+        addField ( new IntegerFieldEditor ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE, "z feedrate (mm/min)", 0, 999, getFieldEditorParent () ) );
+        addField ( new IntegerFieldEditor ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE, "xy feedrate (mm/min)", 0, 999, getFieldEditorParent () ) );
         addField ( new DoubleFieldEditor ( IPreferenceKey.POCKET_MILL_DIAMETER, "mill diameter (mm)", 0.0, IConstant.PREFERENCE_DOUBLE_MAX, getFieldEditorParent () ) );
         addField ( new DoubleFieldEditor ( IPreferenceKey.POCKET_MILL_DIMENSION, "mill dimension", 0.0, IConstant.PREFERENCE_DOUBLE_MAX, getFieldEditorParent () ) );
-        addField ( new DoubleFieldEditor ( IPreferenceKey.POCKET_MILL_Z_DEPTH, "z depth (mm)", IConstant.PREFERENCE_DOUBLE_MIN, 0.0, getFieldEditorParent () ) );
-        final IntegerFieldEditor overlapEditor = new IntegerFieldEditor ( IPreferenceKey.POCKET_MILL_OVERLAP, "overlap (%)", getFieldEditorParent () );
-        overlapEditor.setValidRange ( 0, 99 );
-        addField ( overlapEditor );
+        addField ( new DoubleFieldEditor ( IPreferenceKey.POCKET_MILL_Z_DEPTH, "z depth (mm)", -5.0, 0.0, getFieldEditorParent () ) );
+        addField ( new IntegerFieldEditor ( IPreferenceKey.POCKET_MILL_OVERLAP, "overlap (%)", 0, 99, getFieldEditorParent () ) );
 
     }
 

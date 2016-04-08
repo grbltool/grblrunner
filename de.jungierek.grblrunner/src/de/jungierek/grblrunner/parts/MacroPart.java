@@ -57,6 +57,12 @@ public class MacroPart {
     private Text gcodeText;
     private String macroType;
 
+    public void restorePreferenceData () {
+
+        macroGroup.restorePreferenceData ();
+
+    }
+
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context, Display display, MPart part ) {
 
