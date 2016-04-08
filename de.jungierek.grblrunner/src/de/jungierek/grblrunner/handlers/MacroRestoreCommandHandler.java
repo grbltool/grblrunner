@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.parts.MacroPart;
+import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
+import de.jungierek.grblrunner.service.gcode.IGcodeService;
 
 public class MacroRestoreCommandHandler {
 
@@ -23,10 +25,14 @@ public class MacroRestoreCommandHandler {
 	}
 	
 	@CanExecute
-    public boolean canExecute () {
+    public boolean canExecute ( MPart part, IGcodeProgram gcodeProgram, IGcodeService gcodeService ) {
 
-		return true;
+        LOG.debug ( "canExecute: part=" + part + " program=" + gcodeProgram );
 
-	}
+        if ( part == null || !(part.getObject () instanceof MacroPart) ) return false;
+
+        return !gcodeProgram.isPlaying () && !gcodeProgram.isAutolevelScan ();
+
+    }
 		
 }
