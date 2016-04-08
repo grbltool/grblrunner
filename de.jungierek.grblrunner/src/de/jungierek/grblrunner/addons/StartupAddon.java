@@ -249,8 +249,9 @@ public class StartupAddon {
             if ( ports == null ) ports = port;
             else ports += "," + port;
         }
+
         // the only one info about ports
-        LOG.info ( "serialPortsDetectedNotified: ports=" + ports );
+        LOG.info ( "serialPortsDetectedNotified: " + (ports == null ? "no ports detected" : "ports=" + ports) );
 
     }
 

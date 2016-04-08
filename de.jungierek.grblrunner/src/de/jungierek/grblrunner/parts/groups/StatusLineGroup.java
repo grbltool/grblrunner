@@ -69,7 +69,10 @@ public class StatusLineGroup {
 
         LOG.trace ( "portsDetectedNotified: ports=" + ports );
 
-        statusLabel.setText ( "COM-Ports detected" );
+        String msg = "COM-Ports detected";
+        if ( ports.length == 0 ) msg = "no " + msg;
+
+        statusLabel.setText ( msg );
 
     }
 
