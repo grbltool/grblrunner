@@ -88,6 +88,8 @@ public class GcodeEditorDirectToolItem {
                     sb.append ( String.format ( "Y%+08.3f ", end.getY () ) );
                     sb.append ( String.format ( "Z%+08.3f   ", end.getZ () ) );
 
+                    if ( gcodeLine.isMotionModeArc () ) sb.append ( String.format ( "R%+08.3f   ", gcodeLine.getRadius () ) );
+
                     sb.append ( String.format ( "F%s   ", gcodeLine.getFeedrate () ) );
 
                     // sb.append ( gcodeLine );

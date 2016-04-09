@@ -63,7 +63,7 @@ public enum EGcodeMode {
     
     public boolean isMotionMode () {
         
-        return isMotionModeSeek () || isMotionModeLinear ();
+        return isMotionModeSeek () || isMotionModeLinear () || isMotionModeArc ();
                 
     }
 
@@ -79,7 +79,7 @@ public enum EGcodeMode {
 
     }
 
-    public boolean isArcMode () {
+    public boolean isMotionModeArc () {
 
         return this == EGcodeMode.MOTION_MODE_CW_ARC || this == EGcodeMode.MOTION_MODE_CCW_ARC;
 

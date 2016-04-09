@@ -121,6 +121,13 @@ public class GcodeLineImpl implements IGcodeLine {
     }
 
     @Override
+    public boolean isMotionMode () {
+
+        return mode != null && mode.isMotionMode ();
+
+    }
+
+    @Override
     public boolean isMotionModeSeek () {
 
         return mode != null && mode.isMotionModeSeek ();
@@ -135,31 +142,16 @@ public class GcodeLineImpl implements IGcodeLine {
     }
 
     @Override
-    public boolean isMotionMode () {
+    public boolean isMotionModeArc () {
 
-        return mode != null && mode.isMotionMode ();
-
-    }
-
-    @Override
-    public boolean isArcMode () {
-
-        return mode != null && mode.isArcMode ();
+        return mode != null && mode.isMotionModeArc ();
 
     }
 
     private void parseMotionArc ( IGcodePoint lastEnd, double lastRadius, int last_feedrate ) {
 
-        this.start = lastEnd;
-
-        double x = scanAxisCoordinate ( 'X', lastEnd.getX () );
-        double y = scanAxisCoordinate ( 'Y', lastEnd.getY () );
-        double z = scanAxisCoordinate ( 'Z', lastEnd.getZ () );
-        this.end = new GcodePointImpl ( x, y, z );
-
+        parseMotionLine ( lastEnd, last_feedrate );
         radius = scanAxisCoordinate ( 'R', lastRadius );
-
-        feedrate = (int) scanAxisCoordinate ( 'F', last_feedrate );
 
     }
 
@@ -200,23 +192,27 @@ public class GcodeLineImpl implements IGcodeLine {
 
         if ( lastEnd == null ) return;
 
-        this.mode = EGcodeMode.identify ( line );
+        mode = EGcodeMode.identify ( line );
 
-        if ( this.mode.isMotionMode () ) {
-            parseMotionLine ( lastEnd, lastFeedrate );
-        }
-        else if ( this.mode.isArcMode () ) {
-            parseMotionArc ( lastEnd, lastRadius, lastFeedrate );
-        }
-        else if ( this.mode == EGcodeMode.GCODE_MODE_UNDEF ) {
-            // HACK there is a gap: when in a line is only mess without commented out, then this is an error
-            // then there is a 0-move, because last point is the target
-            this.mode = lastMotionMode;
-            if ( this.mode.isMotionMode () ) {
+        if ( mode.isMotionMode () ) {
+            if ( mode.isMotionModeArc () ) {
+                parseMotionArc ( lastEnd, lastRadius, lastFeedrate );
+            }
+            else {
                 parseMotionLine ( lastEnd, lastFeedrate );
             }
-            else if ( this.mode.isArcMode () ) {
-                parseMotionArc ( lastEnd, lastRadius, lastFeedrate );
+        }
+        else if ( mode == EGcodeMode.GCODE_MODE_UNDEF ) {
+            // HACK there is a gap: when in a line is only mess without commented out, then this is an error
+            // then there is a 0-move, because last point is the target
+            mode = lastMotionMode;
+            if ( mode.isMotionMode () ) {
+                if ( mode.isMotionModeArc () ) {
+                    parseMotionArc ( lastEnd, lastRadius, lastFeedrate );
+                }
+                else {
+                    parseMotionLine ( lastEnd, lastFeedrate );
+                }
             }
         }
 
@@ -229,7 +225,7 @@ public class GcodeLineImpl implements IGcodeLine {
         // a end point from the last gcode line is the same reference as the current start
         // first startpoint is (0,0,0)
 
-        if ( isMotionMode () || isArcMode () ) {
+        if ( isMotionMode () ) {
             if ( lastEnd != null ) start = lastEnd;
             end = end.rotate ( 'Z', angle );
         }
@@ -241,10 +237,9 @@ public class GcodeLineImpl implements IGcodeLine {
         
         String result = "[" + lineNo + ": " + mode;
         if ( isMotionMode () ) {
-            result += " " + start + " -> " + end + " " + feedrate + " mm/min";
-        }
-        else if ( isArcMode () ) {
-            result += " " + start + " -> " + end + " r="+radius + " " + feedrate + " mm/min";
+            result += " " + start + " -> " + end;
+            if ( isMotionModeArc () ) result += " r=" + radius;
+            result += " " + feedrate + " mm/min";
         }
         else if ( mode == EGcodeMode.COMMENT ) {
             result += line;

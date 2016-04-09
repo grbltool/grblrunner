@@ -20,8 +20,7 @@ public interface IGcodeLine {
     public boolean isMotionMode ();
     boolean isMotionModeSeek ();
     boolean isMotionModeLinear ();
-
-    boolean isArcMode ();
+    boolean isMotionModeArc ();
 
     public boolean isMoveInXYZ ();
     public boolean isMoveInXY ();

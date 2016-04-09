@@ -396,7 +396,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         IGcodePoint lastEnd = null;
         for ( IGcodeLine gcodeLine : getAllGcodeLines () ) {
             gcodeLine.rotate ( rotationAngle, lastEnd );
-            if ( gcodeLine.isMotionMode () || gcodeLine.isArcMode () ) {
+            if ( gcodeLine.isMotionMode () ) {
                 lastEnd = gcodeLine.getEnd ();
                 handleMinMax ( gcodeLine );
             }
@@ -424,15 +424,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
                 lastEndPoint = gcodeLine.getEnd ();
                 lastFeedrate = gcodeLine.getFeedrate ();
 
-                handleMinMax ( gcodeLine );
-
-            }
-            else if ( gcodeLine.isArcMode () ) {
-
-                lastMotionMode = gcodeLine.getGcodeMode ();
-                lastEndPoint = gcodeLine.getEnd ();
-                lastRadius = gcodeLine.getRadius ();
-                lastFeedrate = gcodeLine.getFeedrate ();
+                if ( gcodeLine.isMotionModeArc () ) lastRadius = gcodeLine.getRadius ();
 
                 handleMinMax ( gcodeLine );
 
@@ -479,7 +471,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         // double feedrate = IPreferences.MAX_SEEK_FEEDRATE;
         double time = 0.0;
-        if ( gcodeLine.isMotionModeLinear () || gcodeLine.isArcMode () ) {
+        if ( gcodeLine.isMotionModeLinear () || gcodeLine.isMotionModeArc () ) {
             final double feedrate = gcodeLine.getFeedrate ();
             if ( feedrate != 0 ) time = dist / feedrate;
         }

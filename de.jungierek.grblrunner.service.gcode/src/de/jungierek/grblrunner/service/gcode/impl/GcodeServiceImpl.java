@@ -754,8 +754,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 LOG.trace ( THREAD_NAME + ": line=" + gcodeLine.getLine () + " | gcodeLine=" + gcodeLine );
                 eventBroker.send ( IEvent.PLAYER_LINE, gcodeLine );
 
-                // if ( gcodeModel.getTheProgram ().isScanDataComplete () && gcodeLine.isMotionMode () ) {
-                if ( gcodeProgram.isAutolevelScanComplete () && gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) {
+                if ( gcodeProgram.isAutolevelScanComplete () && gcodeLine.isMotionModeLinear () ) {
                     final String cmd = gcodeLine.getGcodeMode ().getCommand ();
                     final String feed = "F" + gcodeLine.getFeedrate ();
                     if ( gcodeLine.isMoveInXYZ () ) {
@@ -785,7 +784,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                             if ( gcodeLine.isMoveInY () ) line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
                             if ( gcodeLine.isMoveInZ () ) line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
                         }
-                        if ( gcodeLine.getGcodeMode () == EGcodeMode.MOTION_MODE_LINEAR ) line += "F" + gcodeLine.getFeedrate ();
+                        if ( gcodeLine.isMotionModeArc () ) line += "R" + gcodeLine.getRadius ();
+                        if ( gcodeLine.isMotionModeLinear () || gcodeLine.isMotionModeArc () ) line += "F" + gcodeLine.getFeedrate ();
                         sendCommandSuppressInTerminal ( line );
                         LOG.trace ( "line=" + line );
                     }
