@@ -29,7 +29,7 @@ public class StateGroup {
 
     private static final Logger LOG = LoggerFactory.getLogger ( StateGroup.class );
 
-    private static final String GROUP_NAME = "GRBL State";
+    private static final String GROUP_NAME = "Grbl State";
 
     private static final String UNCONNECTED_TEXT = "UNCONNECTED";
 
