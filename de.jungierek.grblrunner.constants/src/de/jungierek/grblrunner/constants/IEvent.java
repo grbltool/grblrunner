@@ -67,12 +67,12 @@ public interface IEvent {
     public static final String UPDATE_STATE = UPDATE_BASE + SEPARATOR + "state";
     public static final String UPDATE_MODAL_MODE = UPDATE_BASE + SEPARATOR + "motionmode";
     public static final String UPDATE_FIXTURE = UPDATE_BASE + SEPARATOR + "fixture";
-    public static final String UPDATE_FIXTURE_OFFSET = UPDATE_BASE + SEPARATOR + "fixture" + SEPARATOR + "offset";
+    public static final String UPDATE_FIXTURE_OFFSET = UPDATE_FIXTURE + SEPARATOR + "offset";
     public static final String UPDATE_PLANE = UPDATE_BASE + SEPARATOR + "plane";
-    public static final String UPDATE_METRIC_MODE = UPDATE_BASE + SEPARATOR + "metrixmode";
+    public static final String UPDATE_METRIC_MODE = UPDATE_BASE + SEPARATOR + "metricmode";
     public static final String UPDATE_TOOL = UPDATE_BASE + SEPARATOR + "tool";
     public static final String UPDATE_SPINDLE_MODE = UPDATE_BASE + SEPARATOR + "spindlemode";
-    public static final String UPDATE_COOLANT_MODE = UPDATE_BASE + SEPARATOR + "coolanrmode";
+    public static final String UPDATE_COOLANT_MODE = UPDATE_BASE + SEPARATOR + "coolantmode";
     public static final String UPDATE_FEEDRATE = UPDATE_BASE + SEPARATOR + "feedrate";
     public static final String UPDATE_SPINDLESPEED = UPDATE_BASE + SEPARATOR + "spindlespeed";
     public static final String UPDATE_DISTANCE_MODE = UPDATE_BASE + SEPARATOR + "distancemode";
