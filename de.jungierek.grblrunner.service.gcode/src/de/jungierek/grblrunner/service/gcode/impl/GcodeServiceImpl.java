@@ -42,7 +42,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     protected volatile boolean suppressInTerminal = false;
     protected volatile boolean suppressSingleByteCommandInTerminal = false;
 
-    GcodeGrblStateImpl lastState;
+    GcodeGrblStateImpl lastGrblState;
     private EGcodeMode lastMotionMode;
     private String lastCoordSelect;
     private GcodePointImpl lastCoordSelectOffset;
@@ -250,8 +250,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             GcodeGrblStateImpl gcodeState = new GcodeGrblStateImpl ( state, m, w );
 
             // update only on change
-            if ( lastState == null || !lastState.equals ( gcodeState ) ) {
-                lastState = gcodeState;
+            if ( lastGrblState == null || !lastGrblState.equals ( gcodeState ) ) {
+                lastGrblState = gcodeState;
                 eventBroker.send ( IEvent.UPDATE_STATE, gcodeState );
             }
 
@@ -458,7 +458,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @Override
     public void playGcodeProgram ( IGcodeProgram program ) {
 
-        if ( isPlaying () || isAutolevelScan () ) return;
+        if ( isPlaying () || isAutolevelScan () || !isGrblIdle () ) return;
 
         if ( gcodeProgram != null ) {
             gcodeProgram.resetProcessed ();
@@ -476,7 +476,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @Override
     public void scanAutolevelData ( IGcodeProgram program, double zMin, double zMax, double zClearance, double probeFeedrate, boolean withError ) {
 
-        if ( isPlaying () || isAutolevelScan () ) return;
+        if ( isPlaying () || isAutolevelScan () || !isGrblIdle () ) return;
 
         gcodeProgram = program;
 
@@ -524,6 +524,13 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             new ProbeScannerThread ( zMin, zMax, zClearance, probeFeedrate, withError ).start ();
 
         }
+
+    }
+
+    @Override
+    public boolean isGrblIdle () {
+
+        return lastGrblState != null && lastGrblState.getGrblState () == EGrblState.IDLE;
 
     }
 
@@ -601,7 +608,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
     private void resetLastVars () {
 
-        lastState = null;
+        lastGrblState = null;
         lastCoordSelectOffset = null;
         lastCoordSelectTempOffset = null;
         lastMotionMode = null;

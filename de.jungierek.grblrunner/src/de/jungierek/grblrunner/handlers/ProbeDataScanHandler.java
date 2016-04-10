@@ -51,7 +51,9 @@ public class ProbeDataScanHandler {
 
         LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeService.isPlaying () + " isscanning=" + gcodeService.isAutolevelScan () );
 
-        return serialService.isOpen () && gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeProgram.isAutolevelScanComplete () && !gcodeService.isPlaying () && !gcodeService.isAutolevelScan ();
+        return serialService.isOpen () && gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeProgram.isAutolevelScanComplete () && !gcodeService.isPlaying ()
+                && !gcodeService.isAutolevelScan () && gcodeService.isGrblIdle ();
+
     }
 
 }

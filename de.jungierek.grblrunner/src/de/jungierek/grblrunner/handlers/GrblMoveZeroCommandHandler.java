@@ -39,7 +39,7 @@ public class GrblMoveZeroCommandHandler {
 
         LOG.trace ( "canExecute:" );
 
-        return serial.isOpen () && !gcodeService.isPlaying () && !gcodeService.isAutolevelScan ();
+        return serial.isOpen () && !gcodeService.isPlaying () && !gcodeService.isAutolevelScan () && gcodeService.isGrblIdle ();
 
     }
 

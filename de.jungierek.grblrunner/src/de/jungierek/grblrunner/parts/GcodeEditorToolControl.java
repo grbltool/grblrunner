@@ -39,12 +39,6 @@ public class GcodeEditorToolControl {
     private boolean ignoreRotationTextModifyListener = false;
 
     @PostConstruct
-    public void createGuiEmpty ( Composite parent ) {
-
-        createGui ( parent );
-
-    }
-
     public void createGui ( Composite parent ) {
 
         Composite composite = new Composite ( parent, SWT.NONE );
