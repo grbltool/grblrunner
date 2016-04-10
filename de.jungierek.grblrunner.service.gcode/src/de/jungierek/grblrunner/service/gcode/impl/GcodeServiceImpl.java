@@ -746,6 +746,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             gcodeProgram.setPlayerStart ();
             eventBroker.send ( IEvent.PLAYER_START, getTimestamp () );
 
+            boolean firstMove = true;
             IGcodeLine [] allGcodeLines = gcodeProgram.getAllGcodeLines ();
             for ( IGcodeLine gcodeLine : allGcodeLines ) {
 
@@ -780,9 +781,10 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         String line = "";
                         if ( gcodeLine.isMoveInXYZ () ) {
                             line += cmd;
-                            if ( gcodeLine.isMoveInX () ) line += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getX () );
-                            if ( gcodeLine.isMoveInY () ) line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
-                            if ( gcodeLine.isMoveInZ () ) line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
+                            if ( gcodeLine.isMoveInX () || firstMove ) line += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getX () );
+                            if ( gcodeLine.isMoveInY () || firstMove ) line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
+                            if ( gcodeLine.isMoveInZ () || firstMove ) line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
+                            firstMove = false;
                         }
                         if ( gcodeLine.isMotionModeArc () ) line += "R" + gcodeLine.getRadius ();
                         if ( gcodeLine.isMotionModeLinear () || gcodeLine.isMotionModeArc () ) line += "F" + gcodeLine.getFeedrate ();
