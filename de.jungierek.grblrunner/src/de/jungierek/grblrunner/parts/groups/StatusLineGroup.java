@@ -1,22 +1,34 @@
 package de.jungierek.grblrunner.parts.groups;
 
+import java.util.ArrayList;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.tools.GuiFactory;
 
 public class StatusLineGroup {
@@ -25,12 +37,33 @@ public class StatusLineGroup {
 
     private static final String GROUP_NAME = "Status";
 
+    @Inject
+    private Shell shell;
+
+    @Inject
+    private Display display;
+
     private Label statusLabel;
+    private Label statusHistoryLabel;
+
+    private int statusHistoryDepth;
+    private ArrayList<String> statusHistory;
+
+    @Inject
+    public void setStatusHistoryDepth ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.STATUS_HISTORY_DEPTH) int depth ) {
+
+        LOG.debug ( "setStatusHistoryDepth: depth=" + depth );
+        statusHistoryDepth = depth;
+        trimStatusHistory ();
+
+    }
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
 
         LOG.debug ( "createGui: parent=" + parent );
+        
+        statusHistory = new ArrayList<String> ( statusHistoryDepth + 1 );
 
         int partCols = ((Integer) context.get ( IContextKey.PART_COLS )).intValue ();
         int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
@@ -41,6 +74,70 @@ public class StatusLineGroup {
 
         statusLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "Status", 1 );
 
+        statusLabel.addMouseListener ( new MouseAdapter () {
+
+            private Shell statusHistoryDialog;
+
+            @Override
+            public void mouseUp ( MouseEvent evt ) {
+
+                LOG.debug ( "mouseUp:" );
+
+                statusHistoryDialog.close ();
+
+            }
+
+            @Override
+            public void mouseDown ( MouseEvent evt ) {
+
+                LOG.debug ( "mouseDown:" );
+                
+                statusHistoryDialog = new Shell ( shell, SWT.NO_TRIM | SWT.BORDER );
+                statusHistoryDialog.setBackground ( display.getSystemColor ( SWT.COLOR_GRAY ) );
+                statusHistoryDialog.setLayout ( new GridLayout () );
+
+                statusHistoryLabel = new Label ( statusHistoryDialog, SWT.NONE );
+                statusHistoryLabel.setLayoutData ( new GridData ( SWT.FILL, SWT.TOP, true, false ) );
+
+                String text = null;
+                for ( String t : statusHistory ) {
+                    if ( text == null ) text = t;
+                    else text += "\n" + t;
+                }
+                statusHistoryLabel.setText ( text );
+                
+                final Control refWidget = statusLabel.getParent ();
+                Point groupSize = refWidget.getSize ();
+                Point p = refWidget.toDisplay ( 0, 0 );
+                Point dialogSize = statusHistoryDialog.computeSize ( groupSize.x, SWT.DEFAULT );
+                statusHistoryDialog.setLocation ( p.x, p.y - dialogSize.y );
+                statusHistoryDialog.setSize ( dialogSize );
+
+                statusHistoryDialog.open ();
+
+            }
+
+        } );
+
+    }
+
+    private void setStatusLine ( String line ) {
+
+        statusLabel.setText ( line );
+        
+        statusHistory.add ( line );
+        trimStatusHistory ();
+
+    }
+
+    private void trimStatusHistory () {
+
+        if ( statusHistory == null ) return;
+
+        while ( statusHistory.size () > statusHistoryDepth ) {
+            statusHistory.remove ( 0 ); // remove oldest first
+        }
+
     }
 
     @Inject
@@ -49,7 +146,7 @@ public class StatusLineGroup {
 
         LOG.trace ( "applicationStarted: event=" + event ); // MApplication
 
-        statusLabel.setText ( "retrieving COM-Ports ..." );
+        setStatusLine ( "retrieving COM-Ports ..." );
 
     }
 
@@ -59,20 +156,30 @@ public class StatusLineGroup {
 
         LOG.debug ( "alarmNotified: line=" + line );
 
-        statusLabel.setText ( line );
+        setStatusLine ( line );
 
     }
 
     @Inject
     @Optional
-    public void portsDetectedNotified ( @UIEventTopic(IEvent.SERIAL_PORTS_DETECTED) String [] ports ) {
+    public void portsDetectedNotified ( @UIEventTopic(IEvent.SERIAL_PORTS_DETECTED) String [] portNames ) {
 
-        LOG.trace ( "portsDetectedNotified: ports=" + ports );
+        LOG.trace ( "portsDetectedNotified: ports=" + portNames );
 
         String msg = "COM-Ports detected";
-        if ( ports.length == 0 ) msg = "no " + msg;
+        if ( portNames.length == 0 ) {
+            msg = "no " + msg;
+        }
+        else {
+            String ports = null;
+            for ( String port : portNames ) {
+                if ( ports == null ) ports = port;
+                else ports += "," + port;
+            }
+            msg += " " + ports;
+        }
 
-        statusLabel.setText ( msg );
+        setStatusLine ( msg );
 
     }
 
@@ -82,7 +189,7 @@ public class StatusLineGroup {
 
         LOG.trace ( "connectedNotified: port=" + port );
 
-        statusLabel.setText ( "grbl connected on port " + port );
+        setStatusLine ( "grbl connected on port " + port );
 
     }
 
@@ -92,7 +199,7 @@ public class StatusLineGroup {
 
         LOG.trace ( "connectedNotified: port=" + port );
 
-        statusLabel.setText ( "grbl disconnected" );
+        setStatusLine ( "grbl disconnected" );
 
     }
 
@@ -106,7 +213,7 @@ public class StatusLineGroup {
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
         startMsg = "runnning gcode program since " + timestamp + " ... ";
-        statusLabel.setText ( startMsg );
+        setStatusLine ( startMsg );
 
     }
 
@@ -116,7 +223,7 @@ public class StatusLineGroup {
 
         LOG.trace ( "playerStopNotified: timestamp=" + timestamp );
 
-        statusLabel.setText ( startMsg + "finsihed at " + timestamp );
+        setStatusLine ( startMsg + "finsihed at " + timestamp );
         startMsg = null;
 
     }
@@ -128,7 +235,7 @@ public class StatusLineGroup {
         LOG.trace ( "scanStartNotified:" );
 
         startMsg = "scanning probe data since " + timestamp + " ... ";
-        statusLabel.setText ( startMsg );
+        setStatusLine ( startMsg );
 
     }
 
@@ -138,7 +245,7 @@ public class StatusLineGroup {
 
         LOG.trace ( "scanStopNotified: " );
 
-        statusLabel.setText ( startMsg + "finsihed at " + timestamp );
+        setStatusLine ( startMsg + "finsihed at " + timestamp );
 
     }
 

@@ -87,4 +87,7 @@ public interface IPreferenceKey {
     public static final String COMMAND_HISTORY_DEPTH = IConstant.KEY_BASE + ".command.history.depth";
     public static final String COMMAND_HISTORY_WITHNOWERROR = IConstant.KEY_BASE + ".command.history.withnoerror";
 
+    // --- Status History ---
+    public static final String STATUS_HISTORY_DEPTH = IConstant.KEY_BASE + ".status.history.depth";
+
 }

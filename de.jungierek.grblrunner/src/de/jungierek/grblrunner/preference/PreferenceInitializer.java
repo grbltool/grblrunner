@@ -114,6 +114,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.putInt ( IPreferenceKey.COMMAND_HISTORY_DEPTH, 20 );
         defaults.putBoolean ( IPreferenceKey.COMMAND_HISTORY_WITHNOWERROR, false );
 
+        // --- Status History ---
+        defaults.putInt ( IPreferenceKey.STATUS_HISTORY_DEPTH, 30 );
+
         // -------------------------------
 
         try {

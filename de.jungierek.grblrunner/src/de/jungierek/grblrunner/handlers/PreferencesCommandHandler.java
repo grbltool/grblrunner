@@ -24,6 +24,7 @@ import de.jungierek.grblrunner.preference.MillPreferencePage;
 import de.jungierek.grblrunner.preference.ProbePreferencePage;
 import de.jungierek.grblrunner.preference.ScopedPreferenceStore;
 import de.jungierek.grblrunner.preference.SerialPreferencePage;
+import de.jungierek.grblrunner.preference.StatusHistoryPreferencPage;
 import de.jungierek.grblrunner.preference.TerminalPreferencePage;
 
 // some idieas from https://github.com/opcoach/e4Preferences/blob/master/com.opcoach.e4.preferences.example/src/com/opcoach/e4/preferences/example/pages/DefaultValuesInitializer.java
@@ -55,6 +56,7 @@ public class PreferencesCommandHandler {
         preferenceManager.addTo ( macroNode.getId (), new PreferenceNode ( MacroHobbedBoltPreferencePage.ID, new MacroHobbedBoltPreferencePage ( preferenceStore ) ) );
         preferenceManager.addTo ( macroNode.getId (), new PreferenceNode ( MacroPocketPreferencePage.ID, new MacroPocketPreferencePage ( preferenceStore ) ) );
         preferenceManager.addToRoot ( new PreferenceNode ( CommandHistoryPreferencPage.ID, new CommandHistoryPreferencPage ( preferenceStore ) ) );
+        preferenceManager.addToRoot ( new PreferenceNode ( StatusHistoryPreferencPage.ID, new StatusHistoryPreferencPage ( preferenceStore ) ) );
 
         new PreferenceDialog ( shell, preferenceManager ).open ();
 
