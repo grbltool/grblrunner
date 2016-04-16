@@ -29,7 +29,7 @@ public class GcodeOptimizeCommandHandler {
 	@CanExecute
     public boolean canExecute ( @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram ) {
 		
-        LOG.debug ( "canExecute: program=" + gcodeProgram + " isPLaying=" + gcodeProgram.isPlaying () + " isscanning=" + gcodeProgram.isAutolevelScan () );
+        LOG.debug ( "canExecute: program=" + gcodeProgram );
 
         return gcodeProgram != null && gcodeProgram.isLoaded () && !gcodeProgram.isOptimized () && !gcodeProgram.isPlaying () && !gcodeProgram.isAutolevelScan ()
                 && gcodeProgram.getGcodeProgramFile ().isFile ();

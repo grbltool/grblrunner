@@ -2,33 +2,39 @@
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:advanced="http://www.eclipse.org/ui/2010/UIModel/application/ui/advanced" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_TThFcPsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ide.application" bindingContexts="_TThFefsBEeSJsKKNyX_1bw">
   <children xsi:type="basic:TrimmedWindow" xmi:id="_TThFcfsBEeSJsKKNyX_1bw" elementId="de.jungierek.grblrunner.window.main" label="GRBL Runner" width="500" height="400">
     <tags>shellMaximized</tags>
-    <children xsi:type="advanced:PerspectiveStack" xmi:id="_zL1LwPsKEeSJsKKNyX_1bw" elementId="de.jungierek.grblrunner.perspectivestack.0" selectedElement="_hMZn4HZzEeWm0vFGmduGXw">
+    <children xsi:type="advanced:PerspectiveStack" xmi:id="_zL1LwPsKEeSJsKKNyX_1bw" elementId="de.jungierek.grblrunner.perspectivestack.0" selectedElement="_ASAmsAOaEeaKFK1xDri94w">
       <children xsi:type="advanced:Perspective" xmi:id="_EESWoPsLEeSJsKKNyX_1bw" elementId="de.jungierek.grblrunner.perspective.grblrunner1" label="Grblrunner 1">
-        <children xsi:type="basic:PartSashContainer" xmi:id="_G5wScPsMEeSJsKKNyX_1bw" elementId="de.jungierek.grblrunner.partsashcontainer.0" containerData="1000" horizontal="true">
-          <children xsi:type="basic:PartSashContainer" xmi:id="_5f4WEBKrEeWQTZppWEhVhQ" elementId="de.jungierek.grblrunner.partsashcontainer.1" containerData="300">
-            <children xsi:type="basic:PartStack" xmi:id="_8OqQgBKrEeWQTZppWEhVhQ" elementId="de.jungierek.grblrunner.partstack.0" containerData="500">
-              <children xsi:type="advanced:Placeholder" xmi:id="_NJGGUHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.2" ref="_HqYF4BKsEeWQTZppWEhVhQ"/>
-            </children>
-            <children xsi:type="basic:PartStack" xmi:id="_9AogABKrEeWQTZppWEhVhQ" elementId="de.jungierek.grblrunner.partstack.1" containerData="1300">
-              <children xsi:type="advanced:Placeholder" xmi:id="_bVU7gHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.4" ref="_m1SpwBKsEeWQTZppWEhVhQ"/>
-            </children>
-            <children xsi:type="basic:PartStack" xmi:id="_9ZP0UBKrEeWQTZppWEhVhQ" elementId="de.jungierek.grblrunner.partstack.2" containerData="2200">
-              <children xsi:type="advanced:Placeholder" xmi:id="_AqXUwHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.0" ref="_qrgGUBKsEeWQTZppWEhVhQ"/>
-            </children>
-          </children>
-          <children xsi:type="basic:PartSashContainer" xmi:id="_7rMFECIXEeWrdpg9E2L1Pw" elementId="de.jungierek.grblrunner.partsashcontainer.2" containerData="700">
-            <children xsi:type="basic:PartStack" xmi:id="_JtHuwCIYEeWrdpg9E2L1Pw" elementId="de.jungierek.grblrunner.partstack.3" containerData="600">
-              <children xsi:type="advanced:Placeholder" xmi:id="_s2UtEHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.10" ref="_-TiYoPsNEeSJsKKNyX_1bw"/>
-            </children>
-            <children xsi:type="basic:PartSashContainer" xmi:id="_ushhkDeUEeWKEKUzaxkdZg" elementId="de.jungierek.grblrunner.partsashcontainer.3" containerData="400" horizontal="true">
-              <children xsi:type="basic:PartStack" xmi:id="_KWHBYCIYEeWrdpg9E2L1Pw" elementId="de.jungierek.grblrunner.partstack.4" containerData="200">
-                <children xsi:type="advanced:Placeholder" xmi:id="_jRF4MHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.6" ref="_SD3lAPsNEeSJsKKNyX_1bw"/>
+        <children xsi:type="basic:PartSashContainer" xmi:id="_PSq6MAMxEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partsashcontainer.14">
+          <tags>NoMove</tags>
+          <children xsi:type="basic:PartSashContainer" xmi:id="_G5wScPsMEeSJsKKNyX_1bw" elementId="de.jungierek.grblrunner.partsashcontainer.0" containerData="9350" horizontal="true">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_5f4WEBKrEeWQTZppWEhVhQ" elementId="de.jungierek.grblrunner.partsashcontainer.1" containerData="300">
+              <children xsi:type="basic:PartStack" xmi:id="_8OqQgBKrEeWQTZppWEhVhQ" elementId="de.jungierek.grblrunner.partstack.0" containerData="149">
+                <children xsi:type="advanced:Placeholder" xmi:id="_NJGGUHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.2" ref="_HqYF4BKsEeWQTZppWEhVhQ"/>
               </children>
-              <children xsi:type="basic:PartStack" xmi:id="_5YIIoDeUEeWKEKUzaxkdZg" elementId="de.jungierek.grblrunner.partstack.5" containerData="200">
-                <children xsi:type="advanced:Placeholder" xmi:id="_kcmpEHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.7" ref="_5v8LsDeUEeWKEKUzaxkdZg"/>
+              <children xsi:type="basic:PartStack" xmi:id="_9AogABKrEeWQTZppWEhVhQ" elementId="de.jungierek.grblrunner.partstack.1" toBeRendered="false" visible="false" containerData="1361">
+                <children xsi:type="advanced:Placeholder" xmi:id="_bVU7gHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.4" ref="_m1SpwBKsEeWQTZppWEhVhQ"/>
+              </children>
+              <children xsi:type="basic:PartStack" xmi:id="_9ZP0UBKrEeWQTZppWEhVhQ" elementId="de.jungierek.grblrunner.partstack.2" toBeRendered="false" visible="false" containerData="1983">
+                <children xsi:type="advanced:Placeholder" xmi:id="_AqXUwHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.0" ref="_qrgGUBKsEeWQTZppWEhVhQ"/>
+              </children>
+              <children xsi:type="basic:PartStack" xmi:id="_TmxG0AOYEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partstack.5" containerData="727">
+                <children xsi:type="advanced:Placeholder" xmi:id="_Urbo0AOYEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.23" ref="_jbBuYAMXEeazSLMMvR3jSA"/>
               </children>
             </children>
+            <children xsi:type="basic:PartSashContainer" xmi:id="_7rMFECIXEeWrdpg9E2L1Pw" elementId="de.jungierek.grblrunner.partsashcontainer.2" containerData="700">
+              <children xsi:type="basic:PartStack" xmi:id="_JtHuwCIYEeWrdpg9E2L1Pw" elementId="de.jungierek.grblrunner.partstack.3" containerData="600">
+                <children xsi:type="advanced:Placeholder" xmi:id="_s2UtEHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.10" ref="_-TiYoPsNEeSJsKKNyX_1bw"/>
+              </children>
+              <children xsi:type="basic:PartSashContainer" xmi:id="_ushhkDeUEeWKEKUzaxkdZg" elementId="de.jungierek.grblrunner.partsashcontainer.3" containerData="400" horizontal="true">
+                <children xsi:type="basic:PartStack" xmi:id="_KWHBYCIYEeWrdpg9E2L1Pw" elementId="de.jungierek.grblrunner.partstack.4" containerData="200">
+                  <children xsi:type="advanced:Placeholder" xmi:id="_jRF4MHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.6" ref="_SD3lAPsNEeSJsKKNyX_1bw"/>
+                  <children xsi:type="advanced:Placeholder" xmi:id="_kcmpEHXeEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.placeholder.7" ref="_5v8LsDeUEeWKEKUzaxkdZg"/>
+                </children>
+                <children xsi:type="advanced:Placeholder" xmi:id="_HE4ZYAMxEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.21" containerData="200" ref="_K2TdsHZ1EeWm0vFGmduGXw"/>
+              </children>
+            </children>
           </children>
+          <children xsi:type="advanced:Placeholder" xmi:id="_R-N6cAMxEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.22" containerData="650" ref="_oKDucH2CEeWUeKTWSShdvw"/>
         </children>
       </children>
       <children xsi:type="advanced:Perspective" xmi:id="_hMZn4HZzEeWm0vFGmduGXw" elementId="de.jungierek.grblrunner.perspective.grblrunner2" label="Grblrunner 2">
@@ -47,9 +53,7 @@
               </children>
             </children>
             <children xsi:type="basic:PartSashContainer" xmi:id="_zT2VcHZzEeWm0vFGmduGXw" elementId="de.jungierek.grblrunner.partsashcontainer.5" containerData="500">
-              <children xsi:type="basic:PartStack" xmi:id="_K2TdsHZ1EeWm0vFGmduGXw" elementId="de.jungierek.grblrunner.partstack.editors" containerData="300">
-                <tags>NoAutoCollapse</tags>
-              </children>
+              <children xsi:type="advanced:Placeholder" xmi:id="_JHF30AMoEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.19" containerData="300" ref="_K2TdsHZ1EeWm0vFGmduGXw"/>
               <children xsi:type="basic:PartStack" xmi:id="_0CsBMIREEeW3I9B_GeUYdA" elementId="de.jungierek.grblrunner.partstack.12" containerData="700">
                 <children xsi:type="advanced:Placeholder" xmi:id="_HW1ycIRFEeW3I9B_GeUYdA" elementId="de.jungierek.grblrunner.placeholder.11" ref="_-TiYoPsNEeSJsKKNyX_1bw"/>
               </children>
@@ -63,11 +67,63 @@
               </children>
             </children>
           </children>
-          <children xsi:type="basic:Part" xmi:id="_oKDucH2CEeWUeKTWSShdvw" elementId="de.jungierek.grblrunner.part.statusline" containerData="650" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.StatusLinePart" label="StatusLine">
-            <variables>NoTitle</variables>
-            <variables>NoClose</variables>
-            <variables>Standalone</variables>
+          <children xsi:type="advanced:Placeholder" xmi:id="_-01k4AMnEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.12" containerData="650" ref="_oKDucH2CEeWUeKTWSShdvw"/>
+        </children>
+      </children>
+      <children xsi:type="advanced:Perspective" xmi:id="_dlnEEAMgEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.perspective.grblrunner3" label="Grblrunner 3">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_7tVsoAMgEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partsashcontainer.9">
+          <tags>NoMove</tags>
+          <children xsi:type="basic:PartSashContainer" xmi:id="_89lzkAMgEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partsashcontainer.10" containerData="9350" horizontal="true">
+            <children xsi:type="basic:PartSashContainer" xmi:id="__zN84AMgEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partsashcontainer.13" containerData="300">
+              <children xsi:type="basic:PartStack" xmi:id="_P274IAMhEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partstack.16" containerData="">
+                <children xsi:type="advanced:Placeholder" xmi:id="_Jd_joAMiEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.17" ref="_SD3lAPsNEeSJsKKNyX_1bw"/>
+                <children xsi:type="advanced:Placeholder" xmi:id="_LeGaMAMiEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.18" ref="_5v8LsDeUEeWKEKUzaxkdZg"/>
+              </children>
+            </children>
+            <children xsi:type="basic:PartSashContainer" xmi:id="__csTQAMgEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partsashcontainer.12" containerData="500">
+              <children xsi:type="advanced:Placeholder" xmi:id="_MQAJgAMoEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.20" containerData="300" ref="_K2TdsHZ1EeWm0vFGmduGXw"/>
+              <children xsi:type="basic:PartStack" xmi:id="_PRmWcAMhEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partstack.15" containerData="700">
+                <children xsi:type="advanced:Placeholder" xmi:id="_AyyHAAMiEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.16" ref="_-TiYoPsNEeSJsKKNyX_1bw"/>
+              </children>
+            </children>
+            <children xsi:type="basic:PartSashContainer" xmi:id="__Dl2wAMgEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partsashcontainer.11" containerData="300">
+              <children xsi:type="basic:PartStack" xmi:id="_NgFVgAMhEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partstack.11" containerData="300">
+                <children xsi:type="advanced:Placeholder" xmi:id="_wpz4UAMhEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.13" ref="_HqYF4BKsEeWQTZppWEhVhQ"/>
+              </children>
+              <children xsi:type="basic:PartStack" xmi:id="_N2aK0AMhEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.partstack.13" containerData="700">
+                <children xsi:type="advanced:Placeholder" xmi:id="_zmwKkAMhEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.14" ref="_jbBuYAMXEeazSLMMvR3jSA"/>
+              </children>
+            </children>
           </children>
+          <children xsi:type="advanced:Placeholder" xmi:id="_DMVwoAMoEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.placeholder.15" containerData="650" ref="_oKDucH2CEeWUeKTWSShdvw"/>
+        </children>
+      </children>
+      <children xsi:type="advanced:Perspective" xmi:id="_ASAmsAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.perspective.grblrunner4" label="Grblrunner 4">
+        <children xsi:type="basic:PartSashContainer" xmi:id="_FQVh4AOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partsashcontainer.15">
+          <tags>NoMove</tags>
+          <children xsi:type="basic:PartSashContainer" xmi:id="_HGyGIAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partsashcontainer.16" containerData="9350" horizontal="true">
+            <children xsi:type="basic:PartSashContainer" xmi:id="_Ql0zcAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partsashcontainer.17" containerData="300">
+              <children xsi:type="basic:PartStack" xmi:id="_gXbD8AOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partstack.17" containerData="300">
+                <children xsi:type="advanced:Placeholder" xmi:id="_jin0oAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.27" ref="_HqYF4BKsEeWQTZppWEhVhQ"/>
+              </children>
+              <children xsi:type="basic:PartStack" xmi:id="_gqg_EAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partstack.18" containerData="700">
+                <children xsi:type="advanced:Placeholder" xmi:id="_lsRowAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.28" ref="_jbBuYAMXEeazSLMMvR3jSA"/>
+              </children>
+            </children>
+            <children xsi:type="basic:PartSashContainer" xmi:id="_RCdsIAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partsashcontainer.18" containerData="500">
+              <children xsi:type="advanced:Placeholder" xmi:id="_qqf2QAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.29" containerData="300" ref="_K2TdsHZ1EeWm0vFGmduGXw"/>
+              <children xsi:type="basic:PartStack" xmi:id="_rUICEAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partstack.19" containerData="700">
+                <children xsi:type="advanced:Placeholder" xmi:id="_un6uEAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.30" ref="_-TiYoPsNEeSJsKKNyX_1bw"/>
+              </children>
+            </children>
+            <children xsi:type="basic:PartSashContainer" xmi:id="_RXaBYAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partsashcontainer.19" containerData="300">
+              <children xsi:type="basic:PartStack" xmi:id="_WBcuoAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partstack.14">
+                <children xsi:type="advanced:Placeholder" xmi:id="_cMDPsAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.25" ref="_SD3lAPsNEeSJsKKNyX_1bw"/>
+                <children xsi:type="advanced:Placeholder" xmi:id="_cj350AOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.26" ref="_5v8LsDeUEeWKEKUzaxkdZg"/>
+              </children>
+            </children>
+          </children>
+          <children xsi:type="advanced:Placeholder" xmi:id="_INl9MAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.24" containerData="650" ref="_oKDucH2CEeWUeKTWSShdvw"/>
         </children>
       </children>
     </children>
@@ -190,10 +246,10 @@
       </children>
       <children xsi:type="menu:Menu" xmi:id="_f2I5kDmsEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menu.camera" label="Camera">
         <children xsi:type="menu:Menu" xmi:id="_IJJDkEBhEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.menu.camera.select" label="Select">
-          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_adwqcEBhEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.dynamicmenucontribution.camera.select" label="Kameraauswahl" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.CameraSelectDynMenuHandler"/>
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_adwqcEBhEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.dynamicmenucontribution.camera.select" label="Camera Select" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.CameraSelectDynMenuHandler"/>
         </children>
         <children xsi:type="menu:Menu" xmi:id="_IdHIcEBhEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.menu.camera.resolution" label="Resolution">
-          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_p68KIEBhEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.dynamicmenucontribution.camera.resolution" label="Kameraauflösung" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.CameraResolutionDynMenuHandler"/>
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_p68KIEBhEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.dynamicmenucontribution.camera.resolution" label="Camera Resolution" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.CameraResolutionDynMenuHandler"/>
         </children>
         <children xsi:type="menu:MenuSeparator" xmi:id="_EObjAHwhEeWvRN9uvDzZzw" elementId="de.jungierek.grblrunner.menuseparator.2"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_27Zk8DmsEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.camera.active" label="Activate" type="Check" command="_8ZjwkEEcEeWQa67ydomlgw"/>
@@ -208,7 +264,13 @@
       </children>
       <children xsi:type="menu:Menu" xmi:id="_QJo9AHYcEeWpMYWBxJNtEA" elementId="de.jungierek.grblrunner.menu.window" label="Window">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_14i0kBFOEeWhXb_CmI9f3g" elementId="de.jungierek.grblrunner.handledmenuitem.switchtheme" toBeRendered="false" visible="false" label="Switch Theme" enabled="false" command="_a_xtQBFMEeWhXb_CmI9f3g"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_y2KmcHYcEeWpMYWBxJNtEA" elementId="de.jungierek.grblrunner.handledmenuitem.perspective" label="Switch Perspective" enabled="false" command="_qi7KQHXiEeW-v4gJsYES7Q"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_y2KmcHYcEeWpMYWBxJNtEA" elementId="de.jungierek.grblrunner.handledmenuitem.perspective" label="Switch Perspective" enabled="false" command="_qi7KQHXiEeW-v4gJsYES7Q">
+          <parameters xmi:id="_HAYFsAOmEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.parameter.81" name="de.jungierek.grblrunner.commandparameter.perspective.switch" value="cyclic"/>
+        </children>
+        <children xsi:type="menu:Menu" xmi:id="_bDEfUAOjEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.menu.perspectives" label="Perspectives">
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_yhHQYAOeEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.dynamicmenucontribution.perspective" label="Perspective" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.PerpectiveDynMenuHandler"/>
+        </children>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_hmzSEAOjEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.menuseparator.8"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_41qcwDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.preferences" label="Preferences" command="_2niMwOIsEeWx3dCuCzksUg"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_3re6IHYdEeWpMYWBxJNtEA" elementId="de.jungierek.grblrunner.menu.help" label="Help">
@@ -281,6 +343,33 @@
     <sharedElements xsi:type="basic:Part" xmi:id="_E6J2sH14EeWUeKTWSShdvw" elementId="de.jungierek.grblrunner.part.statusline" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.ProgressToolControl" label="StatusLine">
       <variables>NoTitle</variables>
     </sharedElements>
+    <sharedElements xsi:type="basic:Part" xmi:id="_jbBuYAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.part.grbl" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GrblPart" label="Grbl">
+      <persistedState key="mode" value="min"/>
+      <toolbar xmi:id="_rkmdkAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.toolbar.2">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_t3MLQAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.cycle.start" label="Start Cycle" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/resume.gif" command="_aF5nMH4yEeWuY_2UnCduYA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_ucl-YAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.cycle.pause" label="Hold Feed" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/suspend.gif" command="_daNQkH4yEeWuY_2UnCduYA"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_u5XZ8AMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.cycle.reset" label="Reset Cycle" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/stop.gif" command="_h_GYEH4yEeWuY_2UnCduYA"/>
+        <children xsi:type="menu:ToolBarSeparator" xmi:id="_vk31EAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.toolbarseparator.10"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_w7RnUAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.grbl.home" label="Home" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/home.gif" command="_0hrNEH7PEeWpHvdXu7TwpQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_xbjp4AMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.grbl.unlock" label="Unlock" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/unlock.gif" command="_5KwRAH7PEeWpHvdXu7TwpQ"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_xyb40AMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.grbl.check" label="Check" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/check.gif" command="_9zL0sH7PEeWpHvdXu7TwpQ"/>
+        <children xsi:type="menu:ToolBarSeparator" xmi:id="_yembQAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.toolbarseparator.11"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_0HK7kAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.gcode.$" label="$" command="_FJUFAH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_0eUQQAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.gcode.$$" label="$$" command="_FWMDYH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_0w8RUAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.gcode.$#" label="$#" command="_FkdI4H7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_1DnVsAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.gcode.$G" label="$G" command="_FvgiUH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_1YI0MAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.gcode.$I" label="$I" command="_F550cH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_1rq0MAMXEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.control.gcode.$N" label="$N" command="_GE9N4H7hEeW1G6qhYeYpMg"/>
+      </toolbar>
+    </sharedElements>
+    <sharedElements xsi:type="basic:Part" xmi:id="_oKDucH2CEeWUeKTWSShdvw" elementId="de.jungierek.grblrunner.part.statusline2" containerData="650" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.StatusLinePart" label="StatusLine">
+      <variables>NoTitle</variables>
+      <variables>NoClose</variables>
+      <variables>Standalone</variables>
+    </sharedElements>
+    <sharedElements xsi:type="basic:PartStack" xmi:id="_K2TdsHZ1EeWm0vFGmduGXw" elementId="de.jungierek.grblrunner.partstack.editors" containerData="" accessibilityPhrase="Editors">
+      <tags>NoAutoCollapse</tags>
+    </sharedElements>
     <trimBars xmi:id="_ZFqE8HzvEeWJM-9TFkic0g" elementId="de.jungierek.grblrunner.trimbar.top">
       <tags>Draggable</tags>
       <children xsi:type="menu:ToolBar" xmi:id="_0iPWUH7mEeWvPaFOc9q6Rg" elementId="de.jungierek.grblrunner.toolbar.serial">
@@ -304,13 +393,13 @@
         <children xsi:type="menu:HandledToolItem" xmi:id="_BMTXgH7OEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handledtoolitem.grbl.unlock" label="Unlock" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/unlock.gif" command="_5KwRAH7PEeWpHvdXu7TwpQ"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_JhNM8H7OEeWpHvdXu7TwpQ" elementId="de.jungierek.grblrunner.handledtoolitem.grbl.check" label="Check" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/check.gif" command="_9zL0sH7PEeWpHvdXu7TwpQ"/>
         <children xsi:type="menu:ToolBarSeparator" xmi:id="_pVq-8H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.toolbarseparator.2"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_qLP8EH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$" label="$" command="_FJUFAH7hEeW1G6qhYeYpMg"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_rpqa0H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$$" label="$$" command="_FWMDYH7hEeW1G6qhYeYpMg"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_r_wmoH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$#" label="$#" command="_FkdI4H7hEeW1G6qhYeYpMg"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_sVAd4H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$G" label="$G" command="_FvgiUH7hEeW1G6qhYeYpMg"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_spfgIH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$I" label="$I" command="_F550cH7hEeW1G6qhYeYpMg"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_tFYx8H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$N" label="$N" command="_GE9N4H7hEeW1G6qhYeYpMg"/>
-        <children xsi:type="menu:ToolBarSeparator" xmi:id="_q32ucNzaEeWmYp80rgxZLw" elementId="de.jungierek.grblrunner.toolbarseparator.9"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_qLP8EH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$" toBeRendered="false" visible="false" label="$" command="_FJUFAH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_rpqa0H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$$" toBeRendered="false" visible="false" label="$$" command="_FWMDYH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_r_wmoH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$#" toBeRendered="false" visible="false" label="$#" command="_FkdI4H7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_sVAd4H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$G" toBeRendered="false" visible="false" label="$G" command="_FvgiUH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_spfgIH7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$I" toBeRendered="false" visible="false" label="$I" command="_F550cH7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_tFYx8H7gEeW1G6qhYeYpMg" elementId="de.jungierek.grblrunner.handledtoolitem.gcode.$N" toBeRendered="false" visible="false" label="$N" command="_GE9N4H7hEeW1G6qhYeYpMg"/>
+        <children xsi:type="menu:ToolBarSeparator" xmi:id="_q32ucNzaEeWmYp80rgxZLw" elementId="de.jungierek.grblrunner.toolbarseparator.9" toBeRendered="false" visible="false"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_r-wFENzaEeWmYp80rgxZLw" elementId="de.jungierek.grblrunner.handledtoolitem.editor.previous" label="Previous Editor" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/left.gif" command="_12frkNjPEeWQKJAzQgCBeQ"/>
         <children xsi:type="menu:HandledToolItem" xmi:id="_tIG50NzaEeWmYp80rgxZLw" elementId="de.jungierek.grblrunner.handledtoolitem.editor.next" label="Next Editor" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/right.gif" command="_wG7gsNjPEeWQKJAzQgCBeQ"/>
       </children>
@@ -565,21 +654,22 @@
     <handlers xmi:id="_11rbAJE4EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.handler.editor.gcode.refresh" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeRefreshInPartHandler" command="_bf5LoHdxEeW3XImWwiVxiA"/>
     <handlers xmi:id="_rWbb4OrzEeWP3v-OJcUhZw" elementId="de.jungierek.grblrunner.handler.editor.gcode.optimize" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodeOptimizeInPartCommandHandler" command="_vAbTMOBEEeWXitAFTaNkpw"/>
     <toolbar xmi:id="_2Iz88JE5EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.toolbar.5">
-      <children xsi:type="menu:HandledToolItem" xmi:id="_jGv2sJE4EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.handledtoolitem.editor.play" iconURI="platform:/plugin/de.jungierek.grblrunner/run.gif" command="_dBKgMHdoEeW3XImWwiVxiA"/>
-      <children xsi:type="menu:HandledToolItem" xmi:id="_q-yJ8JE4EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.handledtoolitem.editor.refresh" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/refresh.gif" command="_bf5LoHdxEeW3XImWwiVxiA"/>
-      <children xsi:type="menu:HandledToolItem" xmi:id="_zkWgcOA7EeWXitAFTaNkpw" elementId="de.jungierek.grblrunner.handledtoolitem.editor.optimize" label="Opt" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/optimize.gif" command="_vAbTMOBEEeWXitAFTaNkpw"/>
-      <children xsi:type="menu:DirectToolItem" xmi:id="_FDF4AJFHEeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.directtoolitem.editor.view" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/gcode.gif" tooltip="view gcode" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorDirectToolItem"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_hvP-gAMWEeazSLMMvR3jSA" elementId="de.jungierek.grblrunner.handledtoolitem.editor.load" toBeRendered="false" visible="false" label="Load" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/open_file.gif" command="_PP9sEHdmEeW3XImWwiVxiA"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_jGv2sJE4EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.handledtoolitem.editor.play" label="Run" iconURI="platform:/plugin/de.jungierek.grblrunner/run.gif" command="_dBKgMHdoEeW3XImWwiVxiA"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_q-yJ8JE4EeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.handledtoolitem.editor.refresh" label="Refresh" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/refresh.gif" command="_bf5LoHdxEeW3XImWwiVxiA"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_zkWgcOA7EeWXitAFTaNkpw" elementId="de.jungierek.grblrunner.handledtoolitem.editor.optimize" label="Optimize" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/optimize.gif" command="_vAbTMOBEEeWXitAFTaNkpw"/>
+      <children xsi:type="menu:DirectToolItem" xmi:id="_FDF4AJFHEeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.directtoolitem.editor.view" label="[Debug] View Gcode" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/gcode.gif" tooltip="[Debug] View Gcode" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorDirectToolItem"/>
       <children xsi:type="menu:ToolControl" xmi:id="_SkX2QJFIEeWe_Zdwnr9WOg" elementId="de.jungierek.grblrunner.toolcontrol.editor" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorToolControl"/>
-      <children xsi:type="menu:HandledToolItem" xmi:id="_1Bx84JXuEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handledtoolitem.editor.close" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/delete.gif" command="_0fevEJVUEeWjToG7KvW0lw"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_1Bx84JXuEeWjToG7KvW0lw" elementId="de.jungierek.grblrunner.handledtoolitem.editor.close" label="Close" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/delete.gif" command="_0fevEJVUEeWjToG7KvW0lw"/>
     </toolbar>
   </descriptors>
   <descriptors xmi:id="_TqJzEJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.partdescriptor.gcode.macro" label="Gcode Macro" allowMultiple="true" dirtyable="true" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.MacroPart">
     <handlers xmi:id="_bR2u0JxAEeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handler.macro.play" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handlers.GcodePlayInPartHandler" command="_dBKgMHdoEeW3XImWwiVxiA"/>
     <toolbar xmi:id="_X5YzoJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.toolbar.1">
-      <children xsi:type="menu:HandledToolItem" xmi:id="_3blPEJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handledtoolitem.macro.play" iconURI="platform:/plugin/de.jungierek.grblrunner/run.gif" command="_dBKgMHdoEeW3XImWwiVxiA"/>
-      <children xsi:type="menu:HandledToolItem" xmi:id="_23-IcPw2EeWF4-1h_SKR5Q" elementId="de.jungierek.grblrunner.handledtoolitem.macro.restore" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/undo.gif" command="_A7ZVMPw3EeWF4-1h_SKR5Q"/>
-      <children xsi:type="menu:DirectToolItem" xmi:id="_5Uf4gJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.directtoolitem.macro.view" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/gcode.gif" tooltip="view gcode" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorDirectToolItem"/>
-      <children xsi:type="menu:HandledToolItem" xmi:id="_9v2pgJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handledtoolitem.macro.close" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/delete.gif" command="_0fevEJVUEeWjToG7KvW0lw"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_3blPEJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handledtoolitem.macro.play" label="Run" iconURI="platform:/plugin/de.jungierek.grblrunner/run.gif" command="_dBKgMHdoEeW3XImWwiVxiA"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_23-IcPw2EeWF4-1h_SKR5Q" elementId="de.jungierek.grblrunner.handledtoolitem.macro.restore" label="Refresh" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/undo.gif" command="_A7ZVMPw3EeWF4-1h_SKR5Q"/>
+      <children xsi:type="menu:DirectToolItem" xmi:id="_5Uf4gJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.directtoolitem.macro.view" label="[Debug] View Gcode" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/gcode.gif" tooltip="[Debug] View Gcode" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.parts.GcodeEditorDirectToolItem"/>
+      <children xsi:type="menu:HandledToolItem" xmi:id="_9v2pgJw_EeWzN9HK6hG3ug" elementId="de.jungierek.grblrunner.handledtoolitem.macro.close" label="Close" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/delete.gif" command="_0fevEJVUEeWjToG7KvW0lw"/>
     </toolbar>
   </descriptors>
   <commands xmi:id="_a_xtQBFMEeWhXb_CmI9f3g" elementId="de.jungierek.grblrunner.command.switchtheme" commandName="Switch Theme"/>
@@ -598,7 +688,9 @@
   </commands>
   <commands xmi:id="_sQxBcHT4EeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.command.terminal.cleartext" commandName="Clear Terminal Text"/>
   <commands xmi:id="_vRUBUHT4EeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.command.terminal.togglesuppresslines" commandName="Toggle Suppress Lines"/>
-  <commands xmi:id="_qi7KQHXiEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.command.switchperspective" commandName="Switch Perspective"/>
+  <commands xmi:id="_qi7KQHXiEeW-v4gJsYES7Q" elementId="de.jungierek.grblrunner.command.perspective.switch" commandName="Switch Perspective">
+    <parameters xmi:id="_blrLMAOlEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.commandparameter.perspective.switch" name="Command Parameter 0"/>
+  </commands>
   <commands xmi:id="_PP9sEHdmEeW3XImWwiVxiA" elementId="de.jungierek.grblrunner.command.gcode.load" commandName="Load Gcode"/>
   <commands xmi:id="_dBKgMHdoEeW3XImWwiVxiA" elementId="de.jungierek.grblrunner.command.gcode.play" commandName="Play Gcode"/>
   <commands xmi:id="_bf5LoHdxEeW3XImWwiVxiA" elementId="de.jungierek.grblrunner.command.gcode.refresh" commandName="Refresh Gcode"/>

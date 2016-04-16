@@ -1,7 +1,6 @@
  
 package de.jungierek.grblrunner.handlers;
 
-import java.awt.Dimension;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -26,13 +25,11 @@ import com.github.sarxos.webcam.Webcam;
 
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
 import de.jungierek.grblrunner.tools.CommandTools;
+import de.jungierek.grblrunner.tools.ICommandID;
 
 public class CameraResolutionDynMenuHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger ( CameraResolutionDynMenuHandler.class );
-
-    private final static String COMMAND_ID = "de.jungierek.grblrunner.command.camera.resolution";
-    private final static String PARAMETER_ID = "de.jungierek.grblrunner.commandparameter.camera.resolution";
 
     @Inject
     private MApplication application;
@@ -65,28 +62,23 @@ public class CameraResolutionDynMenuHandler {
         }
         else {
 
-            // Dimension [] viewSizes = webcam.getViewSizes ();
             String [] webcamSizes = webcamService.getWebcamSizes ();
 
             for ( String size : webcamSizes ) {
 
                 LOG.debug ( "size=" + size );
 
+                MCommand command = commandTool.findCommand ( ICommandID.CAMERA_RESOLUTION );
+
                 MParameter parameter = MCommandsFactory.INSTANCE.createParameter ();
-
-                parameter.setElementId ( PARAMETER_ID + "." + size );
-                parameter.setName ( PARAMETER_ID ); // this is the importend "id"
+                parameter.setElementId ( ICommandID.CAMERA_RESOLUTION_PARAMETER + "." + size );
+                parameter.setName ( ICommandID.CAMERA_RESOLUTION_PARAMETER ); // this is the importend "id"
                 parameter.setValue ( size );
-                LOG.debug ( "parameter=" + parameter );
-
-                MCommand command = commandTool.findCommand ( COMMAND_ID );
-                LOG.debug ( "command=" + command );
 
                 MCommandParameter commandParameter = MCommandsFactory.INSTANCE.createCommandParameter ();
-                commandParameter.setElementId ( PARAMETER_ID );
-                commandParameter.setName ( PARAMETER_ID );
+                commandParameter.setElementId ( ICommandID.CAMERA_RESOLUTION_PARAMETER );
+                commandParameter.setName ( ICommandID.CAMERA_RESOLUTION_PARAMETER );
                 commandParameter.setOptional ( true );
-                LOG.debug ( "commandParameter=" + commandParameter );
 
                 MHandledMenuItem item = MMenuFactory.INSTANCE.createHandledMenuItem ();
                 item.setLabel ( size );
@@ -101,12 +93,6 @@ public class CameraResolutionDynMenuHandler {
             }
 
         }
-
-    }
-
-    private String dimToText ( Dimension size ) {
-
-        return "" + size.getWidth () + " x " + size.getHeight ();
 
     }
 

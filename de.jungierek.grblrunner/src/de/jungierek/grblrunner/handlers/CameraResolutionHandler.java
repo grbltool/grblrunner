@@ -12,22 +12,23 @@ import org.slf4j.LoggerFactory;
 import com.github.sarxos.webcam.Webcam;
 
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
+import de.jungierek.grblrunner.tools.ICommandID;
 
 public class CameraResolutionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger ( CameraResolutionHandler.class );
 
     @Execute
-    public void execute ( @Optional @Named("de.jungierek.grblrunner.commandparameter.camera.resolution") String resolution, IWebcamService webcamService ) {
+    public void execute ( @Optional @Named(ICommandID.CAMERA_RESOLUTION_PARAMETER) String resolution, IWebcamService webcamService ) {
 
-        LOG.info ( "execute called resolution=" + resolution );
-        LOG.info ( "res1=" + webcamService.getWebcam ().getViewSize () );
+        LOG.debug ( "execute called resolution=" + resolution );
+        LOG.debug ( "res1=" + webcamService.getWebcam ().getViewSize () );
 
         if ( resolution == null ) return;
 
         webcamService.setViewSize ( resolution );
 
-        LOG.info ( "res2=" + webcamService.getWebcam ().getViewSize () );
+        LOG.debug ( "res2=" + webcamService.getWebcam ().getViewSize () );
     }
 
     @CanExecute

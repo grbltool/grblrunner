@@ -64,5 +64,7 @@ public interface IConstant {
     public static final boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = false;
     public static final boolean AUTOLEVEL_SLOW_Z_SIMULATION = false;
 
+    public static final String CYCLIC_PERSPECTIVE_SWITCHING = "cyclic";
+
 
 }

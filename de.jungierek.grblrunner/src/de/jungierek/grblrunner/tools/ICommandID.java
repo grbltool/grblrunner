@@ -64,4 +64,10 @@ public interface ICommandID {
     public static final String SET_COORDINATE_SYSTEM = "de.jungierek.grblrunner.command.gcode.coordinate.system";
     public static final String SET_COORDINATE_SYSTEM_PARAMETER = "de.jungierek.grblrunner.commandparameter.gcode.coordinate.system";
 
+    public final static String CAMERA_RESOLUTION = "de.jungierek.grblrunner.command.camera.resolution";
+    public final static String CAMERA_RESOLUTION_PARAMETER = "de.jungierek.grblrunner.commandparameter.camera.resolution";
+
+    public final static String PERSPECTIVE_SWITCH = "de.jungierek.grblrunner.command.perspective.switch";
+    public final static String PERSPECTIVE_SWITCH_PARAMETER = "de.jungierek.grblrunner.commandparameter.perspective.switch";
+
 }

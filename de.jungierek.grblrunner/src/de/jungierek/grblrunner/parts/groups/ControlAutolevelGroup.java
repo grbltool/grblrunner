@@ -134,12 +134,14 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
         if ( gcodeProgram == null ) return;
 
         ignoreStepTextModifyListener = true;
-        if ( !scanStepXText.isDisposed () ) scanStepXText.setText ( "" + gcodeProgram.getXSteps () );
-        if ( !scanStepYText.isDisposed () ) scanStepYText.setText ( "" + gcodeProgram.getYSteps () );
+        if ( scanStepXText != null && !scanStepXText.isDisposed () ) scanStepXText.setText ( "" + gcodeProgram.getXSteps () );
+        if ( scanStepYText != null && !scanStepYText.isDisposed () ) scanStepYText.setText ( "" + gcodeProgram.getYSteps () );
         ignoreStepTextModifyListener = false;
 
-        if ( !scanStepWidthXLabel.isDisposed () ) scanStepWidthXLabel.setText ( String.format ( IConstant.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );
-        if ( !scanStepWidthYLabel.isDisposed () ) scanStepWidthYLabel.setText ( String.format ( IConstant.FORMAT_COORDINATE, gcodeProgram.getStepWidthY () ) );
+        if ( scanStepWidthXLabel != null && !scanStepWidthXLabel.isDisposed () )
+            scanStepWidthXLabel.setText ( String.format ( IConstant.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );
+        if ( scanStepWidthYLabel != null && !scanStepWidthYLabel.isDisposed () )
+            scanStepWidthYLabel.setText ( String.format ( IConstant.FORMAT_COORDINATE, gcodeProgram.getStepWidthY () ) );
 
     }
 
