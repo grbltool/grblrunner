@@ -17,10 +17,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class ControlCycleGroup {
@@ -66,9 +66,9 @@ public class ControlCycleGroup {
         cycleResetButton.setBackground ( shell.getDisplay ().getSystemColor ( SWT.COLOR_RED ) );
         GuiFactory.createHiddenLabel ( group );
 
-        cycleStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.CYCLE_START ) );
-        cycleHoldButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.CYCLE_PAUSE ) );
-        cycleResetButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.CYCLE_RESET ) );
+        cycleStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.CYCLE_START ) );
+        cycleHoldButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.CYCLE_PAUSE ) );
+        cycleResetButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.CYCLE_RESET ) );
 
     }
 

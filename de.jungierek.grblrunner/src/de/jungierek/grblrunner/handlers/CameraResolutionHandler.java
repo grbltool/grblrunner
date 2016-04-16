@@ -11,15 +11,15 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sarxos.webcam.Webcam;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
-import de.jungierek.grblrunner.tools.ICommandID;
 
 public class CameraResolutionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger ( CameraResolutionHandler.class );
 
     @Execute
-    public void execute ( @Optional @Named(ICommandID.CAMERA_RESOLUTION_PARAMETER) String resolution, IWebcamService webcamService ) {
+    public void execute ( @Optional @Named(ICommandId.CAMERA_RESOLUTION_PARAMETER) String resolution, IWebcamService webcamService ) {
 
         LOG.debug ( "execute called resolution=" + resolution );
         LOG.debug ( "res1=" + webcamService.getWebcam ().getViewSize () );

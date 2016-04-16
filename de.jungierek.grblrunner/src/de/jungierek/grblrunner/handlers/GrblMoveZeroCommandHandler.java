@@ -9,16 +9,16 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
-import de.jungierek.grblrunner.tools.ICommandID;
 
 public class GrblMoveZeroCommandHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GrblMoveZeroCommandHandler.class );
 
     @Execute
-    public void execute ( IGcodeService gcodeService, ParameterizedCommand command, @Optional @Named(ICommandID.GRBL_MOVE_ZERO_AXIS_PARAMETER) String axis ) {
+    public void execute ( IGcodeService gcodeService, ParameterizedCommand command, @Optional @Named(ICommandId.GRBL_MOVE_ZERO_AXIS_PARAMETER) String axis ) {
 
         LOG.debug ( "execute: axis=" + axis );
 

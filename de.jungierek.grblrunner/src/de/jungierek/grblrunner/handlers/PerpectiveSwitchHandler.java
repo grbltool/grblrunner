@@ -12,8 +12,8 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IConstant;
-import de.jungierek.grblrunner.tools.ICommandID;
 
 public class PerpectiveSwitchHandler {
 
@@ -21,7 +21,7 @@ public class PerpectiveSwitchHandler {
 
     @Execute
     // @Optional
-    public void switchPerspective ( @Named(ICommandID.PERSPECTIVE_SWITCH_PARAMETER) String perspectiveElementId, MPerspective activePerspective, MApplication application, EPartService partService, EModelService modelService ) {
+    public void switchPerspective ( @Named(ICommandId.PERSPECTIVE_SWITCH_PARAMETER) String perspectiveElementId, MPerspective activePerspective, MApplication application, EPartService partService, EModelService modelService ) {
 
         LOG.debug ( "switchPersepctive: id=" + perspectiveElementId );
 

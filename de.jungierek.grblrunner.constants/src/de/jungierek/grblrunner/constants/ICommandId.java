@@ -1,7 +1,7 @@
-package de.jungierek.grblrunner.tools;
+package de.jungierek.grblrunner.constants;
 
 
-public interface ICommandID {
+public interface ICommandId {
 
     public static final String GCODE_LOAD = "de.jungierek.grblrunner.command.gcode.load";
     public static final String GCODE_REFRESH = "de.jungierek.grblrunner.command.gcode.refresh";

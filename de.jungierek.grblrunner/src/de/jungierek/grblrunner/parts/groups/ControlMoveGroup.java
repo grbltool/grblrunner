@@ -19,11 +19,11 @@ import org.eclipse.swt.widgets.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class ControlMoveGroup implements CommandParameterCallback {
@@ -127,7 +127,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
         for ( MoveParameterRecord moveParameterRecord : moveParameter ) {
             moveParameterRecord.button.addSelectionListener ( 
                     partTools.createCommandExecuteSelectionListener ( 
-                            ICommandID.GRBL_MOVE, 
+                            ICommandId.GRBL_MOVE, 
                             createParameterMap ( moveParameterRecord.axis, moveParameterRecord.direction ),
                             this 
                     ) 
@@ -136,14 +136,14 @@ public class ControlMoveGroup implements CommandParameterCallback {
         
         goZeroXYButton.addSelectionListener ( 
                 partTools.createCommandExecuteSelectionListener ( 
-                        ICommandID.GRBL_MOVE_ZERO, 
+                        ICommandId.GRBL_MOVE_ZERO, 
                         createParameterMap ( "XY" ) 
                 ) 
         );
 
         goZeroZButton.addSelectionListener ( 
                 partTools.createCommandExecuteSelectionListener ( 
-                        ICommandID.GRBL_MOVE_ZERO, 
+                        ICommandId.GRBL_MOVE_ZERO, 
                         createParameterMap ( "Z" ) 
                 ) 
         );
@@ -154,8 +154,8 @@ public class ControlMoveGroup implements CommandParameterCallback {
     private Map<String, Object> createParameterMap ( String axis, String direction ) {
         
         Map<String,Object> result = new HashMap<String, Object> ();
-        result.put ( ICommandID.GRBL_MOVE_AXIS_PARAMETER, axis );
-        result.put ( ICommandID.GRBL_MOVE_DIRECTION_PARAMETER, direction );
+        result.put ( ICommandId.GRBL_MOVE_AXIS_PARAMETER, axis );
+        result.put ( ICommandId.GRBL_MOVE_DIRECTION_PARAMETER, direction );
         
         return result;
         
@@ -164,7 +164,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
     private Map<String, Object> createParameterMap ( String axis ) {
 
         Map<String, Object> result = new HashMap<String, Object> ();
-        result.put ( ICommandID.GRBL_MOVE_ZERO_AXIS_PARAMETER, axis );
+        result.put ( ICommandId.GRBL_MOVE_ZERO_AXIS_PARAMETER, axis );
 
         return result;
 
@@ -188,7 +188,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
     public Map<String, Object> getParameter () {
 
         Map<String, Object> result = new HashMap<String, Object> ();
-        result.put ( ICommandID.GRBL_MOVE_DISTANCE_PARAMETER, rangeCombo.getText () );
+        result.put ( ICommandId.GRBL_MOVE_DISTANCE_PARAMETER, rangeCombo.getText () );
 
         return result;
 

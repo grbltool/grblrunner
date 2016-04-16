@@ -19,13 +19,13 @@ import org.eclipse.swt.widgets.Slider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class ControlSpindleGroup {
@@ -96,8 +96,8 @@ public class ControlSpindleGroup {
             }
         } );
 
-        spindleStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.GRBL_SPINDLE_START ) );
-        spindleStopButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.GRBL_SPINDLE_STOP ) );
+        spindleStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_SPINDLE_START ) );
+        spindleStopButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_SPINDLE_STOP ) );
 
     }
 

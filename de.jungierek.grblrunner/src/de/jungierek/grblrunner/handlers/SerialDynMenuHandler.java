@@ -18,9 +18,9 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.CommandTools;
-import de.jungierek.grblrunner.tools.ICommandID;
 
 public class SerialDynMenuHandler {
     
@@ -61,12 +61,12 @@ public class SerialDynMenuHandler {
                 LOG.debug ( "port=" + port );
     
                 MParameter parameter = MCommandsFactory.INSTANCE.createParameter ();
-                parameter.setElementId ( ICommandID.SERIAL_SELECT_PORT_PARAMETER + port );
-                parameter.setName ( ICommandID.SERIAL_SELECT_PORT_PARAMETER ); // this is the importend "id"
+                parameter.setElementId ( ICommandId.SERIAL_SELECT_PORT_PARAMETER + port );
+                parameter.setName ( ICommandId.SERIAL_SELECT_PORT_PARAMETER ); // this is the importend "id"
                 parameter.setValue ( port );
                 LOG.trace ( "parameter=" + parameter );
     
-                MCommand command = commandTool.findCommand ( ICommandID.SERIAL_SELECT_PORT );
+                MCommand command = commandTool.findCommand ( ICommandId.SERIAL_SELECT_PORT );
                 LOG.trace ( "command=" + command );
     
                 MHandledMenuItem item = MMenuFactory.INSTANCE.createHandledMenuItem ();

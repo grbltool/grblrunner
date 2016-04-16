@@ -9,12 +9,12 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
-import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class ProbeDataScanHandler {
@@ -27,10 +27,10 @@ public class ProbeDataScanHandler {
             IGcodeService gcodeService, 
             PartTools partTools, 
             @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram, 
-            @Named(ICommandID.AUTOLEVEL_ZMIN_PARAMETER) String zMin, 
-            @Named(ICommandID.AUTOLEVEL_ZMAX_PARAMETER) String zMax, 
-            @Named(ICommandID.AUTOLEVEL_ZCLEARANCE_PARAMETER) String zClearance, 
-            @Named(ICommandID.AUTOLEVEL_PROBEFEEDRATE_PARAMETER) String probeFeedrate, 
+            @Named(ICommandId.AUTOLEVEL_ZMIN_PARAMETER) String zMin, 
+            @Named(ICommandId.AUTOLEVEL_ZMAX_PARAMETER) String zMax, 
+            @Named(ICommandId.AUTOLEVEL_ZCLEARANCE_PARAMETER) String zClearance, 
+            @Named(ICommandId.AUTOLEVEL_PROBEFEEDRATE_PARAMETER) String probeFeedrate, 
             @Preference( nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.Z_CLEARANCE) double zClearancePref,
             @Preference( nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_Z_MAX) double probeZMaxPref, 
             @Preference( nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepthPref, 

@@ -9,16 +9,16 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
-import de.jungierek.grblrunner.tools.ICommandID;
 
 public class CoordinateOffsetHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger ( CoordinateOffsetHandler.class );
 
     @Execute
-    public void execute ( IGcodeService gcodeService, ParameterizedCommand command, @Optional @Named(ICommandID.COORDINATE_OFFSET_PARAMETER) String axis ) {
+    public void execute ( IGcodeService gcodeService, ParameterizedCommand command, @Optional @Named(ICommandId.COORDINATE_OFFSET_PARAMETER) String axis ) {
 
         LOG.debug ( "execute: axis=" + axis + " cmd=" + command );
 

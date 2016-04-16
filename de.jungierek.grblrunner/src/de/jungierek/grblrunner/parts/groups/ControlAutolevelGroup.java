@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
@@ -33,7 +34,6 @@ import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class ControlAutolevelGroup implements CommandParameterCallback {
@@ -122,10 +122,10 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
         scanStepXText.addModifyListener ( updateViewModifyListener );
         scanStepYText.addModifyListener ( updateViewModifyListener );
 
-        scanStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.AUTOLEVEL_SCAN, new HashMap<String, Object> (), this ) );
-        scanClearButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.AUTOLEVEL_CLEAR ) );
-        loadProbeDataButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.AUTOLEVEL_LOAD ) );
-        saveProbeDataButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.AUTOLEVEL_SAVE ) );
+        scanStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_SCAN, new HashMap<String, Object> (), this ) );
+        scanClearButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_CLEAR ) );
+        loadProbeDataButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_LOAD ) );
+        saveProbeDataButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_SAVE ) );
 
     }
 
@@ -240,10 +240,10 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
     public Map<String, Object> getParameter () {
 
         Map<String, Object> result = new HashMap<String, Object> ();
-        result.put ( ICommandID.AUTOLEVEL_ZMIN_PARAMETER, scanMinZText.getText () );
-        result.put ( ICommandID.AUTOLEVEL_ZMAX_PARAMETER, scanMaxZText.getText () );
-        result.put ( ICommandID.AUTOLEVEL_ZCLEARANCE_PARAMETER, scanClearanceZText.getText () );
-        result.put ( ICommandID.AUTOLEVEL_PROBEFEEDRATE_PARAMETER, scanFeedrateText.getText () );
+        result.put ( ICommandId.AUTOLEVEL_ZMIN_PARAMETER, scanMinZText.getText () );
+        result.put ( ICommandId.AUTOLEVEL_ZMAX_PARAMETER, scanMaxZText.getText () );
+        result.put ( ICommandId.AUTOLEVEL_ZCLEARANCE_PARAMETER, scanClearanceZText.getText () );
+        result.put ( ICommandId.AUTOLEVEL_PROBEFEEDRATE_PARAMETER, scanFeedrateText.getText () );
 
         return result;
 

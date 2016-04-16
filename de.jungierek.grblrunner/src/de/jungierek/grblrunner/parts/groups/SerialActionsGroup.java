@@ -18,12 +18,12 @@ import org.eclipse.swt.widgets.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class SerialActionsGroup {
@@ -82,9 +82,9 @@ public class SerialActionsGroup {
 
         updateButton = GuiFactory.createPushButton ( group, "update", SWT.FILL, true );
 
-        connectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.SERIAL_CONNECT ) );
-        disconnectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.SERIAL_DISCONNECT ) );
-        updateButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.SERIAL_UPDATE ) );
+        connectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.SERIAL_CONNECT ) );
+        disconnectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.SERIAL_DISCONNECT ) );
+        updateButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.SERIAL_UPDATE ) );
 
     }
 

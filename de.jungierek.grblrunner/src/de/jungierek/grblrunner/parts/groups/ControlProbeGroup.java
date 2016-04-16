@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
@@ -26,7 +27,6 @@ import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class ControlProbeGroup implements CommandParameterCallback {
@@ -59,7 +59,7 @@ public class ControlProbeGroup implements CommandParameterCallback {
         probeDepthText = GuiFactory.createDoubleText ( group, String.format ( IConstant.FORMAT_HEIGHT, probeDepth ), 1, true );
         probeStartButton = GuiFactory.createArrowButton ( group, SWT.DOWN );
 
-        probeStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.PROBE_ACTION, new HashMap<String, Object> (), this ) );
+        probeStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.PROBE_ACTION, new HashMap<String, Object> (), this ) );
 
         // probeStartButton.addSelectionListener ( new SelectionAdapter () {
         //
@@ -83,7 +83,7 @@ public class ControlProbeGroup implements CommandParameterCallback {
     public Map<String, Object> getParameter () {
 
         Map<String, Object> result = new HashMap<String, Object> ();
-        result.put ( ICommandID.PROBE_ACTION_DEPTH_PARAMETER, probeDepthText.getText () );
+        result.put ( ICommandId.PROBE_ACTION_DEPTH_PARAMETER, probeDepthText.getText () );
 
         return result;
 

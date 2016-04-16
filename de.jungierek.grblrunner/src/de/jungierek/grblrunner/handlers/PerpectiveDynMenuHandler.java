@@ -23,9 +23,9 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
 import de.jungierek.grblrunner.tools.CommandTools;
-import de.jungierek.grblrunner.tools.ICommandID;
 
 public class PerpectiveDynMenuHandler {
 
@@ -51,16 +51,16 @@ public class PerpectiveDynMenuHandler {
         List<MPerspective> perspectiveList = modelService.findElements ( application, null, MPerspective.class, null );
         for ( MPerspective perspective : perspectiveList ) {
 
-            MCommand command = commandTool.findCommand ( ICommandID.PERSPECTIVE_SWITCH );
+            MCommand command = commandTool.findCommand ( ICommandId.PERSPECTIVE_SWITCH );
 
             MParameter parameter = MCommandsFactory.INSTANCE.createParameter ();
-            parameter.setElementId ( ICommandID.PERSPECTIVE_SWITCH_PARAMETER + "." + perspective.getElementId () );
-            parameter.setName ( ICommandID.PERSPECTIVE_SWITCH_PARAMETER ); // this is the importend "id"
+            parameter.setElementId ( ICommandId.PERSPECTIVE_SWITCH_PARAMETER + "." + perspective.getElementId () );
+            parameter.setName ( ICommandId.PERSPECTIVE_SWITCH_PARAMETER ); // this is the importend "id"
             parameter.setValue ( perspective.getElementId () );
 
             MCommandParameter commandParameter = MCommandsFactory.INSTANCE.createCommandParameter ();
-            commandParameter.setElementId ( ICommandID.PERSPECTIVE_SWITCH_PARAMETER );
-            commandParameter.setName ( ICommandID.PERSPECTIVE_SWITCH_PARAMETER );
+            commandParameter.setElementId ( ICommandId.PERSPECTIVE_SWITCH_PARAMETER );
+            commandParameter.setName ( ICommandId.PERSPECTIVE_SWITCH_PARAMETER );
             commandParameter.setOptional ( true );
 
             MHandledMenuItem item = MMenuFactory.INSTANCE.createHandledMenuItem ();

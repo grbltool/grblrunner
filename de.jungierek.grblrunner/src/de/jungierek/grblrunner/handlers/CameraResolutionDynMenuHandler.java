@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sarxos.webcam.Webcam;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
 import de.jungierek.grblrunner.tools.CommandTools;
-import de.jungierek.grblrunner.tools.ICommandID;
 
 public class CameraResolutionDynMenuHandler {
 
@@ -68,16 +68,16 @@ public class CameraResolutionDynMenuHandler {
 
                 LOG.debug ( "size=" + size );
 
-                MCommand command = commandTool.findCommand ( ICommandID.CAMERA_RESOLUTION );
+                MCommand command = commandTool.findCommand ( ICommandId.CAMERA_RESOLUTION );
 
                 MParameter parameter = MCommandsFactory.INSTANCE.createParameter ();
-                parameter.setElementId ( ICommandID.CAMERA_RESOLUTION_PARAMETER + "." + size );
-                parameter.setName ( ICommandID.CAMERA_RESOLUTION_PARAMETER ); // this is the importend "id"
+                parameter.setElementId ( ICommandId.CAMERA_RESOLUTION_PARAMETER + "." + size );
+                parameter.setName ( ICommandId.CAMERA_RESOLUTION_PARAMETER ); // this is the importend "id"
                 parameter.setValue ( size );
 
                 MCommandParameter commandParameter = MCommandsFactory.INSTANCE.createCommandParameter ();
-                commandParameter.setElementId ( ICommandID.CAMERA_RESOLUTION_PARAMETER );
-                commandParameter.setName ( ICommandID.CAMERA_RESOLUTION_PARAMETER );
+                commandParameter.setElementId ( ICommandId.CAMERA_RESOLUTION_PARAMETER );
+                commandParameter.setName ( ICommandId.CAMERA_RESOLUTION_PARAMETER );
                 commandParameter.setOptional ( true );
 
                 MHandledMenuItem item = MMenuFactory.INSTANCE.createHandledMenuItem ();

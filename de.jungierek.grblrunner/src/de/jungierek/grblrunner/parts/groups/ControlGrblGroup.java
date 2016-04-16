@@ -19,10 +19,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.ICommandID;
 import de.jungierek.grblrunner.tools.PartTools;
 
 public class ControlGrblGroup {
@@ -66,9 +66,9 @@ public class ControlGrblGroup {
         grblCheckButton = GuiFactory.createPushButton ( group, "check", SWT.FILL, true );
         GuiFactory.createHiddenLabel ( group );
 
-        grblHomeButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.GRBL_HOME ) );
-        grblUnlockButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.GRBL_UNLOCK ) );
-        grblCheckButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandID.GRBL_CHECK ) );
+        grblHomeButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_HOME ) );
+        grblUnlockButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_UNLOCK ) );
+        grblCheckButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_CHECK ) );
 
     }
 
