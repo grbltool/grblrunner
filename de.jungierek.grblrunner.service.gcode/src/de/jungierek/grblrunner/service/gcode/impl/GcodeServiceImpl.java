@@ -530,7 +530,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @Override
     public boolean isGrblIdle () {
 
-        return lastGrblState != null && lastGrblState.getGrblState () == EGrblState.IDLE;
+        return lastGrblState == null || lastGrblState.getGrblState () == EGrblState.IDLE;
 
     }
 
