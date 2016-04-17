@@ -117,6 +117,14 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         // --- Status History ---
         defaults.putInt ( IPreferenceKey.STATUS_HISTORY_DEPTH, 30 );
 
+        // --- Camera ---
+        defaults.put ( IPreferenceKey.CAMERA_MIDCROSS_COLOR, "255,0,0" ); // red
+        defaults.putInt ( IPreferenceKey.CAMERA_MIDCROSS_RADIUS, 20 );
+        defaults.putInt ( IPreferenceKey.CAMERA_MIDCROSS_OFFSET_X, 58 );
+        defaults.putInt ( IPreferenceKey.CAMERA_MIDCROSS_OFFSET_Y, -60 );
+        defaults.putInt ( IPreferenceKey.CAMERA_MILL_OFFSET_X, 50 );
+        defaults.putInt ( IPreferenceKey.CAMERA_MILL_OFFSET_Y, 50 );
+
         // -------------------------------
 
         try {

@@ -7,6 +7,8 @@ import java.awt.image.WritableRaster;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.eclipse.e4.core.di.extensions.Preference;
+import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -27,6 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.sarxos.webcam.Webcam;
 
+import de.jungierek.grblrunner.constants.IConstant;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
 import de.jungierek.grblrunner.service.webcam.IWebcamServiceReceiver;
 
@@ -43,12 +47,42 @@ public class CameraPart implements PaintListener, IWebcamServiceReceiver {
     private Canvas webcamCanvas;
     private BufferedImage webcamImage;
 
+    // preferences
+    private Color midcrossColor;
+    private int midcrossRadius;
+    private int midcrossXOffset;
+    private int midcrossYOffset;
+
+    @Inject
+    public void setGantryColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.CAMERA_MIDCROSS_COLOR) String rgbText ) {
+
+        midcrossColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+
+    }
+
+    @Inject
+    public void setMidcrossRadius ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.CAMERA_MIDCROSS_RADIUS) int value ) {
+
+        midcrossRadius = value;
+
+    }
+
+    @Inject
+    public void setMidcrossOffsetX ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.CAMERA_MIDCROSS_OFFSET_X) int value ) {
+
+        midcrossXOffset = value;
+
+    }
+
+    @Inject
+    public void setMidcrossOffsetY ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.CAMERA_MIDCROSS_OFFSET_Y) int value ) {
+
+        midcrossYOffset = value;
+
+    }
+
     @PostConstruct
     private void createGui ( Composite parent ) {
-        
-        // for ( Webcam wc : Webcam.getWebcams () ) {
-        // System.out.println ( "wc=" + wc );
-        // }
         
         Webcam webcam = Webcam.getDefault ();
         LOG.debug ( "createGui: webcam=" + webcam );
@@ -99,8 +133,7 @@ public class CameraPart implements PaintListener, IWebcamServiceReceiver {
                 camImage.dispose ();
             }
 
-            // TODO_PREF Preference
-            drawCross ( gc, 58, -60, canvasArea, paintEvent.display.getSystemColor ( SWT.COLOR_RED ) );
+            drawCross ( gc, midcrossRadius, midcrossXOffset, midcrossYOffset, canvasArea, midcrossColor );
             // drawWeb ( gc, 30, canvasArea, paintEvent.display.getSystemColor ( SWT.COLOR_RED ) );
 
         }
@@ -124,28 +157,21 @@ public class CameraPart implements PaintListener, IWebcamServiceReceiver {
         for ( int y = canvasArea.y; y < canvasArea.height; y += step ) {
             gc.drawLine ( canvasArea.x, y, canvasArea.x + canvasArea.width, y );
         }
-    }
-
-    private void drawCross ( final GC gc, final int dx, final int dy, final Rectangle canvasArea, final Color color ) {
-
-        if ( true ) {
-            gc.setLineStyle ( SWT.LINE_SOLID );
-            gc.setLineWidth ( 1 );
-            gc.setForeground ( color );
-            int r = 20;
-            int x = canvasArea.x + canvasArea.width / 2 + dx;
-            int y = canvasArea.y + canvasArea.height / 2 + dy;
-            gc.drawLine ( x - 2 * r, y, x + 2 * r, y );
-            gc.drawLine ( x, y - 2 * r, x, y + 2 * r );
-            gc.drawOval ( x - r, y - r, 2 * r, 2 * r );
-        }
 
     }
 
-    // if ( size == null ) {
-    // Dimension resolution = webcam.getViewSize ();
-    // setSize ( resolution.width, resolution.height );
-    // }
+    private void drawCross ( final GC gc, final int radius, final int dx, final int dy, final Rectangle canvasArea, final Color color ) {
+
+        gc.setLineStyle ( SWT.LINE_SOLID );
+        gc.setLineWidth ( 1 );
+        gc.setForeground ( color );
+        int x = canvasArea.x + canvasArea.width / 2 + dx;
+        int y = canvasArea.y + canvasArea.height / 2 + dy;
+        gc.drawLine ( x - 2 * radius, y, x + 2 * radius, y );
+        gc.drawLine ( x, y - 2 * radius, x, y + 2 * radius );
+        gc.drawOval ( x - radius, y - radius, 2 * radius, 2 * radius );
+
+    }
 
     private Image awtToSwtImage ( BufferedImage awtBufferedImage ) {
 

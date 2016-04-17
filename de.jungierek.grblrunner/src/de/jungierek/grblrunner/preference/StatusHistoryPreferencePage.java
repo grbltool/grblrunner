@@ -8,14 +8,14 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 
-public class StatusHistoryPreferencPage extends FieldEditorPreferencePage {
+public class StatusHistoryPreferencePage extends FieldEditorPreferencePage {
 
-    private static final Logger LOG = LoggerFactory.getLogger ( StatusHistoryPreferencPage.class );
+    private static final Logger LOG = LoggerFactory.getLogger ( StatusHistoryPreferencePage.class );
 
     private static final String PAGE_NAME = "Status History";
     public static final String ID = IConstant.KEY_BASE + ".status.history";
 
-    public StatusHistoryPreferencPage ( IPreferenceStore preferenceStore ) {
+    public StatusHistoryPreferencePage ( IPreferenceStore preferenceStore ) {
 
         super ( PAGE_NAME, GRID );
         setPreferenceStore ( preferenceStore );

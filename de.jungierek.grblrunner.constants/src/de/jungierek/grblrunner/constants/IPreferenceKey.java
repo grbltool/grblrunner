@@ -90,4 +90,12 @@ public interface IPreferenceKey {
     // --- Status History ---
     public static final String STATUS_HISTORY_DEPTH = IConstant.KEY_BASE + ".status.history.depth";
 
+    // --- Camera ---
+    public static final String CAMERA_MIDCROSS_COLOR = IConstant.KEY_BASE + ".camera.midcross.color";
+    public static final String CAMERA_MIDCROSS_RADIUS = IConstant.KEY_BASE + ".camera.midcross.radius";
+    public static final String CAMERA_MIDCROSS_OFFSET_X = IConstant.KEY_BASE + ".camera.midcross.offset.x";
+    public static final String CAMERA_MIDCROSS_OFFSET_Y = IConstant.KEY_BASE + ".camera.midcross.offset.y";
+    public static final String CAMERA_MILL_OFFSET_X = IConstant.KEY_BASE + ".camera.mill.offset.x";
+    public static final String CAMERA_MILL_OFFSET_Y = IConstant.KEY_BASE + ".camera.mill.offset.y";
+
 }

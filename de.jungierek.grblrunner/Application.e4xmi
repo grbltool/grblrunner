@@ -252,7 +252,7 @@
           <children xsi:type="menu:DynamicMenuContribution" xmi:id="_p68KIEBhEeWQxYaFUM1aCQ" elementId="de.jungierek.grblrunner.dynamicmenucontribution.camera.resolution" label="Camera Resolution" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.CameraResolutionDynMenuHandler"/>
         </children>
         <children xsi:type="menu:MenuSeparator" xmi:id="_EObjAHwhEeWvRN9uvDzZzw" elementId="de.jungierek.grblrunner.menuseparator.2"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_27Zk8DmsEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.camera.active" label="Activate" type="Check" command="_8ZjwkEEcEeWQa67ydomlgw"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_27Zk8DmsEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.camera.active" label="Activate" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/camera.png" type="Check" command="_8ZjwkEEcEeWQa67ydomlgw"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_aorbML-8EeWQDKWD-7TnCg" elementId="de.jungierek.grblrunner.menu.grbl" label="Grbl">
         <children xsi:type="menu:HandledMenuItem" xmi:id="_RE87QKlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.handledmenuitem.grbl.help" label="Grbl Help" command="_FJUFAH7hEeW1G6qhYeYpMg"/>
@@ -297,7 +297,26 @@
         </children>
       </toolbar>
     </sharedElements>
-    <sharedElements xsi:type="basic:Part" xmi:id="_5v8LsDeUEeWKEKUzaxkdZg" elementId="de.jungierek.grblrunner.part.camera" containerData="" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.part.CameraPart" label="Camera"/>
+    <sharedElements xsi:type="basic:Part" xmi:id="_5v8LsDeUEeWKEKUzaxkdZg" elementId="de.jungierek.grblrunner.part.camera" containerData="" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.part.CameraPart" label="Camera">
+      <menus xmi:id="_qr14YAS-Eea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.menu.part.camera">
+        <tags>ViewMenu</tags>
+        <children xsi:type="menu:Menu" xmi:id="_tx2AAAS-Eea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.menu..part.camera.select" label="Camera Select">
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_vVsYYAS-Eea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.dynamicmenucontribution..part.camera.select" label="" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.CameraSelectDynMenuHandler"/>
+        </children>
+        <children xsi:type="menu:Menu" xmi:id="_uXVSsAS-Eea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.menu..part.camera.resolution" label="Camera Resolution">
+          <children xsi:type="menu:DynamicMenuContribution" xmi:id="_v8WvwAS-Eea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.dynamicmenucontribution..part.camera.resolution" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.CameraResolutionDynMenuHandler"/>
+        </children>
+      </menus>
+      <toolbar xmi:id="_8o_38ASyEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.toolbar.3">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_5xH60ATREea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.handledtoolitem.camera.movetomill" label="Move to Mill" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/target_mill.gif" tooltip="Move to Mill" command="_hJiEkATSEea85_QWyWUTdQ">
+          <parameters xmi:id="_gehjQATTEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.parameter.82" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="+"/>
+        </children>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_6hiEEATREea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.handledtoolitem.camera.movetocam" label="Move To Camera" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/target_camera.gif" tooltip="Move To Camera" command="_hJiEkATSEea85_QWyWUTdQ">
+          <parameters xmi:id="_noDxwATTEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.parameter.83" name="de.jungierek.grblrunner.commandparameter.grbl.move.direction" value="-"/>
+        </children>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_9jXOcASyEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.handledtoolitem.camera.active" label="Activate Camera" iconURI="platform:/plugin/de.jungierek.grblrunner/icons/camera.png" type="Check" command="_8ZjwkEEcEeWQa67ydomlgw"/>
+      </toolbar>
+    </sharedElements>
     <sharedElements xsi:type="basic:Part" xmi:id="_-TiYoPsNEeSJsKKNyX_1bw" elementId="de.jungierek.grblrunner.part.view" containerData="" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.part.GcodeViewPart" label="GcodeView">
       <toolbar xmi:id="_4--5oITUEeWfLLryq_6Unw" elementId="de.jungierek.grblrunner.toolbar.0">
         <persistedState key="type" value="gcode"/>
@@ -451,6 +470,7 @@
   <handlers xmi:id="_-U0BgOIsEeWx3dCuCzksUg" elementId="de.jungierek.grblrunner.handler.preferences" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.PreferencesCommandHandler" command="_2niMwOIsEeWx3dCuCzksUg"/>
   <handlers xmi:id="_bozXUOiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.handler.fittosize" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.GcodeViewFitToSizeCommandHandler" command="_UdSy4OiAEeWwz-taqm-HEQ"/>
   <handlers xmi:id="_W7bd4Pw3EeWF4-1h_SKR5Q" elementId="de.jungierek.grblrunner.handler.macro.restore" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.MacroRestoreCommandHandler" command="_A7ZVMPw3EeWF4-1h_SKR5Q"/>
+  <handlers xmi:id="_Np2jUATTEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.handler.camera.move" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.CameraMoveCommandHandler" command="_hJiEkATSEea85_QWyWUTdQ"/>
   <bindingTables xmi:id="_JWsysIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.bindingtable.global" bindingContext="_TThFefsBEeSJsKKNyX_1bw">
     <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+G" command="_PP9sEHdmEeW3XImWwiVxiA">
       <tags>type:user</tags>
@@ -747,6 +767,9 @@
   <commands xmi:id="_2niMwOIsEeWx3dCuCzksUg" elementId="de.jungierek.grblrunner.command.preferences" commandName="Preferences"/>
   <commands xmi:id="_UdSy4OiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.command.fittosize" commandName="Fit To Size"/>
   <commands xmi:id="_A7ZVMPw3EeWF4-1h_SKR5Q" elementId="de.jungierek.grblrunner.command.macro.restore" commandName="Macro Restore"/>
+  <commands xmi:id="_hJiEkATSEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.command.camera.move" commandName="Move Camera">
+    <parameters xmi:id="_110GYATSEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.commandparameter.grbl.move.direction" name="Move Direction"/>
+  </commands>
   <addons xmi:id="_TThFcvsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_TThFc_sBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_TThFdPsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
