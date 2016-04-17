@@ -24,7 +24,7 @@
       <processor
             apply="always"
             beforefragment="false"
-            class="de.jungierek.grblrunner.addons.QuitProcessor">
+            class="de.jungierek.grblrunner.addon.QuitProcessor">
             <element id="de.jungierek.grblrunner.window.main"/>
       </processor>
    </extension>

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
-import de.jungierek.grblrunner.tools.GuiFactory;
+import de.jungierek.grblrunner.tool.GuiFactory;
 
 public class GcodeLargePreferencePage extends FieldEditorPreferencePage {
 
