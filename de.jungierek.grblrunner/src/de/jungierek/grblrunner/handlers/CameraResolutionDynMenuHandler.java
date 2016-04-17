@@ -25,7 +25,7 @@ import com.github.sarxos.webcam.Webcam;
 
 import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
-import de.jungierek.grblrunner.tools.CommandTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class CameraResolutionDynMenuHandler {
 
@@ -41,7 +41,7 @@ public class CameraResolutionDynMenuHandler {
     private IWebcamService webcamService;
 
     @Inject
-    private CommandTools commandTool;
+    private Toolbox toolbox;
 
     @PostConstruct
     public void initMenu () {}
@@ -68,7 +68,7 @@ public class CameraResolutionDynMenuHandler {
 
                 LOG.debug ( "size=" + size );
 
-                MCommand command = commandTool.findCommand ( ICommandId.CAMERA_RESOLUTION );
+                MCommand command = toolbox.findCommand ( ICommandId.CAMERA_RESOLUTION );
 
                 MParameter parameter = MCommandsFactory.INSTANCE.createParameter ();
                 parameter.setElementId ( ICommandId.CAMERA_RESOLUTION_PARAMETER + "." + size );

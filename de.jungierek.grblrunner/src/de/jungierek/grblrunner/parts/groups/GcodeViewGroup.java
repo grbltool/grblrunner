@@ -49,7 +49,7 @@ import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class GcodeViewGroup {
 
@@ -64,7 +64,7 @@ public class GcodeViewGroup {
     private IGcodeService gcodeService;
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     @Inject
     private IEventBroker eventBroker;
@@ -491,15 +491,15 @@ public class GcodeViewGroup {
 
         final Map<String, String> persistedState = application.getPersistedState ();
 
-        scale = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_SCALE ), 5.0 );
+        scale = toolbox.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_SCALE ), 5.0 );
 
-        double x = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_PIXEL_SHIFT + "X" ), 0.0 );
-        double y = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_PIXEL_SHIFT + "Y" ), 0.0 );
+        double x = toolbox.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_PIXEL_SHIFT + "X" ), 0.0 );
+        double y = toolbox.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_PIXEL_SHIFT + "Y" ), 0.0 );
         canvasShift = new Point ( x, y );
 
-        rotX = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_ROTATION + "X" ), 0.0 );
-        rotY = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_ROTATION + "Y" ), 0.0 );
-        rotZ = partTools.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_ROTATION + "Z" ), 0.0 );
+        rotX = toolbox.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_ROTATION + "X" ), 0.0 );
+        rotY = toolbox.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_ROTATION + "Y" ), 0.0 );
+        rotZ = toolbox.parseDouble ( persistedState.get ( IPersistenceKey.VIEW_ROTATION + "Z" ), 0.0 );
 
     }
 

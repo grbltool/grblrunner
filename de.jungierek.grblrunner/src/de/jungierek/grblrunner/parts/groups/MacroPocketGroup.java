@@ -142,18 +142,18 @@ public class MacroPocketGroup extends MacroGroup {
 
         LOG.debug ( "generateGcodeCore: start" );
 
-        int xyFeedrate = partTools.parseIntegerField ( xyFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE ));
-        int spindleSpeed = partTools.parseIntegerField ( spindleSpeedText, getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
-        double xDimension = partTools.parseDoubleField ( xDimensionText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ));
-        double yDimension = partTools.parseDoubleField ( yDimensionText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ));
-        double millDiameter = partTools.parseDoubleField ( millDiameterText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIAMETER ));
-        double zClearance = partTools.parseDoubleField ( zClearanceText, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) );
-        double zLiftup = partTools.parseDoubleField ( zLiftupText, getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) );
-        double zDepth = partTools.parseDoubleField ( zDepthText, getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ));
-        double overlap = partTools.parseIntegerField ( overlapText, getIntPreference ( IPreferenceKey.POCKET_MILL_OVERLAP ) ) / 100.0;
+        int xyFeedrate = toolbox.parseIntegerField ( xyFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE ) );
+        int spindleSpeed = toolbox.parseIntegerField ( spindleSpeedText, getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
+        double xDimension = toolbox.parseDoubleField ( xDimensionText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) );
+        double yDimension = toolbox.parseDoubleField ( yDimensionText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) );
+        double millDiameter = toolbox.parseDoubleField ( millDiameterText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIAMETER ) );
+        double zClearance = toolbox.parseDoubleField ( zClearanceText, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) );
+        double zLiftup = toolbox.parseDoubleField ( zLiftupText, getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) );
+        double zDepth = toolbox.parseDoubleField ( zDepthText, getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ) );
+        double overlap = toolbox.parseIntegerField ( overlapText, getIntPreference ( IPreferenceKey.POCKET_MILL_OVERLAP ) ) / 100.0;
         boolean isCornerCompensation = cornerCompensationCheckButton.getSelection ();
         boolean isClimb = climbCheckButton.getSelection ();
-        int zFeedrate = partTools.parseIntegerField ( zFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ) );
+        int zFeedrate = toolbox.parseIntegerField ( zFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ) );
 
         double millRadius = millDiameter / 2;
         double cornerCompensation = (1 - 1 / Math.sqrt ( 2 )) * millRadius;
@@ -249,17 +249,17 @@ public class MacroPocketGroup extends MacroGroup {
         
         LOG.debug ( "generateGcodeCore: start" );
         
-        int xyFeedrate = partTools.parseIntegerField ( xyFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE ) );
-        int spindleSpeed = partTools.parseIntegerField ( spindleSpeedText, getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
-        double xDimension = partTools.parseDoubleField ( xDimensionText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) );
-        double yDimension = partTools.parseDoubleField ( yDimensionText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) );
-        double millDiameter = partTools.parseDoubleField ( millDiameterText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIAMETER ));
-        double zClearance = partTools.parseDoubleField ( zClearanceText, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) );
-        double zLiftup = partTools.parseDoubleField ( zLiftupText, getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) );
-        double zDepth = partTools.parseDoubleField ( zDepthText, getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ));
-        double overlap = partTools.parseIntegerField ( overlapText, getIntPreference ( IPreferenceKey.POCKET_MILL_OVERLAP ) )/ 100.0;
+        int xyFeedrate = toolbox.parseIntegerField ( xyFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE ) );
+        int spindleSpeed = toolbox.parseIntegerField ( spindleSpeedText, getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
+        double xDimension = toolbox.parseDoubleField ( xDimensionText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) );
+        double yDimension = toolbox.parseDoubleField ( yDimensionText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) );
+        double millDiameter = toolbox.parseDoubleField ( millDiameterText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIAMETER ) );
+        double zClearance = toolbox.parseDoubleField ( zClearanceText, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) );
+        double zLiftup = toolbox.parseDoubleField ( zLiftupText, getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) );
+        double zDepth = toolbox.parseDoubleField ( zDepthText, getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ) );
+        double overlap = toolbox.parseIntegerField ( overlapText, getIntPreference ( IPreferenceKey.POCKET_MILL_OVERLAP ) ) / 100.0;
         boolean isCornerCompensation = cornerCompensationCheckButton.getSelection ();
-        int zFeedrate = partTools.parseIntegerField ( zFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ));
+        int zFeedrate = toolbox.parseIntegerField ( zFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ) );
 
         double millRadius = millDiameter / 2;
         double cornerCompensation = (1 - 1 / Math.sqrt ( 2 )) * millRadius;

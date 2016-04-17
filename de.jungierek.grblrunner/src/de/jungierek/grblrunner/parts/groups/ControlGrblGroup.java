@@ -23,7 +23,7 @@ import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class ControlGrblGroup {
 
@@ -36,7 +36,7 @@ public class ControlGrblGroup {
     private Shell shell;
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     private Button grblHomeButton;
     private Button grblUnlockButton;
@@ -66,9 +66,9 @@ public class ControlGrblGroup {
         grblCheckButton = GuiFactory.createPushButton ( group, "check", SWT.FILL, true );
         GuiFactory.createHiddenLabel ( group );
 
-        grblHomeButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_HOME ) );
-        grblUnlockButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_UNLOCK ) );
-        grblCheckButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_CHECK ) );
+        grblHomeButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_HOME ) );
+        grblUnlockButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_UNLOCK ) );
+        grblCheckButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_CHECK ) );
 
     }
 

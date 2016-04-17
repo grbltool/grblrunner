@@ -30,14 +30,14 @@ import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public abstract class MacroGroup {
 
     private static final Logger LOG = LoggerFactory.getLogger ( MacroGroup.class );
 
     @Inject
-    protected PartTools partTools;
+    protected Toolbox toolbox;
 
     @Inject
     private IGcodeProgram gcodeProgram;
@@ -102,7 +102,7 @@ public abstract class MacroGroup {
         gcodeProgram.parse ();
 
         Text gcodeText = (Text) context.get ( IConstant.MACRO_TEXT_ID );
-        if ( gcodeText != null ) partTools.gcodeToText ( gcodeText, gcodeProgram );
+        if ( gcodeText != null ) toolbox.gcodeToText ( gcodeText, gcodeProgram );
 
         eventBroker.send ( IEvent.GCODE_MACRO_GENERATED, null );
         eventBroker.send ( IEvent.REDRAW, null );

@@ -9,18 +9,18 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class GcodeCoordinateCommandHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeCoordinateCommandHandler.class );
 
     @Execute
-    public void execute ( IGcodeService gcodeService, PartTools partTools, @Optional @Named(ICommandId.SET_COORDINATE_SYSTEM_PARAMETER) String systemNo ) {
+    public void execute ( IGcodeService gcodeService, Toolbox toolbox, @Optional @Named(ICommandId.SET_COORDINATE_SYSTEM_PARAMETER) String systemNo ) {
 
         LOG.debug ( "execute: systemNo=" + systemNo );
         
-        int n = partTools.parseInteger ( systemNo, 1 );
+        int n = toolbox.parseInteger ( systemNo, 1 );
         if ( n > 0 && n < 7 ) { // G54 .. G59
             gcodeService.sendCommandSuppressInTerminal ( "G" + (53 + n) );
         }

@@ -21,7 +21,7 @@ import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class ControlCycleGroup {
 
@@ -34,7 +34,7 @@ public class ControlCycleGroup {
     private Shell shell;
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     private Button cycleHoldButton;
     private Button cycleStartButton;
@@ -66,9 +66,9 @@ public class ControlCycleGroup {
         cycleResetButton.setBackground ( shell.getDisplay ().getSystemColor ( SWT.COLOR_RED ) );
         GuiFactory.createHiddenLabel ( group );
 
-        cycleStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.CYCLE_START ) );
-        cycleHoldButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.CYCLE_PAUSE ) );
-        cycleResetButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.CYCLE_RESET ) );
+        cycleStartButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.CYCLE_START ) );
+        cycleHoldButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.CYCLE_PAUSE ) );
+        cycleResetButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.CYCLE_RESET ) );
 
     }
 

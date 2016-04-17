@@ -41,7 +41,7 @@ import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.gcode.IGrblRequest;
 import de.jungierek.grblrunner.service.gcode.IGrblResponse;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class TerminalPart {
 
@@ -56,7 +56,7 @@ public class TerminalPart {
     private Display display;
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     private StyledText terminalText;
 
@@ -241,9 +241,9 @@ public class TerminalPart {
     private void restorePersistedState ( MApplication application, MPart part ) {
 
         final Map<String, String> persistedState = application.getPersistedState ();
-        showSuppressedLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKey.TERMINAL_SUPPRESS_LINES ) );
-        showGrblStateLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKey.TERMINAL_GRBL_STATE ) );
-        showGcodeModeLines = partTools.parseBoolean ( persistedState.get ( IPersistenceKey.TERMINAL_GRBL_MODES ) );
+        showSuppressedLines = toolbox.parseBoolean ( persistedState.get ( IPersistenceKey.TERMINAL_SUPPRESS_LINES ) );
+        showGrblStateLines = toolbox.parseBoolean ( persistedState.get ( IPersistenceKey.TERMINAL_GRBL_STATE ) );
+        showGcodeModeLines = toolbox.parseBoolean ( persistedState.get ( IPersistenceKey.TERMINAL_GRBL_MODES ) );
 
         // set the state of the direct menu items according to persisted state
         // find the two direct menu items

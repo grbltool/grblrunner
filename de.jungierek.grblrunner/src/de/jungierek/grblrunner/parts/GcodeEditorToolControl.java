@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tools.GuiFactory.IntegerVerifyer;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class GcodeEditorToolControl {
     
@@ -29,7 +29,7 @@ public class GcodeEditorToolControl {
     private IGcodeProgram gcodeProgram;
     
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
     
     @Inject
     private IEventBroker eventBroker; 
@@ -58,7 +58,7 @@ public class GcodeEditorToolControl {
                 if ( ignoreRotationTextModifyListener ) return;
 
                 LOG.debug ( "modifyText: gcodeRotationText" );
-                gcodeProgram.rotate ( partTools.parseIntegerField ( gcodeRotationText, 0 ) );
+                gcodeProgram.rotate ( toolbox.parseIntegerField ( gcodeRotationText, 0 ) );
                 gcodeProgram.prepareAutolevelScan ();
 
                 eventBroker.send ( IEvent.REDRAW, null );

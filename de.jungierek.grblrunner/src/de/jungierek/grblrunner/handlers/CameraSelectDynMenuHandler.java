@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import com.github.sarxos.webcam.Webcam;
 
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
-import de.jungierek.grblrunner.tools.CommandTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class CameraSelectDynMenuHandler {
 
@@ -42,7 +42,7 @@ public class CameraSelectDynMenuHandler {
     private IWebcamService webcamService;
 
     @Inject
-    private CommandTools commandTool;
+    private Toolbox toolbox;
 
     @AboutToShow
     public void aboutToShow ( List<MMenuElement> items ) {
@@ -75,7 +75,7 @@ public class CameraSelectDynMenuHandler {
                 parameter.setValue ( webcamName );
                 LOG.debug ( "parameter=" + parameter );
 
-                MCommand command = commandTool.findCommand ( COMMAND_ID );
+                MCommand command = toolbox.findCommand ( COMMAND_ID );
                 LOG.debug ( "command=" + command );
 
                 MCommandParameter commandParameter = MCommandsFactory.INSTANCE.createCommandParameter ();

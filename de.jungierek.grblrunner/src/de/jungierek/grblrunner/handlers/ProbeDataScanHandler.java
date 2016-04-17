@@ -15,7 +15,7 @@ import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class ProbeDataScanHandler {
 
@@ -25,7 +25,7 @@ public class ProbeDataScanHandler {
     @Execute
     public void execute ( 
             IGcodeService gcodeService, 
-            PartTools partTools, 
+            Toolbox toolbox, 
             @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram gcodeProgram, 
             @Named(ICommandId.AUTOLEVEL_ZMIN_PARAMETER) String zMin, 
             @Named(ICommandId.AUTOLEVEL_ZMAX_PARAMETER) String zMax, 
@@ -41,8 +41,8 @@ public class ProbeDataScanHandler {
 
         gcodeService.scanAutolevelData (
                 gcodeProgram, // current selected gcode program
-                partTools.parseDouble ( zMin, probeDepthPref ), partTools.parseDouble ( zMax, probeZMaxPref ), partTools.parseDouble ( zClearance, zClearancePref ),
-                partTools.parseDouble ( probeFeedrate, probeFeedratePref ), probeWithErrorPref );
+                toolbox.parseDouble ( zMin, probeDepthPref ), toolbox.parseDouble ( zMax, probeZMaxPref ), toolbox.parseDouble ( zClearance, zClearancePref ),
+                toolbox.parseDouble ( probeFeedrate, probeFeedratePref ), probeWithErrorPref );
 
     }
 

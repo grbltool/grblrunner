@@ -18,7 +18,7 @@ import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class ControlInfoGroup {
 
@@ -27,7 +27,7 @@ public class ControlInfoGroup {
     private static final String GROUP_NAME = "Info";
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     private Button grblHelpButton;
     private Button grblSettingsButton;
@@ -54,12 +54,12 @@ public class ControlInfoGroup {
         grblInfoButton = GuiFactory.createPushButton ( group, "$I", SWT.FILL, true );
         grblStartupBlocksButton = GuiFactory.createPushButton ( group, "$N", SWT.FILL, true );
         
-        grblHelpButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_HELP ) );
-        grblSettingsButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_SETTINGS ) );
-        grblCoordinatesButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_COORIDNATES ) );
-        grblModesButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_MODES ) );
-        grblInfoButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_INFO ) );
-        grblStartupBlocksButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_STARTUP ) );
+        grblHelpButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_HELP ) );
+        grblSettingsButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_SETTINGS ) );
+        grblCoordinatesButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_COORIDNATES ) );
+        grblModesButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_MODES ) );
+        grblInfoButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_INFO ) );
+        grblStartupBlocksButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_STARTUP ) );
 
     }
 

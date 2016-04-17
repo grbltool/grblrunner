@@ -31,7 +31,7 @@ import de.jungierek.grblrunner.parts.groups.MacroGroup;
 import de.jungierek.grblrunner.parts.groups.MacroHobbedBoltGroup;
 import de.jungierek.grblrunner.parts.groups.MacroPocketGroup;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class MacroPart {
 
@@ -44,7 +44,7 @@ public class MacroPart {
     private ESelectionService selectionService;
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     // prevent from garbage collection
     @SuppressWarnings("unused")
@@ -105,7 +105,7 @@ public class MacroPart {
 
         context.set ( IConstant.MACRO_TEXT_ID, gcodeText );
 
-        partTools.gcodeToText ( gcodeText, gcodeProgram );
+        toolbox.gcodeToText ( gcodeText, gcodeProgram );
 
         // TODO reload parameters
         // String path = part.getPersistedState ().get ( IPersistenceKey.EDITOR_PATH );

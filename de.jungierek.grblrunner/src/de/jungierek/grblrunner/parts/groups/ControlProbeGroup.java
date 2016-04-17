@@ -24,10 +24,9 @@ import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
-import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class ControlProbeGroup implements CommandParameterCallback {
 
@@ -36,10 +35,7 @@ public class ControlProbeGroup implements CommandParameterCallback {
     private static final String GROUP_NAME = "Z-Probe";
 
     @Inject
-    private PartTools partTools;
-
-    @Inject
-    private IGcodeService gcodeService;
+    private Toolbox toolbox;
 
     private Button probeStartButton;
     private Text probeDepthText;
@@ -59,7 +55,7 @@ public class ControlProbeGroup implements CommandParameterCallback {
         probeDepthText = GuiFactory.createDoubleText ( group, String.format ( IConstant.FORMAT_HEIGHT, probeDepth ), 1, true );
         probeStartButton = GuiFactory.createArrowButton ( group, SWT.DOWN );
 
-        probeStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.PROBE_ACTION, new HashMap<String, Object> (), this ) );
+        probeStartButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.PROBE_ACTION, new HashMap<String, Object> (), this ) );
 
         // probeStartButton.addSelectionListener ( new SelectionAdapter () {
         //

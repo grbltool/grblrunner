@@ -33,7 +33,7 @@ import de.jungierek.grblrunner.service.gcode.IGrblRequest;
 import de.jungierek.grblrunner.service.gcode.IGrblResponse;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class StateCoordinatesGroup implements CommandParameterCallback {
 
@@ -50,7 +50,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
     private IGcodeService gcodeService;
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     private CCombo coordSystemCombo;
 
@@ -87,13 +87,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
         coordSystemCombo.select ( 0 ); // G54
         coordSystemCombo.setLayoutData ( new GridData ( SWT.FILL, SWT.CENTER, true, false, 2, 1 ) );
 
-        coordSystemCombo.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.SET_COORDINATE_SYSTEM, new HashMap<String, Object> (), this ) );
-        // coordSystemCombo.addSelectionListener ( new SelectionAdapter () {
-        // @Override
-        // public void widgetSelected ( SelectionEvent evt ) {
-        // gcodeService.sendCommandSuppressInTerminal ( ((CCombo) evt.getSource ()).getText () );
-        // }
-        // } );
+        coordSystemCombo.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.SET_COORDINATE_SYSTEM, new HashMap<String, Object> (), this ) );
 
         for ( int i = 0; i < AXIS.length; i++ ) {
 
@@ -107,12 +101,12 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
             setZeroButton[i] = GuiFactory.createPushButton ( group, "zero " + axisLetter );
             HashMap<String, Object> parameter1 = new HashMap<String, Object> ();
             parameter1.put ( ICommandId.COORDINATE_OFFSET_PARAMETER, axisLetter );
-            setZeroButton[i].addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.SET_COORDINATE_OFFSET, parameter1 ) );
+            setZeroButton[i].addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.SET_COORDINATE_OFFSET, parameter1 ) );
 
             resetZeroButton[i] = GuiFactory.createPushButton ( group, "reset " + axisLetter );
             HashMap<String, Object> parameter2 = new HashMap<String, Object> ();
             parameter2.put ( ICommandId.COORDINATE_OFFSET_PARAMETER, axisLetter );
-            resetZeroButton[i].addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.RESET_COORDINATE_OFFSET, parameter2 ) );
+            resetZeroButton[i].addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.RESET_COORDINATE_OFFSET, parameter2 ) );
 
         }
 
@@ -157,7 +151,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
     public Map<String, Object> getParameter () {
 
         Map<String, Object> result = new HashMap<String, Object> ();
-        result.put ( ICommandId.SET_COORDINATE_SYSTEM_PARAMETER, "" + (partTools.parseInteger ( coordSystemCombo.getText ().substring ( 1 ), 54 ) - 53) );
+        result.put ( ICommandId.SET_COORDINATE_SYSTEM_PARAMETER, "" + (toolbox.parseInteger ( coordSystemCombo.getText ().substring ( 1 ), 54 ) - 53) );
 
         return result;
 

@@ -26,7 +26,7 @@ import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class ControlSpindleGroup {
 
@@ -35,7 +35,7 @@ public class ControlSpindleGroup {
     private static final String GROUP_NAME = "Spindle";
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     @Inject
     private IGcodeService gcodeService;
@@ -96,8 +96,8 @@ public class ControlSpindleGroup {
             }
         } );
 
-        spindleStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_SPINDLE_START ) );
-        spindleStopButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.GRBL_SPINDLE_STOP ) );
+        spindleStartButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_SPINDLE_START ) );
+        spindleStopButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_SPINDLE_STOP ) );
 
     }
 

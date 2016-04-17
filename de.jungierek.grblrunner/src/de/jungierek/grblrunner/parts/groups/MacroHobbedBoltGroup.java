@@ -121,15 +121,15 @@ public class MacroHobbedBoltGroup extends MacroGroup {
         
         LOG.debug ( "generateGcodeCore: start" );
         
-        int feedrate = partTools.parseIntegerField ( feedrateText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_FEEDRATE ) );
-        int spindleSpeed = partTools.parseIntegerField ( spindleSpeedText, getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
-        int angle = partTools.parseIntegerField ( angleText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_ANGLE ) );
-        int boltDiameter = partTools.parseIntegerField ( boltDiameterText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_BOLT_DIAMETER ) );
-        double zLiftup = partTools.parseDoubleField ( zClearanceText, getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) );
-        double xClearance = partTools.parseDoubleField ( xClearanceText, getDoublePreference ( IPreferenceKey.HOBBED_BOLT_X_CLEARANCE ) );
-        int countRetraction = partTools.parseIntegerField ( countRetractionText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_COUNT_RETRACTION ) );
-        double retraction = partTools.parseDoubleField ( retractionText, getDoublePreference ( IPreferenceKey.HOBBED_BOLT_RETRACTION ) );
-        int waitAtTarget = partTools.parseIntegerField ( waitAtTargetText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_WAIT_AT_TARGET ) );
+        int feedrate = toolbox.parseIntegerField ( feedrateText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_FEEDRATE ) );
+        int spindleSpeed = toolbox.parseIntegerField ( spindleSpeedText, getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
+        int angle = toolbox.parseIntegerField ( angleText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_ANGLE ) );
+        int boltDiameter = toolbox.parseIntegerField ( boltDiameterText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_BOLT_DIAMETER ) );
+        double zLiftup = toolbox.parseDoubleField ( zClearanceText, getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) );
+        double xClearance = toolbox.parseDoubleField ( xClearanceText, getDoublePreference ( IPreferenceKey.HOBBED_BOLT_X_CLEARANCE ) );
+        int countRetraction = toolbox.parseIntegerField ( countRetractionText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_COUNT_RETRACTION ) );
+        double retraction = toolbox.parseDoubleField ( retractionText, getDoublePreference ( IPreferenceKey.HOBBED_BOLT_RETRACTION ) );
+        int waitAtTarget = toolbox.parseIntegerField ( waitAtTargetText, getIntPreference ( IPreferenceKey.HOBBED_BOLT_WAIT_AT_TARGET ) );
 
         double boltRadius = (double) boltDiameter / 2;
         final double y = 0.0;

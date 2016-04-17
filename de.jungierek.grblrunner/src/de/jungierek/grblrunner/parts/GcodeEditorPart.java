@@ -32,7 +32,7 @@ import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPersistenceKey;
 import de.jungierek.grblrunner.parts.groups.GcodeFileGroup;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class GcodeEditorPart {
 
@@ -45,7 +45,7 @@ public class GcodeEditorPart {
     private ESelectionService selectionService;
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     // prevent from garbage collection
     @SuppressWarnings("unused")
@@ -125,7 +125,7 @@ public class GcodeEditorPart {
         File gcodeProgramFile = gcodeProgram.getGcodeProgramFile ();
         if ( gcodeProgramFile != null && gcodeProgramFile.getPath ().equals ( fileName ) ) {
 
-            partTools.gcodeToText ( gcodeText, gcodeProgram );
+            toolbox.gcodeToText ( gcodeText, gcodeProgram );
 
         }
 

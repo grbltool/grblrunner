@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.ICommandId;
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
-import de.jungierek.grblrunner.tools.CommandTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class PerpectiveDynMenuHandler {
 
@@ -41,7 +41,7 @@ public class PerpectiveDynMenuHandler {
     private IWebcamService webcamService;
 
     @Inject
-    private CommandTools commandTool;
+    private Toolbox toolbox;
     
     @AboutToShow
     public void aboutToShow ( List<MMenuElement> items, @Named(IServiceConstants.ACTIVE_PART) MPart activePart ) {
@@ -51,7 +51,7 @@ public class PerpectiveDynMenuHandler {
         List<MPerspective> perspectiveList = modelService.findElements ( application, null, MPerspective.class, null );
         for ( MPerspective perspective : perspectiveList ) {
 
-            MCommand command = commandTool.findCommand ( ICommandId.PERSPECTIVE_SWITCH );
+            MCommand command = toolbox.findCommand ( ICommandId.PERSPECTIVE_SWITCH );
 
             MParameter parameter = MCommandsFactory.INSTANCE.createParameter ();
             parameter.setElementId ( ICommandId.PERSPECTIVE_SWITCH_PARAMETER + "." + perspective.getElementId () );

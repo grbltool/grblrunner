@@ -34,7 +34,7 @@ import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class ControlAutolevelGroup implements CommandParameterCallback {
 
@@ -43,7 +43,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
     private static final String GROUP_NAME = "Autolevel";
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     @Inject
     private ISerialService serialService;
@@ -122,10 +122,10 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
         scanStepXText.addModifyListener ( updateViewModifyListener );
         scanStepYText.addModifyListener ( updateViewModifyListener );
 
-        scanStartButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_SCAN, new HashMap<String, Object> (), this ) );
-        scanClearButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_CLEAR ) );
-        loadProbeDataButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_LOAD ) );
-        saveProbeDataButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_SAVE ) );
+        scanStartButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_SCAN, new HashMap<String, Object> (), this ) );
+        scanClearButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_CLEAR ) );
+        loadProbeDataButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_LOAD ) );
+        saveProbeDataButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.AUTOLEVEL_SAVE ) );
 
     }
 
@@ -165,8 +165,8 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
         // on gcode loading the probe data are always reseted
         if ( gcodeProgram != null ) {
 
-            int xSteps = partTools.parseIntegerField ( scanStepXText, 1 );
-            int ySteps = partTools.parseIntegerField ( scanStepYText, 1 );
+            int xSteps = toolbox.parseIntegerField ( scanStepXText, 1 );
+            int ySteps = toolbox.parseIntegerField ( scanStepYText, 1 );
 
             gcodeProgram.prepareAutolevelScan ( xSteps, ySteps ); // resets scan completed
             scanStepWidthXLabel.setText ( String.format ( IConstant.FORMAT_COORDINATE, gcodeProgram.getStepWidthX () ) );

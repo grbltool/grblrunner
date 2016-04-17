@@ -24,7 +24,7 @@ import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class SerialActionsGroup {
 
@@ -33,7 +33,7 @@ public class SerialActionsGroup {
     private static final String GROUP_NAME = "Actions";
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
     
     @Inject
     private Display display;
@@ -82,9 +82,9 @@ public class SerialActionsGroup {
 
         updateButton = GuiFactory.createPushButton ( group, "update", SWT.FILL, true );
 
-        connectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.SERIAL_CONNECT ) );
-        disconnectButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.SERIAL_DISCONNECT ) );
-        updateButton.addSelectionListener ( partTools.createCommandExecuteSelectionListener ( ICommandId.SERIAL_UPDATE ) );
+        connectButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.SERIAL_CONNECT ) );
+        disconnectButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.SERIAL_DISCONNECT ) );
+        updateButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.SERIAL_UPDATE ) );
 
     }
 

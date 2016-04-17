@@ -24,7 +24,7 @@ import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.tools.CommandParameterCallback;
 import de.jungierek.grblrunner.tools.GuiFactory;
-import de.jungierek.grblrunner.tools.PartTools;
+import de.jungierek.grblrunner.tools.Toolbox;
 
 public class ControlMoveGroup implements CommandParameterCallback {
 
@@ -33,7 +33,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
     private static final String GROUP_NAME = "Move";
 
     @Inject
-    private PartTools partTools;
+    private Toolbox toolbox;
 
     private Button moveYForwardButton;
     private Button moveZUpButton;
@@ -126,7 +126,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
         for ( MoveParameterRecord moveParameterRecord : moveParameter ) {
             moveParameterRecord.button.addSelectionListener ( 
-                    partTools.createCommandExecuteSelectionListener ( 
+                    toolbox.createCommandExecuteSelectionListener ( 
                             ICommandId.GRBL_MOVE, 
                             createParameterMap ( moveParameterRecord.axis, moveParameterRecord.direction ),
                             this 
@@ -135,14 +135,14 @@ public class ControlMoveGroup implements CommandParameterCallback {
         }
         
         goZeroXYButton.addSelectionListener ( 
-                partTools.createCommandExecuteSelectionListener ( 
+                toolbox.createCommandExecuteSelectionListener ( 
                         ICommandId.GRBL_MOVE_ZERO, 
                         createParameterMap ( "XY" ) 
                 ) 
         );
 
         goZeroZButton.addSelectionListener ( 
-                partTools.createCommandExecuteSelectionListener ( 
+                toolbox.createCommandExecuteSelectionListener ( 
                         ICommandId.GRBL_MOVE_ZERO, 
                         createParameterMap ( "Z" ) 
                 ) 
