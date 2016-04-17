@@ -922,6 +922,8 @@ public class GcodeViewGroup {
             gc.drawLine ( (int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y );
 
         }
+        
+        private final static double PRECISION = 1000.0;
 
         private double computeAngle ( IGcodePoint p, IGcodePoint center, double radius ) {
 
@@ -932,7 +934,7 @@ public class GcodeViewGroup {
                 angle = 360 - angle;
             }
 
-            return angle;
+            return ((int) (angle * PRECISION + 0.5)) / PRECISION; // HACK round to 3 decimals
 
         }
 
@@ -946,14 +948,14 @@ public class GcodeViewGroup {
             double cosAngle = (x1 * x2 + y1 * y2) / radius * radius;
             double angle = Math.acos ( cosAngle ) / IConstant.ONE_DEGREE;
 
-            return angle;
+            return ((int) (angle * PRECISION + 0.5)) / PRECISION; // HACK round to 3 decimals
 
         }
 
         // all in plane xy
         private void drawCircle ( GC gc, double mult, IGcodeLine gcodeLine ) {
 
-            LOG.debug ( "drawCircle: gcodeLine=" + gcodeLine );
+            // LOG.debug ( "drawCircle: gcodeLine=" + gcodeLine + " rotationAngle=" + gcodeProgram.getRotationAngle () );
 
             IGcodePoint start = gcodeLine.getStart ().add ( gcodeService.getFixtureShift () );
             IGcodePoint end = gcodeLine.getEnd ().add ( gcodeService.getFixtureShift () );
@@ -967,20 +969,21 @@ public class GcodeViewGroup {
 
             final double dd = x * x + y * y;
             double d = Math.sqrt ( dd );
-            double h = Math.sqrt ( r * r - dd / 4 );
+            double hh = r * r - dd / 4;
+            if ( hh < 0 ) hh = 0.0;
+            double h = Math.sqrt ( hh );
 
             // G2, bei G3 + und - vor h alternieren
             double i = start.getX () + x / 2 + mult * h / d * y;
             double j = start.getY () + y / 2 - mult * h / d * x;
-            // LOG.debug ( "drawCircle: dd=" + dd + " d=" + d + " h=" + h + " i=" + i + " j=" + j );
+            // LOG.debug ( "drawCircle: dd=" + dd + " d=" + d + " hh=" + hh + " h=" + h + " i=" + i + " j=" + j );
             IGcodePoint center = gcodeService.createGcodePoint ( i, j, 0.0 );
 
             double startAngle = computeAngle ( start, center, r );
             double endAngle = computeAngle ( end, center, r );
             double arcAngle = endAngle - startAngle;
-            // LOG.debug ( "drawCircle: arcAngle=" + arcAngle + " mult=" + mult );
             if ( arcAngle < -180 ) arcAngle += 360;
-            else if ( Math.abs ( mult * arcAngle - 180 ) < 0.0001 ) arcAngle = -arcAngle;
+            else if ( Math.abs ( mult * arcAngle - 180 ) == 0.0 ) arcAngle = -arcAngle;
             else if ( arcAngle > 180 ) arcAngle -= 360;
             // LOG.debug ( "drawCircle: startAngle=" + startAngle + " endAngle=" + endAngle + " arcAngle=" + arcAngle );
 
