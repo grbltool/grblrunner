@@ -20,7 +20,10 @@ public interface IGcodeService {
     public boolean isAutolevelScan ();
     public boolean isPlaying ();
     public boolean isAlarm ();
-    boolean isGrblIdle ();
+
+    public boolean isGrblIdle ();
+
+    public boolean isGrblAlarm ();
 
     public IGcodePoint createGcodePoint ( double x, double y, double z );
 
