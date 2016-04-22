@@ -1,5 +1,6 @@
 package de.jungierek.grblrunner.tool;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,12 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.di.annotations.Creatable;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
+import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
+import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -188,6 +195,12 @@ public class Toolbox {
 
     }
 
+    public CommandExecuteSelectionListener createCommandExecuteSelectionListener ( String commandId, CommandParameterCallback parameterCallback ) {
+
+        return new CommandExecuteSelectionListener ( commandId, new HashMap<String, Object> (), parameterCallback );
+
+    }
+
     public CommandExecuteSelectionListener createCommandExecuteSelectionListener ( String commandId, Map<String, Object> parameter ) {
 
         return new CommandExecuteSelectionListener ( commandId, parameter );
@@ -198,6 +211,30 @@ public class Toolbox {
 
         return new CommandExecuteSelectionListener ( commandId );
 
+    }
+
+    public void addMenuItemTo ( List<MMenuElement> items, final boolean selectThisItem, final String commandId, final String parameterId, final String value ) {
+    
+        MCommand command = findCommand ( commandId );
+    
+        MParameter parameter = MCommandsFactory.INSTANCE.createParameter ();
+        parameter.setElementId ( parameterId + value );
+        parameter.setName ( parameterId ); // this is the importend "id"
+        parameter.setValue ( value );
+    
+        // MCommandParameter commandParameter = MCommandsFactory.INSTANCE.createCommandParameter ();
+        // commandParameter.setElementId ( parameterId );
+        // commandParameter.setName ( parameterId );
+        // commandParameter.setOptional ( true );
+    
+        MHandledMenuItem item = MMenuFactory.INSTANCE.createHandledMenuItem ();
+        item.setLabel ( value );
+        item.setType ( ItemType.RADIO );
+        item.setCommand ( command );
+        item.getParameters ().add ( parameter );
+        if ( selectThisItem ) item.setSelected ( true );
+        items.add ( item );
+    
     }
 
     private class CommandExecuteSelectionListener extends SelectionAdapter {

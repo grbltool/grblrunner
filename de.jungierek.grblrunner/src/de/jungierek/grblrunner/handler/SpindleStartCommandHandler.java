@@ -1,6 +1,6 @@
 package de.jungierek.grblrunner.handler;
 
-public class GrblSpindleStartCommandHandler extends GrblCommandHandler {
+public class SpindleStartCommandHandler extends GrblCommandHandler {
 
     @Override
     protected String getCommand () {

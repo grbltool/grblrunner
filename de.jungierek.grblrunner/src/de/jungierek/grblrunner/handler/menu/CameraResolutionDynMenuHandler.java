@@ -1,5 +1,5 @@
  
-package de.jungierek.grblrunner.handler;
+package de.jungierek.grblrunner.handler.menu;
 
 import java.util.List;
 
@@ -9,11 +9,6 @@ import javax.inject.Inject;
 import org.eclipse.e4.ui.di.AboutToHide;
 import org.eclipse.e4.ui.di.AboutToShow;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.commands.MCommand;
-import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
-import org.eclipse.e4.ui.model.application.commands.MCommandsFactory;
-import org.eclipse.e4.ui.model.application.commands.MParameter;
-import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
@@ -63,33 +58,10 @@ public class CameraResolutionDynMenuHandler {
         else {
 
             String [] webcamSizes = webcamService.getWebcamSizes ();
-
+            final String selectedWebcamSize = webcamService.getWebcamSize ();
             for ( String size : webcamSizes ) {
-
                 LOG.debug ( "size=" + size );
-
-                MCommand command = toolbox.findCommand ( ICommandId.CAMERA_RESOLUTION );
-
-                MParameter parameter = MCommandsFactory.INSTANCE.createParameter ();
-                parameter.setElementId ( ICommandId.CAMERA_RESOLUTION_PARAMETER + "." + size );
-                parameter.setName ( ICommandId.CAMERA_RESOLUTION_PARAMETER ); // this is the importend "id"
-                parameter.setValue ( size );
-
-                MCommandParameter commandParameter = MCommandsFactory.INSTANCE.createCommandParameter ();
-                commandParameter.setElementId ( ICommandId.CAMERA_RESOLUTION_PARAMETER );
-                commandParameter.setName ( ICommandId.CAMERA_RESOLUTION_PARAMETER );
-                commandParameter.setOptional ( true );
-
-                MHandledMenuItem item = MMenuFactory.INSTANCE.createHandledMenuItem ();
-                item.setLabel ( size );
-                item.setType ( ItemType.RADIO );
-                item.setCommand ( command );
-                item.getParameters ().add ( parameter );
-                if ( size.equals ( webcamService.getWebcamSize () ) ) {
-                    item.setSelected ( true );
-                }
-                items.add ( item );
-
+                toolbox.addMenuItemTo ( items, size.equals ( selectedWebcamSize ), ICommandId.CAMERA_RESOLUTION, ICommandId.CAMERA_RESOLUTION_PARAMETER, size );
             }
 
         }

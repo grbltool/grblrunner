@@ -125,6 +125,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.putInt ( IPreferenceKey.CAMERA_MILL_OFFSET_X, 50 );
         defaults.putInt ( IPreferenceKey.CAMERA_MILL_OFFSET_Y, 50 );
 
+        // --- Spindle Speed Menu Entries ---
+        defaults.putInt ( IPreferenceKey.SPINDLE_SPEED_ENTRY_1, 5000 );
+        defaults.putInt ( IPreferenceKey.SPINDLE_SPEED_ENTRY_2, 8000 );
+        defaults.putInt ( IPreferenceKey.SPINDLE_SPEED_ENTRY_3, 12000 );
+
         // -------------------------------
 
         try {

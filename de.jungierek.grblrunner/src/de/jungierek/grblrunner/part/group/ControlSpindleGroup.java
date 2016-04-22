@@ -1,5 +1,8 @@
 package de.jungierek.grblrunner.part.group;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -8,8 +11,6 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -25,10 +26,11 @@ import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
+import de.jungierek.grblrunner.tool.CommandParameterCallback;
 import de.jungierek.grblrunner.tool.GuiFactory;
 import de.jungierek.grblrunner.tool.Toolbox;
 
-public class ControlSpindleGroup {
+public class ControlSpindleGroup implements CommandParameterCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger ( ControlSpindleGroup.class );
 
@@ -85,19 +87,24 @@ public class ControlSpindleGroup {
         spindleStartButton = GuiFactory.createPushButton ( group, "start", SWT.CENTER, false );
         spindleStopButton = GuiFactory.createPushButton ( group, "stop", SWT.CENTER, false );
 
-        spindleVelocitySlider.addSelectionListener ( new SelectionAdapter () {
-            @Override
-            public void widgetSelected ( SelectionEvent evt ) {
-                // determine slider selection in UI Thread!!!
-                final int speed = spindleVelocitySlider.getSelection ();
-                // to prevent deadlocks in UI Thread
-                ignoreSpindleSpeedUpdate = true;
-                new Thread ( ( ) -> gcodeService.sendCommandSuppressInTerminal ( "S" + speed ) ).start ();
-            }
-        } );
+        spindleVelocitySlider.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.SPINDLE_SPEED, this ) );
+        spindleStartButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.SPINDLE_START ) );
+        spindleStopButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.SPINDLE_STOP ) );
 
-        spindleStartButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_SPINDLE_START ) );
-        spindleStopButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.GRBL_SPINDLE_STOP ) );
+    }
+
+    @Override
+    public Map<String, Object> getParameter () {
+        
+        LOG.debug ( "getParameter: speed=" + spindleVelocitySlider.getSelection () );
+
+        // to prevent deadlocks in UI Thread
+        ignoreSpindleSpeedUpdate = true;
+
+        Map<String, Object> result = new HashMap<String, Object> ();
+        result.put ( ICommandId.SPINDLE_SPEED_PARAMETER, "" + spindleVelocitySlider.getSelection () );
+
+        return result;
 
     }
 

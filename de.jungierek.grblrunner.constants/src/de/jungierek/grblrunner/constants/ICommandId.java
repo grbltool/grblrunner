@@ -7,13 +7,6 @@ public interface ICommandId {
     public static final String GCODE_REFRESH = "de.jungierek.grblrunner.command.gcode.refresh";
     public static final String GCODE_PLAY = "de.jungierek.grblrunner.command.gcode.play";
 
-    public static final String GCODE_$ = "de.jungierek.grblrunner.command.gcode.$";
-    public static final String GCODE_$$ = "de.jungierek.grblrunner.command.gcode.$$";
-    public static final String GCODE_$sharp = "de.jungierek.grblrunner.command.gcode.$#";
-    public static final String GCODE_$G = "de.jungierek.grblrunner.command.gcode.$G";
-    public static final String GCODE_$I = "de.jungierek.grblrunner.command.gcode.$I";
-    public static final String GCODE_$N = "de.jungierek.grblrunner.command.gcode.$N";
-
     public static final String CYCLE_START = "de.jungierek.grblrunner.command.cycle.start";
     public static final String CYCLE_PAUSE = "de.jungierek.grblrunner.command.cycle.pause";
     public static final String CYCLE_RESET = "de.jungierek.grblrunner.command.cycle.reset";
@@ -55,8 +48,10 @@ public interface ICommandId {
     public static final String GRBL_MOVE_ZERO = "de.jungierek.grblrunner.command.grbl.movezero";
     public static final String GRBL_MOVE_ZERO_AXIS_PARAMETER = "de.jungierek.grblrunner.commandparameter.grbl.movezero.axis";
 
-    public static final String GRBL_SPINDLE_START = "de.jungierek.grblrunner.command.grbl.spindle.start";
-    public static final String GRBL_SPINDLE_STOP = "de.jungierek.grblrunner.command.grbl.spindle.stop";
+    public static final String SPINDLE_START = "de.jungierek.grblrunner.command.spindle.start";
+    public static final String SPINDLE_STOP = "de.jungierek.grblrunner.command.spindle.stop";
+    public static final String SPINDLE_SPEED = "de.jungierek.grblrunner.command.spindle.speed";
+    public final static String SPINDLE_SPEED_PARAMETER = "de.jungierek.grblrunner.commandparameter.spindle.speed";
 
     public static final String PROBE_ACTION = "de.jungierek.grblrunner.command.probe";
     public static final String PROBE_ACTION_DEPTH_PARAMETER = "de.jungierek.grblrunner.commandparameter.probe.depth";
@@ -69,5 +64,8 @@ public interface ICommandId {
 
     public final static String PERSPECTIVE_SWITCH = "de.jungierek.grblrunner.command.perspective.switch";
     public final static String PERSPECTIVE_SWITCH_PARAMETER = "de.jungierek.grblrunner.commandparameter.perspective.switch";
+
+    public final static String CAMERA_SELECT = "de.jungierek.grblrunner.command.camera.select";
+    public final static String CAMERA_SELECT_PARAMETER = "de.jungierek.grblrunner.commandparameter.camera.select";
 
 }

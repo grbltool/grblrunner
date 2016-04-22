@@ -11,7 +11,7 @@ import de.jungierek.grblrunner.service.serial.ISerialService;
 
 public class SerialDisconnectCommandHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger ( SerialDynMenuHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger ( SerialDisconnectCommandHandler.class );
 
     @Execute
     public void execute ( ISerialService serial ) {

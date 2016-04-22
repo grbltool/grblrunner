@@ -66,5 +66,7 @@ public interface IConstant {
 
     public static final String CYCLIC_PERSPECTIVE_SWITCHING = "cyclic";
 
+    public final static int MAX_HISTORY_DEPTH = 100;
+
 
 }

@@ -98,4 +98,9 @@ public interface IPreferenceKey {
     public static final String CAMERA_MILL_OFFSET_X = IConstant.KEY_BASE + ".camera.mill.offset.x";
     public static final String CAMERA_MILL_OFFSET_Y = IConstant.KEY_BASE + ".camera.mill.offset.y";
 
+    // --- Spindle Speed Menu Entries ---
+    public static final String SPINDLE_SPEED_ENTRY_1 = IConstant.KEY_BASE + ".spindlespeed.1";
+    public static final String SPINDLE_SPEED_ENTRY_2 = IConstant.KEY_BASE + ".spindlespeed.2";
+    public static final String SPINDLE_SPEED_ENTRY_3 = IConstant.KEY_BASE + ".spindlespeed.3";
+
 }
