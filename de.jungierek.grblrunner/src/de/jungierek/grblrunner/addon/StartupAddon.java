@@ -249,6 +249,15 @@ public class StartupAddon {
 
     @Inject
     @Optional
+    public void cameraEventNotified ( @UIEventTopic(IEvent.CAMERA_ALL) Object data ) {
+
+        LOG.trace ( "cameraEventNotified: data=" + data );
+        updateToolbarState ();
+
+    }
+
+    @Inject
+    @Optional
     public void serialPortsDetectedNotified ( @UIEventTopic(IEvent.SERIAL_PORTS_DETECTED) String [] portNames ) {
 
         LOG.trace ( "serialPortsDetectedNotified:" );

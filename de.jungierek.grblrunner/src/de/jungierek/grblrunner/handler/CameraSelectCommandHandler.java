@@ -5,12 +5,14 @@ import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.services.events.IEventBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.sarxos.webcam.Webcam;
 
+import de.jungierek.grblrunner.constants.ICommandId;
+import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
 
 public class CameraSelectCommandHandler {
@@ -18,7 +20,7 @@ public class CameraSelectCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger ( CameraSelectCommandHandler.class );
 
     @Execute
-    public void execute ( @Optional @Named("de.jungierek.grblrunner.commandparameter.camera.select") String webcamName, IWebcamService webcamService ) {
+    public void execute ( @Named(ICommandId.CAMERA_SELECT_PARAMETER) String webcamName, IWebcamService webcamService, IEventBroker eventBroker ) {
 
         LOG.debug ( "execute called name=" + webcamName );
 
@@ -28,6 +30,7 @@ public class CameraSelectCommandHandler {
         for ( Webcam webcam : webcams ) {
             if ( webcamName.equals ( webcam.getName () ) ) {
                 webcamService.setWebcam ( webcam );
+                eventBroker.send ( IEvent.CAMERA_SELECTED, webcam.getName () );
             }
         }
 		

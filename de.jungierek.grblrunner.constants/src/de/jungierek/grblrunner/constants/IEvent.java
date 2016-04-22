@@ -96,6 +96,13 @@ public interface IEvent {
 
     // *********************************************************************************************
 
+    public static final String CAMERA_BASE = BASE + SEPARATOR + "camera";
+    public static final String CAMERA_ALL = CAMERA_BASE + SEPARATOR + "*";
+
+    public static final String CAMERA_SELECTED = CAMERA_BASE + SEPARATOR + "selected";
+
+    // *********************************************************************************************
+
     public static final String MESSAGE_BASE = BASE + SEPARATOR + "message";
     public static final String MESSAGE_ALL = MESSAGE_BASE + SEPARATOR + "*";
 
