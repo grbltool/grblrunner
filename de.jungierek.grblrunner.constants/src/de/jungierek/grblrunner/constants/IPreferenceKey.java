@@ -103,4 +103,8 @@ public interface IPreferenceKey {
     public static final String SPINDLE_SPEED_ENTRY_2 = IConstant.KEY_BASE + ".spindlespeed.2";
     public static final String SPINDLE_SPEED_ENTRY_3 = IConstant.KEY_BASE + ".spindlespeed.3";
 
+    // --- PlayGcodeDialog
+    public static final String PLAY_GCODE_DIALOG_SHOW = IConstant.KEY_BASE + ".gcode.play.dialog.show";
+    public static final String PLAY_GCODE_DIALOG_FONT_DATA = IConstant.KEY_BASE + ".gcode.play.dialog.font";
+
 }

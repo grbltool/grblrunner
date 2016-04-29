@@ -130,6 +130,10 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.putInt ( IPreferenceKey.SPINDLE_SPEED_ENTRY_2, 8000 );
         defaults.putInt ( IPreferenceKey.SPINDLE_SPEED_ENTRY_3, 12000 );
 
+        // --- PlayGcodeDialog
+        defaults.putBoolean ( IPreferenceKey.PLAY_GCODE_DIALOG_SHOW, true );
+        defaults.put ( IPreferenceKey.PLAY_GCODE_DIALOG_FONT_DATA, "1|Segoe UI|20.25|1|WINDOWS|1|-27|0|0|0|700|0|0|0|0|3|2|1|34|Segoe UI;" ); // Segoe UI 20pt
+
         // -------------------------------
 
         try {

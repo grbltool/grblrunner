@@ -8,6 +8,7 @@ public interface IGcodeService {
     public void sendFeedHold ();
     public void sendStatePoll ();
     public void sendReset ();
+
     public void sendCommand ( String line ); // append here LF
     public void sendCommandSuppressInTerminal ( String line );
     
@@ -22,8 +23,11 @@ public interface IGcodeService {
     public boolean isAlarm ();
 
     public boolean isGrblIdle ();
-
     public boolean isGrblAlarm ();
+
+    public String getFixture ();
+    public String getMetricMode ();
+    public String getDistanceMode ();
 
     public IGcodePoint createGcodePoint ( double x, double y, double z );
 

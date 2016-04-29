@@ -481,6 +481,12 @@ public class GcodeViewGroup {
 
     }
 
+    public Canvas getCanvas () {
+
+        return canvas;
+
+    }
+
     private void redraw () {
 
         if ( canvas != null && !canvas.isDisposed () ) canvas.redraw ();
@@ -612,6 +618,8 @@ public class GcodeViewGroup {
 
     }
 
+    private Image gcodeImage;
+
     private class Painter implements PaintListener {
 
         private Display display;
@@ -655,7 +663,10 @@ public class GcodeViewGroup {
 
             // Double Buffering
             evt.gc.drawImage ( bufferImage, 0, 0 );
-            bufferImage.dispose ();
+
+            if ( gcodeImage != null ) gcodeImage.dispose ();
+            // bufferImage.dispose ();
+            gcodeImage = bufferImage;
 
         }
 
@@ -1319,6 +1330,12 @@ public class GcodeViewGroup {
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
         if ( gcodeService.isAutolevelScan () ) redraw ();
+
+    }
+
+    public Image getGcodeImage () {
+
+        return gcodeImage;
 
     }
 

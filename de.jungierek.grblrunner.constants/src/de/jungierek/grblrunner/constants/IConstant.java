@@ -15,6 +15,7 @@ public interface IConstant {
     public static final String EDITOR_PARTDESCRIPTOR_ID = KEY_BASE + ".partdescriptor.gcode.editor";
     public static final String MACRO_PARTDESCRIPTOR_ID = KEY_BASE + ".partdescriptor.gcode.macro";;
     public static final String MACRO_TEXT_ID = KEY_BASE + ".gcode.text";
+    public static final String GCODE_VIEW_PART_ID = KEY_BASE + ".part.view";
 
     public static final String FORMAT_COORDINATE = "%.3f";
     public static final String FORMAT_SCALE = "%.1f";
@@ -68,5 +69,7 @@ public interface IConstant {
 
     public final static int MAX_HISTORY_DEPTH = 100;
 
+    public final int PLAY_GCODE_DIALOG_WIDTH = 500;
+    public final int PLAY_GCODE_DIALOG_HEIGHT = 400;
 
 }

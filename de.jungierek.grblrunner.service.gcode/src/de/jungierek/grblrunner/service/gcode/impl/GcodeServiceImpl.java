@@ -49,8 +49,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     private GcodePointImpl lastCoordSelectTempOffset;
     private String lastPlane;
     private String lastMetricMode;
-    private Object lastDistanceMode;
-    private Object lastTool;
+    private String lastDistanceMode;
+    private String lastTool;
     private String lastSpindleMode;
     private String lastCoolantMode;
     private String lastFeedrate;
@@ -452,6 +452,27 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     public IGcodePoint getFixtureShift () {
 
         return fixtureSshift;
+
+    }
+
+    @Override
+    public String getMetricMode () {
+
+        return lastMetricMode;
+
+    }
+
+    @Override
+    public String getDistanceMode () {
+
+        return lastDistanceMode;
+
+    }
+
+    @Override
+    public String getFixture () {
+
+        return lastCoordSelect;
 
     }
 
