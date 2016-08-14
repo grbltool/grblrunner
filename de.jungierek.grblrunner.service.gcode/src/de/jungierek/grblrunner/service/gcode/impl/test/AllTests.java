@@ -4,8 +4,22 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-@RunWith(Suite.class)
-@SuiteClasses({ GcodeGrblStateImplTest.class, GcodeLineImplTest.class, GcodeModelImplTest.class, GcodePointImplTest.class, GcodeResponseImplTest.class, GcodeServiceImplTest.class })
+// @formatter:off
+@RunWith ( Suite.class )
+@SuiteClasses({ 
+    
+    GcodeGrblStateImplTest.class, 
+    GcodeLineImplTest.class,
+    GcodePointImplTest.class,
+    GcodeProgramImplTest.class,
+    GcodeServiceImplTest.class,
+    GrblMessageTest.class,
+    GrblRequestImplTest.class, 
+    GrblResponseImplTest.class, 
+
+})
+//@formatter:on
+
 public class AllTests {
 
 }

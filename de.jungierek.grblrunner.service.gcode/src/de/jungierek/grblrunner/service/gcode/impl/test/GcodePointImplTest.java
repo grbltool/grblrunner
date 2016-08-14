@@ -6,11 +6,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.impl.GcodePointImpl;
 
@@ -343,7 +342,7 @@ public class GcodePointImplTest {
     }
 
     @Test
-    public void testAddoAxisX () {
+    public void testAddAxisX () {
 
         double expectedX = 1.1;
         double expectedY = 2.2;
@@ -409,10 +408,60 @@ public class GcodePointImplTest {
         }
     }
 
-    @Ignore
     @Test
-    public void test () {
-        fail ( "Not yet implemented" );
+    public void testRotateX () {
+
+        double expectedX = 1.0;
+        double expectedY = 1.0;
+        double expectedZ = 1.0;
+
+        GcodePointImpl p1 = new GcodePointImpl ( expectedX, expectedY, expectedZ );
+
+        IGcodePoint p = p1.rotate ( 'X', -90 * IConstant.ONE_DEGREE );
+
+        assertNotSame ( "not same p1", p, p1 );
+        assertEquals ( "X is " + expectedX, expectedX, p.getX (), DELTA );
+        assertEquals ( "Y is " + expectedY, expectedY, p.getY (), DELTA );
+        assertEquals ( "Z is " + expectedZ, expectedZ, p.getZ (), DELTA );
+
+    }
+
+    @Test
+    public void testRotateY () {
+
+        double expectedX = 1.0;
+        double expectedY = 1.0;
+        double expectedZ = 1.0;
+
+        GcodePointImpl p1 = new GcodePointImpl ( expectedX, expectedY, expectedZ );
+
+        IGcodePoint p = p1.rotate ( 'Y', -90 * IConstant.ONE_DEGREE );
+
+        assertNotSame ( "not same p1", p, p1 );
+        assertEquals ( "X is " + expectedX, expectedX, p.getX (), DELTA );
+        assertEquals ( "Y is " + expectedY, expectedY, p.getY (), DELTA );
+        assertEquals ( "Z is " + expectedZ, expectedZ, p.getZ (), DELTA );
+
+    }
+
+    @Test
+    public void testRotateZ () {
+
+        double expectedX = 0.0;
+        double expectedY = 1.0;
+        double expectedZ = 0.0;
+
+        GcodePointImpl p1 = new GcodePointImpl ( 1.0, 0.0, 0.0 );
+        GcodePointImpl p2 = new GcodePointImpl ( expectedX, expectedY, expectedZ );
+
+        IGcodePoint p = p1.rotate ( 'Z', -90 * IConstant.ONE_DEGREE );
+
+        assertNotSame ( "not same p1", p, p1 );
+        assertNotSame ( "not same p2", p, p2 );
+        assertEquals ( "X is " + expectedX, expectedX, p.getX (), DELTA );
+        assertEquals ( "Y is " + expectedY, expectedY, p.getY (), DELTA );
+        assertEquals ( "Z is " + expectedZ, expectedZ, p.getZ (), DELTA );
+
     }
 
 

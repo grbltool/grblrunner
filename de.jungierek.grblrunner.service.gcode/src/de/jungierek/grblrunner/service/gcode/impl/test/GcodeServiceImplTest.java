@@ -26,9 +26,13 @@ import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
+import de.jungierek.grblrunner.service.gcode.IGrblRequest;
+import de.jungierek.grblrunner.service.gcode.IGrblResponse;
 import de.jungierek.grblrunner.service.gcode.impl.GcodeGrblStateImpl;
 import de.jungierek.grblrunner.service.gcode.impl.GcodePointImpl;
 import de.jungierek.grblrunner.service.gcode.impl.GcodeServiceImpl;
+import de.jungierek.grblrunner.service.gcode.impl.GrblRequestImpl;
+import de.jungierek.grblrunner.service.gcode.impl.GrblResponseImpl;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.service.serial.ISerialServiceReceiver;
 
@@ -39,32 +43,46 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
     private SerialServiceMock serialServiceMock;
     private EventBrokerMock eventBrokerMock;
-    private GcodeModelMock gcodeModelMock;
+    private GcodeProgramMock gcodeProgramMock;
 
     private volatile Thread uncaughtExceptionThread;
     private volatile Throwable uncaughtException;
+    
+    private class GrblRequestTestee extends GrblRequestImpl {
+
+        public GrblRequestTestee ( boolean suppressInLine, String message ) {
+            super ( suppressInLine, message );
+        }
+
+    }
+
+    private class GrblResponseTestee extends GrblResponseImpl {
+
+        public GrblResponseTestee ( boolean suppressInLine, String message ) {
+            super ( suppressInLine, message );
+        }
+
+    }
 
     private class GcodeServiceImplTestee extends GcodeServiceImpl {
         
 
         public final GcodeSenderThread gcodeSenderThread;
 
-        private GcodeServiceImplTestee ( EventBrokerMock eventBrocker, SerialServiceMock serial, GcodeModelMock model ) {
+        private GcodeServiceImplTestee ( EventBrokerMock eventBrocker, SerialServiceMock serialService, GcodeProgramMock program ) {
             
-            // super ( eventBrocker, serial, model );
+            super ( eventBrocker, serialService, program );
             gcodeSenderThread = new GcodeSenderThread ();
             
         }
         
         public int getQueueLength () {
-            // return queue.size ();
-            return 0;
+            return queue.size ();
         }
 
-        // public GcodeResponseImpl [] getQueueElements () {
-        // // return queue.toArray ( new GcodeResponseImpl [0] );
-        // return null;
-        // }
+        public GrblRequestImpl [] getQueueElements () {
+            return queue.toArray ( new GrblRequestImpl [0] );
+        }
 
         public boolean isWaitForOk () {
             return waitForOk;
@@ -95,7 +113,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         }
 
         public void appendCommand ( boolean suppressInTerminal, String command ) {
-            // queue.add ( new GcodeResponseImpl ( suppressInTerminal, command ) );
+            queue.add ( new GrblRequestTestee ( suppressInTerminal, command ) );
         }
 
     }
@@ -118,7 +136,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
         }
 
-        public void setExpected ( String explaination, String expectedCommand ) {
+        public void setExpectedCommand ( String explaination, String expectedCommand ) {
 
             this.explaination = explaination;
             this.expectedCommand = expectedCommand;
@@ -206,7 +224,8 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         private boolean receivedEventExpected;
         private String expectedTopic;
         
-        // private IGcodeResponse expectedResponse;
+        private IGrblRequest expectedRequest;
+        private IGrblResponse expectedResponse;
         private IGcodeGrblState expectedGcodeState;
         private String expectedString;
         private GcodePointImpl expectedPoint;
@@ -226,9 +245,15 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
         }
 
-        public void setExpectedResponse ( boolean expectedSuppressInTerminal, String expectedLine ) {
+        public void setExpectedRequest ( boolean expectedSuppressInTerminal, String expectedMessage ) {
 
-            // expectedResponse = new GcodeResponseImpl ( expectedSuppressInTerminal, expectedLine );
+            expectedRequest = new GrblRequestTestee ( expectedSuppressInTerminal, expectedMessage );
+
+        }
+
+        public void setExpectedResponse ( boolean expectedSuppressInTerminal, String expectedMessage ) {
+
+            expectedResponse = new GrblResponseTestee ( expectedSuppressInTerminal, expectedMessage );
 
         }
 
@@ -287,15 +312,24 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
             switch ( topic ) {
 
-                case IEvent.GRBL_RECEIVED:
                 case IEvent.GRBL_SENT:
-                    // if ( !(data instanceof IGcodeResponse) ) fail ( "data not IGcodeResponse " + data.getClass () );
-                    // IGcodeResponse response = (IGcodeResponse) data;
-                    // if ( expectedResponse == null ) fail ( "nothing expected for response=" + response );
-                    // // TODO_TEST change to equlas after implementatioj in class GcodeResponseImpl
-                    // assertEquals ( "sent suppressInTerminal", expectedResponse.suppressInTerminal (), response.suppressInTerminal () );
-                    // assertEquals ( "sent line", expectedResponse.getLine (), response.getLine () );
-                    // expectedResponse = null;
+                    if ( !(data instanceof IGrblRequest) ) fail ( "data not IGrblRequest " + data.getClass () );
+                    IGrblRequest request = (IGrblRequest) data;
+                    if ( expectedRequest == null ) fail ( "nothing expected for request=" + request );
+                    // TODO_TEST change to equals after implementatioj in class GcodeResponseImpl
+                    assertEquals ( "sent suppressInTerminal", expectedRequest.isSuppressInTerminal (), request.isSuppressInTerminal () );
+                    assertEquals ( "sent line", expectedRequest.getMessage (), request.getMessage () );
+                    expectedRequest = null;
+                    break;
+
+                case IEvent.GRBL_RECEIVED:
+                    if ( !(data instanceof IGrblResponse) ) fail ( "data not IGrblResponse " + data.getClass () );
+                    IGrblResponse response = (IGrblResponse) data;
+                    if ( expectedResponse == null ) fail ( "nothing expected for response=" + response );
+                    // TODO_TEST change to equals after implementatioj in class GcodeResponseImpl
+                    assertEquals ( "received suppressInTerminal", expectedResponse.isSuppressInTerminal (), response.isSuppressInTerminal () );
+                    assertEquals ( "received line", expectedResponse.getMessage (), response.getMessage () );
+                    expectedResponse = null;
                     break;
 
                 case IEvent.UPDATE_STATE:
@@ -323,7 +357,11 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
                     break;
 
                 case IEvent.UPDATE_FIXTURE_OFFSET:
-                    assertNull ( "data must be null", data );
+                    if ( !(data instanceof IGcodePoint) ) fail ( "data not Point " + data.getClass () );
+                    IGcodePoint shift = (IGcodePoint) data;
+                    if ( expectedPoint == null ) fail ( "nothing expected for shift=" + shift );
+                    assertEquals ( "shift", expectedPoint, shift );
+                    expectedPoint = null;
                     break;
 
                 case IEvent.UPDATE_MODAL_MODE:
@@ -338,7 +376,40 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
                     if ( !(data instanceof String) ) fail ( "data not String " + data.getClass () );
                     String coord = (String) data;
                     if ( expectedString == null ) fail ( "nothing expected for coord=" + coord );
-                    assertEquals ( "motionMode", expectedString, coord );
+                    assertEquals ( "coord", expectedString, coord );
+                    expectedString = null;
+                    break;
+
+                case IEvent.UPDATE_PLANE:
+                    if ( !(data instanceof String) ) fail ( "data not String " + data.getClass () );
+                    String plane = (String) data;
+                    if ( expectedString == null ) fail ( "nothing expected for plane=" + plane );
+                    assertEquals ( "plane", expectedString, plane );
+                    expectedString = null;
+                    break;
+
+                case IEvent.UPDATE_METRIC_MODE:
+                    if ( !(data instanceof String) ) fail ( "data not String " + data.getClass () );
+                    String metricMode = (String) data;
+                    if ( expectedString == null ) fail ( "nothing expected for metric mode=" + metricMode );
+                    assertEquals ( "metric mode", expectedString, metricMode );
+                    expectedString = null;
+                    break;
+
+                case IEvent.UPDATE_DISTANCE_MODE:
+                    if ( !(data instanceof String) ) fail ( "data not String " + data.getClass () );
+                    String distanceMode = (String) data;
+                    if ( expectedString == null ) fail ( "nothing expected for distance mode=" + distanceMode );
+                    assertEquals ( "distance mode", expectedString, distanceMode );
+                    expectedString = null;
+                    break;
+
+                case IEvent.AUTOLEVEL_START:
+                case IEvent.AUTOLEVEL_STOP:
+                    if ( !(data instanceof String) ) fail ( "data not String " + data.getClass () );
+                    String timestampStop = (String) data;
+                    if ( expectedString == null ) fail ( "nothing expected for timestamp=" + timestampStop );
+                    assertNotNull ( "timestamp", timestampStop );
                     expectedString = null;
                     break;
 
@@ -377,11 +448,12 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
     }
 
-    private class GcodeModelMock implements IGcodeProgram {
+    private class GcodeProgramMock implements IGcodeProgram {
 
         private Object expectedProbe;
         private boolean setProbePointCalled;
-        private IGcodePoint expectedShift;
+        
+        private boolean setAutoLevelScanCompletedCalled;
 
         @Override
         public void rotate ( double angle ) {
@@ -470,13 +542,6 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
             return 0;
         }
 
-        public void setExpectedShift ( IGcodePoint p ) {
-
-            expectedShift = p;
-
-        }
-
-
         @Override
         public int getXSteps () {
             fail ( "GcodeModel: getXSteps not implemented" );
@@ -500,9 +565,17 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
             fail ( "GcodeModel: clearScan not implemented" );
         }
 
+        public boolean isSetAutoLevelScanCompletedCalled () {
+
+            return setAutoLevelScanCompletedCalled;
+
+        }
+
         @Override
         public void setAutolevelScanCompleted () {
-            fail ( "GcodeModel: setScanDataCompleted not implemented" );
+
+            setAutoLevelScanCompletedCalled = true;
+
         }
 
         @Override
@@ -660,8 +733,8 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         else {
             serialServiceMock = new SerialServiceMock ();
             eventBrokerMock = new EventBrokerMock ();
-            gcodeModelMock = new GcodeModelMock ();
-            underTest = new GcodeServiceImplTestee ( eventBrokerMock, serialServiceMock, gcodeModelMock );
+            gcodeProgramMock = new GcodeProgramMock ();
+            underTest = new GcodeServiceImplTestee ( eventBrokerMock, serialServiceMock, gcodeProgramMock );
         }
 
     }
@@ -671,7 +744,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
         assertNotNull ( "constructor", underTest );
         assertNull ( "receiver set", serialServiceMock.receiver );
-        serialServiceMock.setExpected ( "constructor", new String ( new byte [] { 0x18 } ) );
+        serialServiceMock.setExpectedCommand ( "constructor", new String ( new byte [] { 0x18 } ) );
         underTest.sendReset ();
 
     }
@@ -679,7 +752,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
     @Test
     public void testSendFeedHold () {
 
-        serialServiceMock.setExpected ( "send feed hold", "!" );
+        serialServiceMock.setExpectedCommand ( "send feed hold", "!" );
         underTest.sendFeedHold ();
 
     }
@@ -687,7 +760,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
     @Test
     public void testSendReset () {
 
-        serialServiceMock.setExpected ( "send reset", new String ( new byte [] { 0x18 } ) );
+        serialServiceMock.setExpectedCommand ( "send reset", new String ( new byte [] { 0x18 } ) );
         underTest.sendReset ();
 
     }
@@ -695,7 +768,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
     @Test
     public void testSendStartCycle () {
 
-        serialServiceMock.setExpected ( "send start cycle", "~" );
+        serialServiceMock.setExpectedCommand ( "send start cycle", "~" );
         underTest.sendStartCycle ();
 
     }
@@ -703,24 +776,8 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
     @Test
     public void testSendStatePoll () {
 
-        serialServiceMock.setExpected ( "send feed hold", "?" );
+        serialServiceMock.setExpectedCommand ( "send feed hold", "?" );
         underTest.sendStatePoll ();
-
-    }
-
-    @Test
-    public void testSendSingleSignCommandChar () {
-
-        serialServiceMock.setExpected ( "send feed hold", "a" );
-        // underTest.sendSingleSignCommand ( 'a' );
-
-    }
-
-    @Test
-    public void testSendSingleSignCommandCharBoolean () {
-
-        serialServiceMock.setExpected ( "send feed hold", "b" );
-        // underTest.sendSingleSignCommand ( 'b', true );
 
     }
 
@@ -732,9 +789,9 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         underTest.sendCommand ( "blabla" );
         assertEquals ( "send 1 length", 1, t.getQueueLength () );
 
-        // final GcodeResponseImpl response = t.getQueueElements ()[0];
-        // assertEquals ( "send line", "blabla" + IConstant.LF, response.line );
-        // assertFalse ( "send suppress", response.suppressInTerminal );
+        final GrblRequestImpl request = t.getQueueElements ()[0];
+        assertEquals ( "send message", "blabla" + IConstant.LF, request.getMessage () );
+        assertFalse ( "send suppress", request.suppressInTerminal );
         
     }
 
@@ -744,15 +801,15 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         GcodeServiceImplTestee t = (GcodeServiceImplTestee) underTest;
 
         underTest.sendCommandSuppressInTerminal ( "G92 blabla" );
-        assertEquals ( "send 1 length", 2, t.getQueueLength () );
+        assertEquals ( "send 2 length", 2, t.getQueueLength () );
 
-        // GcodeResponseImpl response = t.getQueueElements ()[0];
-        // assertEquals ( "send 1 line", "G92 blabla" + IConstant.LF, response.line );
-        // assertTrue ( "send 1 suppress", response.suppressInTerminal );
-        //
-        // response = t.getQueueElements ()[1];
-        // assertEquals ( "send 2 line", "$#" + IConstant.LF, response.line );
-        // assertTrue ( "send 2 suppress", response.suppressInTerminal );
+        final GrblRequestImpl request0 = t.getQueueElements ()[0];
+        assertEquals ( "send 1 line", "G92 blabla" + IConstant.LF, request0.message );
+        assertTrue ( "send 1 suppress", request0.suppressInTerminal );
+
+        final GrblRequestImpl request1 = t.getQueueElements ()[1];
+        assertEquals ( "send 2 line", "$#" + IConstant.LF, request1.message );
+        assertTrue ( "send 2 suppress", request1.suppressInTerminal );
 
     }
 
@@ -774,7 +831,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
         testee.gcodeSenderThread.interrupt ();
         testee.gcodeSenderThread.join ();
-        assertTrue ( "interrupted", !testee.gcodeSenderThread.isAlive () );
+        assertFalse ( "interrupted", testee.gcodeSenderThread.isAlive () );
 
     }
 
@@ -783,14 +840,14 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
         final GcodeServiceImplTestee testee = (GcodeServiceImplTestee) underTest;
 
-        // testee.setWaitForOk ( true );
+        // testee.setWaitForOk ( true ); // uncomment this for timeout failure
         testee.gcodeSenderThread.setUncaughtExceptionHandler ( this );
         testee.gcodeSenderThread.start ();
         assertTrue ( "running", testee.gcodeSenderThread.isAlive () );
 
-        serialServiceMock.setExpected ( "normal command", "blabla" );
+        serialServiceMock.setExpectedCommand ( "normal command", "blabla" );
         eventBrokerMock.setExpectedTopic ( IEvent.GRBL_SENT );
-        eventBrokerMock.setExpectedResponse ( false, "blabla" );
+        eventBrokerMock.setExpectedRequest ( false, "blabla" );
         testee.appendCommand ( false, "blabla" );
 
         waitForDequeuing ( testee );
@@ -826,17 +883,17 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
         testee.appendCommand ( false, "blabla" );
         waitForDequeuing ( testee );
-        assertFalse ( "waitForOk", testee.isWaitForOk () ); // command was not proceded, but skipped
-        assertEquals ( "queue lebnth = 0", 0, testee.getQueueLength () );
+        assertFalse ( "waitForOk", testee.isWaitForOk () ); // command was not proceeded, but skipped
+        assertEquals ( "queue length = 0", 0, testee.getQueueLength () );
 
         testee.appendCommand ( false, "blabla2" );
         waitForDequeuing ( testee );
-        assertFalse ( "waitForOk2", testee.isWaitForOk () ); // command was not proceded, but skipped
+        assertFalse ( "waitForOk2", testee.isWaitForOk () ); // command was not proceeded, but skipped
         assertEquals ( "queue length2 = 0", 0, testee.getQueueLength () );
 
         testee.appendCommand ( false, "blabla3" );
         waitForDequeuing ( testee );
-        assertFalse ( "waitForOk3", testee.isWaitForOk () ); // command was not proceded, but skipped
+        assertFalse ( "waitForOk3", testee.isWaitForOk () ); // command was not proceeded, but skipped
         assertEquals ( "queue length3 = 0", 0, testee.getQueueLength () );
 
         testee.gcodeSenderThread.interrupt ();
@@ -845,26 +902,61 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
     }
 
-    @Test
-    public void testGcodeSenderThreadScanEnd () throws Throwable {
+    @Test(timeout = 2000)
+    public void testGcodeSenderThreadScanStart () throws Throwable {
+
+        // Test
 
         final GcodeServiceImplTestee testee = (GcodeServiceImplTestee) underTest;
 
-        // testee.setWaitForOk ( true );
+        // testee.setWaitForOk ( true ); // uncomment this with @Test (timeout = 2000)
+        testee.gcodeSenderThread.setUncaughtExceptionHandler ( this );
+        testee.gcodeSenderThread.start ();
+        assertTrue ( "running", testee.gcodeSenderThread.isAlive () );
+
+        testee.setScanRunning ( false );
+
+        eventBrokerMock.setExpectedTopic ( IEvent.AUTOLEVEL_START );
+        eventBrokerMock.setExpectedString ( "dummy" );
+        testee.appendCommand ( false, IConstant.GCODE_SCAN_START );
+
+        waitForDequeuing ( testee );
+
+        assertFalse ( "waitForOk", testee.isWaitForOk () );
+        assertEquals ( "queue length = 0", 0, testee.getQueueLength () );
+        assertTrue ( "scan running", testee.isScanRunning () );
+        assertFalse ( "scan completed", gcodeProgramMock.isSetAutoLevelScanCompletedCalled () );
+
+        testee.gcodeSenderThread.interrupt ();
+        testee.gcodeSenderThread.join ();
+        assertTrue ( "interrupted", !testee.gcodeSenderThread.isAlive () );
+
+    }
+
+    @Test(timeout = 2000)
+    public void testGcodeSenderThreadScanEnd () throws Throwable {
+
+        // Test
+
+        final GcodeServiceImplTestee testee = (GcodeServiceImplTestee) underTest;
+
+        // testee.setWaitForOk ( true ); // uncomment this with @Test (timeout = 2000)
         testee.gcodeSenderThread.setUncaughtExceptionHandler ( this );
         testee.gcodeSenderThread.start ();
         assertTrue ( "running", testee.gcodeSenderThread.isAlive () );
 
         testee.setScanRunning ( true );
-        // TODO_TEST testee.setScanCompleted ( false );
+
+        eventBrokerMock.setExpectedTopic ( IEvent.AUTOLEVEL_STOP );
+        eventBrokerMock.setExpectedString ( "dummy" );
         testee.appendCommand ( false, IConstant.GCODE_SCAN_END );
 
         waitForDequeuing ( testee );
 
         assertFalse ( "waitForOk", testee.isWaitForOk () );
-        assertEquals ( "queue lebgth = 0", 0, testee.getQueueLength () );
+        assertEquals ( "queue length = 0", 0, testee.getQueueLength () );
         assertFalse ( "scan running", testee.isScanRunning () );
-        // TODO_TEST assertTrue ( "scan completed", testee.isScanCompleted () );
+        assertTrue ( "scan completed", gcodeProgramMock.isSetAutoLevelScanCompletedCalled () );
 
         testee.gcodeSenderThread.interrupt ();
         testee.gcodeSenderThread.join ();
@@ -876,23 +968,23 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
     public void testReceivedState () {
 
         final GcodeServiceImplTestee testee = (GcodeServiceImplTestee) underTest;
-        final String line = "<Alarm,MPos:1.01,2.02,3.03,WPos:4.04,5.05,6.06>";
+        final String message = "<Alarm,MPos:1.01,2.02,3.03,WPos:4.04,5.05,6.06>";
 
         testee.setWaitForOk ( false );
         testee.setSkipByAlarm ( false );
         eventBrokerMock.setExpectedReceivedEvent ( true );
-        eventBrokerMock.setExpectedResponse ( false, line );
+        eventBrokerMock.setExpectedResponse ( false, message );
 
         eventBrokerMock.setExpectedTopic ( IEvent.UPDATE_STATE );
         eventBrokerMock.setExpectedGrblState ( EGrblState.ALARM, new GcodePointImpl ( 1.01, 2.02, 3.03 ), new GcodePointImpl ( 4.04, 5.05, 6.06 ) );
 
         assertFalse ( "waitForOk", testee.isWaitForOk () );
-        underTest.received ( line );
+        underTest.received ( message );
         assertFalse ( "waitForOk", testee.isWaitForOk () );
         assertFalse ( "skipByAlarn", testee.isSkipByAlarm () );
 
         eventBrokerMock.setExpectedReceivedEvent ( true );
-        eventBrokerMock.setExpectedResponse ( false, line );
+        eventBrokerMock.setExpectedResponse ( false, message );
 
         eventBrokerMock.setExpectedTopic ( IEvent.UPDATE_STATE );
         eventBrokerMock.setExpectedGrblState ( EGrblState.ALARM, new GcodePointImpl ( 1.01, 2.02, 3.03 ), new GcodePointImpl ( 4.04, 5.05, 6.06 ) );
@@ -902,7 +994,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         assertTrue ( "waitForOk", testee.isWaitForOk () );
         assertTrue ( "skipByAlarn", testee.isSkipByAlarm () );
 
-        underTest.received ( line );
+        underTest.received ( message );
 
         assertTrue ( "line event send called", eventBrokerMock.isSendCalled () );
         assertTrue ( "waitForOk", testee.isWaitForOk () );
@@ -964,32 +1056,6 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
     }
 
     @Test
-    public void testReceivedScanStop () {
-
-        final GcodeServiceImplTestee testee = (GcodeServiceImplTestee) underTest;
-        final String line = "SCAN_STOP";
-
-        eventBrokerMock.setExpectedTopic ( IEvent.GRBL_ALARM );
-        eventBrokerMock.setExpectedReceivedEvent ( true );
-        eventBrokerMock.setExpectedResponse ( false, line );
-
-        testee.setWaitForOk ( true );
-        testee.setSkipByAlarm ( false );
-        testee.setScanRunning ( true );
-        assertTrue ( "waitForOk", testee.isWaitForOk () );
-        assertFalse ( "skipByAlarn", testee.isSkipByAlarm () );
-        assertTrue ( "scanRunning", testee.isScanRunning () );
-
-        underTest.received ( line );
-
-        assertTrue ( "line event send called", eventBrokerMock.isSendCalled () );
-        assertTrue ( "waitForOk", testee.isWaitForOk () );
-        assertFalse ( "skipByAlarn", testee.isSkipByAlarm () );
-        assertFalse ( "scanRunning", testee.isScanRunning () );
-
-    }
-
-    @Test
     public void testReceivedProbeNoScanning () {
 
         final GcodeServiceImplTestee testee = (GcodeServiceImplTestee) underTest;
@@ -1010,7 +1076,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         underTest.received ( line );
 
         assertTrue ( "line event send called", eventBrokerMock.isSendCalled () );
-        assertFalse ( gcodeModelMock.isProbePointCalled () );
+        assertFalse ( gcodeProgramMock.isProbePointCalled () );
         assertFalse ( "waitForOk", testee.isWaitForOk () );
         assertFalse ( "skipByAlarn", testee.isSkipByAlarm () );
         assertFalse ( "scanRunning", testee.isScanRunning () );
@@ -1033,7 +1099,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         testee.setSkipByAlarm ( false );
         testee.setScanRunning ( true );
         
-        gcodeModelMock.setExpectedProbePoint ( p );
+        gcodeProgramMock.setExpectedProbePoint ( p );
 
         assertFalse ( "waitForOk", testee.isWaitForOk () );
         assertFalse ( "skipByAlarn", testee.isSkipByAlarm () );
@@ -1042,7 +1108,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         underTest.received ( line );
 
         assertTrue ( "line event send called", eventBrokerMock.isSendCalled () );
-        assertTrue ( gcodeModelMock.isProbePointCalled () );
+        assertTrue ( gcodeProgramMock.isProbePointCalled () );
         assertFalse ( "waitForOk", testee.isWaitForOk () );
         assertFalse ( "skipByAlarn", testee.isSkipByAlarm () );
         assertTrue ( "scanRunning", testee.isScanRunning () );
@@ -1067,12 +1133,14 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         underTest.received ( line1 );
         assertTrue ( "line1 event send called", eventBrokerMock.isSendCalled () );
 
+        final GcodePointImpl expectedShift = (GcodePointImpl) new GcodePointImpl ( 1.02, 2.03, 3.04 ).add ( new GcodePointImpl ( 1.02, 2.03, 3.04 ) );
         eventBrokerMock.setExpectedTopic ( IEvent.UPDATE_FIXTURE_OFFSET );
+        eventBrokerMock.setExpectedPoint ( expectedShift );
         eventBrokerMock.setExpectedReceivedEvent ( true );
         eventBrokerMock.setExpectedResponse ( false, line2 );
-        gcodeModelMock.setExpectedShift ( new GcodePointImpl ( 1.02, 2.03, 3.04 ).add ( new GcodePointImpl ( 1.02, 2.03, 3.04 ) ) );
         underTest.received ( line2 );
         assertTrue ( "line2 event send called", eventBrokerMock.isSendCalled () );
+        assertEquals ( "fisture shift", expectedShift, underTest.getFixtureShift () );
 
     }
 
@@ -1086,6 +1154,9 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         final String line0 = "[G0 G54 G17 G21 G90 G94 M0 M5 M9 T0 F1000. S0.]";
         underTest.received ( line0 );
         assertFalse ( "line0 event send called", eventBrokerMock.isSendCalled () );
+        assertEquals ( "fixture", "G54", underTest.getFixture () );
+        assertEquals ( "metric mode", "mm", underTest.getMetricMode () );
+        assertEquals ( "distance mode", "absolute", underTest.getDistanceMode () );
 
         eventBrokerMock.setIgnoreSendDetails ( false );
 
@@ -1093,6 +1164,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         final String line1 = "[G0 G54 G17 G21 G90 G94 M0 M5 M9 T0 F1000. S0.]";
         eventBrokerMock.setExpectedReceivedEvent ( true );
         eventBrokerMock.setExpectedResponse ( false, line1 );
+        eventBrokerMock.resetSendCalled ();
         underTest.received ( line1 );
         assertTrue ( "line1 event send called", eventBrokerMock.isSendCalled () );
 
@@ -1102,6 +1174,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         eventBrokerMock.setExpectedResponse ( false, line2 );
         eventBrokerMock.setExpectedTopic ( IEvent.UPDATE_MODAL_MODE );
         eventBrokerMock.setExpectedString ( "G1" );
+        eventBrokerMock.resetSendCalled ();
         underTest.received ( line2 );
         assertTrue ( "line2 event send called", eventBrokerMock.isSendCalled () );
 
@@ -1111,21 +1184,49 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         eventBrokerMock.setExpectedResponse ( false, line3 );
         eventBrokerMock.setExpectedTopic ( IEvent.UPDATE_FIXTURE );
         eventBrokerMock.setExpectedString ( "G55" );
+        eventBrokerMock.resetSendCalled ();
         underTest.received ( line3 );
-        assertTrue ( "line2 event send called", eventBrokerMock.isSendCalled () );
+        assertTrue ( "line3 event send called", eventBrokerMock.isSendCalled () );
+        assertEquals ( "fixture", "G55", underTest.getFixture () );
 
-        // TODO_TEST implement UPDATE_PLANE
-        // TODO_TEST implement UPDATE_METRIC_MODE
-        // TODO_TEST implement UPDATE_DISTANCE_MODE
+        // update plane
+        final String line4 = "[G1 G55 G18 G21 G90 G94 M0 M5 M9 T0 F1000. S0.]";
+        eventBrokerMock.setExpectedReceivedEvent ( true );
+        eventBrokerMock.setExpectedResponse ( false, line4 );
+        eventBrokerMock.setExpectedTopic ( IEvent.UPDATE_PLANE );
+        eventBrokerMock.setExpectedString ( "ZX" );
+        eventBrokerMock.resetSendCalled ();
+        underTest.received ( line4 );
+        assertTrue ( "line4 event send called", eventBrokerMock.isSendCalled () );
+
+        // update metric mode
+        final String line5 = "[G1 G55 G18 G20 G90 G94 M0 M5 M9 T0 F1000. S0.]";
+        eventBrokerMock.setExpectedReceivedEvent ( true );
+        eventBrokerMock.setExpectedResponse ( false, line5 );
+        eventBrokerMock.setExpectedTopic ( IEvent.UPDATE_METRIC_MODE );
+        eventBrokerMock.setExpectedString ( "inch" );
+        eventBrokerMock.resetSendCalled ();
+        underTest.received ( line5 );
+        assertTrue ( "line5 event send called", eventBrokerMock.isSendCalled () );
+        assertEquals ( "metric mode", "inch", underTest.getMetricMode () );
+
+        // update metric mode
+        final String line6 = "[G1 G55 G18 G20 G91 G94 M0 M5 M9 T0 F1000. S0.]";
+        eventBrokerMock.setExpectedReceivedEvent ( true );
+        eventBrokerMock.setExpectedResponse ( false, line6 );
+        eventBrokerMock.setExpectedTopic ( IEvent.UPDATE_DISTANCE_MODE );
+        eventBrokerMock.setExpectedString ( "relative" );
+        eventBrokerMock.resetSendCalled ();
+        underTest.received ( line6 );
+        assertTrue ( "line6 event send called", eventBrokerMock.isSendCalled () );
+        assertEquals ( "distance mode", "relative", underTest.getDistanceMode () );
+
+        // TODO_TEST implement UPDATE_SPINDLE_MODE
+        // TODO_TEST implement UPDATE_COOLANT_MODE
+        // TODO_TEST implement UPDATE_TOOL
         // TODO_TEST implement UPDATE_FEEDRATE
         // TODO_TEST implement UPDATE_SPINDLESPEED
 
-    }
-
-    @Test
-    @Ignore
-    public void testLoad () {
-        fail ( "Not yet implemented" );
     }
 
     @Test
@@ -1136,19 +1237,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
 
     @Test
     @Ignore
-    public void testDispose () {
-        fail ( "Not yet implemented" );
-    }
-
-    @Test
-    @Ignore
     public void testScan () {
-        fail ( "Not yet implemented" );
-    }
-
-    @Test
-    @Ignore
-    public void testClearScan () {
         fail ( "Not yet implemented" );
     }
 
