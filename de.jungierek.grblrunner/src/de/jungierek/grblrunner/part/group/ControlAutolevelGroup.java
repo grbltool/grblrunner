@@ -187,7 +187,10 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
     private final ModifyListener updateViewModifyListener = new ModifyListener () {
         @Override
         public void modifyText ( ModifyEvent evt ) {
-            if ( !ignoreStepTextModifyListener ) updateGrid ();
+            if ( !ignoreStepTextModifyListener ) {
+                updateGrid ();
+                setControlsEnabled ( true );
+            }
         }
     };
 
@@ -207,7 +210,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
                     gcodeProgram.getGcodeProgramFile () != null && 
                     gcodeProgram.isLoaded () && 
                     !gcodeProgram.isAutolevelScanComplete () &&
-                    serialService.isOpen ()
+                    (serialService.isOpen () || IConstant.AUTOLEVEL_ENABLE_WITHOUT_SERIAL)
         );
         
         scanClearButton.setEnabled ( 
@@ -295,6 +298,8 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
         LOG.debug ( "programLoadedNotified: fileName=" + fileName );
 
+        setGridFields ();
+
         setControlsEnabled ( true );
 
     }
@@ -345,6 +350,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
     public void probeDataClearedNotified ( @UIEventTopic(IEvent.AUTOLEVEL_DATA_CLEARED) String fileName ) {
 
         LOG.trace ( "probeDataClearedNotified: fileName=" + fileName );
+        LOG.info ( "probeDataClearedNotified: fileName=" + fileName );
 
         setControlsEnabled ( true ); // side effect is to disable probe save button
         // redrawGcode ();
