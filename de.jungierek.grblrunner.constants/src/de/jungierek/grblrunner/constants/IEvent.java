@@ -56,7 +56,7 @@ public interface IEvent {
     public static final String AUTOLEVEL_STOP = AUTOLEVEL_BASE + SEPARATOR + "stop";
     public static final String AUTOLEVEL_UPDATE = AUTOLEVEL_BASE + SEPARATOR + "update"; // TODO prove this moving to update section
     public static final String AUTOLEVEL_DATA_SAVED = AUTOLEVEL_BASE + SEPARATOR + "saved";
-    public static final String AUTOLEVEL_DATA_LOADED = AUTOLEVEL_BASE + SEPARATOR + "saved";
+    public static final String AUTOLEVEL_DATA_LOADED = AUTOLEVEL_BASE + SEPARATOR + "loaded";
     public static final String AUTOLEVEL_DATA_CLEARED = AUTOLEVEL_BASE + SEPARATOR + "cleared";
 
     // *********************************************************************************************
