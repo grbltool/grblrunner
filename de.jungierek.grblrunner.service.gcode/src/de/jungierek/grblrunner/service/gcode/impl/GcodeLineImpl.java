@@ -99,24 +99,31 @@ public class GcodeLineImpl implements IGcodeLine {
 
     }
 
+    // from GcodePointImpl
+    private boolean doubleEquals ( double d1, double d2 ) {
+
+        return Math.abs ( d1 - d2 ) < IGcodePoint.EPSILON;
+
+    }
+
     @Override
     public boolean isMoveInX () {
 
-        return start != null && end != null && start.getX () != end.getX ();
+        return start != null && end != null && !doubleEquals ( start.getX (), end.getX () );
 
     }
 
     @Override
     public boolean isMoveInY () {
 
-        return start != null && end != null && start.getY () != end.getY ();
+        return start != null && end != null && !doubleEquals ( start.getY (), end.getY () );
 
     }
 
     @Override
     public boolean isMoveInZ () {
 
-        return start != null && end != null && start.getZ () != end.getZ ();
+        return start != null && end != null && !doubleEquals ( start.getZ (), end.getZ () );
 
     }
 
@@ -203,8 +210,8 @@ public class GcodeLineImpl implements IGcodeLine {
             }
         }
         else if ( mode == EGcodeMode.GCODE_MODE_UNDEF ) {
-            // HACK there is a gap: when in a line is only mess without commented out, then this is an error
-            // then there is a 0-move, because last point is the target
+            // HACK there is a gap: when in a line is only mess without commented out, then this should be an error
+            // but there is a 0-move, when lastMotionMode is a motion mode with last point as target
             mode = lastMotionMode;
             if ( mode.isMotionMode () ) {
                 if ( mode.isMotionModeArc () ) {

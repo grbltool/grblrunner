@@ -5,9 +5,9 @@ import de.jungierek.grblrunner.service.gcode.IGrblRequest;
 
 public class GrblRequestImpl extends GrblMessage implements IGrblRequest {
 
-    protected GrblRequestImpl ( boolean suppressInTerminal, String line ) {
+    protected GrblRequestImpl ( boolean suppressInTerminal, String message ) {
 
-        super ( suppressInTerminal, line );
+        super ( suppressInTerminal, message );
 
     }
 

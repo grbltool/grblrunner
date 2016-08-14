@@ -221,8 +221,6 @@ public class GcodePointImpl implements IGcodePoint {
     @Override
     public IGcodePoint rotate ( char axis, double angle ) {
 
-        GcodePointImpl result = this;
-
         double x1 = x;
         double y1 = y;
         double z1 = z;

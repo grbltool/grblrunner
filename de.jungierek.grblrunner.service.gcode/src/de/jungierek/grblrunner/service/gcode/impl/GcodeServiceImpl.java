@@ -76,8 +76,16 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     // only for test
     protected GcodeServiceImpl ( IEventBroker eventBroker, ISerialService serial ) {
 
+        this ( eventBroker, serial, null );
+
+    }
+
+    // only for test
+    protected GcodeServiceImpl ( IEventBroker eventBroker, ISerialService serial, IGcodeProgram program ) {
+
         this.eventBroker = eventBroker;
         this.serial = serial;
+        this.gcodeProgram = program;
 
     }
 
@@ -517,6 +525,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 final int ylength = gcodeProgram.getYSteps () + 1;
 
                 for ( int i = 0; i < xlength; i++ ) {
+                    double z = IConstant.AUTOLEVEL_Z_SIMULATION_SCALE_FACTOR * Math.random ();
                     for ( int j = 0; j < ylength; j++ ) {
                         if ( IConstant.AUTOLEVEL_SLOW_Z_SIMULATION ) {
                             try {
@@ -524,7 +533,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                             }
                             catch ( InterruptedException exc ) {}
                         }
-                        double z = 3.0 * Math.random ();
+                        // double z = IConstant.AUTOLEVEL_Z_SIMULATION_SCALE_FACTOR * Math.random ();
                         IGcodePoint probe = gcodeProgram.getProbePointAt ( i, j ).addAxis ( 'Z', z );
                         gcodeProgram.setProbePoint ( probe );
                         LOG.debug ( "scan: probe=" + probe );

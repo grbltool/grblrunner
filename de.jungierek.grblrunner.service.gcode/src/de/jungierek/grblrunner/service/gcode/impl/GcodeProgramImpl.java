@@ -64,8 +64,6 @@ public class GcodeProgramImpl implements IGcodeProgram {
     // preference
     private double seekFeedrate;
 
-    public GcodeProgramImpl () {}
-    
     private double accelaration; // mm / s^2
     private double timeToFeedrate; // mm / s
     double distanceToFeedrate; // mm
@@ -102,6 +100,9 @@ public class GcodeProgramImpl implements IGcodeProgram {
                 + "s distanceToFeedrate="
                 + distanceToFeedrate + "mm" );
     }
+
+    // for test
+    public GcodeProgramImpl () {}
 
     @Inject
     public GcodeProgramImpl ( IEventBroker eventBroker ) {
@@ -265,7 +266,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         LOG.debug ( "optimize:" );
 
-        final boolean firstAndLastinSegments = true;
+        final boolean firstAndLastInSegments = true;
 
         // 1) divide gcode in segments, each segment ends at the same point as it starts
         List<GcodeSegment> segments = new ArrayList<GcodeSegment> ( 100 );
@@ -298,7 +299,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
                         // segment.append ( new GcodeLineImpl ( -1, "(-------------------)" ) );
                         if ( firstSegment == null ) {
                             firstSegment = segment;
-                            if ( firstAndLastinSegments ) segments.add ( segment );
+                            if ( firstAndLastInSegments ) segments.add ( segment );
                         }
                         else {
                             segments.add ( segment );
@@ -312,7 +313,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         }
 
-        if ( firstAndLastinSegments ) segments.add ( segment );
+        if ( firstAndLastInSegments ) segments.add ( segment );
 
         // algorithm from https://hackaday.io/project/4955-g-code-optimization
 
@@ -363,12 +364,12 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         // 3) flatenize all segments
         List<GcodeLineImpl> optimizedGcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
-        if ( !firstAndLastinSegments ) optimizedGcodeLines.addAll ( firstSegment.gcodeLines );
+        if ( !firstAndLastInSegments ) optimizedGcodeLines.addAll ( firstSegment.gcodeLines );
         for ( int i = 0; i < cities; i++ ) {
             LOG.trace ( "optimize: path[" + i + "]=" + path[i] );
             optimizedGcodeLines.addAll ( segmentArray[path[i]].gcodeLines );
         }
-        if ( !firstAndLastinSegments ) optimizedGcodeLines.addAll ( lastSegment.gcodeLines );
+        if ( !firstAndLastInSegments ) optimizedGcodeLines.addAll ( lastSegment.gcodeLines );
         gcodeLines = optimizedGcodeLines;
 
         // 4) adjust start end points of every line
@@ -771,19 +772,19 @@ public class GcodeProgramImpl implements IGcodeProgram {
             return result.toArray ( new IGcodePoint [2] );
         }
 
-        double ii1 = (p1.x - min.x + IConstant.EPSILON) / xStepWidth;
+        double ii1 = (p1.x - min.x + IConstant.EPSILON / 2) / xStepWidth;
         final int i1 = (int) ii1;
         ii1 -= i1;
 
-        double jj1 = (p1.y - min.y + IConstant.EPSILON) / yStepWidth;
+        double jj1 = (p1.y - min.y + IConstant.EPSILON / 2) / yStepWidth;
         final int j1 = (int) jj1;
         jj1 -= j1;
 
-        double ii2 = (p2.x - min.x + IConstant.EPSILON) / xStepWidth;
+        double ii2 = (p2.x - min.x + IConstant.EPSILON / 2) / xStepWidth;
         int i2 = (int) ii2;
         ii2 -= i2;
 
-        double jj2 = (p2.y - min.y + IConstant.EPSILON) / yStepWidth;
+        double jj2 = (p2.y - min.y + IConstant.EPSILON / 2) / yStepWidth;
         int j2 = (int) jj2;
         jj2 -= j2;
 
@@ -832,11 +833,20 @@ public class GcodeProgramImpl implements IGcodeProgram {
         double tx = 1e10;
         double ty = 1e10;
 
-        while ( isInsideArea ( dx, i, i1, i2 ) && isInsideArea ( dy, j, j1, j2 ) ) {
+        // @formatter:off
+        // if dx == 0 && dy == 0 both areas collapsed, but this condition is returned at beginning
+        while ( 
+                isInsideArea ( dx, i, i1, i2 ) && isInsideArea ( dy, j, j1, j2 ) 
+                || isInsideArea ( dx, i, i1, i2 ) && isInsideCollapsedArea ( dy, j, j1, j2 ) 
+                || isInsideCollapsedArea ( dx, i, i1, i2 ) && isInsideArea ( dy, j, j1, j2 ) 
+                || isInsideArea ( dx, i, i1, i2 ) && isInsideLastCell ( dy, j, j1, j2 ) 
+                || isInsideLastCell ( dx, i, i1, i2 ) && isInsideArea ( dy, j, j1, j2 ) 
+              ) {
+       // @formatter:on
 
             // HACK delete later
             // if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) return null;
-            if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) {
+            if ( Math.abs ( i ) + Math.abs ( j ) > 1000 ) {
                 System.out.println ( "dx=" + dx + " i=" + i + " i2=" + i2 + " dy=" + dy + " j=" + j + " j2=" + j2 + " p1=" + p1 + " p2=" + p2 );
                 break; // HACK HACK
             }
@@ -879,7 +889,11 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         }
 
-        result.add ( interpolate ( p2 ) );
+
+        final GcodePointImpl interpolatedP2 = interpolate ( p2 );
+        if ( !result.get ( result.size () - 1 ).equals ( interpolatedP2 ) ) {
+            result.add ( interpolatedP2 );
+        }
 
         // if ( !isPathMonotonic ( (GcodePointImpl) point1, (GcodePointImpl) point2, result ) ) {
         //
@@ -893,9 +907,27 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     }
 
-    private boolean isInsideArea ( double delta, int index, int minIndex, int maxIndex ) {
+    private boolean isInsideArea ( double delta, int index, int fromIndex, int toIndex ) {
 
-        return delta == 0.0 && index != minIndex && index != maxIndex || delta < 0.0 && index > minIndex || delta > 0.0 && index < maxIndex;
+        // return delta == 0.0 && index != minIndex && index != maxIndex || delta < 0.0 && index > minIndex || delta > 0.0 && index < maxIndex;
+        // @formatter:off
+        return 
+                delta == 0.0 && index != fromIndex && index != toIndex 
+                || delta < 0.0 && index > toIndex 
+                || delta > 0.0 && index < toIndex;
+        // @formatter:on
+
+    }
+
+    private boolean isInsideCollapsedArea ( double delta, int index, int fromIndex, int toIndex ) {
+
+        return delta == 0.0 && index == fromIndex && fromIndex == toIndex;
+
+    }
+
+    private boolean isInsideLastCell ( double delta, int index, int fromIndex, int toIndex ) {
+
+        return delta != 0.0 && index == toIndex;
 
     }
 

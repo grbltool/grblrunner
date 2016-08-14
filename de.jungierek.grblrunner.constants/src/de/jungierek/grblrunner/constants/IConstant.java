@@ -62,8 +62,10 @@ public interface IConstant {
 
     public static final int SERIAL_MAX_WAIT_MS = 2000;
 
-    public static final boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = false;
+    public static final boolean AUTOLEVEL_USE_RANDOM_Z_SIMULATION = true;
     public static final boolean AUTOLEVEL_SLOW_Z_SIMULATION = false;
+    public static final int AUTOLEVEL_Z_SIMULATION_SCALE_FACTOR = 5;
+    public static final boolean AUTOLEVEL_ENABLE_WITHOUT_SERIAL = true;
 
     public static final String CYCLIC_PERSPECTIVE_SWITCHING = "cyclic";
 
