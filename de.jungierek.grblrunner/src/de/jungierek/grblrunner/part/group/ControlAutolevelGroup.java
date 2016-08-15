@@ -350,7 +350,6 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
     public void probeDataClearedNotified ( @UIEventTopic(IEvent.AUTOLEVEL_DATA_CLEARED) String fileName ) {
 
         LOG.trace ( "probeDataClearedNotified: fileName=" + fileName );
-        LOG.info ( "probeDataClearedNotified: fileName=" + fileName );
 
         setControlsEnabled ( true ); // side effect is to disable probe save button
         // redrawGcode ();

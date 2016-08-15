@@ -845,14 +845,13 @@ public class GcodeProgramImpl implements IGcodeProgram {
        // @formatter:on
 
             // HACK delete later
-            // if ( Math.abs ( i ) + Math.abs ( j ) > 100 ) return null;
-            if ( Math.abs ( i ) + Math.abs ( j ) > 1000 ) {
-                System.out.println ( "dx=" + dx + " i=" + i + " i2=" + i2 + " dy=" + dy + " j=" + j + " j2=" + j2 + " p1=" + p1 + " p2=" + p2 );
+            if ( IConstant.AUTOLEVEL_ITERATION_LIMIT_CHECK && Math.abs ( i ) + Math.abs ( j ) > IConstant.AUTOLEVEL_ITERATION_LIMIT_COUNT ) {
+                LOG.error ( "iteration limit reached dx=" + dx + " i=" + i + " i2=" + i2 + " dy=" + dy + " j=" + j + " j2=" + j2 + " p1=" + p1 + " p2=" + p2 );
                 break; // HACK HACK
             }
 
             if ( dx != 0.0 ) {
-                xn = min.x + i * xStepWidth; // wie matrix [i][j].x
+                xn = min.x + i * xStepWidth; // like matrix [i][j].x
                 tx = (xn - p1.x) / cosX; // distXY from p1 to pn by moving x
             }
 
@@ -889,10 +888,12 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         }
 
-
+        // add the last point in a path is neccessary, when this point lies inside a grid cell.
+        // if the last point lies on a cross, the point is allready in the path
         final GcodePointImpl interpolatedP2 = interpolate ( p2 );
         if ( !result.get ( result.size () - 1 ).equals ( interpolatedP2 ) ) {
             result.add ( interpolatedP2 );
+            LOG.trace ( "add last point extra dx=" + dx + " dy=" + dy + " ii2=" + ii2 + " jj2=" + jj2 );
         }
 
         // if ( !isPathMonotonic ( (GcodePointImpl) point1, (GcodePointImpl) point2, result ) ) {
@@ -912,7 +913,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         // return delta == 0.0 && index != minIndex && index != maxIndex || delta < 0.0 && index > minIndex || delta > 0.0 && index < maxIndex;
         // @formatter:off
         return 
-                delta == 0.0 && index != fromIndex && index != toIndex 
+                delta == 0.0 && index != fromIndex && index != toIndex //TODO  may be this condition never fullfilled
                 || delta < 0.0 && index > toIndex 
                 || delta > 0.0 && index < toIndex;
         // @formatter:on
@@ -1236,128 +1237,5 @@ public class GcodeProgramImpl implements IGcodeProgram {
         }
 
     }
-
-    // ====================================================================================================================================
-
-    public void initTest () {
-
-        GcodePointImpl p00 = new GcodePointImpl ( 0.0, 0.0, 1.0 );
-        GcodePointImpl p01 = new GcodePointImpl ( 0.0, 1.0, 0.75 );
-        GcodePointImpl p02 = new GcodePointImpl ( 0.0, 2.0, 0.5 );
-        GcodePointImpl p03 = new GcodePointImpl ( 0.0, 3.0, 0.25 );
-        GcodePointImpl p04 = new GcodePointImpl ( 0.0, 4.0, 0.0 );
-
-        GcodePointImpl p10 = new GcodePointImpl ( 1.0, 0.0, 0.75 );
-        GcodePointImpl p11 = new GcodePointImpl ( 1.0, 1.0, 0.625 );
-        GcodePointImpl p12 = new GcodePointImpl ( 1.0, 2.0, 0.5 );
-        GcodePointImpl p13 = new GcodePointImpl ( 1.0, 3.0, 0.375 );
-        GcodePointImpl p14 = new GcodePointImpl ( 1.0, 4.0, 0.25 );
-
-        GcodePointImpl p20 = new GcodePointImpl ( 2.0, 0.0, 0.5 );
-        GcodePointImpl p21 = new GcodePointImpl ( 2.0, 1.0, 0.5 );
-        GcodePointImpl p22 = new GcodePointImpl ( 2.0, 2.0, 0.5 );
-        GcodePointImpl p23 = new GcodePointImpl ( 2.0, 3.0, 0.5 );
-        GcodePointImpl p24 = new GcodePointImpl ( 2.0, 4.0, 0.5 );
-
-        GcodePointImpl p30 = new GcodePointImpl ( 3.0, 0.0, 0.25 );
-        GcodePointImpl p31 = new GcodePointImpl ( 3.0, 1.0, 0.375 );
-        GcodePointImpl p32 = new GcodePointImpl ( 3.0, 2.0, 0.5 );
-        GcodePointImpl p33 = new GcodePointImpl ( 3.0, 3.0, 0.625 );
-        GcodePointImpl p34 = new GcodePointImpl ( 3.0, 4.0, 0.75 );
-
-        GcodePointImpl p40 = new GcodePointImpl ( 4.0, 0.0, 0.0 );
-        GcodePointImpl p41 = new GcodePointImpl ( 4.0, 1.0, 0.25 );
-        GcodePointImpl p42 = new GcodePointImpl ( 4.0, 2.0, 0.5 );
-        GcodePointImpl p43 = new GcodePointImpl ( 4.0, 3.0, 0.75 );
-        GcodePointImpl p44 = new GcodePointImpl ( 4.0, 4.0, 1.0 );
-
-        /* @formatter:off */
-        matrix = new GcodePointImpl [] [] { 
-                { p00, p01, p02, p03, p04 }, 
-                { p10, p11, p12, p13, p14 }, 
-                { p20, p21, p22, p23, p24 }, 
-                { p30, p31, p32, p33, p34 }, 
-                { p40, p41, p42, p43, p44 }, 
-        };
-        /* @formatter:on */
-
-        xSteps = 4;
-        ySteps = 4;
-
-        min = new GcodePointImpl ( 0.0, 0.0, 0.0 );
-        max = new GcodePointImpl ( 4.0, 4.0, 0.0 );
-
-        xStepWidth = (max.x - min.x) / xSteps;
-        yStepWidth = (max.y - min.y) / ySteps;
-
-    }
-
-    public void testCase ( String name, GcodePointImpl p1, GcodePointImpl p2 ) {
-
-        IGcodePoint [] path = interpolateLine ( p1, p2 );
-
-        System.out.println ( name + ": len=" + path.length + " p1=" + p1 + " p2=" + p2 );
-        for ( int i = 0; i < path.length; i++ ) {
-            System.out.println ( "i=" + i + " p=" + path[i] );
-        }
-        System.out.println ( "-------------------------" );
-
-    }
-
-    public static void _main ( String [] args ) {
-
-        GcodeProgramImpl m = new GcodeProgramImpl ();
-        m.initTest ();
-
-        // for ( int i = 0; i < m.matrix.length; i++ ) {
-        // for ( int j = 0; j < m.matrix[i].length; j++ ) {
-        // System.out.println ( "i=" + i + " j=" + j + " z=" + m.matrix[i][j].z );
-        // }
-        // }
-
-        // GcodePointImpl p = new GcodePointImpl ( 0.5, 0.5, 0.0 );
-        // System.out.println ( "z=" + m.interpolate ( p ).z );
-
-        /* @formatter:off */
-        Object tests [][] = new Object [] [] {
-                
-                { "straight right aligned",          new GcodePointImpl ( 0.0, 0.0, 0.0 ), new GcodePointImpl ( 4.0, 0.0, 0.0 ) },
-                { "straight up aligned",          new GcodePointImpl ( 0.0, 0.0, 0.0 ), new GcodePointImpl ( 0.0, 4.0, 0.0 ) },
-                { "straight left aligned",          new GcodePointImpl ( 4.0, 0.0, 0.0 ), new GcodePointImpl ( 0.0, 0.0, 0.0 ) },
-                { "straight down aligned",          new GcodePointImpl ( 0.0, 4.0, 0.0 ), new GcodePointImpl ( 0.0, 0.0, 0.0 ) },
-
-                { "straight right not aligned",          new GcodePointImpl ( 0.5, 0.5, 0.0 ), new GcodePointImpl ( 3.5, 0.5, 0.0 ) },
-                { "straight up not aligned",          new GcodePointImpl ( 0.5, 0.5, 0.0 ), new GcodePointImpl ( 0.5, 3.5, 0.0 ) },
-                { "straight left not aligned",          new GcodePointImpl ( 3.5, 0.5, 0.0 ), new GcodePointImpl ( 0.5, 0.5, 0.0 ) },
-                { "straight down not aligned",          new GcodePointImpl ( 0.5, 3.5, 0.0 ), new GcodePointImpl ( 0.5, 0.5, 0.0 ) },
-
-                { "diagnoal right up aligned",          new GcodePointImpl ( 0.0, 0.0, 0.0 ), new GcodePointImpl ( 4.0, 4.0, 0.0 ) },
-                { "diagnoal right up not aligned",      new GcodePointImpl ( 0.5, 0.5, 0.0 ), new GcodePointImpl ( 3.5, 3.5, 0.0 ) },
-
-                { "diagnoal left up aligned",          new GcodePointImpl ( 4.0, 0.0, 0.0 ), new GcodePointImpl ( 0.0, 4.0, 0.0 ) },
-                { "diagnoal left up not aligned",      new GcodePointImpl ( 3.5, 0.5, 0.0 ), new GcodePointImpl ( 0.5, 3.5, 0.0 ) },
-
-                { "diagnoal right down aligned",          new GcodePointImpl ( 0.0, 4.0, 0.0 ), new GcodePointImpl ( 4.0, 0.0, 0.0 ) },
-                { "diagnoal right down not aligned",      new GcodePointImpl ( 0.5, 3.5, 0.0 ), new GcodePointImpl ( 3.5, 0.5, 0.0 ) },
-
-                { "diagnoal left down aligned",          new GcodePointImpl ( 4.0, 4.0, 0.0 ), new GcodePointImpl ( 0.0, 0.0, 0.0 ) },
-                { "diagnoal left down not aligned",      new GcodePointImpl ( 3.5, 3.5, 0.0 ), new GcodePointImpl ( 0.5, 0.5, 0.0 ) },
-
-                { "no crossing",      new GcodePointImpl ( 0.3, 0.5, 0.0 ), new GcodePointImpl ( 0.5, 0.7, 0.0 ) },
-                { "irregular",      new GcodePointImpl ( 0.3, 0.5, 0.0 ), new GcodePointImpl ( 2.15, 1.78, 0.0 ) },
-
-        };
-        /* @formatter:on */
-
-        for ( int i = 0; i < tests.length; i++ ) {
-            int j = 0;
-            String name = (String) tests[i][j++];
-            GcodePointImpl p1 = (GcodePointImpl) tests[i][j++];
-            GcodePointImpl p2 = (GcodePointImpl) tests[i][j++];
-            m.testCase ( name, p1, p2 );
-        }
-
-    }
-
 
 }

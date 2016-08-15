@@ -66,6 +66,10 @@ public interface IConstant {
     public static final boolean AUTOLEVEL_SLOW_Z_SIMULATION = false;
     public static final int AUTOLEVEL_Z_SIMULATION_SCALE_FACTOR = 5;
     public static final boolean AUTOLEVEL_ENABLE_WITHOUT_SERIAL = true;
+    public static final boolean AUTOLEVEL_UNIFORM_HEIGHT_AT_Y_AXIS = true;
+
+    public static final boolean AUTOLEVEL_ITERATION_LIMIT_CHECK = true;
+    public static final int AUTOLEVEL_ITERATION_LIMIT_COUNT = 500;
 
     public static final String CYCLIC_PERSPECTIVE_SWITCHING = "cyclic";
 

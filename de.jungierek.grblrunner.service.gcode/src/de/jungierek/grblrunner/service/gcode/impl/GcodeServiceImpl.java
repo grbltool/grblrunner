@@ -525,7 +525,10 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 final int ylength = gcodeProgram.getYSteps () + 1;
 
                 for ( int i = 0; i < xlength; i++ ) {
-                    double z = IConstant.AUTOLEVEL_Z_SIMULATION_SCALE_FACTOR * Math.random ();
+                    double z = 0.0;
+                    if ( IConstant.AUTOLEVEL_UNIFORM_HEIGHT_AT_Y_AXIS ) {
+                        z = IConstant.AUTOLEVEL_Z_SIMULATION_SCALE_FACTOR * Math.random ();
+                    }
                     for ( int j = 0; j < ylength; j++ ) {
                         if ( IConstant.AUTOLEVEL_SLOW_Z_SIMULATION ) {
                             try {
@@ -533,7 +536,9 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                             }
                             catch ( InterruptedException exc ) {}
                         }
-                        // double z = IConstant.AUTOLEVEL_Z_SIMULATION_SCALE_FACTOR * Math.random ();
+                        if ( !IConstant.AUTOLEVEL_UNIFORM_HEIGHT_AT_Y_AXIS ) {
+                            z = IConstant.AUTOLEVEL_Z_SIMULATION_SCALE_FACTOR * Math.random ();
+                        }
                         IGcodePoint probe = gcodeProgram.getProbePointAt ( i, j ).addAxis ( 'Z', z );
                         gcodeProgram.setProbePoint ( probe );
                         LOG.debug ( "scan: probe=" + probe );
