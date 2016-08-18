@@ -7,18 +7,23 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
 import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +31,10 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
+import de.jungierek.grblrunner.constants.IPersistenceKey;
+import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.part.group.GcodeFileGroup;
+import de.jungierek.grblrunner.part.group.MacroDxfGroup;
 import de.jungierek.grblrunner.part.group.MacroGroup;
 import de.jungierek.grblrunner.part.group.MacroHobbedBoltGroup;
 import de.jungierek.grblrunner.part.group.MacroPocketGroup;
@@ -64,7 +72,9 @@ public class MacroPart {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context, Display display, MPart part ) {
+    public void createGui ( Composite parent, IEclipseContext context, Display display, MPart part, MApplication application, Shell shell, @Preference(
+            nodePath = IConstant.PREFERENCE_NODE,
+            value = IPreferenceKey.GCODE_PATH) String gcodePath ) {
 
         LOG.debug ( "createGui: program=" + gcodeProgram );
 
@@ -89,6 +99,29 @@ public class MacroPart {
 
             case "pocket":
                 macroGroup = ContextInjectionFactory.make ( MacroPocketGroup.class, context );
+                break;
+
+            case "dxf":
+
+                FileDialog dialog = new FileDialog ( shell, SWT.OPEN );
+                dialog.setFilterExtensions ( IConstant.DXF_FILE_EXTENSIONS );
+
+                String filterPath = application.getPersistedState ().get ( IPersistenceKey.GCODE_PATH );
+                if ( filterPath == null ) filterPath = gcodePath;
+                dialog.setFilterPath ( filterPath );
+
+                String result = dialog.open ();
+                if ( result != null ) {
+                    application.getPersistedState ().put ( IPersistenceKey.GCODE_PATH, filterPath );
+                    context.set ( IContextKey.MACRO_DXF_FILE_NAME, result );
+                    macroGroup = ContextInjectionFactory.make ( MacroDxfGroup.class, context );
+                }
+                else {
+                    // TODO what happens, when no file is selected
+                    MessageDialog.openError ( shell, "Internal Error", "no dxf file selected" );
+                }
+
+
                 break;
 
             default:

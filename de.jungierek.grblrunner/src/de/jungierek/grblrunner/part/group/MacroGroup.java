@@ -20,6 +20,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,10 +47,15 @@ public abstract class MacroGroup {
     private IEventBroker eventBroker;
 
     @Inject
-    private IEclipseContext context;
+    protected IEclipseContext context;
+
+    @Inject
+    protected Shell shell;
 
     private IEclipsePreferences preferences = InstanceScope.INSTANCE.getNode ( IConstant.PREFERENCE_NODE );
     private IEclipsePreferences defaultPreferences = DefaultScope.INSTANCE.getNode ( IConstant.PREFERENCE_NODE );
+    
+    private boolean gcodeGenerationError = false;
 
     @PostConstruct
     public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
@@ -64,6 +70,12 @@ public abstract class MacroGroup {
 
         generateGcodeProgram ();
         setControlsEnabled ( true );
+
+    }
+
+    protected void gcodeGenerationErrorOmiited () {
+
+        gcodeGenerationError = true;
 
     }
 
@@ -96,13 +108,22 @@ public abstract class MacroGroup {
 
         generateGcodeCore ( gcodeProgram );
 
-        gcodeProgram.appendLine ( "G0 Z" + String.format ( IConstant.FORMAT_COORDINATE, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) ) );
-        gcodeProgram.appendLine ( "M5" );
+        if ( gcodeGenerationError ) {
 
-        gcodeProgram.parse ();
+            clear ();
 
-        Text gcodeText = (Text) context.get ( IConstant.MACRO_TEXT_ID );
-        if ( gcodeText != null ) toolbox.gcodeToText ( gcodeText, gcodeProgram );
+        }
+        else {
+
+            gcodeProgram.appendLine ( "G0 Z" + String.format ( IConstant.FORMAT_COORDINATE, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) ) );
+            gcodeProgram.appendLine ( "M5" );
+
+            gcodeProgram.parse ();
+
+            Text gcodeText = (Text) context.get ( IConstant.MACRO_TEXT_ID );
+            if ( gcodeText != null ) toolbox.gcodeToText ( gcodeText, gcodeProgram );
+
+        }
 
         eventBroker.send ( IEvent.GCODE_MACRO_GENERATED, null );
         eventBroker.send ( IEvent.REDRAW, null );
@@ -124,6 +145,12 @@ public abstract class MacroGroup {
     };
 
     // ------------------------------------------------------------------------------------------
+
+    protected void clear () {
+
+        gcodeProgram.clear ();
+
+    }
 
     protected String formatCoordinate ( double value ) {
 

@@ -59,6 +59,7 @@ public interface IConstant {
 
     public static final String [] GCODE_FILE_EXTENSIONS = new String [] { "*.ngc" };
     public static final String AUTOLEVEL_DATA_FILE_EXTENSION = ".probe";
+    public static final String [] DXF_FILE_EXTENSIONS = new String [] { "*.dxf" };
 
     public static final int SERIAL_MAX_WAIT_MS = 2000;
 

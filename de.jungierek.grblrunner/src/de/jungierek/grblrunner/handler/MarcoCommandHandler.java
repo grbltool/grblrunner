@@ -55,6 +55,7 @@ public class MarcoCommandHandler {
     private final static MacroDescription [] MACROS = new MacroDescription [] {
         new MacroDescription ( "Hobbed Bolt", "hobbed_bolt" ),
         new MacroDescription ( "Pocket", "pocket" ),
+        new MacroDescription ( "Dxf", "dxf" ),
     };
     // @formatter:on
     
@@ -73,7 +74,6 @@ public class MarcoCommandHandler {
 
             MPartStack partStack = (MPartStack) modelService.find ( IConstant.EDITOR_PARTSTACK_ID, application );
             partStack.getChildren ().add ( part );
-            // HACK
             application.getContext ().set ( IContextKey.MACRO_TYPE, selectedMacro.contextValue );
 
             // it instanciates also the part object class

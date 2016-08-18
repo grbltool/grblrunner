@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.kabeja
+Bundle-SymbolicName: org.kabeja
+Bundle-Version: 0.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.kabeja,
+ org.kabeja.common,
+ org.kabeja.dxf.parser,
+ org.kabeja.entities,
+ org.kabeja.math,
+ org.kabeja.parser
