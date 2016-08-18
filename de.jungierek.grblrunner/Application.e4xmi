@@ -229,7 +229,7 @@
           <children xsi:type="menu:Menu" xmi:id="_O2t0cNczEeWrcvb8nXcT5w" elementId="de.jungierek.grblrunner.menu.move.10mm" label="10 mm"/>
         </children>
         <children xsi:type="menu:MenuSeparator" xmi:id="_T-bCwKlMEeWY2qQ8TsvDoA" elementId="de.jungierek.grblrunner.menuseparator.6"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_6fyHIDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.exit" label="_Exit"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_6fyHIDmrEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.handledmenuitem.exit" label="Exit" command="_z6tHcGVwEeazd5PWK8oJLg"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_UN-uMDmtEeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menu.serial.test" label="Serial">
         <children xsi:type="menu:Menu" xmi:id="_3Hrr8Dr1EeWmo4jUF9fDMA" elementId="de.jungierek.grblrunner.menu.serial.selectport" label="Select Port">
@@ -476,6 +476,7 @@
   <handlers xmi:id="_W7bd4Pw3EeWF4-1h_SKR5Q" elementId="de.jungierek.grblrunner.handler.macro.restore" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.MacroRestoreCommandHandler" command="_A7ZVMPw3EeWF4-1h_SKR5Q"/>
   <handlers xmi:id="_Np2jUATTEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.handler.camera.move" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.CameraMoveCommandHandler" command="_hJiEkATSEea85_QWyWUTdQ"/>
   <handlers xmi:id="_L1Oy0AZ6EealnPIlooT0Yw" elementId="de.jungierek.grblrunner.handler.spindle.speed" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.SpindleSpeedCommandHandler" command="_04WAUAZ5EealnPIlooT0Yw"/>
+  <handlers xmi:id="_53ICkGVwEeazd5PWK8oJLg" elementId="de.jungierek.grblrunner.handler.quit" contributionURI="bundleclass://de.jungierek.grblrunner/de.jungierek.grblrunner.handler.ExitHandler" command="_z6tHcGVwEeazd5PWK8oJLg"/>
   <bindingTables xmi:id="_JWsysIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.bindingtable.global" bindingContext="_TThFefsBEeSJsKKNyX_1bw">
     <bindings xmi:id="_P7KlQIBmEeWlxO4pXcSgzA" elementId="de.jungierek.grblrunner.keybinding.gcode.load" keySequence="M1+G" command="_PP9sEHdmEeW3XImWwiVxiA">
       <tags>type:user</tags>
@@ -666,6 +667,9 @@
     <bindings xmi:id="_5jOjsOiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.keybinding.fittosize" keySequence="M1+F" command="_UdSy4OiAEeWwz-taqm-HEQ">
       <tags>type:user</tags>
     </bindings>
+    <bindings xmi:id="_-OeycGVyEeazd5PWK8oJLg" elementId="de.jungierek.grblrunner.keybinding.exit" keySequence="M2+X" command="_z6tHcGVwEeazd5PWK8oJLg">
+      <tags>type:user</tags>
+    </bindings>
   </bindingTables>
   <bindingTables xmi:id="_g0ji0NjPEeWQKJAzQgCBeQ" elementId="de.jungierek.grblrunner.bindingtable.0" bindingContext="_Wr0YQNjPEeWQKJAzQgCBeQ"/>
   <rootContext xmi:id="_TThFefsBEeSJsKKNyX_1bw" elementId="org.eclipse.ui.contexts.dialogAndWindow" name="In Dialog and Windows">
@@ -778,6 +782,7 @@
   <commands xmi:id="_hJiEkATSEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.command.camera.move" commandName="Move Camera">
     <parameters xmi:id="_110GYATSEea85_QWyWUTdQ" elementId="de.jungierek.grblrunner.commandparameter.grbl.move.direction" name="Move Direction"/>
   </commands>
+  <commands xmi:id="_z6tHcGVwEeazd5PWK8oJLg" elementId="de.jungierek.grblrunner.command.exit" commandName="Exit"/>
   <addons xmi:id="_TThFcvsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_TThFc_sBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_TThFdPsBEeSJsKKNyX_1bw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
