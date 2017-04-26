@@ -45,6 +45,8 @@
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.util"/>
       <plugin id="org.apache.batik.util.gui"/>
+      <plugin id="org.apache.commons.jxpath"/>
+      <plugin id="org.apache.log4j"/>
       <plugin id="org.apache.lucene.analysis"/>
       <plugin id="org.apache.lucene.core"/>
       <plugin id="org.apache.xerces"/>
@@ -65,7 +67,6 @@
       <plugin id="org.eclipse.core.externaltools"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.filesystem.java7" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.net"/>
@@ -81,8 +82,10 @@
       <plugin id="org.eclipse.e4.core.commands"/>
       <plugin id="org.eclipse.e4.core.contexts"/>
       <plugin id="org.eclipse.e4.core.di"/>
+      <plugin id="org.eclipse.e4.core.di.annotations"/>
       <plugin id="org.eclipse.e4.core.di.extensions"/>
       <plugin id="org.eclipse.e4.core.services"/>
+      <plugin id="org.eclipse.e4.emf.xpath"/>
       <plugin id="org.eclipse.e4.tools"/>
       <plugin id="org.eclipse.e4.ui.bindings"/>
       <plugin id="org.eclipse.e4.ui.css.core"/>
@@ -175,6 +178,7 @@
       <plugin id="org.eclipse.m2e.maven.runtime"/>
       <plugin id="org.eclipse.m2e.maven.runtime.slf4j.simple"/>
       <plugin id="org.eclipse.m2e.model.edit"/>
+      <plugin id="org.eclipse.m2e.workspace.cli"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
       <plugin id="org.eclipse.osgi.compatibility.state.source"/>
@@ -230,6 +234,8 @@
       <plugin id="org.sat4j.pb"/>
       <plugin id="org.slf4j"/>
       <plugin id="org.slf4j.api"/>
+      <plugin id="org.slf4j.impl.log4j12" fragment="true"/>
+      <plugin id="org.tukaani.xz"/>
       <plugin id="org.w3c.css.sac"/>
       <plugin id="org.w3c.dom.events"/>
       <plugin id="org.w3c.dom.smil"/>
