@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.kabeja.DraftDocument;
@@ -36,12 +35,10 @@ public class MacroDxfGroup extends MacroGroup {
 
     private Text xyFeedrateText;
     private Text spindleSpeedText;
-    private Text millDiameterText;
     private Text zClearanceText;
     private Text zLiftupText;
     private Text zDepthText;
     private Text zFeedrateText;
-    private Button drillCompensationCheckButton;
 
     @Override
     protected int getGridLayoutColumns () {
@@ -75,47 +72,32 @@ public class MacroDxfGroup extends MacroGroup {
                 getIntPreference ( IPreferenceKey.SPINDLE_MIN ), getIntPreference ( IPreferenceKey.SPINDLE_MAX ) );
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "rpm" );
 
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mill diameter", 1 );
-        millDiameterText = GuiFactory.createDoubleText ( group, formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIAMETER ) ), 1, true, 0.0 );
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm" );
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "feedrate z", 1 );
+        zFeedrateText = GuiFactory.createIntegerText ( group, "" + getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ), 1, true, 0 );
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm/min" );
 
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "z depth", 1 );
         zDepthText = GuiFactory.createDoubleText ( group, formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ) ), 1, true, -5.0 );
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm" );
 
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "feedrate z", 1 );
-        zFeedrateText = GuiFactory.createIntegerText ( group, "" + getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ), 1, true, 0 );
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm/min" );
-
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "cutter comp.", 1 );
-        drillCompensationCheckButton = GuiFactory.createButton ( group, SWT.CHECK, null, SWT.LEFT, SWT.CENTER, true, false );
-        drillCompensationCheckButton.setSelection ( true );
-        GuiFactory.createHiddenLabel ( group );
-
         xyFeedrateText.addModifyListener ( textFieldModifyListener );
         zFeedrateText.addModifyListener ( textFieldModifyListener );
         spindleSpeedText.addModifyListener ( textFieldModifyListener );
-        millDiameterText.addModifyListener ( textFieldModifyListener );
         zClearanceText.addModifyListener ( textFieldModifyListener );
         zLiftupText.addModifyListener ( textFieldModifyListener );
         zDepthText.addModifyListener ( textFieldModifyListener );
-        drillCompensationCheckButton.addSelectionListener ( buttonSelectionListener );
 
     }
 
     @Override
     public void restorePreferenceData () {
         
-        // xDimensionText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) ) );
         zLiftupText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) ) );
         xyFeedrateText.setText ( "" + getIntPreference ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE ) );
-        // yDimensionText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIMENSION ) ) );
         zClearanceText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) ) );
         spindleSpeedText.setText ( "" + getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
-        millDiameterText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_DIAMETER ) ) );
         zDepthText.setText ( formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ) ) );
         zFeedrateText.setText ( "" + getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ) );
-        // drillCompensationCheckButton.setSelection ( true );
 
     }
 
@@ -134,14 +116,10 @@ public class MacroDxfGroup extends MacroGroup {
         
         int xyFeedrate = toolbox.parseIntegerField ( xyFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_XY_FEEDRATE ) );
         int spindleSpeed = toolbox.parseIntegerField ( spindleSpeedText, getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ) );
-        double millDiameter = toolbox.parseDoubleField ( millDiameterText, getDoublePreference ( IPreferenceKey.POCKET_MILL_DIAMETER ) );
         double zClearance = toolbox.parseDoubleField ( zClearanceText, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) );
         double zLiftup = toolbox.parseDoubleField ( zLiftupText, getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) );
         double zDepth = toolbox.parseDoubleField ( zDepthText, getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ) );
-        boolean isDrillCompensation = drillCompensationCheckButton.getSelection ();
         int zFeedrate = toolbox.parseIntegerField ( zFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ) );
-
-        double millRadius = millDiameter / 2;
 
         motionSeekZ ( zClearance );
         motionSeekXY ( 0.0, 0.0 );
@@ -211,14 +189,12 @@ public class MacroDxfGroup extends MacroGroup {
     @Override
     public void setControlsEnabled ( boolean enabled ) {
 
-        millDiameterText.setEnabled ( enabled );
         spindleSpeedText.setEnabled ( enabled );
         zClearanceText.setEnabled ( enabled );
         xyFeedrateText.setEnabled ( enabled );
         zLiftupText.setEnabled ( enabled );
         zDepthText.setEnabled ( enabled );
         zFeedrateText.setEnabled ( enabled );
-        drillCompensationCheckButton.setEnabled ( enabled );
 
     }
 
