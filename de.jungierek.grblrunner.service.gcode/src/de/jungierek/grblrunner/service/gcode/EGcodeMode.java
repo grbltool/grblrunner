@@ -2,23 +2,33 @@ package de.jungierek.grblrunner.service.gcode;
 
 public enum EGcodeMode {
     
-    /* @formatter:off */
-    METRIC_MODE_INCH    ( "G20" ), 
-    METRIC_MODE_MM      ( "G21" ),
-    MOTION_MODE_PROBE   ( "G38" ),
+    // TODO G93, G04 G04
 
-    MOTION_MODE_LINEAR  ( "G01", "G1" ),
-    MOTION_MODE_CW_ARC  ( "G02", "G2" ),
-    MOTION_MODE_CCW_ARC ( "G03", "G3" ),
-    MOTION_MODE_SEEK    ( "G00", "G0" ), // must be here to prevent failures
-    MOTION_MODE_NONE    ( "G80" ),
-    COMMENT             ( "(", ";" ),
-    SPINDLE_ON_CW       ( "M03", "M3" ),
-    SPINDLE_ON_CCW      ( "M04", "M4" ),
-    SPINDLE_OFF         ( "M05", "M5" ),
-    DISTANCE_MODE_ABS   ( "G90" ),
-    DISTANCE_MODE_REL   ( "G91" ),
-    WAIT                ( "G04", "G4" ),
+    /* @formatter:off */
+    METRIC_MODE_INCH        ( "G20" ), 
+    METRIC_MODE_MM          ( "G21" ),
+    
+    MOTION_MODE_PROBE       ( "G38" ),
+
+    MOTION_MODE_LINEAR      ( "G01", "G1" ),
+    MOTION_MODE_CW_ARC      ( "G02", "G2" ),
+    MOTION_MODE_CCW_ARC     ( "G03", "G3" ),
+    DWELL                   ( "G04", "G4" ),
+    MOTION_MODE_SEEK        ( "G00", "G0" ), // must be at last of all G0X gcodes to prevent failures
+    
+    MOTION_MODE_NONE        ( "G80" ),
+    
+    COMMENT                 ( "(", ";" ),
+    
+    SPINDLE_ON_CW           ( "M03", "M3" ),
+    SPINDLE_ON_CCW          ( "M04", "M4" ),
+    SPINDLE_OFF             ( "M05", "M5" ),
+    
+    DISTANCE_MODE_ABS       ( "G90" ),
+    DISTANCE_MODE_REL       ( "G91" ),
+    
+    INVERSE_TIME_MODE       ( "G93" ),
+    UNITS_PER_MINUTE_MODE   ( "G94" ),
     
     GCODE_MODE_UNDEF ( "" )
     ;
