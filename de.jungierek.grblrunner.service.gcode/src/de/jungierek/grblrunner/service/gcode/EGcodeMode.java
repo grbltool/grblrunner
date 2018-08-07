@@ -20,6 +20,7 @@ public enum EGcodeMode {
     
     COMMENT                 ( "(", ";" ),
     
+    SPINDLE_SPEED           ( "S" ),
     SPINDLE_ON_CW           ( "M03", "M3" ),
     SPINDLE_ON_CCW          ( "M04", "M4" ),
     SPINDLE_OFF             ( "M05", "M5" ),
