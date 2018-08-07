@@ -1,11 +1,5 @@
 package de.jungierek.grblrunner.service.serial.impl;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
-import gnu.io.SerialPort;
-import gnu.io.UnsupportedCommOperationException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,6 +16,12 @@ import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.service.serial.ISerialServiceReceiver;
+
+import gnu.io.CommPortIdentifier;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.SerialPort;
+import gnu.io.UnsupportedCommOperationException;
 
 public class SerialServiceImpl implements ISerialService {
 
@@ -85,7 +85,7 @@ public class SerialServiceImpl implements ISerialService {
 
         portEnum = CommPortIdentifier.getPortIdentifiers ();
 
-        ArrayList<String> portNames = new ArrayList<String> ();
+        ArrayList<String> portNames = new ArrayList<> ();
         while ( portEnum.hasMoreElements () ) {
             CommPortIdentifier pid = portEnum.nextElement ();
             int portType = pid.getPortType ();
@@ -316,6 +316,8 @@ public class SerialServiceImpl implements ISerialService {
 
         LOG.debug ( "close: serialReceiverThread=" + serialReceiverThread );
         
+        if ( !isOpen () ) return;
+
         if ( serialReceiverThread == null ) return;
 
         new Thread ( ( ) -> {
