@@ -667,7 +667,7 @@
     <bindings xmi:id="_5jOjsOiAEeWwz-taqm-HEQ" elementId="de.jungierek.grblrunner.keybinding.fittosize" keySequence="M1+F" command="_UdSy4OiAEeWwz-taqm-HEQ">
       <tags>type:user</tags>
     </bindings>
-    <bindings xmi:id="_-OeycGVyEeazd5PWK8oJLg" elementId="de.jungierek.grblrunner.keybinding.exit" keySequence="M2+X" command="_z6tHcGVwEeazd5PWK8oJLg">
+    <bindings xmi:id="_-OeycGVyEeazd5PWK8oJLg" elementId="de.jungierek.grblrunner.keybinding.exit" keySequence="M3+Q" command="_z6tHcGVwEeazd5PWK8oJLg">
       <tags>type:user</tags>
     </bindings>
   </bindingTables>
