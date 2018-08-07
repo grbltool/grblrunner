@@ -35,7 +35,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     private ISerialService serial;
 
     // protected for test purposes
-    protected ArrayBlockingQueue<GrblRequestImpl> queue = new ArrayBlockingQueue<GrblRequestImpl> ( IConstant.GCODE_QUEUE_LENGTH, false );
+    protected ArrayBlockingQueue<GrblRequestImpl> queue = new ArrayBlockingQueue<> ( IConstant.GCODE_QUEUE_LENGTH, true );
 
     protected volatile boolean waitForOk = false;
     protected volatile boolean skipByAlarm = false;
