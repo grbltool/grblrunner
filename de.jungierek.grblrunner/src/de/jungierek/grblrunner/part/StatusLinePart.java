@@ -11,6 +11,7 @@ import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -76,7 +77,14 @@ public class StatusLinePart {
 
         LOG.trace ( "msgErrorNotified: msg=" + msg );
 
-        MessageDialog.openError ( shell, "Error", msg );
+        // the default dialog blocks on open and the terminal is completly blocked
+        // MessageDialog.openError ( shell, "Error", msg );
+        
+        // original code from MessageDialog supplemented with non blocking behavior
+        // accept the default window icon, ok is the default button
+        MessageDialog dialog = new MessageDialog ( shell, "Error", null, msg, MessageDialog.ERROR, new String [] { IDialogConstants.OK_LABEL }, 0 );
+        dialog.setBlockOnOpen ( false );
+        dialog.open ();
 
     }
 
