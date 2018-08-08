@@ -79,8 +79,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.put ( IPreferenceKey.COLOR_GRBL_BACKGROUND, "128,128,128" ); // dark gray
         defaults.put ( IPreferenceKey.COLOR_OK_SUPPRESSED_FOREGROUND, "0,255,0" ); // green
         defaults.put ( IPreferenceKey.COLOR_ERROR_SUPPRESSED_FOREGROUND, "255,0,0" ); // red
-        defaults.put ( IPreferenceKey.COLOR_GRBL_SUPPRESSED_FOREGROUND, "0,0,0" ); // white
-        defaults.put ( IPreferenceKey.COLOR_GRBL_SUPPRESSED_BACKGROUND, "192,192,192" ); // gray
+        defaults.put ( IPreferenceKey.COLOR_MSG_FOREGROUND, "255,255,255" ); // white
+        defaults.put ( IPreferenceKey.COLOR_MSG_BACKGROUND, "0,0,255" ); // blue
 
         // --- Probe ---
         defaults.putInt ( IPreferenceKey.PROBE_FEEDRATE, 40 );

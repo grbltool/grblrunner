@@ -51,8 +51,8 @@ public interface IPreferenceKey {
     public static final String COLOR_GRBL_BACKGROUND = IConstant.KEY_BASE + ".grbl.background.color";
     public static final String COLOR_OK_SUPPRESSED_FOREGROUND = IConstant.KEY_BASE + ".ok.suppressed.foreground.color";
     public static final String COLOR_ERROR_SUPPRESSED_FOREGROUND = IConstant.KEY_BASE + ".error.suppressed.foreground.color";
-    public static final String COLOR_GRBL_SUPPRESSED_FOREGROUND = IConstant.KEY_BASE + ".grbl.suppressed.foreground.color";
-    public static final String COLOR_GRBL_SUPPRESSED_BACKGROUND = IConstant.KEY_BASE + ".grbl.suppressed.background.color";
+    public static final String COLOR_MSG_FOREGROUND = IConstant.KEY_BASE + ".msg.foreground.color";
+    public static final String COLOR_MSG_BACKGROUND = IConstant.KEY_BASE + ".msg.background.color";
     public static final String TERMINAL_FONT_DATA = IConstant.KEY_BASE + ".terminal.fontdata";
 
     // --- Probe/Autolevel ---

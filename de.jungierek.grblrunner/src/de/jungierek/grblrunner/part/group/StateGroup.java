@@ -11,6 +11,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -40,17 +41,21 @@ public class StateGroup {
     private static final HashMap<EGrblState, int []> stateColors;
     // TODO colors to pref
     static {
-        stateColors = new HashMap<EGrblState, int []> ();
+        stateColors = new HashMap<> ();
         stateColors.put ( EGrblState.IDLE, new int [] { SWT.COLOR_BLACK, SWT.COLOR_GRAY } );
-        stateColors.put ( EGrblState.QUEUE, new int [] { SWT.COLOR_BLACK, SWT.COLOR_YELLOW } );
         stateColors.put ( EGrblState.RUN, new int [] { SWT.COLOR_BLACK, SWT.COLOR_GREEN } );
         stateColors.put ( EGrblState.HOLD, new int [] { SWT.COLOR_BLACK, SWT.COLOR_YELLOW } );
         stateColors.put ( EGrblState.HOME, new int [] { SWT.COLOR_BLACK, SWT.COLOR_MAGENTA } );
         stateColors.put ( EGrblState.ALARM, new int [] { SWT.COLOR_WHITE, SWT.COLOR_RED } );
         stateColors.put ( EGrblState.CHECK, new int [] { SWT.COLOR_BLACK, SWT.COLOR_CYAN } );
+        stateColors.put ( EGrblState.SLEEP, new int [] { SWT.COLOR_DARK_GRAY, SWT.COLOR_GRAY } );
+        stateColors.put ( EGrblState.DOOR, new int [] { SWT.COLOR_BLACK, SWT.COLOR_DARK_YELLOW } );
+        stateColors.put ( EGrblState.JOG, new int [] { SWT.COLOR_WHITE, SWT.COLOR_DARK_BLUE } );
     };
 
     private Label stateLabel;
+    private Label [] extraStateLabel = new Label [3];
+    private Color [] unconnectedColors = new Color [2];
 
     @PostConstruct
     public void createGui ( Composite parent, IEclipseContext context ) {
@@ -62,9 +67,18 @@ public class StateGroup {
         int groupRows = ((Integer) context.get ( IContextKey.PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
-        group.setLayout ( new FillLayout () );
+        final FillLayout l = new FillLayout ();
+        l.type = SWT.VERTICAL;
+        group.setLayout ( l );
         stateLabel = new Label ( group, SWT.CENTER );
         stateLabel.setText ( UNCONNECTED_TEXT );
+        unconnectedColors [0] = stateLabel.getForeground ();
+        unconnectedColors [1] = stateLabel.getBackground ();
+        
+        for ( int i = 0; i < extraStateLabel.length; i++ ) {
+            extraStateLabel [i] = new Label ( group, SWT.CENTER );
+            extraStateLabel [i].setVisible ( false );
+        }
 
     }
 
@@ -75,19 +89,52 @@ public class StateGroup {
         stateLabel.setText ( state.getText () );
 
         int [] colors = stateColors.get ( state );
-        stateLabel.setForeground ( shell.getDisplay ().getSystemColor ( colors[0] ) );
-        stateLabel.setBackground ( shell.getDisplay ().getSystemColor ( colors[1] ) );
+        stateLabel.setForeground ( shell.getDisplay ().getSystemColor ( colors [0] ) );
+        stateLabel.setBackground ( shell.getDisplay ().getSystemColor ( colors [1] ) );
+
+    }
+
+    private void resetStateLabel () {
+
+        LOG.trace ( "resetStateLabel:" );
+
+        stateLabel.setText ( UNCONNECTED_TEXT );
+        stateLabel.setForeground ( unconnectedColors [0] );
+        stateLabel.setBackground ( unconnectedColors [1] );
+
+    }
+
+    private void hideExtraStateLabels () {
+
+        LOG.trace ( "resetExtraStateLabels:" );
+
+        for ( int i = 0; i < extraStateLabel.length; i++ ) {
+            extraStateLabel [i].setVisible ( false );
+        }
 
     }
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String [] line ) {
 
         LOG.debug ( "alarmNotified: start" );
         setStateLabel ( EGrblState.ALARM );
-        // inform about whole message
-        stateLabel.setText ( line );
+
+        hideExtraStateLabels ();
+
+        int [] colors = stateColors.get ( EGrblState.ALARM );
+        for ( int i = 0; i < line.length; i++ ) {
+            if ( i - 1 < extraStateLabel.length ) {
+                extraStateLabel [i].setVisible ( true );
+                extraStateLabel [i].setText ( line [i] );
+                extraStateLabel [i].setForeground ( shell.getDisplay ().getSystemColor ( colors [0] ) );
+                extraStateLabel [i].setBackground ( shell.getDisplay ().getSystemColor ( colors [1] ) );
+            }
+            else {
+                LOG.error ( "alarmNotified: alarm messages exceeds extra labels i=" + i + " line=" + line [i] );
+            }
+        }
 
     }
 
@@ -96,7 +143,9 @@ public class StateGroup {
     public void disconnectedNotified ( @UIEventTopic(IEvent.SERIAL_DISCONNECTED) String param ) {
 
         LOG.debug ( "disconnectedNotified: param=" + param );
-        stateLabel.setText ( UNCONNECTED_TEXT );
+
+        resetStateLabel ();
+        hideExtraStateLabels ();
 
     }
 
@@ -106,6 +155,9 @@ public class StateGroup {
 
         LOG.debug ( "updateStateNotified: grblState=" + grblState );
         setStateLabel ( grblState.getGrblState () );
+        if ( !EGrblState.ALARM.equals ( grblState.getGrblState () ) ) {
+            hideExtraStateLabels ();
+        }
 
     }
 

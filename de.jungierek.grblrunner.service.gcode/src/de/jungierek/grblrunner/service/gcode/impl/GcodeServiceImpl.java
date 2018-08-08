@@ -42,11 +42,9 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     protected volatile boolean suppressInTerminal = false;
     protected volatile boolean suppressSingleByteCommandInTerminal = false;
 
-    GcodeGrblStateImpl lastGrblState;
+    private GcodeGrblStateImpl lastGrblState;
     private EGcodeMode lastMotionMode;
     private String lastCoordSelect;
-    private GcodePointImpl lastCoordSelectOffset;
-    private GcodePointImpl lastCoordSelectTempOffset;
     private String lastPlane;
     private String lastMetricMode;
     private String lastDistanceMode;
@@ -176,22 +174,19 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             releaseWaitForOk = true;
             skipByAlarm = false;
         }
-        else if ( line.startsWith ( "Grbl" ) ) {
+        else if ( line.startsWith ( "Grbl" ) || line.startsWith ( "[MSG:" ) ) {
             suppressLine = false;
         }
         else if ( line.startsWith ( "ALARM" ) ) {
             // queue.clear (); // empty queue
-            LOG.info ( "received: ALARM" );
             releaseWaitForOk = true;
             skipByAlarm = true;
             suppressInTerminal = false; // show this line ever
         }
 
         // erst event senden, dann ...
-        // System.out.println ( logName () + "received: posting event waitForOk=" + waitForOk + " skiByAlarm=" + skipByAlarm + " suppressInTerminl=" + suppressInTerminal + " line="
-        // + line );
-        analyseResponse ( line );
-        eventBroker.send ( IEvent.GRBL_RECEIVED, new GrblResponseImpl ( suppressLine, line ) );
+        String analysedLine = analyseResponse ( line );
+        eventBroker.post ( IEvent.GRBL_RECEIVED, new GrblResponseImpl ( suppressLine, analysedLine ) );
 
         // ... nächstes Kommando frei geben
         if ( releaseWaitForOk ) waitForOk = false;
@@ -233,71 +228,81 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
     }
 
-    private boolean ignoreNextProbe = false;
-    private final static String PROBE_PATTERN = "[PRB:";
-    private final static int PROBE_PATTERN_LEN = PROBE_PATTERN.length ();
+    private int parseInt ( int defaultValue, String s ) {
 
-    private void analyseResponse ( String line ) {
+        int result = defaultValue;
+        try {
+            result = Integer.parseInt ( s );
+        }
+        catch ( NumberFormatException exc ) {}
 
-        if ( line.startsWith ( "ALARM" ) ) {
+        return result;
 
-            eventBroker.send ( IEvent.GRBL_ALARM, line ); // inform about alarm message
+    }
+
+    private static final int SETTING_COLUMN_WIDTH = 20;
+    private static final String SETTING_COLUMN_EMPTY = "                    ";
+    
+    // see https://github.com/gnea/grbl/wiki/Grbl-v1.1-Interface
+    private String analyseResponse ( String line ) {
+
+        if ( line.startsWith ( "ALARM:" ) ) { // alarm message
+            
+            int index = parseInt ( 0, line.substring ( "ALARM:".length (), line.length () - 2 ) ); // cut the crlf at the end
+            eventBroker.post ( IEvent.GRBL_ALARM, ALARM_CODE_DESCRIPTION [index] ); // inform about alarm message
 
         }
-        else if ( line.startsWith ( "Grbl" ) ) {
+        else if ( line.startsWith ( "error:" ) ) { // error message
 
-            eventBroker.send ( IEvent.GRBL_RESTARTED, line ); // inform about grbl restart
+            int index = parseInt ( 0, line.substring ( "error:".length (), line.length () - 2 ) ); // cut the crlf at the end
+            final String msg = ERROR_CODE_DESCRIPTION [index];
+            line = line + msg + "\r\n";
+            if ( !suppressInTerminal ) {
+                eventBroker.post ( IEvent.MESSAGE_ERROR, msg ); // inform about error message
+            }
 
         }
-        else if ( line.startsWith ( "<" ) ) { // we found state line
+        else if ( line.startsWith ( "Grbl" ) ) { // welcome message
+
+            eventBroker.post ( IEvent.GRBL_RESTARTED, line ); // inform about grbl restart
+
+        }
+        else if ( line.startsWith ( ">" ) ) {} // startup line execution >G54G20:ok
+        else if ( line.startsWith ( "<" ) ) { // grbl state message
 
             EGrblState state = EGrblState.identify ( line );
 
-            GcodePointImpl m = parseCoordinates ( line, "MPos:", ',' );
-            GcodePointImpl w = parseCoordinates ( line, "WPos:", '>' );
+            GcodePointImpl m = parseCoordinates ( line, "MPos:", '|' );
+            if ( line.indexOf ( "WCO:" ) > 0 ) {
+                GcodePointImpl wco = parseCoordinates ( line, "WCO:", '>' );
+                // update only on change
+                if ( !fixtureSshift.equals ( wco ) ) {
+                    fixtureSshift = wco;
+                    LOG.trace ( "analyseResponse: wco=" + wco );
+                    eventBroker.post ( IEvent.UPDATE_FIXTURE_OFFSET, wco );
+                }
+            }
+            GcodePointImpl w = (GcodePointImpl) m.sub ( fixtureSshift );
             GcodeGrblStateImpl gcodeState = new GcodeGrblStateImpl ( state, m, w );
 
             // update only on change
             if ( lastGrblState == null || !lastGrblState.equals ( gcodeState ) ) {
                 lastGrblState = gcodeState;
-                eventBroker.send ( IEvent.UPDATE_STATE, gcodeState );
+                eventBroker.post ( IEvent.UPDATE_STATE, gcodeState );
             }
-
+            
         }
         else if ( line.startsWith ( "[PRB:" ) ) {
-            // System.out.println ( logName () + "receivedNotified: send update probe line=" + line );
             // probe sends all cooridnates in machine system
             GcodePointImpl probePoint = null;
-            final int probePatternLength = "[PRB:".length ();
-            if ( line.substring ( probePatternLength ).indexOf ( ':' ) > 0 ) { // test after "[PRB:"
-                // we are in v0.9j
-                probePoint = parseCoordinates ( line, "PRB:", ':' );
-                char success = line.charAt ( probePatternLength + line.substring ( probePatternLength ).indexOf ( ':' ) + 1 );
-                ignoreNextProbe = success == '0';
-                LOG.trace ( "analyseResponse: probe detected scanRunning=" + scanRunning + " line=" + line + " probe=" + probePoint + " success=" + success );
-            }
-            else {
-                // v0.9g
-                probePoint = parseCoordinates ( line, "PRB:", ']' ); // before v0.9j
-                LOG.trace ( "analyseResponse: probe detected scanRunning=" + scanRunning + " line=" + line + " probe=" + probePoint );
-            }
-
-            if ( probePoint == null ) {
-                LOG.error ( "analyseResponse: probe is null!" );
-            }
-            else {
+            probePoint = parseCoordinates ( line, "[PRB:", ':' );
+            char success = line.charAt ( "[PRB:".length () + line.substring ( "[PRB:".length () ).indexOf ( ':' ) + 1 );
+            LOG.trace ( "analyseResponse: probe detected scanRunning=" + scanRunning + " line=" + line + " probe=" + probePoint + " success=" + success );
+            if ( success == '1' ) {
                 // transfer probe coordinates from machine to working coordinates
-                if ( ignoreNextProbe ) {
-                    ignoreNextProbe = false;
-                }
-                else {
-                    if ( scanRunning ) gcodeProgram.setProbePoint ( probePoint.sub ( fixtureSshift ) );
-                    eventBroker.send ( IEvent.AUTOLEVEL_UPDATE, probePoint );
-                }
+                if ( scanRunning ) gcodeProgram.setProbePoint ( probePoint.sub ( fixtureSshift ) );
+                eventBroker.post ( IEvent.AUTOLEVEL_UPDATE, probePoint );
             }
-        }
-        else if ( line.startsWith ( "[" + lastCoordSelect ) ) {
-            lastCoordSelectOffset = parseCoordinates ( line, lastCoordSelect + ":", ']' );
         }
         else if ( line.startsWith ( "[G54" ) ) {} // do nothing
         else if ( line.startsWith ( "[G55" ) ) {} // do nothing
@@ -307,41 +312,27 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         else if ( line.startsWith ( "[G59" ) ) {} // do nothing
         else if ( line.startsWith ( "[G28" ) ) {} // do nothing
         else if ( line.startsWith ( "[G30" ) ) {} // do nothing
-        else if ( line.startsWith ( "[G92" ) ) {
-            lastCoordSelectTempOffset = parseCoordinates ( line, "G92:", ']' );
-            // System.out.println ( logName () + "receivedNotified: " + lastCoordSelect + "=" + lastCoordSelectOffset + " G92=" + lastCoordSelectTempOffset );
-            fixtureSshift = lastCoordSelectOffset.add ( lastCoordSelectTempOffset );
-            eventBroker.send ( IEvent.UPDATE_FIXTURE_OFFSET, fixtureSshift ); // inform all receivers only once, G92 is the last entry
-            ignoreNextProbe = true;
-        }
-        else if ( line.startsWith ( "[G" ) ) {
+        else if ( line.startsWith ( "[G92" ) ) {} // do nothing
+        else if ( line.startsWith ( "[GC:" ) ) {
 
-            // System.out.println ( logName () + "receivedNotified: $G found" );
-
-            // [G0 G54 G17 G21 G90 G94 M0 M5 M9 T0 F1000. S0.]
-            int startPos = 1; // without '['
+            // v0.9j -> [G0 G54 G17 G21 G90 G94 M0 M5 M9 T0 F1000. S0.]
+            // v1.1f -> [GC:G0 G54 G17 G21 G90 G94 M5 M9 T0 F0 S0]
+            int startPos = "{GC:".length (); // without '[GC:'
             int endPos = line.indexOf ( ']' );
             String [] token = line.substring ( startPos, endPos ).split ( "\\s" );
-
-            // if ( token.length != 12 ) {
-            // // does not called
-            // LOG.error ( "analyseResponse: NOT 12 TOKEN: line=" + line );
-            // return;
-            // }
 
             // token [0] -> motion mode
             EGcodeMode motionMode = EGcodeMode.identify ( token[0] );
             if ( lastMotionMode != motionMode && motionMode != EGcodeMode.GCODE_MODE_UNDEF ) {
                 lastMotionMode = motionMode;
-                eventBroker.send ( IEvent.UPDATE_MODAL_MODE, motionMode.getCommand () );
+                eventBroker.post ( IEvent.UPDATE_MODAL_MODE, motionMode.getCommand () );
             }
 
             // token [1] -> G54 .. G59
             String coordSelect = token[1];
             if ( lastCoordSelect != coordSelect && !coordSelect.equals ( lastCoordSelect ) ) {
                 lastCoordSelect = coordSelect;
-                eventBroker.send ( IEvent.UPDATE_FIXTURE, coordSelect );
-                sendCommandSuppressInTerminal ( "$#" );
+                eventBroker.post ( IEvent.UPDATE_FIXTURE, coordSelect );
             }
 
             // token [2] -> Plane XY ZY YZ
@@ -362,29 +353,28 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             if ( !plane.equals ( lastPlane ) ) {
                 lastPlane = plane;
-                eventBroker.send ( IEvent.UPDATE_PLANE, plane );
+                eventBroker.post ( IEvent.UPDATE_PLANE, plane );
             }
 
             // token [3] -> inch or mm
             String metricMode = token[3].equals ( "G20" ) ? "inch" : "mm";
             if ( !metricMode.equals ( lastMetricMode ) ) {
                 lastMetricMode = metricMode;
-                eventBroker.send ( IEvent.UPDATE_METRIC_MODE, metricMode );
+                eventBroker.post ( IEvent.UPDATE_METRIC_MODE, metricMode );
             }
 
             // token [4] absolute or relative
             String distanceMode = token[4].equals ( "G90" ) ? "absolute" : "relative";
             if ( !distanceMode.equals ( lastDistanceMode ) ) {
                 lastDistanceMode = distanceMode;
-                eventBroker.send ( IEvent.UPDATE_DISTANCE_MODE, distanceMode );
+                eventBroker.post ( IEvent.UPDATE_DISTANCE_MODE, distanceMode );
             }
 
             // TODO token [5] path control mode G93 inverse time mode G94 units per minute mode G95 units per revision mode
-            // TODO token [6] program control M0 temp stop M1 temp stop M2 return M30 return and "reset"
 
-            // token [7] spindle mode M3 CW rot M4 CCW rot M5 stop
+            // token [6] spindle mode M3 CW rot M4 CCW rot M5 stop
             String spindleMode = "unknown";
-            switch ( token [7]) {
+            switch ( token[6] ) {
                 case "M3":
                     spindleMode = "CW";
                     break;
@@ -399,10 +389,10 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
             if ( !spindleMode.equals ( lastSpindleMode ) ) {
                 lastSpindleMode = spindleMode;
-                eventBroker.send ( IEvent.UPDATE_SPINDLE_MODE, spindleMode );
+                eventBroker.post ( IEvent.UPDATE_SPINDLE_MODE, spindleMode );
             }
 
-            // TODO token [8] coolant mode M7 mist coolant M8 flood coolant M9 stop coolant
+            // token [7] coolant mode M7 mist coolant M8 flood coolant M9 stop coolant
             String coolantMode = "unknown";
             switch ( token[8] ) {
                 case "M7":
@@ -419,33 +409,137 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
             if ( !coolantMode.equals ( lastCoolantMode ) ) {
                 lastCoolantMode = coolantMode;
-                eventBroker.send ( IEvent.UPDATE_COOLANT_MODE, coolantMode );
+                eventBroker.post ( IEvent.UPDATE_COOLANT_MODE, coolantMode );
             }
 
-            // token [9] Tn tool number
-            String tool = token[9];
+            // token [8] Tn tool number
+            String tool = token[8];
             if ( !tool.equals ( lastTool ) ) {
                 lastTool = tool;
-                eventBroker.send ( IEvent.UPDATE_TOOL, tool );
+                eventBroker.post ( IEvent.UPDATE_TOOL, tool );
             }
 
-            // token [10] -> feedrate
-            String feedrate = token[10].substring ( 1 ); // ignore 'F'
+            // token [9] -> feedrate
+            String feedrate = token[9].substring ( 1 ); // ignore 'F'
             if ( feedrate.endsWith ( "." ) ) feedrate = feedrate.substring ( 0, feedrate.length () - 1 );
             if ( !feedrate.equals ( lastFeedrate ) ) {
                 lastFeedrate = feedrate;
-                eventBroker.send ( IEvent.UPDATE_FEEDRATE, feedrate );
+                eventBroker.post ( IEvent.UPDATE_FEEDRATE, feedrate );
             }
 
-            // token [12] -> spindle speed
-            String spindlespeed = token[11].substring ( 1 ); // ignore 'S'
+            // token [10] -> spindle speed
+            String spindlespeed = token[10].substring ( 1 ); // ignore 'S'
             if ( spindlespeed.endsWith ( "." ) ) spindlespeed = spindlespeed.substring ( 0, spindlespeed.length () - 1 );
             if ( !spindlespeed.equals ( lastSpindlespeed ) ) {
                 lastSpindlespeed = spindlespeed;
-                eventBroker.send ( IEvent.UPDATE_SPINDLESPEED, spindlespeed );
+                eventBroker.post ( IEvent.UPDATE_SPINDLESPEED, spindlespeed );
             }
 
         }
+        else if ( line.startsWith ( "$0=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Step pulse time, microseconds)\r\n";
+        }
+        else if ( line.startsWith ( "$1=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Step idle delay, milliseconds)\r\n";
+        }
+        else if ( line.startsWith ( "$2=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Step pulse invert, mask)\r\n";
+        }
+        else if ( line.startsWith ( "$3=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Step direction invert, mask)\r\n";
+        }
+        else if ( line.startsWith ( "$4=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Invert step enable pin, boolean)\r\n";
+        }
+        else if ( line.startsWith ( "$5=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Invert limit pins, boolean)\r\n";
+        }
+        else if ( line.startsWith ( "$6=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Invert probe pin, boolean)\r\n";
+        }
+        else if ( line.startsWith ( "$10=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Status report options, mask)\r\n";
+        }
+        else if ( line.startsWith ( "$11=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Junction deviation, millimeters)\r\n";
+        }
+        else if ( line.startsWith ( "$12=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Arc tolerance, millimeters)\r\n";
+        }
+        else if ( line.startsWith ( "$13=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Report in inches, boolean)\r\n";
+        }
+        else if ( line.startsWith ( "$20=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Soft limits enable, boolean)\r\n";
+        }
+        else if ( line.startsWith ( "$21=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Hard limits enable, boolean)\r\n";
+        }
+        else if ( line.startsWith ( "$22=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Homing cycle enable, boolean)\r\n";
+        }
+        else if ( line.startsWith ( "$23=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Homing direction invert, mask)\r\n";
+        }
+        else if ( line.startsWith ( "$24=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Homing locate feed rate, mm/min)\r\n";
+        }
+        else if ( line.startsWith ( "$25=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Homing search seek rate, mm/min)\r\n";
+        }
+        else if ( line.startsWith ( "$26=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Homing switch debounce delay, milliseconds)\r\n";
+        }
+        else if ( line.startsWith ( "$27=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Homing switch pull-off distance, millimeters)\r\n";
+        }
+        else if ( line.startsWith ( "$30=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Maximum spindle speed, RPM)\r\n";
+        }
+        else if ( line.startsWith ( "$31=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Minimum spindle speed, RPM)\r\n";
+        }
+        else if ( line.startsWith ( "$32=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Laser-mode enable, boolean)\r\n";
+        }
+        else if ( line.startsWith ( "$100=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(X-axis steps per millimeter)\r\n";
+        }
+        else if ( line.startsWith ( "$101=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Y-axis steps per millimeter)\r\n";
+        }
+        else if ( line.startsWith ( "$102=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Z-axis steps per millimeter)\r\n";
+        }
+        else if ( line.startsWith ( "$110=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(X-axis maximum rate, mm/min)\r\n";
+        }
+        else if ( line.startsWith ( "$111=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Y-axis maximum rate, mm/min)\r\n";
+        }
+        else if ( line.startsWith ( "$112=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Z-axis maximum rate, mm/min)\r\n";
+        }
+        else if ( line.startsWith ( "$120=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(X-axis acceleration, mm/sec^2)\r\n";
+        }
+        else if ( line.startsWith ( "$121=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Y-axis acceleration, mm/sec^2)\r\n";
+        }
+        else if ( line.startsWith ( "$122=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Z-axis acceleration, mm/sec^2)\r\n";
+        }
+        else if ( line.startsWith ( "$130=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(X-axis maximum travel, millimeters)\r\n";
+        }
+        else if ( line.startsWith ( "$131=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Y-axis maximum travel, millimeters)\r\n";
+        }
+        else if ( line.startsWith ( "$132=" ) ) {
+            line = line.substring ( 0, line.length () - 2 ) + SETTING_COLUMN_EMPTY.substring ( line.length () ) + "(Z-axis maximum travel, millimeters)\r\n";
+        }
+        
+        return line;
 
     }
 
@@ -517,7 +611,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
                 LOG.warn ( "scan: randomZSimulation" );
 
-                eventBroker.send ( IEvent.AUTOLEVEL_START, getTimestamp () );
+                eventBroker.post ( IEvent.AUTOLEVEL_START, getTimestamp () );
 
                 scanRunning = true;
 
@@ -542,13 +636,13 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         IGcodePoint probe = gcodeProgram.getProbePointAt ( i, j ).addAxis ( 'Z', z );
                         gcodeProgram.setProbePoint ( probe );
                         LOG.debug ( "scan: probe=" + probe );
-                        eventBroker.send ( IEvent.AUTOLEVEL_UPDATE, probe );
+                        eventBroker.post ( IEvent.AUTOLEVEL_UPDATE, probe );
                     }
                 }
                 scanRunning = false;
                 gcodeProgram.setAutolevelScanCompleted ();
 
-                eventBroker.send ( IEvent.AUTOLEVEL_STOP, getTimestamp () );
+                eventBroker.post ( IEvent.AUTOLEVEL_STOP, getTimestamp () );
 
             } ).start ();
 
@@ -651,8 +745,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     private void resetLastVars () {
 
         lastGrblState = null;
-        lastCoordSelectOffset = null;
-        lastCoordSelectTempOffset = null;
         lastMotionMode = null;
         lastCoordSelect = null;
         lastPlane = null;
@@ -688,7 +780,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         sb.append ( "Cause:\n" );
         sb.append ( exc + "\n\n" );
 
-        eventBroker.send ( IEvent.MESSAGE_ERROR, "" + sb );
+        eventBroker.post ( IEvent.MESSAGE_ERROR, "" + sb );
 
     }
 
@@ -793,7 +885,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             playRunning = true;
 
             gcodeProgram.setPlayerStart ();
-            eventBroker.send ( IEvent.PLAYER_START, getTimestamp () );
+            eventBroker.post ( IEvent.PLAYER_START, getTimestamp () );
 
             boolean firstMove = true;
             IGcodeLine [] allGcodeLines = gcodeProgram.getAllGcodeLines ();
@@ -802,7 +894,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 if ( skipByAlarm ) break;
 
                 LOG.trace ( THREAD_NAME + ": line=" + gcodeLine.getLine () + " | gcodeLine=" + gcodeLine );
-                eventBroker.send ( IEvent.PLAYER_LINE, gcodeLine );
+                eventBroker.post ( IEvent.PLAYER_LINE, gcodeLine );
 
                 if ( gcodeProgram.isAutolevelScanComplete () && gcodeLine.isMotionModeLinear () ) {
                     final String cmd = gcodeLine.getGcodeMode ().getCommand ();
@@ -817,7 +909,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                             segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getY () );
                             segment += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getZ () );
                             segment += feed;
-                            eventBroker.send ( IEvent.PLAYER_SEGMENT, segment );
+                            eventBroker.post ( IEvent.PLAYER_SEGMENT, segment );
                             sendCommandSuppressInTerminal ( segment );
                             LOG.trace ( "  segment=" + segment );
                         }
@@ -849,10 +941,10 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
 
             gcodeProgram.setPlayerStop ();
-            eventBroker.send ( IEvent.PLAYER_STOP, getTimestamp () );
+            eventBroker.post ( IEvent.PLAYER_STOP, getTimestamp () );
             // TODO
             // if ( skipByAlarm ) {
-            // eventBroker.send ( EVENT_GCODE_PLAYER_CANCELED, getTimestamp () );
+            // eventBroker.post ( EVENT_GCODE_PLAYER_CANCELED, getTimestamp () );
             // }
 
             playRunning = false;
@@ -897,12 +989,12 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
                         if ( cmd.message.startsWith ( IConstant.GCODE_SCAN_START ) ) {
                             scanRunning = true;
-                            eventBroker.send ( IEvent.AUTOLEVEL_START, getTimestamp () );
+                            eventBroker.post ( IEvent.AUTOLEVEL_START, getTimestamp () );
                         }
                         else if ( cmd.message.startsWith ( IConstant.GCODE_SCAN_END ) ) {
                             scanRunning = false;
                             if ( !skipByAlarm ) gcodeProgram.setAutolevelScanCompleted ();
-                            eventBroker.send ( IEvent.AUTOLEVEL_STOP, getTimestamp () ); //
+                            eventBroker.post ( IEvent.AUTOLEVEL_STOP, getTimestamp () ); //
                         }
                         else {
 
@@ -910,7 +1002,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                             suppressInTerminal = cmd.suppressInTerminal;
 
                             byte [] buffer = cmd.message.getBytes ( StandardCharsets.US_ASCII );
-                            eventBroker.send ( IEvent.GRBL_SENT, cmd );
+                            eventBroker.post ( IEvent.GRBL_SENT, cmd );
 
                             serial.send ( buffer );
 

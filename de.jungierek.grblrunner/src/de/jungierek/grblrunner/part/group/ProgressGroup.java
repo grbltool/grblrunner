@@ -106,7 +106,6 @@ public class ProgressGroup {
                 break;
 
             case HOLD:
-            case QUEUE:
             case CHECK:
                 progressBar.setState ( SWT.PAUSED );
                 break;

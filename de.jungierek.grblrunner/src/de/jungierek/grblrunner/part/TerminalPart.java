@@ -78,8 +78,8 @@ public class TerminalPart {
     private Color grblBackgroundColor;
     private Color suppressedOkForegroundColor;
     private Color supppressedErrorForegroundColor;
-    private Color suppressedGrblForegroundColor;
-    private Color suppressedGrblBackgroundColor;
+    private Color msgForegroundColor;
+    private Color msgBackgroundColor;
 
     @Inject
     public void setTerminalFontData ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.TERMINAL_FONT_DATA) String fontDataString ) {
@@ -181,16 +181,16 @@ public class TerminalPart {
     }
 
     @Inject
-    public void setSuppressedGrblForegroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_SUPPRESSED_FOREGROUND) String rgbText ) {
+    public void setMsgForegroundColor ( Display display, @Preference ( nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_MSG_FOREGROUND) String rgbText ) {
 
-        suppressedGrblForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        msgForegroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
     @Inject
-    public void setSuppressedGrblBackgroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_GRBL_SUPPRESSED_BACKGROUND) String rgbText ) {
+    public void setMsgBackgroundColor ( Display display, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.COLOR_MSG_BACKGROUND) String rgbText ) {
 
-        suppressedGrblBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
+        msgBackgroundColor = new Color ( display, StringConverter.asRGB ( rgbText ) );
 
     }
 
@@ -199,7 +199,7 @@ public class TerminalPart {
 
         LOG.debug ( "createGui:" );
 
-        terminalText = new StyledText ( parent, SWT.MULTI | SWT.V_SCROLL );
+        terminalText = new StyledText ( parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL );
         terminalText.setEditable ( false );
         terminalText.setForeground ( terminalForegroundColor );
         terminalText.setBackground ( terminalBackgroundColor );
@@ -391,11 +391,14 @@ public class TerminalPart {
             if ( line.startsWith ( "ok" ) ) {
                 appendText ( line, okForegroundColor, null, SWT.BOLD );
             }
-            else if ( line.startsWith ( "error" ) ) {
+            else if ( line.startsWith ( "error:" ) ) {
                 appendText ( line, errorForegroundColor, null, SWT.BOLD );
             }
             else if ( line.startsWith ( "Grbl" ) ) {
                 appendText ( line, grblForegroundColor, grblBackgroundColor );
+            }
+            else if ( line.startsWith ( "[MSG:" ) ) {
+                appendText ( line, msgForegroundColor, msgBackgroundColor, SWT.BOLD );
             }
             else {
                 terminalText.append ( line );
@@ -407,11 +410,8 @@ public class TerminalPart {
                 if ( ignoreNextOk ) ignoreNextOk = false;
                 else appendText ( line, suppressedOkForegroundColor, null, SWT.BOLD );
             }
-            else if ( line.startsWith ( "error" ) ) {
+            else if ( line.startsWith ( "error:" ) ) {
                 appendText ( line, supppressedErrorForegroundColor, null, SWT.BOLD );
-            }
-            else if ( line.startsWith ( "Grbl" ) ) {
-                appendText ( line, suppressedGrblForegroundColor, suppressedGrblBackgroundColor );
             }
             else {
 
@@ -427,7 +427,7 @@ public class TerminalPart {
                 else if ( line.startsWith ( "[G28" ) ) {} // do nothing
                 else if ( line.startsWith ( "[G30" ) ) {} // do nothing
                 else if ( line.startsWith ( "[G92" ) ) {} // do nothing
-                else if ( line.startsWith ( "[G" ) ) {
+                else if ( line.startsWith ( "[GC:" ) ) {
                     show = showGcodeModeLines;
                     if ( !show ) ignoreNextOk = true;
                 }

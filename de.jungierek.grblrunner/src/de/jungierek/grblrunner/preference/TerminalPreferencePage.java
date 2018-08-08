@@ -38,12 +38,12 @@ public class TerminalPreferencePage extends FieldEditorPreferencePage {
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_SUPPRESSED_LINE_FOREGROUND, "Suppressed Line Foreground", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_OK_FOREGROUND, "Ok Message Foreground", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_ERROR_FOREGROUND, "Error Message Foreground", getFieldEditorParent () ) );
+        addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_MSG_FOREGROUND, "Feedback Message Foreground", getFieldEditorParent () ) );
+        addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_MSG_BACKGROUND, "Feedback Message Background", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_GRBL_FOREGROUND, "Grbl Message Foreground", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_GRBL_BACKGROUND, "Grbl Message Background", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_OK_SUPPRESSED_FOREGROUND, "Suppressed Ok Message Foreground", getFieldEditorParent () ) );
         addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_ERROR_SUPPRESSED_FOREGROUND, "Suppressed Error Message Foreground", getFieldEditorParent () ) );
-        addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_GRBL_SUPPRESSED_FOREGROUND, "Suppressed Grbl Message Foreground", getFieldEditorParent () ) );
-        addField ( new ColorFieldEditor ( IPreferenceKey.COLOR_GRBL_SUPPRESSED_BACKGROUND, "Suppressed Grbl Message Background", getFieldEditorParent () ) );
         GuiFactory.createHiddenLabel ( getFieldEditorParent (), 3, true );
 
     }

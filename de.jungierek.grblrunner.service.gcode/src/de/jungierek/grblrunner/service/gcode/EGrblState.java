@@ -5,14 +5,14 @@ public enum EGrblState {
 
     // @formatter:off
     IDLE ( "<Idle" ),
-    QUEUE ( "<Queue" ), // since grbl v0.9i this state is obsolte
     RUN ( "<Run" ),
     HOLD ( "<Hold" ),
-    HOME ( "<Home" ),
+    JOG ( "<Jog" ),
     ALARM ( "<Alarm" ),
+    DOOR ( "Door" ),
     CHECK ( "<Check" ),
-    DOOR("Door"), // new with grbl v0.9i
-//    SPECIAL_ALARM ( "ALARM" ),
+    HOME ( "<Home" ),
+    SLEEP ( "<Sleep" ),
     GRBL_STATE_UNDEF ( null ),
     ;
     // @formatter:on
