@@ -141,13 +141,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     private void sendCommand ( String line, boolean suppressInTerminal ) {
 
         try {
-
             queue.put ( new GrblRequestImpl ( suppressInTerminal, line + IConstant.LF ) );
-
-            if ( line.startsWith ( "G92" ) || line.startsWith ( "G10" ) ) { // detect G92 or G10 to update shift
-                queue.put ( new GrblRequestImpl ( true, "$#" + IConstant.LF ) );
-            }
-
         }
         catch ( InterruptedException exc ) {
             LOG.error ( "sendCommand: exception in line=" + line );
