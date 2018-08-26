@@ -41,6 +41,8 @@ public interface IGcodeService {
         /* 15 */ "Jog target exceeds machine travel. Command ignored.",
         /* 16 */ "Jog command with no '=' or contains prohibited g-code.",
         /* 17 */ "Laser mode requires PWM output.",
+        /* 18 */ "dummy",
+        /* 19 */ "dummy",
         /* 20 */ "Unsupported or invalid g-code command found in block.",
         /* 21 */ "More than one g-code command from same modal group found in block.",
         /* 22 */ "Feed rate has not yet been set or is undefined.",
