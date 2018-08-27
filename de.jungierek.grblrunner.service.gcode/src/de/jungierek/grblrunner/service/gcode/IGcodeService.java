@@ -23,7 +23,7 @@ public interface IGcodeService {
     public static final String [] ERROR_CODE_DESCRIPTION = new String [] {
 
         /* @formatter:off */
-        /*  0 */ "No error descritpion found",
+        /*  0 */ "No error description found",
         /*  1 */ "G-code words consist of a letter and a value. Letter was not found.",
         /*  2 */ "Numeric value format is not valid or missing an expected value.",
         /*  3 */ "Grbl '$' system command was not recognized or supported.",
