@@ -1053,7 +1053,7 @@ public class GcodeViewGroup {
 
             LOG.trace ( "mouseScrolled: evt=" + evt );
 
-            scale += evt.count / 10; // TODO_PREF to preferences
+            scale += evt.count / 1; // TODO_PREF to preferences
             if ( scale < 1.0 ) scale = 1.0;
 
             // savePersistedState ();
