@@ -164,9 +164,14 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 suppressSingleByteCommandInTerminal = false;
             }
         }
-        else if ( line.startsWith ( "ok" ) || line.startsWith ( "error" ) ) {
+        else if ( line.startsWith ( "ok" ) ) {
             releaseWaitForOk = true;
             skipByAlarm = false;
+        }
+        else if ( line.startsWith ( "error" ) ) {
+            releaseWaitForOk = true;
+            skipByAlarm = false;
+            suppressLine = false; // show this line ever
         }
         else if ( line.startsWith ( "Grbl" ) || line.startsWith ( "[MSG:" ) ) {
             suppressLine = false;
@@ -175,7 +180,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             // queue.clear (); // empty queue
             releaseWaitForOk = true;
             skipByAlarm = true;
-            suppressInTerminal = false; // show this line ever
+            suppressLine = false; // show this line ever
         }
 
         // erst event senden, dann ...
@@ -207,6 +212,23 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         }
 
         return coord;
+
+    }
+
+    private int [] parseIntVector ( String line, int vectorLength, String intro, char closingChar ) {
+
+        int [] value = new int [vectorLength];
+
+        int startPos = line.indexOf ( intro ) + intro.length ();
+        int endPos = -1;
+
+        for ( int i = 0; i < vectorLength; i++ ) {
+            endPos = line.indexOf ( (i < vectorLength - 1 ? "," : "" + closingChar), startPos );
+            value [i] = parseInt ( 99999, line.substring ( startPos, endPos ) );
+            startPos = endPos + 1;
+        }
+
+        return value;
 
     }
 
@@ -250,6 +272,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             int index = parseInt ( 0, line.substring ( "error:".length (), line.length () - 2 ) ); // cut the crlf at the end
             final String msg = ERROR_CODE_DESCRIPTION [index];
+            LOG.error ( "analyseResponse: index=" + index + " masg=" + msg );
             line = line + msg + "\r\n";
             if ( !suppressInTerminal ) {
                 eventBroker.post ( IEvent.MESSAGE_ERROR, msg ); // inform about error message
@@ -264,11 +287,13 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         else if ( line.startsWith ( ">" ) ) {} // startup line execution >G54G20:ok
         else if ( line.startsWith ( "<" ) ) { // grbl state message
 
-            EGrblState state = EGrblState.identify ( line );
+            String linePiped = line.replace ( '>', '|' );
 
-            GcodePointImpl m = parseCoordinates ( line, "MPos:", '|' );
-            if ( line.indexOf ( "WCO:" ) > 0 ) {
-                GcodePointImpl wco = parseCoordinates ( line, "WCO:", '>' );
+            EGrblState state = EGrblState.identify ( linePiped );
+
+            GcodePointImpl m = parseCoordinates ( linePiped, "MPos:", '|' );
+            if ( linePiped.indexOf ( "WCO:" ) > 0 ) {
+                GcodePointImpl wco = parseCoordinates ( linePiped, "WCO:", '|' );
                 // update only on change
                 if ( !fixtureSshift.equals ( wco ) ) {
                     fixtureSshift = wco;
@@ -277,12 +302,35 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 }
             }
             GcodePointImpl w = (GcodePointImpl) m.sub ( fixtureSshift );
-            GcodeGrblStateImpl gcodeState = new GcodeGrblStateImpl ( state, m, w );
+            GcodeGrblStateImpl grblState = new GcodeGrblStateImpl ( state, m, w );
+            
+            if ( linePiped.indexOf ( "Bf:" ) > 0 ) {
+                int [] n = parseIntVector ( linePiped, 2, "Bf:", '|' );
+                grblState.setAvailablePlannerBufferSize ( n [0] ); // planner buffer size
+                grblState.setAvailableRxBufferSize ( n [1] ); // rx buffer size
+            }
+
+            if ( linePiped.indexOf ( "FS:" ) > 0 ) {
+                int [] n = parseIntVector ( linePiped, 2, "FS:", '|' );
+                grblState.setFeedRate ( n [0] );
+                grblState.setSpindleSpeed ( n [1] );
+            }
+            else if ( linePiped.indexOf ( "F:" ) > 0 ) {
+                int [] n = parseIntVector ( linePiped, 1, "F:", '|' );
+                grblState.setFeedRate ( n [0] );
+            }
+
+            String pinState = "no pin";
+            if ( linePiped.indexOf ( "Pn:" ) > 0 ) {
+                final int pos = linePiped.indexOf ( "Pn:" ) + 3;
+                pinState = linePiped.substring ( pos, linePiped.indexOf ( '|', pos ) );
+            }
+            grblState.setPinState ( pinState );
 
             // update only on change
-            if ( lastGrblState == null || !lastGrblState.equals ( gcodeState ) ) {
-                lastGrblState = gcodeState;
-                eventBroker.post ( IEvent.UPDATE_STATE, gcodeState );
+            if ( lastGrblState == null || !lastGrblState.equals ( grblState ) ) {
+                lastGrblState = grblState;
+                eventBroker.post ( IEvent.UPDATE_STATE, grblState );
             }
             
         }
@@ -885,7 +933,10 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             IGcodeLine [] allGcodeLines = gcodeProgram.getAllGcodeLines ();
             for ( IGcodeLine gcodeLine : allGcodeLines ) {
 
-                if ( skipByAlarm ) break;
+                if ( skipByAlarm ) {
+                    LOG.debug ( THREAD_NAME + ": skipped by alarm" );
+                    break;
+                }
 
                 LOG.trace ( THREAD_NAME + ": line=" + gcodeLine.getLine () + " | gcodeLine=" + gcodeLine );
                 eventBroker.post ( IEvent.PLAYER_LINE, gcodeLine );

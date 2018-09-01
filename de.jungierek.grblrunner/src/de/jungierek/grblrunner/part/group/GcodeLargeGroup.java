@@ -44,6 +44,12 @@ public class GcodeLargeGroup {
     private Label gcodeYLabel;
     private Label gcodeZLabel;
 
+    private Label bufferPlannerLabel;
+    private Label bufferRxLabel;
+    private Label feedRateLabel;
+    private Label spindleSpeedLabel;
+    private Label pinStateLabel;
+
     // preferences
     private Font coordinateFont;
     
@@ -84,6 +90,14 @@ public class GcodeLargeGroup {
         gcodeXLabel = GuiFactory.createHeadingLabel ( group, "", 2 );
         gcodeYLabel = GuiFactory.createHeadingLabel ( group, "", 2 );
         gcodeZLabel = GuiFactory.createHeadingLabel ( group, "", 2 );
+        
+        GuiFactory.createText ( group, SWT.LEFT, "RX Buffer", 1, true );
+        bufferRxLabel = GuiFactory.createHeadingLabel ( group, "--", 1 );
+        GuiFactory.createText ( group, SWT.LEFT, "Planner", 1, true );
+        bufferPlannerLabel = GuiFactory.createHeadingLabel ( group, "--", 1 );
+        feedRateLabel = GuiFactory.createHeadingLabel ( group, "" );
+        spindleSpeedLabel = GuiFactory.createHeadingLabel ( group, "" );
+        pinStateLabel = GuiFactory.createHeadingLabel ( group, "" );
 
         setLabelFont ();
 
@@ -101,6 +115,15 @@ public class GcodeLargeGroup {
         gcodeXLabel.setText ( "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, workCoordindates.getX () ) );
         gcodeYLabel.setText ( "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, workCoordindates.getY () ) );
         gcodeZLabel.setText ( "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, workCoordindates.getZ () ) );
+
+        bufferPlannerLabel.setText ( "" + state.getAvailablePlannerBufferSize () );
+        bufferRxLabel.setText ( "" + state.getAvailableRxBufferSize () );
+        feedRateLabel.setText ( "F" + state.getFeedRate () );
+        spindleSpeedLabel.setText ( "S" + state.getSpindleSpeed () );
+        String pins = state.getPinState ();
+        if ( pins != null ) {
+            pinStateLabel.setText ( pins );
+        }
 
     }
 

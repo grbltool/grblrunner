@@ -31,6 +31,13 @@ public enum EGcodeMode {
     INVERSE_TIME_MODE       ( "G93" ),
     UNITS_PER_MINUTE_MODE   ( "G94" ),
     
+    TOOL                    ( "T" ),
+    
+    PROGRAM_HALT            ( "M0" ),
+    PROGRAM_END             ( "M2", "M30" ),
+    
+    //TOOL_CHANGE             ( "M6" ), // not supported
+    
     GCODE_MODE_UNDEF ( "" )
     ;
     /* @formatter:on */
