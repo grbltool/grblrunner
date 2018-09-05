@@ -142,6 +142,15 @@ public class GcodeViewGroup {
 
     }
 
+    public void setInitialViewFlags ( boolean viewGrid, boolean viewGcode, boolean viewAltitude, boolean viewWorkArea ) {
+        
+        this.viewGrid = viewGrid;
+        this.viewGcode = viewGcode;
+        this.viewAltitude = viewAltitude;
+        this.viewWorkarea = viewWorkArea;
+
+    }
+
     public void toggleViewGrid () {
 
         this.viewGrid = !this.viewGrid;
