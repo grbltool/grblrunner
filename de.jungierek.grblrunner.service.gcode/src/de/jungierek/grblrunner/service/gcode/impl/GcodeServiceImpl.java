@@ -40,7 +40,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     protected volatile boolean waitForOk = false;
     protected volatile boolean skipByAlarm = false;
     protected volatile boolean suppressInTerminal = false;
-    protected volatile boolean suppressSingleByteCommandInTerminal = false;
 
     private GcodeGrblStateImpl lastGrblState;
     private EGcodeMode lastMotionMode;
@@ -116,11 +115,10 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
     private void sendSingleSignCommand ( char c ) {
 
-        LOG.trace ( "sendSingleSignCommand: c=" + c + " suppressInTerminal=" + suppressInTerminal );
+        LOG.trace ( "sendSingleSignCommand: c=" + c );
 
         // send Command direct, bypassing queue
         // only for '?', '!', '~'
-        this.suppressSingleByteCommandInTerminal = true;
         serial.send ( c );
 
     }
@@ -153,16 +151,15 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     @Override
     public void received ( String line ) {
 
+        LOG.trace ( "received: suppressInTerminal=" + suppressInTerminal + " line=" + line );
+
         boolean releaseWaitForOk = false;
         boolean suppressLine = suppressInTerminal;
 
         if ( line.startsWith ( "<" ) ) { // response on state request '?'
             releaseWaitForOk = false;
             skipByAlarm = false;
-            if ( suppressSingleByteCommandInTerminal ) {
-                suppressLine = true;
-                suppressSingleByteCommandInTerminal = false;
-            }
+            suppressLine = true; // suppress ever
         }
         else if ( line.startsWith ( "ok" ) ) {
             releaseWaitForOk = true;
@@ -174,6 +171,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             suppressLine = false; // show this line ever
         }
         else if ( line.startsWith ( "Grbl" ) || line.startsWith ( "[MSG:" ) ) {
+            // queue.clear (); // empty queue
+            // releaseWaitForOk = true;
             suppressLine = false;
         }
         else if ( line.startsWith ( "ALARM" ) ) {
