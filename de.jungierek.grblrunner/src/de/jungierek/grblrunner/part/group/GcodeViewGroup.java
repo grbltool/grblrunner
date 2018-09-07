@@ -82,6 +82,13 @@ public class GcodeViewGroup {
     private double rotZ = 0.0 * IConstant.ONE_DEGREE;
     private double scale = IConstant.INITIAL_SCALE;
 
+    private double sinRotX = Math.sin ( rotX );
+    private double cosRotX = Math.cos ( rotX );
+    private double sinRotY = Math.sin ( rotY );
+    private double cosRotY = Math.cos ( rotY );
+    private double sinRotZ = Math.sin ( rotZ );
+    private double cosRotZ = Math.cos ( rotZ );
+
     // preferences
     private double workAreaMaxX; // set from preferences
     private double workAreaMaxY; // set from preferences
@@ -578,17 +585,17 @@ public class GcodeViewGroup {
         double z0 = zoom * gcodePoint.getZ ();
 
         // rotation around z
-        double x1 = x0 * Math.cos ( rotZ ) + y0 * Math.sin ( rotZ );
-        double y1 = x0 * -Math.sin ( rotZ ) + y0 * Math.cos ( rotZ );
+        double x1 = x0 * cosRotZ + y0 * sinRotZ;
+        double y1 = x0 * -sinRotZ + y0 * cosRotZ;
         double z1 = z0;
         // rotation around y
-        double x2 = x1 * Math.cos ( rotY ) + z1 * -Math.sin ( rotY );
+        double x2 = x1 * cosRotY + z1 * -sinRotY;
         double y2 = y1;
-        double z2 = x1 * Math.sin ( rotY ) + z1 * Math.cos ( rotY );
+        double z2 = x1 * sinRotY + z1 * cosRotY;
         // rotation around x
         double x3 = x2;
-        double y3 = y2 * Math.cos ( rotX ) + z2 * Math.sin ( rotX );
-        // double z3 = y2 * -Math.sin ( rotX ) + z2 * Math.cos ( rotX );
+        double y3 = y2 * cosRotX + z2 * sinRotX;
+        // double z3 = y2 * -sinRotX + z2 * cosRotX;
 
         return new Point ( x3, y3 );
 
@@ -627,6 +634,17 @@ public class GcodeViewGroup {
 
     }
 
+    private void calculateRots () {
+        
+        sinRotX = Math.sin ( rotX );
+        cosRotX = Math.cos ( rotX );
+        sinRotY = Math.sin ( rotY );
+        cosRotY = Math.cos ( rotY );
+        sinRotZ = Math.sin ( rotZ );
+        cosRotZ = Math.cos ( rotZ );
+
+    }
+
     private Image gcodeImage;
 
     private class Painter implements PaintListener {
@@ -641,6 +659,8 @@ public class GcodeViewGroup {
             canvasArea = canvas.getClientArea ();
             final int w = canvasArea.width;
             final int h = canvasArea.height;
+
+            calculateRots ();
 
             display = evt.display;
 
@@ -669,6 +689,8 @@ public class GcodeViewGroup {
                 }
             }
             drawGantry ( gc );
+
+            gc.dispose ();
 
             // Double Buffering
             evt.gc.drawImage ( bufferImage, 0, 0 );
