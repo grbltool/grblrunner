@@ -39,7 +39,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     private File gcodeFile, probeDataFile;
 
     private int nextLineNo = 0;
-    private List<GcodeLineImpl> gcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
+    private List<GcodeLineImpl> gcodeLines = new ArrayList<> ( 100 );
 
     private GcodePointImpl min;
     private GcodePointImpl max;
@@ -187,7 +187,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         nextLineNo = 0;
         // gcodeLines.clear ();
-        gcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
+        gcodeLines = new ArrayList<> ( 100 );
 
         rotationAngle = 0.0;
         optimized = false;
@@ -228,7 +228,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     private class GcodeSegment {
 
-        public final List<GcodeLineImpl> gcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
+        public final List<GcodeLineImpl> gcodeLines = new ArrayList<> ( 100 );
 
         public final double x;
         public final double y;
@@ -269,7 +269,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         final boolean firstAndLastInSegments = true;
 
         // 1) divide gcode in segments, each segment ends at the same point as it starts
-        List<GcodeSegment> segments = new ArrayList<GcodeSegment> ( 100 );
+        List<GcodeSegment> segments = new ArrayList<> ( 100 );
         GcodeSegment segment = new GcodeSegment ( 0.0, 0.0 ); // TODO start to pref
         GcodeSegment firstSegment = null;
         GcodeSegment lastSegment = null;
@@ -363,7 +363,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
         }
 
         // 3) flatenize all segments
-        List<GcodeLineImpl> optimizedGcodeLines = new ArrayList<GcodeLineImpl> ( 100 );
+        List<GcodeLineImpl> optimizedGcodeLines = new ArrayList<> ( 100 );
         if ( !firstAndLastInSegments ) optimizedGcodeLines.addAll ( firstSegment.gcodeLines );
         for ( int i = 0; i < cities; i++ ) {
             LOG.trace ( "optimize: path[" + i + "]=" + path[i] );
@@ -752,10 +752,9 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     }
 
-    @Override
     public IGcodePoint [] interpolateLine ( IGcodePoint point1, IGcodePoint point2 ) {
 
-        ArrayList<IGcodePoint> result = new ArrayList<IGcodePoint> ();
+        ArrayList<IGcodePoint> result = new ArrayList<> ();
 
         GcodePointImpl p1 = (GcodePointImpl) point1;
         GcodePointImpl p2 = (GcodePointImpl) point2;
@@ -939,9 +938,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         for ( IGcodePoint p : path ) {
             final double pointSignum = Math.signum ( p2.x - p.getX () );
-            if ( pointSignum != 0.0 && pathSignum != pointSignum ) {
- return false;
-            }
+            if ( pointSignum != 0.0 && pathSignum != pointSignum ) { return false; }
         }
         
         return true;
@@ -1003,6 +1000,20 @@ public class GcodeProgramImpl implements IGcodeProgram {
         catch ( NumberFormatException exc ) {}
 
         return result;
+
+    }
+
+    @Override
+    public void computeAutlevelSegments () {
+
+        LOG.debug ( "computeAutlevelSegments:" );
+
+        for ( IGcodeLine gcodeLine : gcodeLines ) {
+            if ( gcodeLine.isMotionMode () ) {
+                IGcodePoint [] path = interpolateLine ( gcodeLine.getStart (), gcodeLine.getEnd () );
+                gcodeLine.setAutolevelSegmentPath ( path );
+            }
+        }
 
     }
 
@@ -1151,6 +1162,8 @@ public class GcodeProgramImpl implements IGcodeProgram {
                 }
 
                 reader.close ();
+
+                computeAutlevelSegments ();
 
                 eventBroker.send ( IEvent.AUTOLEVEL_DATA_LOADED, file.getPath () );
 

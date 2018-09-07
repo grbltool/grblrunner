@@ -28,6 +28,9 @@ public interface IGcodeLine {
     public boolean isMoveInY ();
     public boolean isMoveInZ ();
 
+    public void setAutolevelSegmentPath ( IGcodePoint [] path );
+
+    public IGcodePoint [] getAutoevelSegmentPath ();
 
     void parseGcode ( EGcodeMode lastMotionMode, IGcodePoint lastEnd, double lastRadius, int lastFeedrate );
 

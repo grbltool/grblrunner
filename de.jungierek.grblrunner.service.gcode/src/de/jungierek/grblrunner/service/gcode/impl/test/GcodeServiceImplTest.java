@@ -525,12 +525,6 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         }
 
         @Override
-        public IGcodePoint [] interpolateLine ( IGcodePoint point1, IGcodePoint point2 ) {
-            fail ( "GcodeModel: interpolateLine not implemented" );
-            return null;
-        }
-
-        @Override
         public double getStepWidthX () {
             fail ( "GcodeModel: getStepWidthX not implemented" );
             return 0;
@@ -593,6 +587,11 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         @Override
         public void prepareAutolevelScan () {
             fail ( "GcodeModel: prepareAutolevelScan not implemented" );
+        }
+
+        @Override
+        public void computeAutlevelSegments () {
+            fail ( "GcodeModel: computeAutlevelSegments not implemented" );
         }
 
         @Override

@@ -681,6 +681,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     }
                 }
                 scanRunning = false;
+                gcodeProgram.computeAutlevelSegments ();
                 gcodeProgram.setAutolevelScanCompleted ();
 
                 eventBroker.post ( IEvent.AUTOLEVEL_STOP, getTimestamp () );
@@ -895,6 +896,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
 
             gcodeProgram.setAutolevelStop ();
+            gcodeProgram.computeAutlevelSegments ();
             sendCommand ( IConstant.GCODE_SCAN_END );
     
             LOG.debug ( THREAD_NAME + ": stopped" );
@@ -944,7 +946,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     final String cmd = gcodeLine.getGcodeMode ().getCommand ();
                     final String feed = "F" + gcodeLine.getFeedrate ();
                     if ( gcodeLine.isMoveInXYZ () ) {
-                        IGcodePoint [] path = gcodeProgram.interpolateLine ( gcodeLine.getStart (), gcodeLine.getEnd () );
+                        IGcodePoint [] path = gcodeLine.getAutoevelSegmentPath ();
                         for ( int i = 1; i < path.length; i++ ) {
                             // Attention: eliminate first point in path with index 0, because G0 lines has'nt autoleveled.
                             // So the last end point (autoleveled or not) is the start point of the next move

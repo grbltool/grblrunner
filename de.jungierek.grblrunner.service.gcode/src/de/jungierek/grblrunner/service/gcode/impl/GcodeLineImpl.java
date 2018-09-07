@@ -15,10 +15,26 @@ public class GcodeLineImpl implements IGcodeLine {
     private int feedrate;
     private boolean processed;
 
+    private IGcodePoint [] autolevelSegmentPath = null;
+
     public GcodeLineImpl ( int lineNo, String line ) {
 
         this.line = line;
         this.lineNo = lineNo;
+
+    }
+
+    @Override
+    public void setAutolevelSegmentPath ( IGcodePoint [] path ) {
+
+        this.autolevelSegmentPath = path;
+
+    }
+
+    @Override
+    public IGcodePoint [] getAutoevelSegmentPath () {
+
+        return autolevelSegmentPath;
 
     }
 
