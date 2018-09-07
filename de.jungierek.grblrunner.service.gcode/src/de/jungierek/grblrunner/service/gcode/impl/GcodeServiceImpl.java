@@ -856,7 +856,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     
         }
     
-        @SuppressWarnings("unused")
         @Override
         public void run () {
     
@@ -875,12 +874,14 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             LOOP: for ( int i = 0; i < xlength; i++ ) {
     
-                // TODO implement mäander
                 for ( int j = 0; j < ylength; j++ ) {
-
+                    
                     if ( skipByAlarm ) break LOOP;
-    
-                    probePoint = gcodeProgram.getProbePointAt ( i, j );
+
+                    int d = i % 2;
+                    int jj = d * (ylength - j - 1) + (1 - d) * j;
+
+                    probePoint = gcodeProgram.getProbePointAt ( i, jj );
 
                     sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
                     if ( withError ) {
