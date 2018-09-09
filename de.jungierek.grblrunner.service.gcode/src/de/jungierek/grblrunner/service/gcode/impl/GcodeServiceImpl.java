@@ -941,6 +941,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 }
 
                 LOG.trace ( THREAD_NAME + ": line=" + gcodeLine.getLine () + " | gcodeLine=" + gcodeLine );
+                gcodeLine.setProcessed ( true );
                 eventBroker.post ( IEvent.PLAYER_LINE, gcodeLine );
 
                 if ( gcodeProgram.isAutolevelScanComplete () && gcodeLine.isMotionModeLinear () ) {
@@ -983,7 +984,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         sendCommandSuppressInTerminal ( gcodeLine.getLine () );
                     }
                 }
-                gcodeLine.setProcessed ( true );
 
             }
 

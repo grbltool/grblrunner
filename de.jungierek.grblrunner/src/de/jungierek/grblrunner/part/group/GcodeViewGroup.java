@@ -69,6 +69,9 @@ public class GcodeViewGroup {
     @Inject
     private IEventBroker eventBroker;
 
+    @Inject
+    private Display display;
+
     private IGcodeProgram gcodeProgram;
     private IGcodeProgram overlayGcodeProgram;
 
@@ -118,6 +121,7 @@ public class GcodeViewGroup {
     private IGcodePoint [] workAreaCenterCrossEndPoints;
 
     private Canvas canvas;
+    private GC canvasGC;
 
     private volatile boolean viewGrid = IConstant.INITIAL_VIEW_GRID;
     private volatile boolean viewGcode = IConstant.INITIAL_VIEW_GCODE;
@@ -129,6 +133,11 @@ public class GcodeViewGroup {
     private Label pixelShiftLabel;
     private Label rotationLabel;
     private Label mouseCoordinateLabel;
+
+    private Image gcodeImage;
+    private GC gcodeImageGC;
+
+    private Image gantryImage = new Image ( display, 2 * (IConstant.GANTRY_LINE_WIDTH + IConstant.GANTRY_RADIUS) + 1, 2 * (IConstant.GANTRY_LINE_WIDTH + IConstant.GANTRY_RADIUS) + 1 );
 
     @Inject
     public void setGcodeProgram ( @Optional @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
@@ -488,6 +497,8 @@ public class GcodeViewGroup {
         canvas.addMouseWheelListener ( mouseDetector );
         canvas.addKeyListener ( mouseDetector );
 
+        canvasGC = new GC ( canvas );
+
         // create arrays here, because we need injected gcode service for this
         initWorkAreaPoints ();
 
@@ -645,24 +656,327 @@ public class GcodeViewGroup {
 
     }
 
-    private Image gcodeImage;
+    private void drawGcode ( GC gc, IGcodeProgram program ) {
+    
+        drawGcode ( gc, program, false );
+    
+    }
+
+    private void drawGcode ( GC gc, IGcodeProgram program, boolean isOverlay ) {
+    
+        for ( IGcodeLine gcodeLine : program.getAllGcodeLines () ) {
+    
+            EGcodeMode gcodeMode = gcodeLine.getGcodeMode ();
+    
+            if ( gcodeMode != null ) {
+    
+                switch ( gcodeMode ) {
+    
+                    case MOTION_MODE_SEEK:
+                        gc.setLineStyle ( SWT.LINE_SOLID );
+                        gc.setLineWidth ( 1 );
+                        gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeSeekColor : gcodeMotionModeSeekColor );
+                        drawLine ( gc, gcodeLine );
+                        break;
+                    case MOTION_MODE_LINEAR:
+                        gc.setLineStyle ( SWT.LINE_SOLID );
+                        gc.setLineWidth ( 1 );
+                        gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeLinearColor : gcodeMotionModeLinearColor );
+                        drawLine ( gc, gcodeLine );
+                        break;
+                    case MOTION_MODE_CW_ARC:
+                        gc.setLineStyle ( SWT.LINE_SOLID );
+                        gc.setLineWidth ( 1 );
+                        gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeArcColor : gcodeMotionModeArcColor );
+                        drawCircle ( gc, +1, gcodeLine );
+                        break;
+                    case MOTION_MODE_CCW_ARC:
+                        gc.setLineStyle ( SWT.LINE_SOLID );
+                        gc.setLineWidth ( 1 );
+                        gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeArcColor : gcodeMotionModeArcColor );
+                        drawCircle ( gc, -1, gcodeLine );
+                        break;
+                    case MOTION_MODE_PROBE:
+                        gc.setLineStyle ( SWT.LINE_DASH );
+                        gc.setLineWidth ( 1 );
+                        gc.setForeground ( gcodeMotionModeProbeColor );
+                        drawLine ( gc, gcodeLine );
+                        break;
+    
+                    case COMMENT:
+                        break;
+    
+                    default:
+                        // do nothing
+                        break;
+                }
+    
+            }
+    
+        }
+    
+    }
+
+    private void drawLine ( GC gc, IGcodeLine gcodeLine ) {
+    
+        IGcodePoint start = gcodeLine.getStart ();
+        IGcodePoint end = gcodeLine.getEnd ();
+    
+        if ( start.equals ( end ) ) return;
+    
+        if ( viewAltitude && gcodeProgram.isAutolevelScanComplete () ) {
+            IGcodePoint [] path = gcodeLine.getAutoevelSegmentPath ();
+            for ( int i = 0; i < path.length - 1; i++ ) {
+                drawLine ( gc, path[i].add ( gcodeService.getFixtureShift () ), path[i + 1].add ( gcodeService.getFixtureShift () ) );
+            }
+        }
+        else {
+            // translate to machine coordinates
+            drawLine ( gc, start.add ( gcodeService.getFixtureShift () ), end.add ( gcodeService.getFixtureShift () ) );
+        }
+    
+    }
+
+    private void drawLine ( GC gc, IGcodePoint start, IGcodePoint end ) {
+    
+        Point p1 = gcodeToCanvas ( start );
+        Point p2 = gcodeToCanvas ( end );
+    
+        if ( p1.equals ( p2 ) ) return;
+    
+        LOG.trace ( "paintControl.drawLine: x1=" + p1.x + " y1=" + p1.y + " x2=" + p2.x + " y2=" + p2.y );
+        LOG.trace ( "paintControl.drawLine: start=" + start + " end=" + end );
+    
+        drawLine ( gc, p1, p2 );
+    
+    }
+
+    private void drawLine ( GC gc, Point p1, Point p2 ) {
+    
+        gc.drawLine ( (int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y );
+    
+    }
+
+    private void drawGantry ( GC gc ) {
+    
+        if ( gcodeState != null ) {
+    
+            gc.setLineStyle ( SWT.LINE_SOLID );
+            gc.setLineWidth ( IConstant.GANTRY_LINE_WIDTH );
+            gc.setForeground ( gantryColor );
+    
+            Point p = gcodeToCanvas ( gcodeState.getMachineCoordindates () );
+            // The oval covers an area that is width + 1 pixels wide and height + 1 pixels tall.
+            gc.drawOval ( (int) p.x - IConstant.GANTRY_RADIUS, (int) p.y - IConstant.GANTRY_RADIUS, 2 * IConstant.GANTRY_RADIUS, 2 * IConstant.GANTRY_RADIUS );
+    
+        }
+    
+    }
+
+    private void drawGrid ( GC gc ) {
+    
+        LOG.trace ( "drawGrid:" );
+    
+        if ( !gcodeProgram.isAutolevelScanPrepared () ) return;
+    
+        gc.setLineStyle ( SWT.LINE_SOLID );
+        gc.setLineWidth ( 1 );
+        gc.setForeground ( autolevelGridColor );
+    
+        IGcodePoint gcodeShift = gcodeService.getFixtureShift ();
+    
+        int xlength = gcodeProgram.getXSteps () + 1;
+        int ylength = gcodeProgram.getYSteps () + 1;
+    
+        for ( int i = 0; i < xlength; i++ ) {
+            for ( int j = 0; j < ylength; j++ ) {
+    
+                IGcodePoint p1 = gcodeProgram.getProbePointAt ( i, j );
+                if ( !viewAltitude ) p1 = p1.zeroAxis ( 'Z' );
+                p1 = p1.add ( gcodeShift );
+    
+                if ( i + 1 < xlength ) {
+                    IGcodePoint p2 = gcodeProgram.getProbePointAt ( i + 1, j );
+                    if ( !viewAltitude ) p2 = p2.zeroAxis ( 'Z' );
+                    drawLine ( gc, p1, p2.add ( gcodeShift ) );
+                }
+    
+                if ( j + 1 < ylength ) {
+                    IGcodePoint p2 = gcodeProgram.getProbePointAt ( i, j + 1 );
+                    if ( !viewAltitude ) p2 = p2.zeroAxis ( 'Z' );
+                    drawLine ( gc, p1, p2.add ( gcodeShift ) );
+                }
+    
+            }
+        }
+    
+    }
+
+    private void drawOrigign ( GC gc, char type ) {
+    
+        final double r = 0.5;
+    
+        IGcodePoint zero = gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 );
+    
+        Color color = machineOriginColor;
+        if ( type == 'W' ) {
+            zero = zero.add ( gcodeService.getFixtureShift () );
+            color = workOriginColor;
+        }
+    
+        IGcodePoint xDist = gcodeService.createGcodePoint ( r, 0.0, 0.0 );
+        IGcodePoint yDist = gcodeService.createGcodePoint ( 0.0, r, 0.0 );
+    
+        Point p1 = gcodeToCanvas ( zero.sub ( xDist ) );
+        Point p2 = gcodeToCanvas ( zero.add ( yDist ) );
+        Point p3 = gcodeToCanvas ( zero.add ( xDist ) );
+        Point p4 = gcodeToCanvas ( zero.sub ( yDist ) );
+    
+        gc.setLineStyle ( SWT.LINE_SOLID );
+        gc.setLineWidth ( 2 );
+        gc.setForeground ( color  );
+    
+        drawLine ( gc, p1, p2 );
+        drawLine ( gc, p2, p3 );
+        drawLine ( gc, p3, p4 );
+        drawLine ( gc, p4, p1 );
+    
+        if ( type == 'M' ) {
+            gc.setLineStyle ( SWT.LINE_DOT );
+            gc.setLineWidth ( 1 );
+            gc.setForeground ( color  );
+            drawLine ( gc, zero, zero.addAxis ( 'Z', gcodeService.getFixtureShift () ) );
+        }
+    
+    }
+
+    private void drawWorkArea ( GC gc, char type ) {
+    
+        // draw work area
+        gc.setLineStyle ( SWT.LINE_DOT );
+        gc.setLineWidth ( 1 );
+        gc.setForeground ( workareaBorderColor );
+    
+        IGcodePoint p1 = workAreaPoints[workAreaPoints.length - 1];
+        if ( type == 'W' ) p1 = p1.addAxis ( 'Z', gcodeService.getFixtureShift () );
+    
+        for ( int i = 0; i < workAreaPoints.length; i++ ) {
+            IGcodePoint p2 = workAreaPoints[i];
+            if ( type == 'W' ) p2 = p2.addAxis ( 'Z', gcodeService.getFixtureShift () );
+            drawLine ( gc, p1, p2 );
+            p1 = p2;
+        }
+    
+        // cross in the middle of work area
+        gc.setLineStyle ( SWT.LINE_DASH );
+        gc.setLineWidth ( 1 );
+        gc.setForeground ( workareaMidcrossColor );
+        drawLine ( gc, workAreaCenterCrossEndPoints[0].addAxis ( 'Z', gcodeService.getFixtureShift () ),
+                workAreaCenterCrossEndPoints[1].addAxis ( 'Z', gcodeService.getFixtureShift () ) );
+        drawLine ( gc, workAreaCenterCrossEndPoints[2].addAxis ( 'Z', gcodeService.getFixtureShift () ),
+                workAreaCenterCrossEndPoints[3].addAxis ( 'Z', gcodeService.getFixtureShift () ) );
+    
+    }
+
+    // all in plane xy
+    private void drawCircle ( GC gc, double mult, IGcodeLine gcodeLine ) {
+    
+        // LOG.debug ( "drawCircle: gcodeLine=" + gcodeLine + " rotationAngle=" + gcodeProgram.getRotationAngle () );
+    
+        IGcodePoint start = gcodeLine.getStart ().add ( gcodeService.getFixtureShift () );
+        IGcodePoint end = gcodeLine.getEnd ().add ( gcodeService.getFixtureShift () );
+        double r = gcodeLine.getRadius ();
+    
+        if ( start.equals ( end ) ) return; // TODO this is may be wrong, this is a full circle
+    
+        // from grbl code
+        double x = end.getX () - start.getX ();
+        double y = end.getY () - start.getY ();
+    
+        final double dd = x * x + y * y;
+        double d = Math.sqrt ( dd );
+        double hh = r * r - dd / 4;
+        if ( hh < 0 ) hh = 0.0;
+        double h = Math.sqrt ( hh );
+    
+        // G2, bei G3 + und - vor h alternieren
+        double i = start.getX () + x / 2 + mult * h / d * y;
+        double j = start.getY () + y / 2 - mult * h / d * x;
+        // LOG.debug ( "drawCircle: dd=" + dd + " d=" + d + " hh=" + hh + " h=" + h + " i=" + i + " j=" + j );
+        IGcodePoint center = gcodeService.createGcodePoint ( i, j, 0.0 );
+    
+        double startAngle = computeAngle ( start, center, r );
+        double endAngle = computeAngle ( end, center, r );
+        double arcAngle = endAngle - startAngle;
+        if ( arcAngle < -180 ) arcAngle += 360;
+        else if ( Math.abs ( mult * arcAngle - 180 ) == 0.0 ) arcAngle = -arcAngle;
+        else if ( arcAngle > 180 ) arcAngle -= 360;
+        // LOG.debug ( "drawCircle: startAngle=" + startAngle + " endAngle=" + endAngle + " arcAngle=" + arcAngle );
+    
+        // rotate all points by z angle
+        // the 4 tangential points: north, west, south, east
+        IGcodePoint north = gcodeService.createGcodePoint ( i, j + r, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
+        IGcodePoint west = gcodeService.createGcodePoint ( i - r, j, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
+        IGcodePoint south = gcodeService.createGcodePoint ( i, j - r, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
+        IGcodePoint east = gcodeService.createGcodePoint ( i + r, j, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
+    
+        drawCircle ( gc, north, west, south, east, (int) (startAngle - (rotZ / IConstant.ONE_DEGREE)), (int) arcAngle );
+        // LOG.debug ( "drawCircle: ====================================" );
+    
+    }
+
+    private void drawCircle ( GC gc, IGcodePoint pointN, IGcodePoint pointW, IGcodePoint pointS, IGcodePoint pointE, int startAngle, int arcAngle ) {
+    
+        // LOG.debug ( "drawCircle: north=" + pointN + " west=" + pointW + " south=" + pointS + " east=" + pointE );
+    
+        Point pN = gcodeToCanvas ( pointN );
+        Point pW = gcodeToCanvas ( pointW );
+        Point pS = gcodeToCanvas ( pointS );
+        Point pE = gcodeToCanvas ( pointE );
+    
+        // The resulting arc begins at startAngle and extends for arcAngle degrees, using the current color. Angles are interpreted such that 0 degrees is at the 3 o'clock
+        // position. A positive value indicates a counter-clockwise rotation while a negative value indicates a clockwise rotation.
+        // The center of the arc is the center of the rectangle whose origin is (x, y) and whose size is specified by the width and height arguments.
+        // The resulting arc covers an area width + 1 pixels wide by height + 1 pixels tall.
+    
+        int w = (int) pE.x - (int) pW.x;
+        int h = (int) pS.y - (int) pN.y;
+        int x = (int) pN.x - w / 2;
+        int y = (int) pW.y - h / 2;
+    
+        // LOG.debug ( "drawCircle: x=" + x + " y=" + y + " h=" + h + " w=" + w );
+    
+        gc.drawArc ( x, y, w, h, startAngle, arcAngle );
+    
+    }
+
+    private double computeAngle ( IGcodePoint p, IGcodePoint center, double radius ) {
+    
+        final double PRECISION = 1000.0;
+
+        double cosAngle = (p.getX () - center.getX ()) / radius;
+        double angle = Math.acos ( cosAngle ) / IConstant.ONE_DEGREE;
+    
+        if ( p.getY () < center.getY () ) {
+            angle = 360 - angle;
+        }
+    
+        return ((int) (angle * PRECISION + 0.5)) / PRECISION; // HACK round to 3 decimals
+    
+    }
 
     private class Painter implements PaintListener {
-
-        private Display display;
 
         @Override
         public void paintControl ( PaintEvent evt ) {
 
-            LOG.trace ( "paintControl: grid=" + viewGrid + " alt=" + viewAltitude );
+            LOG.trace ( "paintControl: gcode=" + viewGcode + " grid=" + viewGrid + " alt=" + viewAltitude );
 
             canvasArea = canvas.getClientArea ();
             final int w = canvasArea.width;
             final int h = canvasArea.height;
 
             calculateRots ();
-
-            display = evt.display;
 
             scaleLabel.setText ( String.format ( IConstant.FORMAT_SCALE, scale ) );
             pixelShiftLabel.setText ( "" + canvasShift );
@@ -685,25 +999,21 @@ public class GcodeViewGroup {
             if ( gcodeProgram != null && viewGcode ) {
                 drawGcode ( gc, gcodeProgram );
                 if ( overlayGcodeProgram != null && gcodeProgram != overlayGcodeProgram ) {
-                    drawOverlayGcode ( gc, overlayGcodeProgram );
+                    drawGcode ( gc, overlayGcodeProgram, true );
                 }
             }
-            drawGantry ( gc );
-
-            gc.dispose ();
 
             // Double Buffering
             evt.gc.drawImage ( bufferImage, 0, 0 );
+            // draw gantry only on canvas
+            drawGantry ( evt.gc );
 
-            if ( gcodeImage != null ) gcodeImage.dispose ();
-            // bufferImage.dispose ();
+            Image oldGcodeImage = gcodeImage;
+            GC oldGcodeImageGC = gcodeImageGC;
             gcodeImage = bufferImage;
-
-        }
-
-        private Color getColor ( int color ) {
-
-            return display.getSystemColor ( color );
+            gcodeImageGC = gc;
+            if ( oldGcodeImage != null ) oldGcodeImage.dispose ();
+            if ( oldGcodeImageGC != null ) oldGcodeImageGC.dispose ();
 
         }
 
@@ -727,342 +1037,13 @@ public class GcodeViewGroup {
             Point p0 = gcodeToCanvas ( factor, shift, origin );
 
             for ( int i = 0; i < v.length; i++ ) {
-                gc.setForeground ( getColor ( IConstant.COORDINATE_SYSTEM_ARROW_COLORS[i + 1] ) );
+                gc.setForeground ( display.getSystemColor ( IConstant.COORDINATE_SYSTEM_ARROW_COLORS[i + 1] ) );
                 drawLine ( gc, p0, gcodeToCanvas ( factor, shift, v[i] ) );
                 Point p = gcodeToCanvas ( 1.3 * factor, shift, v[i] );
                 gc.setForeground ( display.getSystemColor ( IConstant.COORDINATE_SYSTEM_ARROW_COLORS[0] ) );
                 org.eclipse.swt.graphics.Point extent = gc.textExtent ( IConstant.AXIS[i] );
-                gc.drawString ( IConstant.AXIS[i], (int) p.x - extent.x / 2, (int) p.y - extent.y / 2, true );
+                gc.drawString ( IConstant.AXIS [i], (int) p.x - extent.x / 2, (int) p.y - extent.y / 2, true );
             }
-
-        }
-
-        private void drawGrid ( GC gc ) {
-
-            LOG.trace ( "drawGrid:" );
-
-            if ( !gcodeProgram.isAutolevelScanPrepared () ) return;
-
-            gc.setLineStyle ( SWT.LINE_SOLID );
-            gc.setLineWidth ( 1 );
-            gc.setForeground ( autolevelGridColor );
-
-            IGcodePoint gcodeShift = gcodeService.getFixtureShift ();
-
-            int xlength = gcodeProgram.getXSteps () + 1;
-            int ylength = gcodeProgram.getYSteps () + 1;
-
-            for ( int i = 0; i < xlength; i++ ) {
-                for ( int j = 0; j < ylength; j++ ) {
-
-                    IGcodePoint p1 = gcodeProgram.getProbePointAt ( i, j );
-                    if ( !viewAltitude ) p1 = p1.zeroAxis ( 'Z' );
-                    p1 = p1.add ( gcodeShift );
-
-                    if ( i + 1 < xlength ) {
-                        IGcodePoint p2 = gcodeProgram.getProbePointAt ( i + 1, j );
-                        if ( !viewAltitude ) p2 = p2.zeroAxis ( 'Z' );
-                        drawLine ( gc, p1, p2.add ( gcodeShift ) );
-                    }
-
-                    if ( j + 1 < ylength ) {
-                        IGcodePoint p2 = gcodeProgram.getProbePointAt ( i, j + 1 );
-                        if ( !viewAltitude ) p2 = p2.zeroAxis ( 'Z' );
-                        drawLine ( gc, p1, p2.add ( gcodeShift ) );
-                    }
-
-                }
-            }
-
-        }
-
-        private void drawGantry ( GC gc ) {
-
-            if ( gcodeState != null ) {
-
-                gc.setLineStyle ( SWT.LINE_SOLID );
-                gc.setLineWidth ( 3 );
-                gc.setForeground ( gantryColor );
-
-                Point p = gcodeToCanvas ( gcodeState.getMachineCoordindates () );
-                final int r = 2; // radius in pixel
-                gc.drawOval ( (int) p.x - r, (int) p.y - r, 2 * r, 2 * r );
-
-            }
-
-        }
-
-        private void drawGcode ( GC gc, IGcodeProgram program ) {
-
-            drawGcode ( gc, program, false );
-
-        }
-
-        private void drawOverlayGcode ( GC gc, IGcodeProgram program ) {
-
-            drawGcode ( gc, program, true );
-
-        }
-
-        private void drawGcode ( GC gc, IGcodeProgram program, boolean isOverlay ) {
-
-            for ( IGcodeLine gcodeLine : program.getAllGcodeLines () ) {
-
-                EGcodeMode gcodeMode = gcodeLine.getGcodeMode ();
-
-                if ( gcodeMode != null ) {
-
-                    switch ( gcodeMode ) {
-
-                        case MOTION_MODE_SEEK:
-                            gc.setLineStyle ( SWT.LINE_SOLID );
-                            gc.setLineWidth ( 1 );
-                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeSeekColor : gcodeMotionModeSeekColor );
-                            drawLine ( gc, gcodeLine );
-                            break;
-                        case MOTION_MODE_LINEAR:
-                            gc.setLineStyle ( SWT.LINE_SOLID );
-                            gc.setLineWidth ( 1 );
-                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeLinearColor : gcodeMotionModeLinearColor );
-                            drawLine ( gc, gcodeLine );
-                            break;
-                        case MOTION_MODE_CW_ARC:
-                            gc.setLineStyle ( SWT.LINE_SOLID );
-                            gc.setLineWidth ( 1 );
-                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeArcColor : gcodeMotionModeArcColor );
-                            drawCircle ( gc, +1, gcodeLine );
-                            break;
-                        case MOTION_MODE_CCW_ARC:
-                            gc.setLineStyle ( SWT.LINE_SOLID );
-                            gc.setLineWidth ( 1 );
-                            gc.setForeground ( gcodeLine.isProcessed () ? gcodeProcessedColor : isOverlay ? overlayGcodeMotionModeArcColor : gcodeMotionModeArcColor );
-                            drawCircle ( gc, -1, gcodeLine );
-                            break;
-                        case MOTION_MODE_PROBE:
-                            gc.setLineStyle ( SWT.LINE_DASH );
-                            gc.setLineWidth ( 1 );
-                            gc.setForeground ( gcodeMotionModeProbeColor );
-                            drawLine ( gc, gcodeLine );
-                            break;
-
-                        case COMMENT:
-                            break;
-
-                        default:
-                            // do nothing
-                            break;
-                    }
-
-                }
-
-            }
-
-        }
-
-        private void drawOrigign ( GC gc, char type ) {
-
-            final double r = 0.5;
-
-            IGcodePoint zero = gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 );
-
-            Color color = machineOriginColor;
-            if ( type == 'W' ) {
-                zero = zero.add ( gcodeService.getFixtureShift () );
-                color = workOriginColor;
-            }
-
-            IGcodePoint xDist = gcodeService.createGcodePoint ( r, 0.0, 0.0 );
-            IGcodePoint yDist = gcodeService.createGcodePoint ( 0.0, r, 0.0 );
-
-            Point p1 = gcodeToCanvas ( zero.sub ( xDist ) );
-            Point p2 = gcodeToCanvas ( zero.add ( yDist ) );
-            Point p3 = gcodeToCanvas ( zero.add ( xDist ) );
-            Point p4 = gcodeToCanvas ( zero.sub ( yDist ) );
-
-            gc.setLineStyle ( SWT.LINE_SOLID );
-            gc.setLineWidth ( 2 );
-            gc.setForeground ( color  );
-
-            drawLine ( gc, p1, p2 );
-            drawLine ( gc, p2, p3 );
-            drawLine ( gc, p3, p4 );
-            drawLine ( gc, p4, p1 );
-
-            if ( type == 'M' ) {
-                gc.setLineStyle ( SWT.LINE_DOT );
-                gc.setLineWidth ( 1 );
-                gc.setForeground ( color  );
-                drawLine ( gc, zero, zero.addAxis ( 'Z', gcodeService.getFixtureShift () ) );
-            }
-
-        }
-
-        private void drawWorkArea ( GC gc, char type ) {
-
-            // draw work area
-            gc.setLineStyle ( SWT.LINE_DOT );
-            gc.setLineWidth ( 1 );
-            gc.setForeground ( workareaBorderColor );
-
-            IGcodePoint p1 = workAreaPoints[workAreaPoints.length - 1];
-            if ( type == 'W' ) p1 = p1.addAxis ( 'Z', gcodeService.getFixtureShift () );
-
-            for ( int i = 0; i < workAreaPoints.length; i++ ) {
-                IGcodePoint p2 = workAreaPoints[i];
-                if ( type == 'W' ) p2 = p2.addAxis ( 'Z', gcodeService.getFixtureShift () );
-                drawLine ( gc, p1, p2 );
-                p1 = p2;
-            }
-
-            // cross in the middle of work area
-            gc.setLineStyle ( SWT.LINE_DASH );
-            gc.setLineWidth ( 1 );
-            gc.setForeground ( workareaMidcrossColor );
-            drawLine ( gc, workAreaCenterCrossEndPoints[0].addAxis ( 'Z', gcodeService.getFixtureShift () ),
-                    workAreaCenterCrossEndPoints[1].addAxis ( 'Z', gcodeService.getFixtureShift () ) );
-            drawLine ( gc, workAreaCenterCrossEndPoints[2].addAxis ( 'Z', gcodeService.getFixtureShift () ),
-                    workAreaCenterCrossEndPoints[3].addAxis ( 'Z', gcodeService.getFixtureShift () ) );
-
-        }
-
-        private void drawLine ( GC gc, IGcodeLine gcodeLine ) {
-
-            IGcodePoint start = gcodeLine.getStart ();
-            IGcodePoint end = gcodeLine.getEnd ();
-
-            if ( start.equals ( end ) ) return;
-
-            if ( viewAltitude && gcodeProgram.isAutolevelScanComplete () ) {
-                IGcodePoint [] path = gcodeLine.getAutoevelSegmentPath ();
-                for ( int i = 0; i < path.length - 1; i++ ) {
-                    drawLine ( gc, path[i].add ( gcodeService.getFixtureShift () ), path[i + 1].add ( gcodeService.getFixtureShift () ) );
-                }
-            }
-            else {
-                // translate to machine coordinates
-                drawLine ( gc, start.add ( gcodeService.getFixtureShift () ), end.add ( gcodeService.getFixtureShift () ) );
-            }
-
-        }
-
-        private void drawLine ( GC gc, IGcodePoint start, IGcodePoint end ) {
-
-            Point p1 = gcodeToCanvas ( start );
-            Point p2 = gcodeToCanvas ( end );
-
-            if ( p1.equals ( p2 ) ) return;
-
-            LOG.trace ( "paintControl.drawLine: x1=" + p1.x + " y1=" + p1.y + " x2=" + p2.x + " y2=" + p2.y );
-            LOG.trace ( "paintControl.drawLine: start=" + start + " end=" + end );
-
-            drawLine ( gc, p1, p2 );
-
-        }
-
-        private void drawLine ( GC gc, Point p1, Point p2 ) {
-
-            gc.drawLine ( (int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y );
-
-        }
-        
-        private final static double PRECISION = 1000.0;
-
-        private double computeAngle ( IGcodePoint p, IGcodePoint center, double radius ) {
-
-            double cosAngle = (p.getX () - center.getX ()) / radius;
-            double angle = Math.acos ( cosAngle ) / IConstant.ONE_DEGREE;
-
-            if ( p.getY () < center.getY () ) {
-                angle = 360 - angle;
-            }
-
-            return ((int) (angle * PRECISION + 0.5)) / PRECISION; // HACK round to 3 decimals
-
-        }
-
-        private double computeAngle ( IGcodePoint p1, IGcodePoint p2, IGcodePoint center, double radius ) {
-
-            final double x1 = p1.getX () - center.getX ();
-            final double x2 = p2.getX () - center.getX ();
-            final double y1 = p1.getY () - center.getY ();
-            final double y2 = p2.getY () - center.getY ();
-
-            double cosAngle = (x1 * x2 + y1 * y2) / radius * radius;
-            double angle = Math.acos ( cosAngle ) / IConstant.ONE_DEGREE;
-
-            return ((int) (angle * PRECISION + 0.5)) / PRECISION; // HACK round to 3 decimals
-
-        }
-
-        // all in plane xy
-        private void drawCircle ( GC gc, double mult, IGcodeLine gcodeLine ) {
-
-            // LOG.debug ( "drawCircle: gcodeLine=" + gcodeLine + " rotationAngle=" + gcodeProgram.getRotationAngle () );
-
-            IGcodePoint start = gcodeLine.getStart ().add ( gcodeService.getFixtureShift () );
-            IGcodePoint end = gcodeLine.getEnd ().add ( gcodeService.getFixtureShift () );
-            double r = gcodeLine.getRadius ();
-
-            if ( start.equals ( end ) ) return; // TODO this is may be wrong, this is a full circle
-
-            // from grbl code
-            double x = end.getX () - start.getX ();
-            double y = end.getY () - start.getY ();
-
-            final double dd = x * x + y * y;
-            double d = Math.sqrt ( dd );
-            double hh = r * r - dd / 4;
-            if ( hh < 0 ) hh = 0.0;
-            double h = Math.sqrt ( hh );
-
-            // G2, bei G3 + und - vor h alternieren
-            double i = start.getX () + x / 2 + mult * h / d * y;
-            double j = start.getY () + y / 2 - mult * h / d * x;
-            // LOG.debug ( "drawCircle: dd=" + dd + " d=" + d + " hh=" + hh + " h=" + h + " i=" + i + " j=" + j );
-            IGcodePoint center = gcodeService.createGcodePoint ( i, j, 0.0 );
-
-            double startAngle = computeAngle ( start, center, r );
-            double endAngle = computeAngle ( end, center, r );
-            double arcAngle = endAngle - startAngle;
-            if ( arcAngle < -180 ) arcAngle += 360;
-            else if ( Math.abs ( mult * arcAngle - 180 ) == 0.0 ) arcAngle = -arcAngle;
-            else if ( arcAngle > 180 ) arcAngle -= 360;
-            // LOG.debug ( "drawCircle: startAngle=" + startAngle + " endAngle=" + endAngle + " arcAngle=" + arcAngle );
-
-            // rotate all points by z angle
-            // the 4 tangential points: north, west, south, east
-            IGcodePoint north = gcodeService.createGcodePoint ( i, j + r, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
-            IGcodePoint west = gcodeService.createGcodePoint ( i - r, j, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
-            IGcodePoint south = gcodeService.createGcodePoint ( i, j - r, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
-            IGcodePoint east = gcodeService.createGcodePoint ( i + r, j, start.getZ () ).sub ( center ).rotate ( 'Z', -rotZ ).add ( center );
-
-            drawCircle ( gc, north, west, south, east, (int) (startAngle - (rotZ / IConstant.ONE_DEGREE)), (int) arcAngle );
-            // LOG.debug ( "drawCircle: ====================================" );
-
-        }
-
-        private void drawCircle ( GC gc, IGcodePoint pointN, IGcodePoint pointW, IGcodePoint pointS, IGcodePoint pointE, int startAngle, int arcAngle ) {
-
-            // LOG.debug ( "drawCircle: north=" + pointN + " west=" + pointW + " south=" + pointS + " east=" + pointE );
-
-            Point pN = gcodeToCanvas ( pointN );
-            Point pW = gcodeToCanvas ( pointW );
-            Point pS = gcodeToCanvas ( pointS );
-            Point pE = gcodeToCanvas ( pointE );
-
-            // The resulting arc begins at startAngle and extends for arcAngle degrees, using the current color. Angles are interpreted such that 0 degrees is at the 3 o'clock
-            // position. A positive value indicates a counter-clockwise rotation while a negative value indicates a clockwise rotation.
-            // The center of the arc is the center of the rectangle whose origin is (x, y) and whose size is specified by the width and height arguments.
-            // The resulting arc covers an area width + 1 pixels wide by height + 1 pixels tall.
-
-            int w = (int) (pE.x - pW.x);
-            int h = (int) (pS.y - pN.y);
-            int x = (int) pN.x - w / 2;
-            int y = (int) pW.y - h / 2;
-
-            // LOG.debug ( "drawCircle: x=" + x + " y=" + y + " h=" + h + " w=" + w );
-
-            gc.drawArc ( x, y, w, h, startAngle, arcAngle );
 
         }
 
@@ -1118,7 +1099,8 @@ public class GcodeViewGroup {
             Rectangle clientArea = canvas.getClientArea ();
 
             final int x = evt.x - clientArea.x;
-            final int y = clientArea.height - evt.y - clientArea.y;
+            // final int y = clientArea.height - evt.y - clientArea.y;
+            final int y = evt.y - clientArea.y;
             mouseCoordinateLabel.setText ( "[" + x + "," + y + "]" );
 
             redraw ();
@@ -1307,10 +1289,47 @@ public class GcodeViewGroup {
     @Optional
     public void stateUpdateNotified ( @UIEventTopic(IEvent.UPDATE_STATE) IGcodeGrblState state ) {
 
-        // System.out.println ( logName () + "stateUpdateNotified: state=" + state );
+        LOG.debug ( "stateUpdateNotified: state=" + state );
+        
+        if ( gcodeState != null && gcodeImage != null ) {
+
+            // restore gsntry area on old position
+            Point p = gcodeToCanvas ( gcodeState.getMachineCoordindates () );
+            final int x = (int) p.x - IConstant.GANTRY_LINE_WIDTH - IConstant.GANTRY_RADIUS;
+            final int y = (int) p.y - IConstant.GANTRY_LINE_WIDTH - IConstant.GANTRY_RADIUS;
+
+            gcodeImageGC.copyArea ( gantryImage, x, y );
+            canvasGC.drawImage ( gantryImage, x, y );
+
+        }
 
         gcodeState = state;
-        redraw ();
+
+        // draw gantry on new position
+        drawGantry ( canvasGC );
+
+    }
+
+    @Inject
+    @Optional
+    public void playerLineNotified ( @UIEventTopic(IEvent.PLAYER_LINE) IGcodeLine gcodeLine ) {
+
+        LOG.trace ( "playerLineNotified: gcodeLine=" + gcodeLine );
+
+        // draw into gcodeImage and then transfer to canvas
+        if ( gcodeLine.isMotionMode () ) {
+
+            gcodeImageGC.setLineStyle ( SWT.LINE_SOLID );
+            gcodeImageGC.setLineWidth ( 1 );
+            gcodeImageGC.setForeground ( gcodeProcessedColor );
+            drawLine ( gcodeImageGC, gcodeLine );
+
+            canvasGC.setLineStyle ( SWT.LINE_SOLID );
+            canvasGC.setLineWidth ( 1 );
+            canvasGC.setForeground ( gcodeProcessedColor );
+            drawLine ( canvasGC, gcodeLine );
+
+        }
 
     }
 

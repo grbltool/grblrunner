@@ -74,9 +74,12 @@ public interface IConstant {
 
     public static final String CYCLIC_PERSPECTIVE_SWITCHING = "cyclic";
 
-    public final static int MAX_HISTORY_DEPTH = 100;
+    public static final int MAX_HISTORY_DEPTH = 100;
 
-    public final int PLAY_GCODE_DIALOG_WIDTH = 500;
-    public final int PLAY_GCODE_DIALOG_HEIGHT = 400;
+    public static final int PLAY_GCODE_DIALOG_WIDTH = 500;
+    public static final int PLAY_GCODE_DIALOG_HEIGHT = 400;
+
+    public static final int GANTRY_RADIUS = 2; // in pixel
+    public static final int GANTRY_LINE_WIDTH = 3; // in pixel
 
 }
