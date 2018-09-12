@@ -82,4 +82,8 @@ public interface IConstant {
     public static final int GANTRY_RADIUS = 2; // in pixel
     public static final int GANTRY_LINE_WIDTH = 3; // in pixel
 
+    int GRBL_STATE_POLLER_SLEEP_MS = 200;
+    int PARSER_STATE_POLLER_SLEEP_MS = 1003;
+    int GCODE_SENDER_WAIT_SLEEP_MS = 10;
+
 }

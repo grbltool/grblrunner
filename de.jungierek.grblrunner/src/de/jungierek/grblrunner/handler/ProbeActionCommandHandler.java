@@ -25,11 +25,12 @@ public class ProbeActionCommandHandler {
         LOG.debug ( "execute: depth=" + probeDepth );
 
         if ( command != null ) {
-            if ( probeWithError ) {
-                gcodeService.sendCommandSuppressInTerminal ( "G90G38.2Z" + probeDepth + "F" + probeFeedrate );
+            final String line = "G90G38." + (probeWithError ? "2" : "3") + "Z" + probeDepth + "F" + probeFeedrate;
+            try {
+                gcodeService.sendCommandSuppressInTerminal ( line );
             }
-            else {
-                gcodeService.sendCommandSuppressInTerminal ( "G90G38.3Z" + probeDepth + "F" + probeFeedrate );
+            catch ( InterruptedException exc ) {
+                LOG.info ( "execute: interrupted exception in line=" + line );
             }
         }
 

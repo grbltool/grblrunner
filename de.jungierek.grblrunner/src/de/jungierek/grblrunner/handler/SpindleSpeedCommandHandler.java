@@ -22,7 +22,13 @@ public class SpindleSpeedCommandHandler {
 
         LOG.debug ( "execute:" );
 
-        gcodeService.sendCommandSuppressInTerminal ( "S" + speed );
+        final String line = "S" + speed;
+        try {
+            gcodeService.sendCommandSuppressInTerminal ( line );
+        }
+        catch ( InterruptedException exc ) {
+            LOG.info ( "execute: interrupted exception in line=" + line );
+        }
 
     }
 

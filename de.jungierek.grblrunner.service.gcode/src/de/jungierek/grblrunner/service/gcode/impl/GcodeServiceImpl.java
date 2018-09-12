@@ -53,9 +53,9 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     private String lastFeedrate;
     private String lastSpindlespeed;
 
-    public static final int GRBL_STATE_POLLER_SLEEP_MS = 200;
-    public static final int PARSER_STATE_POLLER_SLEEP_MS = 1003;
-
+    private Thread gcodePlayerThread;
+    private Thread probeScannerThread;
+    
     private Thread senderThread;
     private Thread statePollerThread;
     private Thread parserStatePoller;
@@ -124,26 +124,27 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     }
 
     @Override
-    public void sendCommand ( String line ) {
+    public void sendCommand ( String line ) throws InterruptedException {
         
         sendCommand ( line, false );
     }
 
     @Override
-    public void sendCommandSuppressInTerminal ( String line ) {
+    public void sendCommandSuppressInTerminal ( String line ) throws InterruptedException {
 
         sendCommand ( line, true );
 
     }
 
-    private void sendCommand ( String line, boolean suppressInTerminal ) {
+    private void sendCommand ( String line, boolean suppressInTerminal ) throws InterruptedException {
 
         try {
             queue.put ( new GrblRequestImpl ( suppressInTerminal, line + IConstant.LF ) );
         }
         catch ( InterruptedException exc ) {
-            LOG.error ( "sendCommand: exception in line=" + line );
-            sendErrorMessage ( "sending gcode command interrupted!\n" + line, exc );
+            LOG.info ( "sendCommand: interrupted exception in line=" + line );
+            // sendErrorMessage ( "sending gcode command interrupted!\n" + line, exc );
+            throw exc;
         }
 
     }
@@ -158,7 +159,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
         if ( line.startsWith ( "<" ) ) { // response on state request '?'
             releaseWaitForOk = false;
-            skipByAlarm = false;
+            skipByAlarm = false; // this is also reset, when <Alarm is received!
             suppressLine = true; // suppress ever
         }
         else if ( line.startsWith ( "ok" ) ) {
@@ -169,6 +170,9 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             releaseWaitForOk = true;
             skipByAlarm = false;
             suppressLine = false; // show this line ever
+            if ( gcodePlayerThread != null ) gcodePlayerThread.interrupt ();
+            if ( probeScannerThread != null ) probeScannerThread.interrupt ();
+            queue.clear (); // empty queue
         }
         else if ( line.startsWith ( "Grbl" ) || line.startsWith ( "[MSG:" ) ) {
             // queue.clear (); // empty queue
@@ -176,10 +180,12 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             suppressLine = false;
         }
         else if ( line.startsWith ( "ALARM" ) ) {
-            // queue.clear (); // empty queue
             releaseWaitForOk = true;
             skipByAlarm = true;
             suppressLine = false; // show this line ever
+            if ( gcodePlayerThread != null ) gcodePlayerThread.interrupt ();
+            if ( probeScannerThread != null ) probeScannerThread.interrupt ();
+            queue.clear (); // empty queue
         }
 
         // erst event senden, dann ...
@@ -271,7 +277,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             int index = parseInt ( 0, line.substring ( "error:".length (), line.length () - 2 ) ); // cut the crlf at the end
             final String msg = ERROR_CODE_DESCRIPTION [index];
-            LOG.error ( "analyseResponse: index=" + index + " masg=" + msg );
+            LOG.debug ( "analyseResponse: index=" + index + " masg=" + msg );
             line = line + msg + "\r\n";
             if ( !suppressInTerminal ) {
                 eventBroker.post ( IEvent.MESSAGE_ERROR, msg ); // inform about error message
@@ -632,7 +638,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         gcodeProgram.resetProcessed ();
 
         // decouple from UI thread
-        new GcodePlayerThread ().start ();
+        gcodePlayerThread = new GcodePlayerThread ();
+        gcodePlayerThread.start ();
 
     }
 
@@ -692,7 +699,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         else {
 
             // decouple from UI thread
-            new ProbeScannerThread ( zMin, zMax, zClearance, probeFeedrate, withError ).start ();
+            probeScannerThread = new ProbeScannerThread ( zMin, zMax, zClearance, probeFeedrate, withError );
+            probeScannerThread.start ();
 
         }
 
@@ -860,45 +868,56 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         public void run () {
     
             gcodeProgram.setAutolevelStart ();
-            sendCommand ( IConstant.GCODE_SCAN_START );
+            scanRunning = true;
+            eventBroker.post ( IEvent.AUTOLEVEL_START, getTimestamp () );
 
             final int xlength = gcodeProgram.getXSteps () + 1;
             final int ylength = gcodeProgram.getYSteps () + 1;
     
             IGcodePoint probePoint = gcodeProgram.getProbePointAt ( 0, 0 );
-            sendCommandSuppressInTerminal ( "G21" );
-            sendCommandSuppressInTerminal ( "G90" );
-            sendCommandSuppressInTerminal ( "G0Z" + zClearance );
-            sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
-            sendCommandSuppressInTerminal ( "G0Z" + zMax );
 
-            LOOP: for ( int i = 0; i < xlength; i++ ) {
+            try {
+                sendCommandSuppressInTerminal ( "G21" );
+                sendCommandSuppressInTerminal ( "G90" );
+                sendCommandSuppressInTerminal ( "G0Z" + zClearance );
+                sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
+                sendCommandSuppressInTerminal ( "G0Z" + zMax );
+
+                LOOP: for ( int i = 0; i < xlength; i++ ) {
+
+                    for ( int j = 0; j < ylength; j++ ) {
+
+                        if ( isInterrupted () ) break LOOP;
+
+                        int d = i % 2;
+                        int jj = d * (ylength - j - 1) + (1 - d) * j;
+
+                        probePoint = gcodeProgram.getProbePointAt ( i, jj );
     
-                for ( int j = 0; j < ylength; j++ ) {
-                    
-                    if ( skipByAlarm ) break LOOP;
+                        sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
+                        final String line = "G90G38." + (withError ? "2" : "3") + "Z" + zMin + "F" + probeFeedrate;
+                        sendCommandSuppressInTerminal ( line );
+                        sendCommandSuppressInTerminal ( "G0Z" + zMax );
 
-                    int d = i % 2;
-                    int jj = d * (ylength - j - 1) + (1 - d) * j;
-
-                    probePoint = gcodeProgram.getProbePointAt ( i, jj );
-
-                    sendCommandSuppressInTerminal ( "G0X" + probePoint.getX () + "Y" + probePoint.getY () );
-                    if ( withError ) {
-                        sendCommandSuppressInTerminal ( "G38.2Z" + zMin + "F" + probeFeedrate ); // MOTION_MODE_PROBE_TOWARD
                     }
-                    else {
-                        sendCommandSuppressInTerminal ( "G38.3Z" + zMin + "F" + probeFeedrate ); // MOTION_MODE_PROBE_TOWARD_NO_ERROR
-                    }
-                    sendCommandSuppressInTerminal ( "G0Z" + zMax );
-    
+
                 }
-    
+
+                gcodeProgram.setAutolevelScanCompleted ();
+
+            }
+            catch ( InterruptedException exc ) {
+                LOG.info ( THREAD_NAME + ": cancelled" );
             }
 
-            gcodeProgram.setAutolevelStop ();
             gcodeProgram.computeAutlevelSegments ();
-            sendCommand ( IConstant.GCODE_SCAN_END );
+
+            gcodeProgram.setAutolevelStop ();
+            eventBroker.post ( IEvent.AUTOLEVEL_STOP, getTimestamp () ); //
+
+            scanRunning = false;
+
+            probeScannerThread = null;
     
             LOG.debug ( THREAD_NAME + ": stopped" );
     
@@ -935,66 +954,75 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             IGcodeLine [] allGcodeLines = gcodeProgram.getAllGcodeLines ();
             for ( IGcodeLine gcodeLine : allGcodeLines ) {
 
-                if ( skipByAlarm ) {
-                    LOG.debug ( THREAD_NAME + ": skipped by alarm" );
+                if ( isInterrupted () ) {
+                    LOG.debug ( THREAD_NAME + ": loop break" );
                     break;
                 }
-
-                LOG.trace ( THREAD_NAME + ": line=" + gcodeLine.getLine () + " | gcodeLine=" + gcodeLine );
-                gcodeLine.setProcessed ( true );
-                eventBroker.post ( IEvent.PLAYER_LINE, gcodeLine );
-
-                if ( gcodeProgram.isAutolevelScanComplete () && gcodeLine.isMotionModeLinear () ) {
-                    final String cmd = gcodeLine.getGcodeMode ().getCommand ();
-                    final String feed = "F" + gcodeLine.getFeedrate ();
-                    if ( gcodeLine.isMoveInXYZ () ) {
-                        IGcodePoint [] path = gcodeLine.getAutoevelSegmentPath ();
-                        for ( int i = 1; i < path.length; i++ ) {
-                            // Attention: eliminate first point in path with index 0, because G0 lines has'nt autoleveled.
-                            // So the last end point (autoleveled or not) is the start point of the next move
-                            String segment = cmd;
-                            segment += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getX () );
-                            segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getY () );
-                            segment += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, path[i].getZ () );
-                            segment += feed;
-                            eventBroker.post ( IEvent.PLAYER_SEGMENT, segment );
-                            sendCommandSuppressInTerminal ( segment );
-                            LOG.trace ( "  segment=" + segment );
-                        }
-                    }
-                }
                 else {
-                    // after rotation the original line is obsolet for motion commands
-                    if ( gcodeLine.isMotionMode () ) {
-                        final String cmd = gcodeLine.getGcodeMode ().getCommand ();
-                        String line = "";
-                        if ( gcodeLine.isMoveInXYZ () ) {
-                            line += cmd;
-                            if ( gcodeLine.isMoveInX () || firstMove ) line += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getX () );
-                            if ( gcodeLine.isMoveInY () || firstMove ) line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
-                            if ( gcodeLine.isMoveInZ () || firstMove ) line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
-                            firstMove = false;
+                    
+                    try {
+
+                        LOG.trace ( THREAD_NAME + ": line=" + gcodeLine.getLine () + " | gcodeLine=" + gcodeLine );
+                        gcodeLine.setProcessed ( true );
+                        eventBroker.post ( IEvent.PLAYER_LINE, gcodeLine );
+    
+                        if ( gcodeProgram.isAutolevelScanComplete () && gcodeLine.isMotionModeLinear () ) {
+                            final String cmd = gcodeLine.getGcodeMode ().getCommand ();
+                            final String feed = "F" + gcodeLine.getFeedrate ();
+                            if ( gcodeLine.isMoveInXYZ () ) {
+                                IGcodePoint [] path = gcodeLine.getAutoevelSegmentPath ();
+                                for ( int i = 1; i < path.length; i++ ) {
+                                    // Attention: eliminate first point in path with index 0, because G0 lines has'nt autoleveled.
+                                    // So the last end point (autoleveled or not) is the start point of the next move
+                                    String segment = cmd;
+                                    segment += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, path [i].getX () );
+                                    segment += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, path [i].getY () );
+                                    segment += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, path [i].getZ () );
+                                    segment += feed;
+                                    eventBroker.post ( IEvent.PLAYER_SEGMENT, segment );
+                                    sendCommandSuppressInTerminal ( segment );
+                                    LOG.trace ( "  segment=" + segment );
+                                }
+                            }
                         }
-                        if ( gcodeLine.isMotionModeArc () ) line += "R" + gcodeLine.getRadius ();
-                        if ( gcodeLine.isMotionModeLinear () || gcodeLine.isMotionModeArc () ) line += "F" + gcodeLine.getFeedrate ();
-                        sendCommandSuppressInTerminal ( line );
-                        LOG.trace ( "line=" + line );
+                        else {
+                            // after rotation the original line is obsolet for motion commands
+                            if ( gcodeLine.isMotionMode () ) {
+                                final String cmd = gcodeLine.getGcodeMode ().getCommand ();
+                                String line = "";
+                                if ( gcodeLine.isMoveInXYZ () ) {
+                                    line += cmd;
+                                    if ( gcodeLine.isMoveInX () || firstMove ) line += "X" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getX () );
+                                    if ( gcodeLine.isMoveInY () || firstMove ) line += "Y" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getY () );
+                                    if ( gcodeLine.isMoveInZ () || firstMove ) line += "Z" + String.format ( IGcodePoint.FORMAT_COORDINATE, gcodeLine.getEnd ().getZ () );
+                                    firstMove = false;
+                                }
+                                if ( gcodeLine.isMotionModeArc () ) line += "R" + gcodeLine.getRadius ();
+                                if ( gcodeLine.isMotionModeLinear () || gcodeLine.isMotionModeArc () ) line += "F" + gcodeLine.getFeedrate ();
+                                sendCommandSuppressInTerminal ( line );
+                                LOG.trace ( "line=" + line );
+                            }
+                            else {
+                                sendCommandSuppressInTerminal ( gcodeLine.getLine () );
+                            }
+                        }
+                        
                     }
-                    else {
-                        sendCommandSuppressInTerminal ( gcodeLine.getLine () );
+                    catch ( InterruptedException exc ) {
+                        LOG.info ( THREAD_NAME + ": cancelled" );
+                        interrupt ();
                     }
+
                 }
 
             }
 
             gcodeProgram.setPlayerStop ();
             eventBroker.post ( IEvent.PLAYER_STOP, getTimestamp () );
-            // TODO
-            // if ( skipByAlarm ) {
-            // eventBroker.post ( EVENT_GCODE_PLAYER_CANCELED, getTimestamp () );
-            // }
 
             playRunning = false;
+
+            gcodePlayerThread = null;
 
             LOG.debug ( THREAD_NAME + ": stopped" );
 
@@ -1028,32 +1056,19 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 try {
 
                     while ( waitForOk ) {
-                        sleep ( 100 );
+                        sleep ( IConstant.GCODE_SENDER_WAIT_SLEEP_MS );
                     }
 
                     GrblRequestImpl cmd = queue.take ();
-                    if ( !skipByAlarm || cmd.isReset () || cmd.isHome () || cmd.isUnlock () || cmd.message.startsWith ( IConstant.GCODE_SCAN_END ) ) {
+                    if ( !skipByAlarm || cmd.isReset () || cmd.isHome () || cmd.isUnlock () ) {
 
-                        if ( cmd.message.startsWith ( IConstant.GCODE_SCAN_START ) ) {
-                            scanRunning = true;
-                            eventBroker.post ( IEvent.AUTOLEVEL_START, getTimestamp () );
-                        }
-                        else if ( cmd.message.startsWith ( IConstant.GCODE_SCAN_END ) ) {
-                            scanRunning = false;
-                            if ( !skipByAlarm ) gcodeProgram.setAutolevelScanCompleted ();
-                            eventBroker.post ( IEvent.AUTOLEVEL_STOP, getTimestamp () ); //
-                        }
-                        else {
+                        waitForOk = true;
+                        suppressInTerminal = cmd.suppressInTerminal;
 
-                            waitForOk = true;
-                            suppressInTerminal = cmd.suppressInTerminal;
+                        byte [] buffer = cmd.message.getBytes ( StandardCharsets.US_ASCII );
+                        eventBroker.post ( IEvent.GRBL_SENT, cmd );
 
-                            byte [] buffer = cmd.message.getBytes ( StandardCharsets.US_ASCII );
-                            eventBroker.post ( IEvent.GRBL_SENT, cmd );
-
-                            serial.send ( buffer );
-
-                        }
+                        serial.send ( buffer );
 
                     }
 
@@ -1094,7 +1109,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             while ( !isInterrupted () ) {
                 try {
-                    sleep ( GRBL_STATE_POLLER_SLEEP_MS );
+                    sleep ( IConstant.GRBL_STATE_POLLER_SLEEP_MS );
                     sendSingleSignCommand ( '?' );
                 }
                 catch ( InterruptedException exc ) {
@@ -1133,7 +1148,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             while ( !isInterrupted () ) {
                 try {
                     sendCommandSuppressInTerminal ( "$G" );
-                    sleep ( PARSER_STATE_POLLER_SLEEP_MS );
+                    sleep ( IConstant.PARSER_STATE_POLLER_SLEEP_MS );
                 }
                 catch ( InterruptedException exc ) {
                     interrupt ();

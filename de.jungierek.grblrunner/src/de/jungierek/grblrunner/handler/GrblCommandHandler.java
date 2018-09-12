@@ -12,8 +12,6 @@ public abstract class GrblCommandHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GrblCommandHandler.class );
 
-    private static final String COMMAND = "noop";
-    
     abstract protected String getCommand ();
     abstract protected boolean isSuppressLines ();
         
@@ -22,11 +20,17 @@ public abstract class GrblCommandHandler {
 
         LOG.debug ( "execute:" );
 
-        if ( isSuppressLines () ) {
-            gcodeService.sendCommandSuppressInTerminal ( getCommand () );
+        final String line = getCommand ();
+        try {
+            if ( isSuppressLines () ) {
+                gcodeService.sendCommandSuppressInTerminal ( line );
+            }
+            else {
+                gcodeService.sendCommand ( line );
+            }
         }
-        else {
-            gcodeService.sendCommand ( getCommand () );
+        catch ( InterruptedException exc ) {
+            LOG.info ( "execute: interrupted exception in line=" + line );
         }
 
     }

@@ -40,12 +40,17 @@ public class GrblMoveZeroCommandHandler {
 
         if ( command != null ) {
 
-            String gcode = "$J=G21G90F" + seekFeedrate;
+            String line = "$J=G21G90F" + seekFeedrate;
 
             for ( int i = 0; i < axis.length (); i++ ) {
-                gcode += axis.charAt ( i ) + "0";
+                line += axis.charAt ( i ) + "0";
             }
-            gcodeService.sendCommandSuppressInTerminal ( gcode );
+            try {
+                gcodeService.sendCommandSuppressInTerminal ( line );
+            }
+            catch ( InterruptedException exc ) {
+                LOG.info ( "execute: interrupted exception in line=" + line );
+            }
         }
 
     }

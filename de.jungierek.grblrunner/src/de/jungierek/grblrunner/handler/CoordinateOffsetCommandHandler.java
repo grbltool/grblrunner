@@ -23,21 +23,19 @@ public class CoordinateOffsetCommandHandler {
         LOG.debug ( "execute: axis=" + axis + " cmd=" + command );
 
         if ( command != null ) {
-            String id = command.getId ();
-            String type = id.substring ( id.lastIndexOf ( '.' ) + 1 );
-            switch ( type ) {
-                case "set":
-                    gcodeService.sendCommandSuppressInTerminal ( "G10 L20 " + axis + "0" );
-                    break;
-                case "reset":
-                    gcodeService.sendCommandSuppressInTerminal ( "G10 L2 " + axis + "0" );
-                    break;
 
-                default:
-                    break;
+            String line = "G10 L2";
+            if ( command.getId ().endsWith ( "set" ) ) line += "0";
+            line += axis + "0";
+
+            try {
+                gcodeService.sendCommandSuppressInTerminal ( line );
             }
-        }
+            catch ( InterruptedException exc ) {
+                LOG.info ( "execute: interrupted exception in line=" + line );
+            }
 
+        }
 
     }
 

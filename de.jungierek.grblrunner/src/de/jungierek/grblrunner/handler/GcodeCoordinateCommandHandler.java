@@ -22,7 +22,13 @@ public class GcodeCoordinateCommandHandler {
         
         int n = toolbox.parseInteger ( systemNo, 1 );
         if ( n > 0 && n < 7 ) { // G54 .. G59
-            gcodeService.sendCommandSuppressInTerminal ( "G" + (53 + n) );
+            final String line = "G" + (53 + n);
+            try {
+                gcodeService.sendCommandSuppressInTerminal ( line );
+            }
+            catch ( InterruptedException exc ) {
+                LOG.info ( "execute: interrupted exception in line=" + line );
+            }
         }
 
 

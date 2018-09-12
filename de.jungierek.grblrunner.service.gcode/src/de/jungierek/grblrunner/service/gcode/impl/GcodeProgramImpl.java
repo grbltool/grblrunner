@@ -495,13 +495,6 @@ public class GcodeProgramImpl implements IGcodeProgram {
     }
 
     @Override
-    public boolean isAutolevelScanComplete () {
-
-        return scanDataComplete;
-
-    }
-
-    @Override
     public boolean isLoaded () {
 
         return gcodeLines.size () > 0;
@@ -531,9 +524,16 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     @Override
     public void setAutolevelScanCompleted () {
-
+    
         scanDataComplete = true;
+    
+    }
 
+    @Override
+    public boolean isAutolevelScanComplete () {
+    
+        return scanDataComplete;
+    
     }
 
     @Override

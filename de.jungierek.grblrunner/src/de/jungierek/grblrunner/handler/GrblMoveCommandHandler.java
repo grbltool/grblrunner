@@ -39,7 +39,13 @@ public class GrblMoveCommandHandler {
         LOG.debug ( "execute: axis=" + axis + " cmd=" + command + " dir=" + direction + " dist=" + distance );
 
         if ( command != null ) {
-            gcodeService.sendCommandSuppressInTerminal ( "$J=G21G91F" + seekFeedrate + axis + direction + distance );
+            final String line = "$J=G21G91F" + seekFeedrate + axis + direction + distance;
+            try {
+                gcodeService.sendCommandSuppressInTerminal ( line );
+            }
+            catch ( InterruptedException exc ) {
+                LOG.info ( "execute: interrupted exception in line=" + line );
+            }
         }
 
     }

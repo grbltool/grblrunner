@@ -70,8 +70,8 @@ public interface IGcodeService {
     public void sendStatePoll ();
     public void sendReset ();
 
-    public void sendCommand ( String line ); // append here LF
-    public void sendCommandSuppressInTerminal ( String line );
+    public void sendCommand ( String line ) throws InterruptedException; // append here LF
+    public void sendCommandSuppressInTerminal ( String line ) throws InterruptedException;
     
     public void setFixtureShift ( IGcodePoint shift );
     public IGcodePoint getFixtureShift ();

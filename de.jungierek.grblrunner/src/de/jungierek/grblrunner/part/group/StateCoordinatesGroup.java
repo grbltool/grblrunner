@@ -99,12 +99,12 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
             workCoordLabel[i] = GuiFactory.createCoordinateLabel ( group );
 
             setZeroButton[i] = GuiFactory.createPushButton ( group, "zero " + axisLetter );
-            HashMap<String, Object> parameter1 = new HashMap<String, Object> ();
+            HashMap<String, Object> parameter1 = new HashMap<> ();
             parameter1.put ( ICommandId.COORDINATE_OFFSET_PARAMETER, axisLetter );
             setZeroButton[i].addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.SET_COORDINATE_OFFSET, parameter1 ) );
 
             resetZeroButton[i] = GuiFactory.createPushButton ( group, "reset " + axisLetter );
-            HashMap<String, Object> parameter2 = new HashMap<String, Object> ();
+            HashMap<String, Object> parameter2 = new HashMap<> ();
             parameter2.put ( ICommandId.COORDINATE_OFFSET_PARAMETER, axisLetter );
             resetZeroButton[i].addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.RESET_COORDINATE_OFFSET, parameter2 ) );
 
@@ -133,8 +133,12 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
         String coordSelect = application.getPersistedState ().get ( IPersistenceKey.LAST_COORDINATE_SYSTEM );
         if ( coordSelect != null && coordSelect.length () == 3 ) {
-            gcodeService.sendCommandSuppressInTerminal ( coordSelect );
-            // gcode.sendCommand ( coordSelect );
+            try {
+                gcodeService.sendCommandSuppressInTerminal ( coordSelect );
+            }
+            catch ( InterruptedException exc ) {
+                LOG.info ( "execute: interrupted exception in line=" + coordSelect );
+            }
         }
 
     }
@@ -150,7 +154,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
     @Override
     public Map<String, Object> getParameter () {
 
-        Map<String, Object> result = new HashMap<String, Object> ();
+        Map<String, Object> result = new HashMap<> ();
         result.put ( ICommandId.SET_COORDINATE_SYSTEM_PARAMETER, "" + (toolbox.parseInteger ( coordSystemCombo.getText ().substring ( 1 ), 54 ) - 53) );
 
         return result;

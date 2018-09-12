@@ -1,5 +1,6 @@
 package de.jungierek.grblrunner.handler;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.CanExecute;
@@ -18,25 +19,32 @@ public class CameraMoveCommandHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger ( CameraMoveCommandHandler.class );
 
+    // preference
+    private double seekFeedrate;
+
+    @Inject
+    public void setSeekFeedrate ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.MAX_SEEK_FEEDRATE) int feedrate ) {
+
+        LOG.debug ( "setSeekFeedrate: feedrate=" + feedrate );
+
+        seekFeedrate = feedrate;
+
+    }
+
     @Execute
     public void execute ( IGcodeService gcodeService, @Named(ICommandId.GRBL_MOVE_DIRECTION_PARAMETER) String direction, @Preference(
             nodePath = IConstant.PREFERENCE_NODE,
             value = IPreferenceKey.CAMERA_MILL_OFFSET_X) int offsetX, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.CAMERA_MILL_OFFSET_Y) int offsetY ) {
 
-        LOG.debug ( "execute:" );
+        // direction is '+' or '-'
+        String line = "$J=G21G91 X" + direction + offsetX + " Y" + direction + offsetY + " F" + seekFeedrate;
+        LOG.debug ( "execute: line=" + line );
 
-        switch ( direction ) {
-
-            case "+": // to mill
-                gcodeService.sendCommandSuppressInTerminal ( "G91 G0 X" + offsetX + " Y" + offsetY );
-                break;
-
-            case "-": // to camera
-                gcodeService.sendCommandSuppressInTerminal ( "G91 G0 X" + -offsetX + " Y" + -offsetY );
-                break;
-
-            default:
-                break;
+        try {
+            gcodeService.sendCommandSuppressInTerminal ( line );
+        }
+        catch ( InterruptedException exc ) {
+            LOG.info ( "execute: send cancelled for command=" + line );
         }
 
     }

@@ -267,7 +267,12 @@ public class CommandGroup {
 
         public void execute () {
             
-            gcodeService.sendCommand ( command );
+            try {
+                gcodeService.sendCommand ( command );
+            }
+            catch ( InterruptedException exc ) {
+                LOG.info ( "execute: interrupted exception for command=" + command );
+            }
 
         }
 
@@ -281,7 +286,7 @@ public class CommandGroup {
 
     private class CommandProcessor {
 
-        private ArrayList<Command> history = new ArrayList<CommandGroup.Command> ( historyDepth );
+        private ArrayList<Command> history = new ArrayList<> ( historyDepth );
 
         public CommandProcessor () {}
 

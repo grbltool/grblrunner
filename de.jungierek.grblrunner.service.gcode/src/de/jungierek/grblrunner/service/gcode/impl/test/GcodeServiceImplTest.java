@@ -804,7 +804,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
     }
 
     @Test
-    public void testSendCommand1 () {
+    public void testSendCommand1 () throws InterruptedException {
         
         GcodeServiceImplTestee t = (GcodeServiceImplTestee) underTest;
 
@@ -818,7 +818,7 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
     }
 
     @Test
-    public void testSendCommand2 () {
+    public void testSendCommand2 () throws InterruptedException {
 
         GcodeServiceImplTestee t = (GcodeServiceImplTestee) underTest;
 
