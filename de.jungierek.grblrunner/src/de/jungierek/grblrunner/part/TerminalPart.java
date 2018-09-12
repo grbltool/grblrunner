@@ -291,16 +291,6 @@ public class TerminalPart {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
-        
-        LOG.trace ( "alarmNotified: line=" + line );
-
-        appendText ( line, alarmForegroundColor, alarmBackgroundColor, SWT.BOLD );
-
-    }
-
-    @Inject
-    @Optional
     public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String timestamp ) {
 
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
@@ -394,6 +384,9 @@ public class TerminalPart {
             else if ( line.startsWith ( "error:" ) ) {
                 appendText ( line, errorForegroundColor, null, SWT.BOLD );
             }
+            else if ( line.startsWith ( "ALARM" ) ) {
+                appendText ( line, alarmForegroundColor, alarmBackgroundColor, SWT.BOLD );
+            }
             else if ( line.startsWith ( "Grbl" ) ) {
                 appendText ( line, grblForegroundColor, grblBackgroundColor );
             }
@@ -435,6 +428,10 @@ public class TerminalPart {
                 if ( show ) appendText ( line, suppressedLineForegroundColor, null, SWT.BOLD );
 
             }
+        }
+        else if ( line.startsWith ( "error:" ) ) {
+            // show eeror line ever
+            appendText ( line, supppressedErrorForegroundColor, null, SWT.NONE );
         }
 
     }

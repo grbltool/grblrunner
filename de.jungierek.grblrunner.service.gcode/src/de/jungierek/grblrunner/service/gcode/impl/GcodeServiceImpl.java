@@ -169,7 +169,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         else if ( line.startsWith ( "error" ) ) {
             releaseWaitForOk = true;
             skipByAlarm = false;
-            suppressLine = false; // show this line ever
             if ( gcodePlayerThread != null ) gcodePlayerThread.interrupt ();
             if ( probeScannerThread != null ) probeScannerThread.interrupt ();
             queue.clear (); // empty queue
@@ -270,14 +269,17 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         if ( line.startsWith ( "ALARM:" ) ) { // alarm message
             
             int index = parseInt ( 0, line.substring ( "ALARM:".length (), line.length () - 2 ) ); // cut the crlf at the end
-            eventBroker.post ( IEvent.GRBL_ALARM, ALARM_CODE_DESCRIPTION [index] ); // inform about alarm message
+            final String [] msg = ALARM_CODE_DESCRIPTION [index];
+            for ( String s : msg ) {
+                line = line + s + "\r\n";
+            }
+            eventBroker.post ( IEvent.GRBL_ALARM, msg ); // inform about alarm message
 
         }
         else if ( line.startsWith ( "error:" ) ) { // error message
 
             int index = parseInt ( 0, line.substring ( "error:".length (), line.length () - 2 ) ); // cut the crlf at the end
             final String msg = ERROR_CODE_DESCRIPTION [index];
-            LOG.debug ( "analyseResponse: index=" + index + " masg=" + msg );
             line = line + msg + "\r\n";
             if ( !suppressInTerminal ) {
                 eventBroker.post ( IEvent.MESSAGE_ERROR, msg ); // inform about error message
