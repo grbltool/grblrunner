@@ -24,5 +24,14 @@ public interface IGcodeGrblState {
     public void setPinState ( String state );
     public String getPinState ();
 
+    public void setFeedOverride ( int percent );
+    public int getFeedOverride ();
+
+    public void setRapidOverride ( int percent );
+    public int getRapidOverride ();
+
+    public void setSpindleOverride ( int percent );
+    public int getSpindleOverride ();
+
 
 }

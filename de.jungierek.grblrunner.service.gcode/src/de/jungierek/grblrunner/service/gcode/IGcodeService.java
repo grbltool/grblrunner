@@ -70,6 +70,28 @@ public interface IGcodeService {
     public void sendStatePoll ();
     public void sendReset ();
 
+    public void sendJogCancel ();
+
+    public void sendFeedOverride100Percent ();
+    public void sendFeedOverrideIncrease10Percent ();
+    public void sendFeedOverrideDecrease10Percent ();
+    public void sendFeedOverrideIncrease1Percent ();
+    public void sendFeedOverrideDecrease1Percent ();
+
+    public void sendSpindleOverride100Percent ();
+    public void sendSpindleOverrideIncrease10Percent ();
+    public void sendSpindleOverrideDecrease10Percent ();
+    public void sendSpindleOverrideIncrease1Percent ();
+    public void sendSpindleOverrideDecrease1Percent ();
+
+    public void sendRapidOverride100Percent ();
+    public void sendRapidOverride50Percent ();
+    public void sendRapidOverride25Percent ();
+
+    public void sendToggleSpindleStop ();
+    public void sendToggleFloodCoolant ();
+    public void sendToggleMistCoolant ();
+
     public void sendCommand ( String line ) throws InterruptedException; // append here LF
     public void sendCommandSuppressInTerminal ( String line ) throws InterruptedException;
     

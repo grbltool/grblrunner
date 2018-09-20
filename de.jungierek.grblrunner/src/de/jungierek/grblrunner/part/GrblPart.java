@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.part.group.ControlAutolevelGroup;
 import de.jungierek.grblrunner.part.group.ControlMoveGroup;
+import de.jungierek.grblrunner.part.group.ControlOverrideGroup;
 import de.jungierek.grblrunner.part.group.ControlProbeGroup;
 import de.jungierek.grblrunner.part.group.ControlSpindleGroup;
 import de.jungierek.grblrunner.part.group.StateCoolantGroup;
@@ -40,6 +41,7 @@ public class GrblPart {
     // prevent groups from garbage collection
     private StateCoordinatesGroup stateCoordinatesGroup;
     private StateGroup stateGroup;
+    private ControlOverrideGroup overrideGroup;
     private StateFeedrateGroup stateFeedrateGroup;
     private StateToolGroup stateToolGroup;
     private StateSpindleGroup stateSpindleGroup;
@@ -118,6 +120,11 @@ public class GrblPart {
 
         // Distance
         stateDistanceGroup = ContextInjectionFactory.make ( StateDistanceGroup.class, context );
+
+        // overrides
+        context.set ( IContextKey.PART_GROUP_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
+        overrideGroup = ContextInjectionFactory.make ( ControlOverrideGroup.class, context );
 
         // scan
         context.set ( IContextKey.PART_GROUP_COLS, cols );

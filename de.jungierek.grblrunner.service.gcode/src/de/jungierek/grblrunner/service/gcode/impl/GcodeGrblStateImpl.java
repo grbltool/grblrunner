@@ -23,6 +23,10 @@ public class GcodeGrblStateImpl implements IGcodeGrblState {
 
     private String pinState;
 
+    private int feedOverride;
+    private int rapidOverride;
+    private int spindleOverride;
+
     public GcodeGrblStateImpl ( EGrblState state, GcodePointImpl machineCoordinates, GcodePointImpl workCoordinates ) {
         
         this.state = state;
@@ -133,6 +137,48 @@ public class GcodeGrblStateImpl implements IGcodeGrblState {
     }
 
     @Override
+    public void setFeedOverride ( int percent ) {
+
+        this.feedOverride = percent;
+
+    }
+
+    @Override
+    public int getFeedOverride () {
+
+        return feedOverride;
+
+    }
+
+    @Override
+    public void setRapidOverride ( int percent ) {
+
+        this.rapidOverride = percent;
+
+    }
+
+    @Override
+    public int getRapidOverride () {
+
+        return rapidOverride;
+
+    }
+
+    @Override
+    public void setSpindleOverride ( int percent ) {
+
+        this.spindleOverride = percent;
+
+    }
+
+    @Override
+    public int getSpindleOverride () {
+
+        return spindleOverride;
+
+    }
+
+    @Override
     public String toString () {
         
         return "GcodeState[" + state + ",m:" + machine + ",w:" + work + ",f:" + feedRate + ",s:" + spindleSpeed + (pinState == null ? "" : ",p:" + pinState) + "]";
@@ -155,6 +201,9 @@ public class GcodeGrblStateImpl implements IGcodeGrblState {
         result = result && s.feedRate == this.feedRate;
         result = result && s.spindleSpeed == this.spindleSpeed;
         result = result && (s.pinState == null ? true : s.pinState.equals ( this.pinState ));
+        result = result && (s.feedOverride == 0) ? true : s.feedOverride == this.feedOverride;
+        result = result && (s.rapidOverride == 0) ? true : s.rapidOverride == this.rapidOverride;
+        result = result && (s.spindleOverride == 0) ? true : s.spindleOverride == this.spindleOverride;
 
         return result;
         

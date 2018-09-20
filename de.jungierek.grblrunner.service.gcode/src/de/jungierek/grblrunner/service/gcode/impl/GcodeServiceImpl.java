@@ -113,6 +113,91 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         new Thread ( ( ) -> sendSingleSignCommand ( '?' ) ).start ();
     }
 
+    @Override
+    public void sendJogCancel () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x85 ) ).start ();
+    }
+
+    @Override
+    public void sendFeedOverride100Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x90 ) ).start ();
+    }
+
+    @Override
+    public void sendFeedOverrideIncrease10Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x91 ) ).start ();
+    }
+
+    @Override
+    public void sendFeedOverrideDecrease10Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x92 ) ).start ();
+    }
+
+    @Override
+    public void sendFeedOverrideIncrease1Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x93 ) ).start ();
+    }
+
+    @Override
+    public void sendFeedOverrideDecrease1Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x94 ) ).start ();
+    }
+
+    @Override
+    public void sendSpindleOverride100Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x99 ) ).start ();
+    }
+
+    @Override
+    public void sendSpindleOverrideIncrease10Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x9A ) ).start ();
+    }
+
+    @Override
+    public void sendSpindleOverrideDecrease10Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x9B ) ).start ();
+    }
+
+    @Override
+    public void sendSpindleOverrideIncrease1Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x9C ) ).start ();
+    }
+
+    @Override
+    public void sendSpindleOverrideDecrease1Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x9D ) ).start ();
+    }
+
+    @Override
+    public void sendToggleSpindleStop () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x9E ) ).start ();
+    }
+
+    @Override
+    public void sendRapidOverride100Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x95 ) ).start ();
+    }
+
+    @Override
+    public void sendRapidOverride50Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x96 ) ).start ();
+    }
+
+    @Override
+    public void sendRapidOverride25Percent () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0x97 ) ).start ();
+    }
+
+    @Override
+    public void sendToggleFloodCoolant () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0xA0 ) ).start ();
+    }
+
+    @Override
+    public void sendToggleMistCoolant () {
+        new Thread ( () -> sendSingleSignCommand ( (char) 0xA1 ) ).start ();
+    }
+
     private void sendSingleSignCommand ( char c ) {
 
         LOG.trace ( "sendSingleSignCommand: c=" + c );
@@ -260,7 +345,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
     }
 
-    private static final int SETTING_COLUMN_WIDTH = 20;
     private static final String SETTING_COLUMN_EMPTY = "                    ";
     
     // see https://github.com/gnea/grbl/wiki/Grbl-v1.1-Interface
@@ -325,6 +409,13 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             else if ( linePiped.indexOf ( "F:" ) > 0 ) {
                 int [] n = parseIntVector ( linePiped, 1, "F:", '|' );
                 grblState.setFeedRate ( n [0] );
+            }
+            
+            if ( linePiped.indexOf ( "Ov:" ) > 0 ) {
+                int [] n = parseIntVector ( linePiped, 3, "Ov:", '|' );
+                grblState.setFeedOverride ( n [0] );
+                grblState.setRapidOverride ( n [0] );
+                grblState.setSpindleOverride ( n [0] );
             }
 
             String pinState = "no pin";
