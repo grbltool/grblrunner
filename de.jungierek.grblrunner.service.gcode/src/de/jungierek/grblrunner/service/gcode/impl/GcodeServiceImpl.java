@@ -729,6 +729,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
         gcodeProgram = program;
         gcodeProgram.resetProcessed ();
+        eventBroker.post ( IEvent.REDRAW, "dummy" );
 
         // decouple from UI thread
         gcodePlayerThread = new GcodePlayerThread ();

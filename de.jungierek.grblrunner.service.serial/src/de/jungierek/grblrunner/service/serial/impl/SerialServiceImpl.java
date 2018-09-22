@@ -212,8 +212,12 @@ public class SerialServiceImpl implements ISerialService {
 
                                 line += new String ( buffer, startPos, i + 1 - startPos );
 
-                                // TODO maybe enclosing the received call with a catch clause for runtime excptions
-                                if ( listener != null ) listener.received ( line );
+                                try {
+                                    if ( listener != null ) listener.received ( line );
+                                }
+                                catch ( Throwable exc ) {
+                                    LOG.error ( THREAD_NAME + " run: exception occured exc=" + exc );
+                                }
 
                                 startPos = i + 1;
                                 line = "";
