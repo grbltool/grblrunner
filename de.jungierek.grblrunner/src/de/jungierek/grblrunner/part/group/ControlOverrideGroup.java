@@ -82,7 +82,7 @@ public class ControlOverrideGroup {
         GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "Feed", 1 );
         feedOverrideDecrease1PercentButton = GuiFactory.createArrowButton ( group, SWT.LEFT );
         feedOverrideDecrease10PercentButton = GuiFactory.createArrowButton ( group, SWT.LEFT );
-        feedOverride100PercentButton = GuiFactory.createPushButton ( group, "   " );
+        feedOverride100PercentButton = GuiFactory.createPushButton ( group, " | " );
         feedOverrideIncrease10PercentButton = GuiFactory.createArrowButton ( group, SWT.RIGHT );
         feedOverrideIncrease1PercentButton = GuiFactory.createArrowButton ( group, SWT.RIGHT );
         GuiFactory.createHiddenLabel ( group, 1 );
@@ -93,7 +93,7 @@ public class ControlOverrideGroup {
         GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "Spindle", 1 );
         spindleOverrideDecrease1PercentButton = GuiFactory.createArrowButton ( group, SWT.LEFT );
         spindleOverrideDecrease10PercentButton = GuiFactory.createArrowButton ( group, SWT.LEFT );
-        spindleOverride100PercentButton = GuiFactory.createPushButton ( group, "   " );
+        spindleOverride100PercentButton = GuiFactory.createPushButton ( group, " | " );
         spindleOverrideIncrease10PercentButton = GuiFactory.createArrowButton ( group, SWT.RIGHT );
         spindleOverrideIncrease1PercentButton = GuiFactory.createArrowButton ( group, SWT.RIGHT );
         toggleSpindleStopButton = GuiFactory.createPushButton ( group, "" );

@@ -201,9 +201,9 @@ public class GcodeGrblStateImpl implements IGcodeGrblState {
         result = result && s.feedRate == this.feedRate;
         result = result && s.spindleSpeed == this.spindleSpeed;
         result = result && (s.pinState == null ? true : s.pinState.equals ( this.pinState ));
-        result = result && (s.feedOverride == 0) ? true : s.feedOverride == this.feedOverride;
-        result = result && (s.rapidOverride == 0) ? true : s.rapidOverride == this.rapidOverride;
-        result = result && (s.spindleOverride == 0) ? true : s.spindleOverride == this.spindleOverride;
+        result = result && s.feedOverride == this.feedOverride;
+        result = result && s.rapidOverride == this.rapidOverride;
+        result = result && s.spindleOverride == this.spindleOverride;
 
         return result;
         
