@@ -414,8 +414,8 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             if ( linePiped.indexOf ( "Ov:" ) > 0 ) {
                 int [] n = parseIntVector ( linePiped, 3, "Ov:", '|' );
                 grblState.setFeedOverride ( n [0] );
-                grblState.setRapidOverride ( n [0] );
-                grblState.setSpindleOverride ( n [0] );
+                grblState.setRapidOverride ( n [1] );
+                grblState.setSpindleOverride ( n [2] );
             }
 
             String pinState = "no pin";

@@ -462,13 +462,13 @@ public class GcodeViewGroup {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        Group group = GuiFactory.createGroup ( parent, "", groupCols, 1, true, true );
+        Group group = GuiFactory.createGroup ( parent, "Gcode View", groupCols, 1, true, true );
 
-        final int cols = 9 + 3;
+        final int cols = 12;
         group.setLayout ( new GridLayout ( cols, true ) );
 
         canvas = new Canvas ( group, SWT.NO_BACKGROUND );
@@ -479,13 +479,10 @@ public class GcodeViewGroup {
 
         GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "zoom:", 1 );
         scaleLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
-
         GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "shift:", 1 );
         pixelShiftLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
-
         GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "rot:", 1 );
         rotationLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
-
         GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "mouse:", 1 );
         mouseCoordinateLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
 
@@ -505,12 +502,6 @@ public class GcodeViewGroup {
         restorePersistedState ();
 
         redraw ();
-
-    }
-
-    public Canvas getCanvas () {
-
-        return canvas;
 
     }
 

@@ -19,12 +19,14 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.part.group.GcodeViewGroup;
+import de.jungierek.grblrunner.part.group.GrblRealtimeInfoGroup;
 
 public class GcodeViewPart {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeViewPart.class );
 
     // prevent from garbage collection
+    private GrblRealtimeInfoGroup grblRealtimeInfoGroup;
     private GcodeViewGroup gcodeViewGroup;
 
     @Inject
@@ -37,10 +39,12 @@ public class GcodeViewPart {
 
         final int cols = 1;
         parent.setLayout ( new GridLayout ( cols, true ) );
+
         context.set ( IContextKey.PART_COLS, cols );
-        context.set ( IContextKey.PART_GROUP_COLS, 1 ); // all groups have a width of 1 column
+        context.set ( IContextKey.PART_GROUP_COLS, cols ); // all groups have a width of 1 column
 
         // collect groups
+        grblRealtimeInfoGroup = ContextInjectionFactory.make ( GrblRealtimeInfoGroup.class, context );
         gcodeViewGroup = ContextInjectionFactory.make ( GcodeViewGroup.class, context );
         
         restoreViewState ( part );
