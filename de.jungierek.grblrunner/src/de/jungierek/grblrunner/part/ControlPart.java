@@ -18,10 +18,11 @@ import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.part.group.ControlAutolevelGroup;
 import de.jungierek.grblrunner.part.group.ControlCycleGroup;
 import de.jungierek.grblrunner.part.group.ControlGrblGroup;
+import de.jungierek.grblrunner.part.group.ControlInfoGroup;
 import de.jungierek.grblrunner.part.group.ControlMoveGroup;
+import de.jungierek.grblrunner.part.group.ControlOverrideGroup;
 import de.jungierek.grblrunner.part.group.ControlProbeGroup;
 import de.jungierek.grblrunner.part.group.ControlSpindleGroup;
-import de.jungierek.grblrunner.part.group.GrblRealtimeInfoGroup;
 
 public class ControlPart {
     
@@ -33,7 +34,7 @@ public class ControlPart {
 
     // prevent groups from garbage collection
     @SuppressWarnings("unused")
-    private GrblRealtimeInfoGroup controlInfoGroup;
+    private ControlInfoGroup controlInfoGroup;
 
     @SuppressWarnings("unused")
     private ControlCycleGroup controlCycleGroup;
@@ -49,6 +50,9 @@ public class ControlPart {
 
     @SuppressWarnings("unused")
     private ControlProbeGroup controlProbeGroup;
+
+    @SuppressWarnings("unused")
+    private ControlOverrideGroup controlOverrideGroup;
 
     @SuppressWarnings("unused")
     private ControlAutolevelGroup controlAutolevelGroup;
@@ -69,7 +73,7 @@ public class ControlPart {
         // settings $$, parameters $#, parser $G, build $I, startup $N
         context.set ( IContextKey.PART_GROUP_COLS, cols );
         context.set ( IContextKey.PART_GROUP_ROWS, 1 );
-        controlInfoGroup = ContextInjectionFactory.make ( GrblRealtimeInfoGroup.class, context );
+        controlInfoGroup = ContextInjectionFactory.make ( ControlInfoGroup.class, context );
         
         // cycle start, feed hold, reset
         context.set ( IContextKey.PART_GROUP_COLS, cols / 4 );
@@ -96,6 +100,11 @@ public class ControlPart {
         context.set ( IContextKey.PART_GROUP_ROWS, 1 );
         controlProbeGroup = ContextInjectionFactory.make ( ControlProbeGroup.class, context );
         
+        // override
+        context.set ( IContextKey.PART_GROUP_COLS, cols );
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
+        controlOverrideGroup = ContextInjectionFactory.make ( ControlOverrideGroup.class, context );
+
         // scan
         context.set ( IContextKey.PART_GROUP_COLS, cols );
         context.set ( IContextKey.PART_GROUP_ROWS, 1 );
