@@ -155,7 +155,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
         setGridFields ();
 
         if ( scanClearanceZText != null && !scanClearanceZText.isDisposed () ) { // gui created
-            setControlsEnabled ( true );
+            setControlsEnabled ( program != null );
         }
 
     }
@@ -197,12 +197,13 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
 
     private void setControlsEnabled ( boolean enabled ) {
 
-        scanStepXText.setEnabled ( enabled );
-        scanStepYText.setEnabled ( enabled );
-        scanMinZText.setEnabled ( enabled );
-        scanMaxZText.setEnabled ( enabled );
-        scanClearanceZText.setEnabled ( enabled );
-        scanFeedrateText.setEnabled ( enabled );
+        boolean textFieldEnabled = enabled && gcodeProgram != null && (serialService.isOpen () || IConstant.AUTOLEVEL_ENABLE_WITHOUT_SERIAL);
+        scanStepXText.setEnabled ( textFieldEnabled );
+        scanStepYText.setEnabled ( textFieldEnabled );
+        scanMinZText.setEnabled ( textFieldEnabled );
+        scanMaxZText.setEnabled ( textFieldEnabled );
+        scanClearanceZText.setEnabled ( textFieldEnabled );
+        scanFeedrateText.setEnabled ( textFieldEnabled );
 
         // @formatter:off
         scanStartButton.setEnabled ( 
