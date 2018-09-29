@@ -62,6 +62,7 @@ public class GcodeEditorPart {
         parent.setLayout ( new GridLayout ( cols, false ) );
         context.set ( IContextKey.PART_COLS, cols );
         context.set ( IContextKey.PART_GROUP_COLS, cols ); // all groups have a width of 1 column
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
         
         context.set ( IGcodeProgram.class, gcodeProgram );
 

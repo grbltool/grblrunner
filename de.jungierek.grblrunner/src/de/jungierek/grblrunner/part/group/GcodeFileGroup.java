@@ -4,7 +4,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -40,13 +39,11 @@ public class GcodeFileGroup {
     private Label gcodeTimeLabel;
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IContextKey.PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
-        Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, 1, true );
+        Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         final int cols = 9;
         group.setLayout ( new GridLayout ( cols, true ) );

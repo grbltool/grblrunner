@@ -18,10 +18,10 @@ import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.part.group.ControlAutolevelGroup;
 import de.jungierek.grblrunner.part.group.ControlCycleGroup;
 import de.jungierek.grblrunner.part.group.ControlGrblGroup;
-import de.jungierek.grblrunner.part.group.GrblRealtimeInfoGroup;
 import de.jungierek.grblrunner.part.group.ControlMoveGroup;
 import de.jungierek.grblrunner.part.group.ControlProbeGroup;
 import de.jungierek.grblrunner.part.group.ControlSpindleGroup;
+import de.jungierek.grblrunner.part.group.GrblRealtimeInfoGroup;
 
 public class ControlPart {
     
@@ -32,12 +32,25 @@ public class ControlPart {
     private Shell shell;
 
     // prevent groups from garbage collection
+    @SuppressWarnings("unused")
     private GrblRealtimeInfoGroup controlInfoGroup;
+
+    @SuppressWarnings("unused")
     private ControlCycleGroup controlCycleGroup;
+
+    @SuppressWarnings("unused")
     private ControlMoveGroup controlMoveGroup;
+
+    @SuppressWarnings("unused")
     private ControlGrblGroup controlBasicsGroup;
+
+    @SuppressWarnings("unused")
     private ControlSpindleGroup controlSpindleGroup;
+
+    @SuppressWarnings("unused")
     private ControlProbeGroup controlProbeGroup;
+
+    @SuppressWarnings("unused")
     private ControlAutolevelGroup controlAutolevelGroup;
 
     // ********************************************************

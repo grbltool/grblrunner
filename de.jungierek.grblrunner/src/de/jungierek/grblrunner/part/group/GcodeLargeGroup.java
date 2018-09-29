@@ -28,6 +28,7 @@ import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.tool.GuiFactory;
 
+@SuppressWarnings("restriction")
 public class GcodeLargeGroup {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeLargeGroup.class );

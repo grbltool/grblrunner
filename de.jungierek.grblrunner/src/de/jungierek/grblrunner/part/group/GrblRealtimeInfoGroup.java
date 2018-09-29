@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
@@ -44,11 +45,11 @@ public class GrblRealtimeInfoGroup {
     private Label pinStateLabel;
 
     @PostConstruct
-    public void createGui ( Composite parent, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, 1, true );
+        Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         final int cols = 12;
         group.setLayout ( new GridLayout ( cols, true ) );
@@ -87,8 +88,8 @@ public class GrblRealtimeInfoGroup {
         }
 
         // update speeds
-        feedRateLabel.setText ( "" + state.getFeedRate () + " mm/min" );
-        spindleSpeedLabel.setText ( "" + state.getSpindleSpeed () + " rpm" );
+        feedRateLabel.setText ( "" + state.getFeedRate () + " " + IConstant.SPEED_MM_MIN_TEXT );
+        spindleSpeedLabel.setText ( "" + state.getSpindleSpeed () + " " + IConstant.SPEED_RPM_TEXT );
 
         // update buffers
         rxBufferLabel.setText ( "" + state.getAvailableRxBufferSize () );

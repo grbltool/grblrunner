@@ -2,8 +2,8 @@ package de.jungierek.grblrunner.part.group;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
@@ -27,12 +27,11 @@ public class StateUnitGroup {
     private Label unitLabel;
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
-        Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, 1, true );
+        Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         group.setLayout ( new GridLayout ( 1, false ) );
         unitLabel = GuiFactory.createHeadingLabel ( group, SWT.CENTER, "", 1 );

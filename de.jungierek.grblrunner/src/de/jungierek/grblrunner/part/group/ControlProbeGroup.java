@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -28,6 +28,7 @@ import de.jungierek.grblrunner.tool.CommandParameterCallback;
 import de.jungierek.grblrunner.tool.GuiFactory;
 import de.jungierek.grblrunner.tool.Toolbox;
 
+@SuppressWarnings("restriction")
 public class ControlProbeGroup implements CommandParameterCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger ( ControlProbeGroup.class );
@@ -41,12 +42,12 @@ public class ControlProbeGroup implements CommandParameterCallback {
     private Text probeDepthText;
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context, @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepth ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols, @Preference(
+            nodePath = IConstant.PREFERENCE_NODE,
+            value = IPreferenceKey.PROBE_DEPTH) double probeDepth ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IContextKey.PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         group.setLayout ( new GridLayout ( 3, false ) );
@@ -56,15 +57,6 @@ public class ControlProbeGroup implements CommandParameterCallback {
         probeStartButton = GuiFactory.createArrowButton ( group, SWT.DOWN );
 
         probeStartButton.addSelectionListener ( toolbox.createCommandExecuteSelectionListener ( ICommandId.PROBE_ACTION, new HashMap<String, Object> (), this ) );
-
-        // probeStartButton.addSelectionListener ( new SelectionAdapter () {
-        //
-        // @Override
-        // public void widgetSelected ( SelectionEvent evt ) {
-        // gcodeService.sendCommandSuppressInTerminal ( "G90G38.2Z" + probeDepthText.getText () + "F" + IPreferences.PROBE_FEEDRATE );
-        // }
-        //
-        // } );
 
     }
 
@@ -78,7 +70,7 @@ public class ControlProbeGroup implements CommandParameterCallback {
     @Override
     public Map<String, Object> getParameter () {
 
-        Map<String, Object> result = new HashMap<String, Object> ();
+        Map<String, Object> result = new HashMap<> ();
         result.put ( ICommandId.PROBE_ACTION_DEPTH_PARAMETER, probeDepthText.getText () );
 
         return result;

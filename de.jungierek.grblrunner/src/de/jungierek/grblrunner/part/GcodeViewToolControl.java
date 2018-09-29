@@ -86,7 +86,7 @@ public class GcodeViewToolControl {
         if ( index < 0 ) index = 0; // default selection is "NO OVERLAY"
         String text = cCombo.getText ();
 
-        ArrayList<String> itemList = new ArrayList<String> ( 10 );
+        ArrayList<String> itemList = new ArrayList<> ( 10 );
         itemList.add ( IConstant.NO_OVERLAY );
 
         Collection<MPart> parts = partService.getParts ();

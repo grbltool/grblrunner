@@ -51,6 +51,7 @@ import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tool.GuiFactory;
 import de.jungierek.grblrunner.tool.Toolbox;
 
+@SuppressWarnings("restriction")
 public class GcodeViewGroup {
 
     private static final Logger LOG = LoggerFactory.getLogger ( GcodeViewGroup.class );
@@ -462,11 +463,11 @@ public class GcodeViewGroup {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        Group group = GuiFactory.createGroup ( parent, "Gcode View", groupCols, 1, true, true );
+        Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true, true );
 
         final int cols = 12;
         group.setLayout ( new GridLayout ( cols, true ) );

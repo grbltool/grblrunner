@@ -6,7 +6,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -20,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.EGrblState;
@@ -31,8 +31,6 @@ public class StateGroup {
     private static final Logger LOG = LoggerFactory.getLogger ( StateGroup.class );
 
     private static final String GROUP_NAME = "Grbl State";
-
-    private static final String UNCONNECTED_TEXT = "UNCONNECTED";
 
     @Inject
     @Named(IServiceConstants.ACTIVE_SHELL)
@@ -58,20 +56,17 @@ public class StateGroup {
     private Color [] unconnectedColors = new Color [2];
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IContextKey.PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IContextKey.PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         final FillLayout l = new FillLayout ();
         l.type = SWT.VERTICAL;
         group.setLayout ( l );
         stateLabel = new Label ( group, SWT.CENTER );
-        stateLabel.setText ( UNCONNECTED_TEXT );
+        stateLabel.setText ( IConstant.UNCONNECTED_TEXT );
         unconnectedColors [0] = stateLabel.getForeground ();
         unconnectedColors [1] = stateLabel.getBackground ();
         
@@ -98,7 +93,7 @@ public class StateGroup {
 
         LOG.trace ( "resetStateLabel:" );
 
-        stateLabel.setText ( UNCONNECTED_TEXT );
+        stateLabel.setText ( IConstant.UNCONNECTED_TEXT );
         stateLabel.setForeground ( unconnectedColors [0] );
         stateLabel.setBackground ( unconnectedColors [1] );
 

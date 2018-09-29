@@ -23,6 +23,7 @@ import de.jungierek.grblrunner.service.serial.ISerialService;
 
 // TODO_PREF Auswahlfeld für Baudrate
 
+@SuppressWarnings("restriction")
 public class SerialPart {
     
     private static final Logger LOG = LoggerFactory.getLogger ( SerialPart.class );
@@ -30,8 +31,10 @@ public class SerialPart {
     // prevrent from garbage collection
     @SuppressWarnings("unused")
     private SerialActionsGroup serialActionsGroup;
+
     @SuppressWarnings("unused")
     private SerialPortGroup serialPortGroup;
+
     @SuppressWarnings("unused")
     private SerialAutoConnectGroup serialAutoConnectGroup;
     

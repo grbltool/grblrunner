@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -31,6 +31,7 @@ import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.tool.GuiFactory;
 
+@SuppressWarnings("restriction")
 public class StatusLineGroup {
 
     private static final Logger LOG = LoggerFactory.getLogger ( StatusLineGroup.class );
@@ -49,6 +50,8 @@ public class StatusLineGroup {
     private int statusHistoryDepth;
     private ArrayList<String> statusHistory;
 
+    private String startMsg;
+
     @Inject
     public void setStatusHistoryDepth ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.STATUS_HISTORY_DEPTH) int depth ) {
 
@@ -59,14 +62,12 @@ public class StatusLineGroup {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
         
-        statusHistory = new ArrayList<String> ( statusHistoryDepth + 1 );
+        statusHistory = new ArrayList<> ( statusHistoryDepth + 1 );
 
-        int partCols = ((Integer) context.get ( IContextKey.PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, 1, true );
 
         final int cols = 1;
@@ -203,9 +204,6 @@ public class StatusLineGroup {
 
     }
 
-    private String startMsg;
-
-    @SuppressWarnings("deprecation")
     @Inject
     @Optional
     public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String timestamp ) {

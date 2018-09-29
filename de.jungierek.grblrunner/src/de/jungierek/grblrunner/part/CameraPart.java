@@ -34,6 +34,7 @@ import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
 import de.jungierek.grblrunner.service.webcam.IWebcamServiceReceiver;
 
+@SuppressWarnings("restriction")
 public class CameraPart implements PaintListener, IWebcamServiceReceiver {
 
     private static final Logger LOG = LoggerFactory.getLogger ( CameraPart.class );

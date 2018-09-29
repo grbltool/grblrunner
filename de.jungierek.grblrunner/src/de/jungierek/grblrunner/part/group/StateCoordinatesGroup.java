@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -29,8 +29,6 @@ import de.jungierek.grblrunner.constants.IPersistenceKey;
 import de.jungierek.grblrunner.service.gcode.IGcodeGrblState;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
-import de.jungierek.grblrunner.service.gcode.IGrblRequest;
-import de.jungierek.grblrunner.service.gcode.IGrblResponse;
 import de.jungierek.grblrunner.tool.CommandParameterCallback;
 import de.jungierek.grblrunner.tool.GuiFactory;
 import de.jungierek.grblrunner.tool.Toolbox;
@@ -66,13 +64,10 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IContextKey.PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IContextKey.PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         group.setLayout ( new GridLayout ( 5, true ) );
@@ -188,6 +183,7 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
     public void updateCoordSelectNotified ( @UIEventTopic(IEvent.UPDATE_FIXTURE) String coordSelect ) {
 
         LOG.trace ( "updateCoordSelectNotified: coordSelect=" + coordSelect );
+
         coordSystemCombo.select ( coordSelect.charAt ( 2 ) - '4' );
         saveCoordinateSystem ( coordSelect );
 
@@ -237,49 +233,6 @@ public class StateCoordinatesGroup implements CommandParameterCallback {
 
         LOG.trace ( "scanStopNotified:" );
         setControlsEnabled ( true );
-
-    }
-
-    // TODO check this code or delete it
-
-    boolean unlockSent = false;
-
-    @Inject
-    @Optional
-    public void sentNotified ( @UIEventTopic(IEvent.GRBL_SENT) IGrblRequest command ) {
-
-        LOG.trace ( "sentNotified: command=" + command );
-
-        if ( command != null && command.isUnlock () ) { // unlock
-            unlockSent = true;
-        }
-
-    }
-
-    @Inject
-    @Optional
-    public void receivedNotified ( @UIEventTopic(IEvent.GRBL_RECEIVED) IGrblResponse response ) {
-
-        if ( response == null ) {
-            LOG.warn ( "receivedNotified: response == null" );
-            return;
-        }
-
-        if ( response.getMessage () == null ) {
-            LOG.warn ( "receivedNotified: line == null" );
-            return;
-        }
-
-        if ( !response.getMessage ().startsWith ( "<" ) ) {
-            LOG.trace ( "receivedNotified: response=" + response + " unlockSent=" + unlockSent );
-        }
-
-        if ( unlockSent && response.getMessage ().startsWith ( "ok" ) ) {
-            unlockSent = false;
-            // first 'ok' after alarm comes with unlock an periodic $G command, then the coordinate system will be set
-
-            // restoreCoordinateSystem ();
-        }
 
     }
 

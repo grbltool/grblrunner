@@ -34,15 +34,34 @@ public class StatePart {
     private Shell shell;
 
     // prevent groups from garbage collection
+    @SuppressWarnings("unused")
     private StateCoordinatesGroup stateCoordinatesGroup;
+
+    @SuppressWarnings("unused")
     private StateGroup stateGroup;
+
+    @SuppressWarnings("unused")
     private StateFeedrateGroup stateFeedrateGroup;
+
+    @SuppressWarnings("unused")
     private StateToolGroup stateToolGroup;
+
+    @SuppressWarnings("unused")
     private StateSpindleGroup stateSpindleGroup;
+
+    @SuppressWarnings("unused")
     private StateCoolantGroup stateCoolantGroup;
+
+    @SuppressWarnings("unused")
     private StateModalModeGroup stateModalModeGroup;
+
+    @SuppressWarnings("unused")
     private StatePlaneGroup statePlaneGroup;
+
+    @SuppressWarnings("unused")
     private StateUnitGroup stateUnitsGroup;
+
+    @SuppressWarnings("unused")
     private StateDistanceGroup stateDistanceGroup;
 
     @Inject

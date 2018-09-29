@@ -41,6 +41,7 @@ import de.jungierek.grblrunner.part.group.MacroPocketGroup;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tool.Toolbox;
 
+@SuppressWarnings("restriction")
 public class MacroPart {
 
     private static final Logger LOG = LoggerFactory.getLogger ( MacroPart.class );
@@ -55,7 +56,6 @@ public class MacroPart {
     private Toolbox toolbox;
 
     // prevent from garbage collection
-    @SuppressWarnings("unused")
     private MacroGroup macroGroup;
 
     // prevent from garbage collection

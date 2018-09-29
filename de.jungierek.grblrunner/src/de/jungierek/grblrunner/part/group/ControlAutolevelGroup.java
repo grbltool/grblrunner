@@ -36,6 +36,7 @@ import de.jungierek.grblrunner.tool.CommandParameterCallback;
 import de.jungierek.grblrunner.tool.GuiFactory;
 import de.jungierek.grblrunner.tool.Toolbox;
 
+@SuppressWarnings("restriction")
 public class ControlAutolevelGroup implements CommandParameterCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger ( ControlAutolevelGroup.class );
@@ -242,7 +243,7 @@ public class ControlAutolevelGroup implements CommandParameterCallback {
     @Override
     public Map<String, Object> getParameter () {
 
-        Map<String, Object> result = new HashMap<String, Object> ();
+        Map<String, Object> result = new HashMap<> ();
         result.put ( ICommandId.AUTOLEVEL_ZMIN_PARAMETER, scanMinZText.getText () );
         result.put ( ICommandId.AUTOLEVEL_ZMAX_PARAMETER, scanMaxZText.getText () );
         result.put ( ICommandId.AUTOLEVEL_ZCLEARANCE_PARAMETER, scanClearanceZText.getText () );

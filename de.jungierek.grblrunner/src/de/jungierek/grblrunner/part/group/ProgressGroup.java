@@ -4,11 +4,9 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.workbench.modeling.ESelectionService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,22 +34,13 @@ public class ProgressGroup {
     @Inject
     private IGcodeService gcodeService;
 
-    @Inject
-    private ESelectionService selectionService;
-
     private ProgressBar progressBar;
 
-    private int progressMaxPlayer;
-
-    private int progressMaxScan;
-
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int partCols = ((Integer) context.get ( IContextKey.PART_COLS )).intValue ();
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, 1, true );
 
         final int cols = 1;
@@ -68,18 +57,15 @@ public class ProgressGroup {
 
     @Inject
     public void setGcodeProgram ( @Optional @Named(IServiceConstants.ACTIVE_SELECTION) IGcodeProgram program ) {
-    
+
         LOG.debug ( "setGcodeProgram: program=" + program );
-    
-        if ( program == null ) {
-            progressMaxPlayer = 1;
-            progressMaxScan = 1;
+
+        // reset progress bar
+        if ( program == null && progressBar != null && !progressBar.isDisposed () ) {
+            progressBar.setSelection ( 0 );
+            progressBar.setState ( SWT.NORMAL );
         }
-        else {
-            progressMaxPlayer = program.getLineCount ();
-            progressMaxScan = program.getNumProbePoints ();
-        }
-    
+
     }
 
     @Inject
@@ -137,7 +123,6 @@ public class ProgressGroup {
         LOG.trace ( "playerStartNotified: timestamp=" + timestamp );
 
         progressBar.setMinimum ( 0 );
-        // progressBar.setMaximum ( progressMaxPlayer );
         progressBar.setMaximum ( program.getLineCount () );
         progressBar.setSelection ( 0 );
 
@@ -160,7 +145,6 @@ public class ProgressGroup {
         LOG.trace ( "scanStartNotified:" );
 
         progressBar.setMinimum ( 0 );
-        // progressBar.setMaximum ( progressMaxScan );
         progressBar.setMaximum ( program.getNumProbePoints () );
         progressBar.setSelection ( 0 );
 

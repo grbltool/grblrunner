@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -25,11 +25,11 @@ import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.constants.IPreferenceKey;
-import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.tool.CommandParameterCallback;
 import de.jungierek.grblrunner.tool.GuiFactory;
 import de.jungierek.grblrunner.tool.Toolbox;
 
+@SuppressWarnings("restriction")
 public class ControlSpindleGroup implements CommandParameterCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger ( ControlSpindleGroup.class );
@@ -38,9 +38,6 @@ public class ControlSpindleGroup implements CommandParameterCallback {
 
     @Inject
     private Toolbox toolbox;
-
-    @Inject
-    private IGcodeService gcodeService;
 
     private Slider spindleVelocitySlider;
     private Button spindleStartButton;
@@ -67,12 +64,10 @@ public class ControlSpindleGroup implements CommandParameterCallback {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IContextKey.PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         group.setLayout ( new GridLayout ( 3, false ) );
@@ -101,7 +96,7 @@ public class ControlSpindleGroup implements CommandParameterCallback {
         // to prevent deadlocks in UI Thread
         ignoreSpindleSpeedUpdate = true;
 
-        Map<String, Object> result = new HashMap<String, Object> ();
+        Map<String, Object> result = new HashMap<> ();
         result.put ( ICommandId.SPINDLE_SPEED_PARAMETER, "" + spindleVelocitySlider.getSelection () );
 
         return result;

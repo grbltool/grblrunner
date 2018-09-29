@@ -43,11 +43,10 @@ import de.jungierek.grblrunner.service.gcode.IGrblRequest;
 import de.jungierek.grblrunner.service.gcode.IGrblResponse;
 import de.jungierek.grblrunner.tool.Toolbox;
 
+@SuppressWarnings("restriction")
 public class TerminalPart {
 
     private static final Logger LOG = LoggerFactory.getLogger ( TerminalPart.class );
-
-    private static final String JUSTIFY_PLACE = "                    ";
 
     @Inject
     private IGcodeService gcodeService;

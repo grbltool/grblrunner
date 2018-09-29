@@ -40,7 +40,7 @@ public class SerialAutoConnectGroup {
     private Label autoConnectPortLabel;
 
     @PostConstruct
-    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 

@@ -9,7 +9,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
-import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -25,25 +24,24 @@ import de.jungierek.grblrunner.part.group.CommandGroup;
 import de.jungierek.grblrunner.part.group.GcodeLargeGroup;
 import de.jungierek.grblrunner.part.group.ProgressGroup;
 import de.jungierek.grblrunner.part.group.StatusLineGroup;
-import de.jungierek.grblrunner.service.gcode.IGcodeService;
 
 public class StatusLinePart {
 
     private static final Logger LOG = LoggerFactory.getLogger ( StatusLinePart.class );
 
     @Inject
-    private IGcodeService gcodeService;
-
-    @Inject
     @Named(IServiceConstants.ACTIVE_SHELL)
     private Shell shell;
 
-    @Inject
-    UISynchronize sync;
-
+    @SuppressWarnings("unused")
     private GcodeLargeGroup gcodeLargeGroup;
+
     private CommandGroup commandGroup;
+
+    @SuppressWarnings("unused")
     private StatusLineGroup statusLineGroup;
+
+    @SuppressWarnings("unused")
     private ProgressGroup progressGroup;
 
     @Focus
@@ -62,6 +60,7 @@ public class StatusLinePart {
         parent.setLayout ( new GridLayout ( cols, true ) );
         context.set ( IContextKey.PART_COLS, cols );
         context.set ( IContextKey.PART_GROUP_COLS, 1 ); // all groups have a width of 1 column
+        context.set ( IContextKey.PART_GROUP_ROWS, 1 );
 
         // collect groups and hold reference to prevent garbage collection
         gcodeLargeGroup = ContextInjectionFactory.make ( GcodeLargeGroup.class, context );

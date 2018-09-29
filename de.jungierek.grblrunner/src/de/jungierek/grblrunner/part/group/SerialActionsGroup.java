@@ -26,6 +26,7 @@ import de.jungierek.grblrunner.constants.IPreferenceKey;
 import de.jungierek.grblrunner.tool.GuiFactory;
 import de.jungierek.grblrunner.tool.Toolbox;
 
+@SuppressWarnings("restriction")
 public class SerialActionsGroup {
 
     private static final Logger LOG = LoggerFactory.getLogger ( SerialActionsGroup.class );
@@ -62,7 +63,7 @@ public class SerialActionsGroup {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_ORIENTATION) int orientation ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols, @Named(IContextKey.PART_GROUP_ORIENTATION) int orientation ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 

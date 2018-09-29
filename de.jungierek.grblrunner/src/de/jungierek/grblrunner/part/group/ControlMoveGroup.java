@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
@@ -62,12 +62,10 @@ public class ControlMoveGroup implements CommandParameterCallback {
     }
 
     @PostConstruct
-    public void createGui ( Composite parent, IEclipseContext context ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
-        int groupCols = ((Integer) context.get ( IContextKey.PART_GROUP_COLS )).intValue ();
-        int groupRows = ((Integer) context.get ( IContextKey.PART_GROUP_ROWS )).intValue ();
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
         group.setLayout ( new GridLayout ( 9, false ) );
@@ -153,7 +151,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
     
     private Map<String, Object> createParameterMap ( String axis, String direction ) {
         
-        Map<String,Object> result = new HashMap<String, Object> ();
+        Map<String,Object> result = new HashMap<> ();
         result.put ( ICommandId.GRBL_MOVE_AXIS_PARAMETER, axis );
         result.put ( ICommandId.GRBL_MOVE_DIRECTION_PARAMETER, direction );
         
@@ -163,7 +161,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
 
     private Map<String, Object> createParameterMap ( String axis ) {
 
-        Map<String, Object> result = new HashMap<String, Object> ();
+        Map<String, Object> result = new HashMap<> ();
         result.put ( ICommandId.GRBL_MOVE_ZERO_AXIS_PARAMETER, axis );
 
         return result;
@@ -187,7 +185,7 @@ public class ControlMoveGroup implements CommandParameterCallback {
     @Override
     public Map<String, Object> getParameter () {
 
-        Map<String, Object> result = new HashMap<String, Object> ();
+        Map<String, Object> result = new HashMap<> ();
         result.put ( ICommandId.GRBL_MOVE_DISTANCE_PARAMETER, rangeCombo.getText () );
 
         return result;

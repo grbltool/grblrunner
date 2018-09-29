@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.e4.core.di.annotations.Optional;
+import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -33,15 +34,15 @@ public class SerialPortGroup {
 
     private Combo portCombo;
 
-    // @Focus
-    // public void SetFocusToPortCombo () {
-    //
-    // portCombo.setFocus ();
-    //
-    // }
-    //
+    @Focus
+    public void SetFocusToPortCombo () {
+
+        portCombo.setFocus ();
+
+    }
+
     @PostConstruct
-    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_COLS) int groupCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows ) {
+    public void createGui ( Composite parent, @Named(IContextKey.PART_COLS) int partCols, @Named(IContextKey.PART_GROUP_ROWS) int groupRows, @Named(IContextKey.PART_GROUP_COLS) int groupCols ) {
 
         LOG.debug ( "createGui: parent=" + parent );
 
