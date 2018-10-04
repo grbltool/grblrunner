@@ -38,8 +38,8 @@ public class CameraPreferencePage extends FieldEditorPreferencePage {
         addField ( new IntegerFieldEditor ( IPreferenceKey.CAMERA_MIDCROSS_OFFSET_Y, "Midcross Y-Offset", -CAMERA_OFFSET_RANGE, +CAMERA_OFFSET_RANGE, getFieldEditorParent () ) );
         GuiFactory.createHiddenLabel ( getFieldEditorParent (), cols, true );
 
-        addField ( new IntegerFieldEditor ( IPreferenceKey.CAMERA_MILL_OFFSET_X, "Midcross X-Offset", -CAMERA_OFFSET_RANGE, +CAMERA_OFFSET_RANGE, getFieldEditorParent () ) );
-        addField ( new IntegerFieldEditor ( IPreferenceKey.CAMERA_MILL_OFFSET_Y, "Midcross Y-Offset", -CAMERA_OFFSET_RANGE, +CAMERA_OFFSET_RANGE, getFieldEditorParent () ) );
+        addField ( new IntegerFieldEditor ( IPreferenceKey.CAMERA_MILL_OFFSET_X, "Mill X-Offset", -CAMERA_OFFSET_RANGE, +CAMERA_OFFSET_RANGE, getFieldEditorParent () ) );
+        addField ( new IntegerFieldEditor ( IPreferenceKey.CAMERA_MILL_OFFSET_Y, "Mill Y-Offset", -CAMERA_OFFSET_RANGE, +CAMERA_OFFSET_RANGE, getFieldEditorParent () ) );
 
     }
 
