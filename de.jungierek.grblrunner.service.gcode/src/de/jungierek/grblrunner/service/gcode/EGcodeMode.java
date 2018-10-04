@@ -36,7 +36,7 @@ public enum EGcodeMode {
     PROGRAM_HALT            ( "M0" ),
     PROGRAM_END             ( "M2", "M30" ),
     
-    //TOOL_CHANGE             ( "M6" ), // not supported
+    TOOL_CHANGE             ( "M06", "M6" ), // not supported
     
     GCODE_MODE_UNDEF ( "" )
     ;

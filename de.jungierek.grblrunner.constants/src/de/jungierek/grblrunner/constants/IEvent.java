@@ -110,6 +110,7 @@ public interface IEvent {
     public static final String MESSAGE_CONFIRM = MESSAGE_BASE + SEPARATOR + "confirm";
     public static final String MESSAGE_INFO = MESSAGE_BASE + SEPARATOR + "info";
     public static final String MESSAGE_QUESTION = MESSAGE_BASE + SEPARATOR + "question";
+    public static final String MESSAGE_ON_HALT = MESSAGE_BASE + SEPARATOR + "onhalt";
 
     // *********************************************************************************************
 

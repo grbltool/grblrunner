@@ -21,6 +21,7 @@ public class GcodePlayCommandInPartHandler {
     private static final Logger LOG = LoggerFactory.getLogger ( GcodePlayCommandInPartHandler.class );
 
     // @formatter:off
+    @SuppressWarnings("restriction")
     @Execute
     public void execute ( 
             Display display, 
@@ -29,14 +30,17 @@ public class GcodePlayCommandInPartHandler {
             EPartService partService, 
             IGcodeProgram gcodeProgram,
             @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PLAY_GCODE_DIALOG_SHOW) boolean showDialog,
-            @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PLAY_GCODE_DIALOG_FONT_DATA) String fontDataString
+            @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PLAY_GCODE_DIALOG_FONT_DATA) String fontDataString,
+            @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_DEPTH) double probeDepth, 
+            @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_FEEDRATE) double probeFeedrate, 
+            @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.PROBE_WITH_ERROR) boolean probeWithError
     ) {
     // @formatter:on
 
         LOG.debug ( "execute: program=" + gcodeProgram );
 
         if ( !showDialog || showDialog && new GcodePlayDialog ( display, shell, gcodeService, partService, fontDataString ).open () == 0 ) { // 0 -> ok, 1 -> Cancel
-            gcodeService.playGcodeProgram ( gcodeProgram );
+            gcodeService.playGcodeProgram ( gcodeProgram, probeDepth, probeFeedrate, probeWithError );
         }
 
     }

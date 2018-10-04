@@ -84,11 +84,14 @@ public interface IConstant {
 
     public static final int GRBL_STATE_POLLER_SLEEP_MS = 200;
     public static final int PARSER_STATE_POLLER_SLEEP_MS = 1003;
-    public static final int GCODE_SENDER_WAIT_SLEEP_MS = 10;
+    public static final int GCODE_SENDER_WAITOK_SLEEP_MS = 10;
+    public static final int GCODE_PLAYER_PROBE_SLEEP_MS = 100;
 
     public static final String UNCONNECTED_TEXT = "UNCONNECTED";
 
     public static final String SPEED_MM_MIN_TEXT = "mm/min";
     public static final String SPEED_RPM_TEXT = "rpm";
+
+    public static final String GCODE_MSG_TAG = "(MSG, ";
 
 }
