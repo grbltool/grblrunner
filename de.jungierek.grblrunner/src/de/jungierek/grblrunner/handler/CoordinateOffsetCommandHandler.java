@@ -25,7 +25,7 @@ public class CoordinateOffsetCommandHandler {
         if ( command != null ) {
 
             String line = "G10 L2";
-            if ( command.getId ().endsWith ( "set" ) ) line += "0";
+            if ( command.getId ().endsWith ( ".set" ) ) line += "0";
             line += axis + "0";
 
             try {
