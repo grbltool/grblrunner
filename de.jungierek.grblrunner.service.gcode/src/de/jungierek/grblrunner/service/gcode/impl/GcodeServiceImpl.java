@@ -816,6 +816,13 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     }
 
     @Override
+    public boolean isGrblJog () {
+
+        return lastGrblState == null || lastGrblState.getGrblState () == EGrblState.JOG;
+
+    }
+
+    @Override
     public boolean isAutolevelScan () {
 
         return scanRunning;

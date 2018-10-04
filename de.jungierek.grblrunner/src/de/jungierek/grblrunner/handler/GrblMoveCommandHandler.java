@@ -55,7 +55,7 @@ public class GrblMoveCommandHandler {
 
         LOG.trace ( "canExecute:" );
 
-        return serial.isOpen () && !gcodeService.isPlaying () && !gcodeService.isAutolevelScan () && gcodeService.isGrblIdle ();
+        return serial.isOpen () && !gcodeService.isPlaying () && !gcodeService.isAutolevelScan () && (gcodeService.isGrblIdle () || gcodeService.isGrblJog ());
 
     }
 

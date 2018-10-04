@@ -107,6 +107,7 @@ public interface IGcodeService {
 
     public boolean isGrblIdle ();
     public boolean isGrblAlarm ();
+    public boolean isGrblJog ();
 
     public String getFixture ();
     public String getMetricMode ();
