@@ -525,6 +525,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
     @Override
     public void setAutolevelScanCompleted () {
     
+        computeAutlevelSegments ();
         scanDataComplete = true;
     
     }
@@ -648,12 +649,12 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         final GcodePointImpl p = (GcodePointImpl) probe;
 
-        final double distx = p.x - min.x;
-        final double ii = distx / this.xStepWidth + IConstant.EPSILON;
+        final double distx = p.x - min.x + IConstant.EPSILON;
+        final double ii = distx / this.xStepWidth;
         int i = (int) ii;
 
-        final double disty = p.y - min.y;
-        final double jj = disty / this.yStepWidth + IConstant.EPSILON;
+        final double disty = p.y - min.y + IConstant.EPSILON;
+        final double jj = disty / this.yStepWidth;
         int j = (int) jj;
 
         LOG.debug ( "setProbePoint: dx=" + distx + " dy=" + disty + "  ii=" + ii + " i=" + i + " jj=" + jj + " j=" + j );
@@ -1003,8 +1004,7 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
     }
 
-    @Override
-    public void computeAutlevelSegments () {
+    private void computeAutlevelSegments () {
 
         LOG.debug ( "computeAutlevelSegments:" );
 
@@ -1162,8 +1162,6 @@ public class GcodeProgramImpl implements IGcodeProgram {
                 }
 
                 reader.close ();
-
-                computeAutlevelSegments ();
 
                 eventBroker.send ( IEvent.AUTOLEVEL_DATA_LOADED, file.getPath () );
 

@@ -362,6 +362,17 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
             }
             eventBroker.post ( IEvent.GRBL_ALARM, msg ); // inform about alarm message
 
+            if ( scanRunning ) {
+                gcodeProgram.setAutolevelStop ();
+                scanRunning = false;
+            }
+
+            if ( playRunning ) {
+                gcodeProgram.setPlayerStop ();
+                playRunning = false;
+                parserStatePoller.restart ();
+            }
+
         }
         else if ( line.startsWith ( "error:" ) ) { // error message
 
@@ -434,6 +445,21 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 eventBroker.post ( IEvent.UPDATE_STATE, grblState );
             }
             
+        }
+        else if ( line.startsWith ( "[MSG:Pgm End]" ) ) {
+            if ( scanRunning ) {
+                gcodeProgram.setAutolevelStop ();
+                gcodeProgram.setAutolevelScanCompleted ();
+                eventBroker.post ( IEvent.AUTOLEVEL_STOP, getTimestamp () );
+                scanRunning = false;
+            }
+            else if ( playRunning ) {
+                gcodeProgram.setPlayerStop ();
+                eventBroker.post ( IEvent.PLAYER_STOP, getTimestamp () );
+                playRunning = false;
+                parserStatePoller.restart ();
+            }
+
         }
         else if ( line.startsWith ( "[PRB:" ) ) {
             // probe sends all cooridnates in machine system, transfer probe coordinates from machine to working coordinates
@@ -783,7 +809,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                     }
                 }
                 scanRunning = false;
-                gcodeProgram.computeAutlevelSegments ();
                 gcodeProgram.setAutolevelScanCompleted ();
 
                 eventBroker.post ( IEvent.AUTOLEVEL_STOP, getTimestamp () );
@@ -1004,23 +1029,19 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
                 }
 
-                gcodeProgram.setAutolevelScanCompleted ();
+                sendCommandSuppressInTerminal ( "M2" ); // program ends
 
             }
             catch ( InterruptedException exc ) {
                 LOG.info ( THREAD_NAME + ": cancelled" );
+                interrupt ();
             }
 
-            gcodeProgram.computeAutlevelSegments ();
-
-            gcodeProgram.setAutolevelStop ();
-            eventBroker.post ( IEvent.AUTOLEVEL_STOP, getTimestamp () ); //
-
-            scanRunning = false;
+            // all state changes on scan completion are made in analyzeReponse () when "[MSG:Pgm End]" (from M2) ist detected
 
             probeScannerThread = null;
     
-            LOG.debug ( THREAD_NAME + ": stopped" );
+            LOG.info ( THREAD_NAME + ": stopped" );
     
         }
     }
@@ -1156,16 +1177,9 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             }
 
-            gcodeProgram.setPlayerStop ();
-            eventBroker.post ( IEvent.PLAYER_STOP, getTimestamp () );
-
-            playRunning = false;
-
             gcodePlayerThread = null;
 
-            parserStatePoller.restart ();
-
-            LOG.debug ( THREAD_NAME + ": stopped" );
+            LOG.info ( THREAD_NAME + ": stopped" );
 
         }
 

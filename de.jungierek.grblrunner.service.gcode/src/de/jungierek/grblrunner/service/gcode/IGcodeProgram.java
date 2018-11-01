@@ -65,6 +65,4 @@ public interface IGcodeProgram {
     public void setProbePoint ( IGcodePoint probe );
     public IGcodePoint getProbePointAt ( int ix, int iy );
 
-    public void computeAutlevelSegments ();
-
 }

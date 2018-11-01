@@ -451,9 +451,8 @@ public class TerminalPart {
 
         LOG.trace ( "updateProbeNotified: probe=" + probe );
 
-        // convert from machine to work coordinate system
-        final IGcodePoint p = probe.sub ( gcodeService.getFixtureShift () );
-        terminalText.append ( "" + probe + "    delta=" + String.format ( IGcodePoint.FORMAT_COORDINATE, p.getZ () ) + "\n" );
+        // probe is in work coordinate system
+        terminalText.append ( "" + probe + "\n" );
 
         scrollToEnd ();
 

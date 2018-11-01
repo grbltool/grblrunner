@@ -613,11 +613,6 @@ public class GcodeServiceImplTest implements UncaughtExceptionHandler {
         }
 
         @Override
-        public void computeAutlevelSegments () {
-            fail ( "GcodeModel: computeAutlevelSegments not implemented" );
-        }
-
-        @Override
         public double getRotationAngle () {
             // TODO Auto-generated method stub
             return 0;
