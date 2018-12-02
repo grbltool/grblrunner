@@ -204,9 +204,9 @@ public class StatusLinePart {
 
     @Inject
     @Optional
-    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String [] line ) {
 
-        LOG.trace ( "alarmNotified: line=" + line );
+        LOG.trace ( "alarmNotified: line=" + line [0] );
 
         dialogs.clear ();
 
