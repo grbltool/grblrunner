@@ -117,6 +117,7 @@ public abstract class MacroGroup {
 
             gcodeProgram.appendLine ( "G0 Z" + String.format ( IConstant.FORMAT_COORDINATE, getDoublePreference ( IPreferenceKey.Z_CLEARANCE ) ) );
             gcodeProgram.appendLine ( "M5" );
+            gcodeProgram.appendLine ( "M2" );
 
             gcodeProgram.parse ();
 

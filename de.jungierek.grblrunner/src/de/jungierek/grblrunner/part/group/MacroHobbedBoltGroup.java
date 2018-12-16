@@ -71,7 +71,7 @@ public class MacroHobbedBoltGroup extends MacroGroup {
         spindleSpeedText = GuiFactory.createIntegerText ( group, "" + getIntPreference ( IPreferenceKey.MACRO_SPINDLE_SPEED ), 1, true, getIntPreference ( IPreferenceKey.SPINDLE_MIN ), getIntPreference ( IPreferenceKey.SPINDLE_MAX ));
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "rpm" );
 
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "retraction count", 1 );
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "retraction cnt", 1 );
         countRetractionText = GuiFactory.createIntegerText ( group, "" + getIntPreference ( IPreferenceKey.HOBBED_BOLT_COUNT_RETRACTION ), 1, true, 0, 10 );
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "" );
 
