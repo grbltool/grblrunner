@@ -649,11 +649,11 @@ public class GcodeProgramImpl implements IGcodeProgram {
 
         final GcodePointImpl p = (GcodePointImpl) probe;
 
-        final double distx = p.x - min.x + IConstant.EPSILON;
+        final double distx = p.x - min.x + 0.5;
         final double ii = distx / this.xStepWidth;
         int i = (int) ii;
 
-        final double disty = p.y - min.y + IConstant.EPSILON;
+        final double disty = p.y - min.y + 0.5;
         final double jj = disty / this.yStepWidth;
         int j = (int) jj;
 
