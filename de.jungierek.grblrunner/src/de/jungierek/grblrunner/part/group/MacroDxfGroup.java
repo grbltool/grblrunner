@@ -3,6 +3,7 @@ package de.jungierek.grblrunner.part.group;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,10 +12,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 import org.kabeja.DraftDocument;
+import org.kabeja.common.DraftEntity;
 import org.kabeja.common.Layer;
+import org.kabeja.common.LineType;
 import org.kabeja.common.Type;
 import org.kabeja.dxf.parser.DXFParserBuilder;
+import org.kabeja.entities.Arc;
 import org.kabeja.entities.Line;
+import org.kabeja.entities.Polyline;
+import org.kabeja.entities.Vertex;
 import org.kabeja.math.Point3D;
 import org.kabeja.parser.ParseException;
 import org.kabeja.parser.Parser;
@@ -39,6 +45,7 @@ public class MacroDxfGroup extends MacroGroup {
     private Text zLiftupText;
     private Text zDepthText;
     private Text zFeedrateText;
+    private Text scaleText;
 
     @Override
     protected int getGridLayoutColumns () {
@@ -80,12 +87,17 @@ public class MacroDxfGroup extends MacroGroup {
         zDepthText = GuiFactory.createDoubleText ( group, formatCoordinate ( getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ) ), 1, true, -5.0 );
         GuiFactory.createHeadingLabel ( group, SWT.LEFT, "mm" );
 
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "scale", 1 );
+        scaleText = GuiFactory.createDoubleText ( group, "1.0", 1, true, -5.0 );
+        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "" );
+
         xyFeedrateText.addModifyListener ( textFieldModifyListener );
         zFeedrateText.addModifyListener ( textFieldModifyListener );
         spindleSpeedText.addModifyListener ( textFieldModifyListener );
         zClearanceText.addModifyListener ( textFieldModifyListener );
         zLiftupText.addModifyListener ( textFieldModifyListener );
         zDepthText.addModifyListener ( textFieldModifyListener );
+        scaleText.addModifyListener ( textFieldModifyListener );
 
     }
 
@@ -108,6 +120,12 @@ public class MacroDxfGroup extends MacroGroup {
 
     }
 
+    private Point3D scalePoint ( double scale, Point3D p ) {
+        
+        return new Point3D ( scale* p.getX (), scale*p.getY (), p.getZ () );
+        
+    }
+
     // http://www.programcreek.com/java-api-examples/index.php?api=org.kabeja.parser.Parser
     @Override
     public void generateGcodeCore ( IGcodeProgram gcodeProgram ) {
@@ -120,6 +138,7 @@ public class MacroDxfGroup extends MacroGroup {
         double zLiftup = toolbox.parseDoubleField ( zLiftupText, getDoublePreference ( IPreferenceKey.MACRO_Z_LIFTUP ) );
         double zDepth = toolbox.parseDoubleField ( zDepthText, getDoublePreference ( IPreferenceKey.POCKET_MILL_Z_DEPTH ) );
         int zFeedrate = toolbox.parseIntegerField ( zFeedrateText, getIntPreference ( IPreferenceKey.POCKET_MILL_Z_FEEDRATE ) );
+        double scale = toolbox.parseDoubleField ( scaleText, 1.0 );
 
         motionSeekZ ( zClearance );
         motionSeekXY ( 0.0, 0.0 );
@@ -138,27 +157,92 @@ public class MacroDxfGroup extends MacroGroup {
 
             Point3D lastP2 = null;
 
-            // Collection<Layer> layers = document.getLayers ();
+            Collection<Layer> layers = document.getLayers ();
             // for ( Layer layer : layers ) {
             // LOG.debug ( "generateGcodeCore: layer=" + layer.getName () );
             // }
 
-            Layer layer0 = document.getLayer ( "0" );
-            List<Line> lines = layer0.getEntitiesByType ( Type.TYPE_LINE );
-            for ( Line line : lines ) {
-                final Point3D p1 = line.getStartPoint ();
-                final Point3D p2 = line.getEndPoint ();
-                LOG.debug ( "generateGcodeCore: p1=" + point ( p1 ) + " p2=" + point ( p2 ) + " lastP2=" + point ( lastP2 ) );
-                if ( !p1.equals ( lastP2 ) ) {
-                    // this is valid for the first point with lastP2 == null and also for every start of a new contour
-                    motionSeekZ ( zLiftup );
-                    motionSeekXY ( p1.getX (), p1.getY () );
-                    motionLinearZ ( zDepth, zFeedrate );
+            Collection<LineType> lineTypes = document.getLineTypes ();
+            for ( LineType lineType : lineTypes ) {
+                LOG.debug ( "generateGcodeCore: type=" + lineType.getName () );
+            }
+
+            LOG.debug ( "generateGcodeCore: TYPE_LINE" );
+            for ( Layer layer : layers ) {
+                LOG.debug ( "generateGcodeCore: layer=" + layer.getName () );
+                List<Line> lines = layer.getEntitiesByType ( Type.TYPE_LINE );
+                for ( Line line : lines ) {
+                    final Point3D p1 = scalePoint ( scale, line.getStartPoint () );
+                    final Point3D p2 = scalePoint ( scale, line.getEndPoint () );
+                    LOG.debug ( "generateGcodeCore: p1=" + point ( p1 ) + " p2=" + point ( p2 ) + " lastP2=" + point ( lastP2 ) );
+                    if ( !p1.equals ( lastP2 ) ) {
+                        // this is valid for the first point with lastP2 == null and also for every start of a new contour
+                        motionSeekZ ( zLiftup );
+                        motionSeekXY ( p1.getX (), p1.getY () );
+                        motionLinearZ ( zDepth, zFeedrate );
+                    }
+                    motionLinearXY ( p2.getX (), p2.getY (), xyFeedrate );
+                    lastP2 = p2;
                 }
-                motionLinearXY ( p2.getX (), p2.getY (), xyFeedrate );
-                lastP2 = p2;
+                motionSeekZ ( zLiftup );
+                List<Arc> arcs = layer.getEntitiesByType ( Type.TYPE_ARC );
+                for ( Arc arc : arcs ) {
+                    final Point3D p1 = scalePoint ( scale, arc.getStartPoint () );
+                    final Point3D p2 = scalePoint ( scale, arc.getEndPoint () );
+                    LOG.debug ( "generateGcodeCore: p1=" + point ( p1 ) + " p2=" + point ( p2 ) + " lastP2=" + point ( lastP2 ) );
+                    if ( !p1.equals ( lastP2 ) ) {
+                        // this is valid for the first point with lastP2 == null and also for every start of a new contour
+                        motionSeekZ ( zLiftup );
+                        motionSeekXY ( p1.getX (), p1.getY () );
+                        motionLinearZ ( zDepth, zFeedrate );
+                    }
+                    motionLinearXY ( p2.getX (), p2.getY (), xyFeedrate );
+                    lastP2 = p2;
+                }
             }
             motionSeekZ ( zLiftup );
+
+            LOG.debug ( "generateGcodeCore: TYPE_POLYLINE" );
+            for ( Layer layer : layers ) {
+                LOG.debug ( "generateGcodeCore: layer=" + layer.getName () );
+                Collection<Type<? extends DraftEntity>> entityTypes = layer.getEntityTypes ();
+                for ( Type<? extends DraftEntity> entityType : entityTypes ) {
+                    LOG.debug ( "generateGcodeCore: type=" + entityType.getName () );
+                }
+                List<Polyline> plines = layer.getEntitiesByType ( Type.TYPE_POLYLINE );
+                for ( Polyline pline : plines ) {
+                    List<Vertex> vertices = pline.getVertices ();
+                    Point3D p1 = null;
+                    Point3D p2 = null;
+                    for ( Vertex vertex : vertices ) {
+                        if ( p1 == null ) {
+                            p1 = scalePoint ( scale, vertex.getPoint () );
+                            if ( !p1.equals ( lastP2 ) ) {
+                                // this is valid for the first point with lastP2 == null and also for every start of a new contour
+                                motionSeekZ ( zLiftup );
+                                motionSeekXY ( p1.getX (), p1.getY () );
+                                motionLinearZ ( zDepth, zFeedrate );
+                            }
+                        }
+                        else {
+                            p2 = scalePoint ( scale, vertex.getPoint () );
+                            motionLinearXY ( p2.getX (), p2.getY (), xyFeedrate );
+                            lastP2 = p2;
+                        }
+                        LOG.debug ( "generateGcodeCore: p1=" + point ( p1 ) + " p2=" + point ( p2 ) + " lastP2=" + point ( lastP2 ) );
+                    }
+                }
+            }
+            motionSeekZ ( zLiftup );
+
+            layers = document.getLayers ();
+            for ( Layer layer : layers ) {
+                LOG.debug ( "generateGcodeCore: layer=" + layer.getName () );
+                Collection<Type<? extends DraftEntity>> entityTypes = layer.getEntityTypes ();
+                for ( Type<? extends DraftEntity> entityType : entityTypes ) {
+                    LOG.debug ( "generateGcodeCore: type=" + entityType.getName () );
+                }
+            }
 
         }
         catch ( FileNotFoundException | ParseException exc ) {
@@ -195,6 +279,7 @@ public class MacroDxfGroup extends MacroGroup {
         zLiftupText.setEnabled ( enabled );
         zDepthText.setEnabled ( enabled );
         zFeedrateText.setEnabled ( enabled );
+        scaleText.setEnabled ( enabled );
 
     }
 
