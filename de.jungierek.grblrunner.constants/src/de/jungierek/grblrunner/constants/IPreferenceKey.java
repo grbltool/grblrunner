@@ -8,6 +8,7 @@ public interface IPreferenceKey {
     public static final String BAUDRATE = IConstant.KEY_BASE + ".baudrate";
     public static final String WORK_AREA_MAX_X = IConstant.KEY_BASE + ".workarea.max.x";
     public static final String WORK_AREA_MAX_Y = IConstant.KEY_BASE + ".workarea.max.y";
+    public static final String WORK_AREA_ORGIN_0x0 = IConstant.KEY_BASE + ".workarea.origin.0x0";
     public static final String SPINDLE_MIN = IConstant.KEY_BASE + ".spindle.min";
     public static final String SPINDLE_MAX = IConstant.KEY_BASE + ".spindle.max";
     public static final String MAX_SEEK_FEEDRATE = IConstant.KEY_BASE + ".seekrate.max";

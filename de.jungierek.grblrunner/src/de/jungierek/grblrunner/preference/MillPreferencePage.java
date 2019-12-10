@@ -1,6 +1,7 @@
 package de.jungierek.grblrunner.preference;
 
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,6 +40,7 @@ public class MillPreferencePage extends FieldEditorPreferencePage {
 
         addField ( new DoubleFieldEditor ( IPreferenceKey.WORK_AREA_MAX_X, "Work Area X (mm)", 0.0, IConstant.PREFERENCE_DOUBLE_MAX, getFieldEditorParent () ) );
         addField ( new DoubleFieldEditor ( IPreferenceKey.WORK_AREA_MAX_Y, "Work Area Y (mm)", 0.0, IConstant.PREFERENCE_DOUBLE_MAX, getFieldEditorParent () ) );
+        addField ( new BooleanFieldEditor ( IPreferenceKey.WORK_AREA_ORGIN_0x0, "Work Area Origin is at (0,0)", getFieldEditorParent () ) );
         GuiFactory.createHiddenLabel ( getFieldEditorParent (), cols, true );
 
         addField ( new IntegerFieldEditor ( IPreferenceKey.SPINDLE_MIN, "Spindle min (rpm)", getFieldEditorParent () ) );

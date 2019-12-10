@@ -96,6 +96,7 @@ public class GcodeViewGroup {
     // preferences
     private double workAreaMaxX; // set from preferences
     private double workAreaMaxY; // set from preferences
+    private boolean isWorkAreaOrigin0x0; // set from preferences
 
     private double fitToSizeMargin; // set from preferences
 
@@ -335,6 +336,15 @@ public class GcodeViewGroup {
     }
     
     @Inject
+    public void setWorkAreaOriginAt0x0 ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.WORK_AREA_ORGIN_0x0) boolean flag ) {
+
+        isWorkAreaOrigin0x0 = flag;
+        initWorkAreaPoints ();
+        redraw ();
+
+    }
+
+    @Inject
     public void setFitToSizeMargin ( @Preference(nodePath = IConstant.PREFERENCE_NODE, value = IPreferenceKey.FIT_TO_SIZE_MARGIN) double margin ) {
 
         fitToSizeMargin = margin;
@@ -545,14 +555,28 @@ public class GcodeViewGroup {
 
     private void initWorkAreaPoints () {
 
+        if ( isWorkAreaOrigin0x0 ) {
+            /* @formatter:off */
+            workAreaPoints = new IGcodePoint [] { 
+                    gcodeService.createGcodePoint ( workAreaMaxX, 0.0, 0.0 ), 
+                    gcodeService.createGcodePoint ( workAreaMaxX, workAreaMaxY, 0.0 ), 
+                    gcodeService.createGcodePoint ( 0.0, workAreaMaxY, 0.0 ), 
+                    gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 ),
+            };
+            /* @formatter:on */
+        }
+        else {
+            /* @formatter:off */
+            workAreaPoints = new IGcodePoint [] { 
+                    gcodeService.createGcodePoint ( -workAreaMaxX, 0.0, 0.0 ), 
+                    gcodeService.createGcodePoint ( -workAreaMaxX, -workAreaMaxY, 0.0 ), 
+                    gcodeService.createGcodePoint ( 0.0, -workAreaMaxY, 0.0 ), 
+                    gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 ),
+            };
+            /* @formatter:on */
+        }
+
         /* @formatter:off */
-        workAreaPoints = new IGcodePoint [] { 
-                gcodeService.createGcodePoint ( workAreaMaxX, 0.0, 0.0 ), 
-                gcodeService.createGcodePoint ( workAreaMaxX, workAreaMaxY, 0.0 ), 
-                gcodeService.createGcodePoint ( 0.0, workAreaMaxY, 0.0 ), 
-                gcodeService.createGcodePoint ( 0.0, 0.0, 0.0 ),
-        };
-        
         workAreaCenterCrossEndPoints = new IGcodePoint [] { 
                 gcodeService.createGcodePoint ( workAreaMaxX / 2 - workAreaCenterCrossLength, workAreaMaxY / 2, 0.0 ), 
                 gcodeService.createGcodePoint ( workAreaMaxX / 2 + workAreaCenterCrossLength, workAreaMaxY / 2, 0.0 ), 
@@ -882,11 +906,11 @@ public class GcodeViewGroup {
         if ( start.equals ( end ) ) return; // TODO this is may be wrong, this is a full circle
     
         // from grbl code
-        double x = end.getX () - start.getX ();
-        double y = end.getY () - start.getY ();
+        final double x = end.getX () - start.getX ();
+        final double y = end.getY () - start.getY ();
     
         final double dd = x * x + y * y;
-        double d = Math.sqrt ( dd );
+        final double d = Math.sqrt ( dd );
         double hh = r * r - dd / 4;
         if ( hh < 0 ) hh = 0.0;
         double h = Math.sqrt ( hh );

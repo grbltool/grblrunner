@@ -31,6 +31,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         defaults.put ( IPreferenceKey.GCODE_PATH, "C:\\Users\\Andreas\\Documents\\eagle" );
         defaults.putDouble ( IPreferenceKey.WORK_AREA_MAX_X, 107.5 );
         defaults.putDouble ( IPreferenceKey.WORK_AREA_MAX_Y, 84.3 );
+        defaults.putBoolean ( IPreferenceKey.WORK_AREA_ORGIN_0x0, true );
         defaults.putInt ( IPreferenceKey.SPINDLE_MIN, 0 );
         defaults.putInt ( IPreferenceKey.SPINDLE_MAX, 12000 );
         defaults.putInt ( IPreferenceKey.MAX_SEEK_FEEDRATE, 600 );
