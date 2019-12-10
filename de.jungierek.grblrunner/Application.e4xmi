@@ -103,10 +103,10 @@
           <tags>NoMove</tags>
           <children xsi:type="basic:PartSashContainer" xmi:id="_HGyGIAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partsashcontainer.16" containerData="9350" horizontal="true">
             <children xsi:type="basic:PartSashContainer" xmi:id="_Ql0zcAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partsashcontainer.17" containerData="300">
-              <children xsi:type="basic:PartStack" xmi:id="_gXbD8AOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partstack.17" containerData="300">
+              <children xsi:type="basic:PartStack" xmi:id="_gXbD8AOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partstack.17" containerData="200">
                 <children xsi:type="advanced:Placeholder" xmi:id="_jin0oAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.27" ref="_HqYF4BKsEeWQTZppWEhVhQ"/>
               </children>
-              <children xsi:type="basic:PartStack" xmi:id="_gqg_EAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partstack.18" containerData="700">
+              <children xsi:type="basic:PartStack" xmi:id="_gqg_EAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.partstack.18" containerData="800">
                 <children xsi:type="advanced:Placeholder" xmi:id="_lsRowAOaEeaKFK1xDri94w" elementId="de.jungierek.grblrunner.placeholder.28" ref="_jbBuYAMXEeazSLMMvR3jSA"/>
               </children>
             </children>
