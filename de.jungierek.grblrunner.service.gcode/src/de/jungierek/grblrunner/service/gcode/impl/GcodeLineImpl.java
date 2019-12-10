@@ -1,10 +1,15 @@
 package de.jungierek.grblrunner.service.gcode.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jungierek.grblrunner.service.gcode.EGcodeMode;
 import de.jungierek.grblrunner.service.gcode.IGcodeLine;
 import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 
 public class GcodeLineImpl implements IGcodeLine {
+
+    private static final Logger LOG = LoggerFactory.getLogger ( GcodeLineImpl.class );
 
     private final int lineNo;
     private final String line;
@@ -174,7 +179,16 @@ public class GcodeLineImpl implements IGcodeLine {
     private void parseMotionArc ( IGcodePoint lastEnd, double lastRadius, int last_feedrate ) {
 
         parseMotionLine ( lastEnd, last_feedrate );
-        radius = scanAxisCoordinate ( 'R', lastRadius );
+
+        if ( hasAxisCoordinate ( 'R' ) ) {
+            radius = scanAxisCoordinate ( 'R', lastRadius );
+        }
+        else {
+            final double i = scanAxisCoordinate ( 'I', 0 );
+            final double j = scanAxisCoordinate ( 'J', 0 );
+            radius = Math.sqrt ( i * i + j * j );
+            LOG.debug ( "parseMotionArc: i=" + i + " j=" + j + " radius=" + radius );
+        }
 
     }
 
@@ -191,11 +205,20 @@ public class GcodeLineImpl implements IGcodeLine {
 
     }
 
+    private boolean hasAxisCoordinate ( char axis ) {
+
+        return line.indexOf ( axis ) > -1;
+
+    }
+
     private double scanAxisCoordinate ( char axis, double coordinate ) {
     
         int pos = line.indexOf ( axis );
         if ( pos == -1 ) return coordinate;
         int end = pos;
+        while ( line.charAt ( end + 1 ) == ' ' ) {
+            end++; // skip leading space
+        }
         for ( int i = end + 1; i < line.length (); i++ ) {
             char c = line.charAt ( i );
             // TODO Vorzeichen nur ganz vorne
