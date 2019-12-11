@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JSerialComm
+Bundle-SymbolicName: jSerialComm
+Bundle-Version: 1.0.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ClassPath: jSerialComm-2.5.3.jar
+Export-Package: com.fazecast.jSerialComm
