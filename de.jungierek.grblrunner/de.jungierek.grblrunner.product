@@ -37,6 +37,7 @@
       <plugin id="de.jungierek.grblrunner.service.gcode"/>
       <plugin id="de.jungierek.grblrunner.service.serial"/>
       <plugin id="de.jungierek.grblrunner.service.webcam"/>
+      <plugin id="jSerialComm"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
       <plugin id="javax.servlet"/>

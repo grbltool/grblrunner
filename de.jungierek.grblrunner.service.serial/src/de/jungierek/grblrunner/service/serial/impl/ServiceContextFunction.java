@@ -29,9 +29,20 @@ public class ServiceContextFunction extends ContextFunction {
     }
 
     private ISerialService createSerialService ( IEclipseContext context ) {
-        ISerialService result = ContextInjectionFactory.make ( SerialServiceImpl.class, context );
+
+        ISerialService result;
+
+        final boolean useRXTX = false;
+        if ( useRXTX ) {
+             result= ContextInjectionFactory.make ( RXTXSerialServiceImpl.class, context );
+        }
+        else {
+            result = ContextInjectionFactory.make ( JSerialServiceImpl.class, context );
+        }
         context.get ( MApplication.class ).getContext ().set ( ISerialService.class, result );
+
         return result;
+
     }
 
 }
