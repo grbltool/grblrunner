@@ -227,7 +227,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
     private void sendCommand ( String line, boolean suppressInTerminal ) throws InterruptedException {
 
         try {
-            queue.put ( new GrblRequestImpl ( suppressInTerminal, line + IConstant.LF ) );
+            queue.put ( new GrblRequestImpl ( suppressInTerminal, line + IConstant.CR + IConstant.LF ) );
         }
         catch ( InterruptedException exc ) {
             LOG.info ( "sendCommand: interrupted exception in line=" + line );
