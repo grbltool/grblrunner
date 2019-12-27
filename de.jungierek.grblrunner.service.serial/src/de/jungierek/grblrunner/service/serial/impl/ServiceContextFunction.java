@@ -32,11 +32,13 @@ public class ServiceContextFunction extends ContextFunction {
 
         ISerialService result;
 
-        final boolean useRXTX = false;
+        final boolean useRXTX = true;
         if ( useRXTX ) {
-             result= ContextInjectionFactory.make ( RXTXSerialServiceImpl.class, context );
+            LOG.info ( "Using RXTXSerial" );
+            result = ContextInjectionFactory.make ( RXTXSerialServiceImpl.class, context );
         }
         else {
+            LOG.info ( "Using JSerial" );
             result = ContextInjectionFactory.make ( JSerialServiceImpl.class, context );
         }
         context.get ( MApplication.class ).getContext ().set ( ISerialService.class, result );
