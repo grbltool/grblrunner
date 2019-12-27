@@ -5,8 +5,7 @@ Bundle-SymbolicName: de.jungierek.grblrunner.service.serial
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/serial_service.xml
-Require-Bundle: org.eclipse.equinox.util;bundle-version="1.0.500",
- org.eclipse.equinox.ds;bundle-version="1.4.200",
+Require-Bundle: 
  org.eclipse.osgi.services;bundle-version="3.4.0",
  jSerialComm;bundle-version="1.0.0",
  org.rxtx;bundle-version="2.2.0",
