@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IContextKey;
 import de.jungierek.grblrunner.constants.IEvent;
+import de.jungierek.grblrunner.service.gcode.IGcodePoint;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
 import de.jungierek.grblrunner.tool.GuiFactory;
 
@@ -36,6 +37,7 @@ public class GcodeFileGroup {
 
     private Label gcodeMinLabel;
     private Label gcodeMaxLabel;
+    private Label gcodeDimLabel;
     private Label gcodeTimeLabel;
 
     @PostConstruct
@@ -45,26 +47,32 @@ public class GcodeFileGroup {
 
         Group group = GuiFactory.createGroup ( parent, GROUP_NAME, groupCols, groupRows, true );
 
-        final int cols = 9;
+        final int cols = 11;
         group.setLayout ( new GridLayout ( cols, true ) );
 
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "min", 1 );
+        GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "min:", 1 );
         gcodeMinLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
 
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "max", 1 );
+        GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "max:", 1 );
         gcodeMaxLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
 
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "time", 1 );
-        gcodeTimeLabel = GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "", 1 );
-        GuiFactory.createHeadingLabel ( group, SWT.LEFT, "min", 1 );
+        GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "dim:", 1 );
+        gcodeDimLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 2 );
+
+        GuiFactory.createHeadingLabel ( group, SWT.RIGHT, "time:", 1 );
+        gcodeTimeLabel = GuiFactory.createHeadingLabel ( group, SWT.LEFT, "", 1 );
 
     }
 
     private void refreshGuiData () {
 
-        gcodeMinLabel.setText ( "" + gcodeProgram.getMin () );
-        gcodeMaxLabel.setText ( "" + gcodeProgram.getMax () );
-        gcodeTimeLabel.setText ( "" + gcodeProgram.getDuration () );
+        final IGcodePoint min = gcodeProgram.getMin ();
+        final IGcodePoint max = gcodeProgram.getMax ();
+
+        gcodeMinLabel.setText ( "" + min );
+        gcodeMaxLabel.setText ( "" + max );
+        gcodeDimLabel.setText ( "" + max.sub ( min ) );
+        gcodeTimeLabel.setText ( "" + gcodeProgram.getDuration () + "min" );
 
     }
 

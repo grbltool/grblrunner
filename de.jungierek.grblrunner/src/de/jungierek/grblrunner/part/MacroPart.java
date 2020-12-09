@@ -199,9 +199,7 @@ public class MacroPart {
 
         LOG.debug ( "playerStartNotified: isPlaying=" + gcodeProgram.isPlaying () );
 
-        if ( gcodeProgram.isPlaying () ) {
-            macroGroup.setControlsEnabled ( true );
-        }
+        macroGroup.setControlsEnabled ( true );
 
     }
 
