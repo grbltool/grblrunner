@@ -4,5 +4,5 @@ Bundle-Name: JSerialComm
 Bundle-SymbolicName: jSerialComm
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Bundle-ClassPath: jSerialComm-2.5.3.jar
+Bundle-ClassPath: jSerialComm-2.6.2.jar
 Export-Package: com.fazecast.jSerialComm
