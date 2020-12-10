@@ -59,6 +59,8 @@ public class JSerialServiceImpl implements ISerialService {
     private void detectSerialPorts () {
 
         LOG.debug ( "detectSerialPorts:" );
+        
+        LOG.info ( "jserial verion=" + SerialPort.getVersion () );
 
         detectingSerialPortsIsRunning = true;
 
@@ -86,7 +88,7 @@ public class JSerialServiceImpl implements ISerialService {
         detectingSerialPortsIsRunning = false;
 
         LOG.debug ( "detectSerialPorts: posting event" );
-        if ( eventBroker != null ) eventBroker.send ( IEvent.SERIAL_PORTS_DETECTED, cachedPorts );
+        eventBroker.send ( IEvent.SERIAL_PORTS_DETECTED, cachedPorts );
 
     }
 
@@ -256,14 +258,17 @@ public class JSerialServiceImpl implements ISerialService {
 
         in = serialPort.getInputStream ();
         out = serialPort.getOutputStream ();
+        
+        LOG.debug ( "close: in=" + in + " out=" + out );
 
         serialReceiverThread = new SerialReceiverThread ();
         serialReceiverThread.start ();
 
-        LOG.trace ( "connect: posting event" );
+        LOG.debug ( "connect: posting event" );
         eventBroker.post ( IEvent.SERIAL_CONNECTED, portName );
 
         // a little bit later
+        LOG.debug ( "connect: resetting grbl" );
         send ( new byte [] { ISerialService.GRBL_RESET_CODE } );
 
     }
@@ -275,45 +280,53 @@ public class JSerialServiceImpl implements ISerialService {
 
     }
 
+    private Object closeLock = new Object ();
+
     @Override
     public void close () {
-
-        LOG.debug ( "close: serialReceiverThread=" + serialReceiverThread );
         
-        if ( !isOpen () ) return;
+            new Thread ( ( ) -> {
+    
+                synchronized ( closeLock ) {
 
-        if ( serialReceiverThread == null ) return;
-
-        new Thread ( ( ) -> {
-
-            serialReceiverThread.interrupt ();
-
-            LOG.debug ( "close: posting event" );
-            eventBroker.send ( IEvent.SERIAL_DISCONNECTED, "-" );
-
-            try {
-                in.close ();
-                out.close ();
-            }
-            catch ( IOException exc ) {
-                LOG.error ( "exc=" + exc );
-                sendErrorMessage ( "closing of streams failed, cause=" + exc );
-            }
-            finally {
-                in = null;
-                out = null;
-            }
-
-            if ( !serialPort.closePort () ) {
-                sendErrorMessage ( "serial port " + portName + " not connected!" );
-            }
-            serialPort = null;
-
-        } ).start ();
-
+                    LOG.debug ( "close: serialReceiverThread=" + serialReceiverThread + in + out );
+                    LOG.debug ( "close: in=" + in );
+                    LOG.debug ( "close: out=" + out );
+                    
+                    if ( !isOpen () ) return;
+                    if ( serialReceiverThread == null ) return;
+                    if ( in == null || out == null ) return;
+            
+                    serialReceiverThread.interrupt ();
+        
+                    LOG.debug ( "close: posting event" );
+                    eventBroker.send ( IEvent.SERIAL_DISCONNECTED, "-" );
+        
+                    try {
+                        in.close ();
+                        out.close ();
+                    }
+                    catch ( IOException exc ) {
+                        LOG.error ( "exc=" + exc );
+                        sendErrorMessage ( "closing of streams failed, cause=" + exc );
+                    }
+                    finally {
+                        in = null;
+                        out = null;
+                    }
+        
+                    if ( !serialPort.closePort () ) {
+                        sendErrorMessage ( "serial port " + portName + " not connected!" );
+                    }
+                    serialPort = null;
+                    
+                }
+    
+            } ).start ();
+            
     }
 
-    private Object lock = new Object ();
+    private Object sendLock = new Object ();
 
     @Override
     public void send ( char c ) {
@@ -321,14 +334,14 @@ public class JSerialServiceImpl implements ISerialService {
         LOG.trace ( "send: c=" + c );
 
         try {
-            synchronized ( lock ) {
+            synchronized ( sendLock ) {
                 if ( out != null ) out.write ( c );
             }
 
         }
         catch ( IOException exc ) {
-            // TODO Auto-generated catch block
-            exc.printStackTrace ();
+            LOG.debug ( "exception in send character", exc );
+            close ();
         }
 
     }
@@ -339,13 +352,13 @@ public class JSerialServiceImpl implements ISerialService {
         LOG.trace ( "send: bytes=" + printBuffer ( bytes, bytes.length ) );
 
         try {
-            synchronized ( lock ) {
+            synchronized ( sendLock ) {
                 if ( out != null ) out.write ( bytes );
             }
         }
         catch ( IOException exc ) {
-            // TODO Auto-generated catch block
-            exc.printStackTrace ();
+            LOG.debug ( "exception in send buffer", exc );
+            close ();
         }
 
     }

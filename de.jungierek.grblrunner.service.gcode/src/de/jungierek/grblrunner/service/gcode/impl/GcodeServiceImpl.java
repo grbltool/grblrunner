@@ -1319,7 +1319,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 // TODO catch throwable and restart (if necesarry a new thread (robust implementation)
             }
 
-            LOG.warn ( THREAD_NAME + ": stopped" );
+            LOG.debug ( THREAD_NAME + ": stopped" );
 
         }
 
