@@ -485,9 +485,9 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
 
             // v0.9j -> [G0 G54 G17 G21 G90 G94 M0 M5 M9 T0 F1000. S0.]
             // v1.1f -> [GC:G0 G54 G17 G21 G90 G94 M5 M9 T0 F0 S0]
-            int startPos = "{GC:".length (); // without '[GC:'
+            int startPos = "[GC:".length (); // without '[GC:'
             int endPos = line.indexOf ( ']' );
-            String [] token = line.substring ( startPos, endPos ).split ( "\\s" );
+            String [] token = line.substring ( startPos, endPos ).split ( "\\s" ); // split with token space
 
             // token [0] -> motion mode
             EGcodeMode motionMode = EGcodeMode.identify ( token[0] );
@@ -518,7 +518,6 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                 default:
                     break;
             }
-
             if ( !plane.equals ( lastPlane ) ) {
                 lastPlane = plane;
                 eventBroker.post ( IEvent.UPDATE_PLANE, plane );
@@ -752,6 +751,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
         if ( isPlaying () || isAutolevelScan () || !isGrblIdle () ) return;
 
         if ( gcodeProgram != null ) {
+            // reset "old" program
             gcodeProgram.resetProcessed ();
         }
 
