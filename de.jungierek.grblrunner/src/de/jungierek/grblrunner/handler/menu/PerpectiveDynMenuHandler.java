@@ -2,8 +2,8 @@ package de.jungierek.grblrunner.handler.menu;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.eclipse.e4.ui.di.AboutToHide;
 import org.eclipse.e4.ui.di.AboutToShow;

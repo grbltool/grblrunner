@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
@@ -1140,6 +1140,7 @@ public class GcodeServiceImpl implements IGcodeService, ISerialServiceReceiver {
                         else if ( gcodeLine.getGcodeMode () == EGcodeMode.TOOL_CHANGE ) {
                             sendCommandSuppressInTerminal ( "G49" ); // reset TLO
                             eventBroker.post ( IEvent.MESSAGE_ON_HALT, "Attach probe wires" );
+//                          sendCommandSuppressInTerminal ( "G30Z" + lastPoint.getZ () ); // move first on z axis
                             sendCommandSuppressInTerminal ( "G30" ); // go to tool change position
                             sendCommandSuppressInTerminal ( "M0" ); // pause and display attach message
                             sendCommandSuppressInTerminal ( "G0X0Y0" ); // go to [0,0]

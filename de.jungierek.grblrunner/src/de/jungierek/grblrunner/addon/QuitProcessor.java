@@ -1,7 +1,7 @@
 package de.jungierek.grblrunner.addon;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
@@ -19,6 +19,7 @@ import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.IGcodeService;
 import de.jungierek.grblrunner.service.serial.ISerialService;
+
 
 public class QuitProcessor {
 

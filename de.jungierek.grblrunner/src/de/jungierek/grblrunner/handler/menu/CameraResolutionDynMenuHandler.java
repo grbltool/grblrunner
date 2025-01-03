@@ -3,8 +3,8 @@ package de.jungierek.grblrunner.handler.menu;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.ui.di.AboutToHide;
 import org.eclipse.e4.ui.di.AboutToShow;

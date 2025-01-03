@@ -1,8 +1,8 @@
 package de.jungierek.grblrunner.part;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -181,6 +181,26 @@ public class MacroPart {
 
     }
     
+    @Inject
+    @Optional
+    public void alarmNotified ( @UIEventTopic(IEvent.GRBL_ALARM) String line ) {
+
+        LOG.trace ( "alarmNotified: line=" + line );
+
+        macroGroup.setControlsEnabled ( true );
+
+    }
+
+    @Inject
+    @Optional
+    public void grblRestartedNotified ( @UIEventTopic(IEvent.GRBL_RESTARTED) String line ) {
+
+        LOG.trace ( "grblRestartedNotified: line=" + line );
+
+        macroGroup.setControlsEnabled ( true );
+
+    }
+
     @Inject
     @Optional
     public void playerStartNotified ( @UIEventTopic(IEvent.PLAYER_START) String timestamp ) {

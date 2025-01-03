@@ -1,7 +1,7 @@
 package de.jungierek.grblrunner.part;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.gcode.IGcodeProgram;
-import de.jungierek.grblrunner.tool.Toolbox;
 import de.jungierek.grblrunner.tool.GuiFactory.IntegerVerifyer;
+import de.jungierek.grblrunner.tool.Toolbox;
 
 public class GcodeEditorToolControl {
     

@@ -1,8 +1,6 @@
  
 package de.jungierek.grblrunner.handler;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.slf4j.Logger;
@@ -11,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.github.sarxos.webcam.Webcam;
 
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
+import jakarta.inject.Inject;
 
 public class CameraActivateCommandHandler {
 

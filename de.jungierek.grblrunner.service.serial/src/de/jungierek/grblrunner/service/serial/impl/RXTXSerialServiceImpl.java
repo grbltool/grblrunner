@@ -6,8 +6,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +14,12 @@ import de.jungierek.grblrunner.constants.IConstant;
 import de.jungierek.grblrunner.constants.IEvent;
 import de.jungierek.grblrunner.service.serial.ISerialService;
 import de.jungierek.grblrunner.service.serial.ISerialServiceReceiver;
-
 import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.SerialPort;
 import gnu.io.UnsupportedCommOperationException;
+import jakarta.inject.Inject;
 
 public class RXTXSerialServiceImpl implements ISerialService {
 

@@ -1,7 +1,7 @@
  
 package de.jungierek.grblrunner.handler;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.CanExecute;

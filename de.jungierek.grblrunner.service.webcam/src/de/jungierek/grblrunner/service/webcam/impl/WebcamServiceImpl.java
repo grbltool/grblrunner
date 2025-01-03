@@ -9,9 +9,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +18,8 @@ import com.github.sarxos.webcam.WebcamExceptionHandler;
 
 import de.jungierek.grblrunner.service.webcam.IWebcamService;
 import de.jungierek.grblrunner.service.webcam.IWebcamServiceReceiver;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 public class WebcamServiceImpl implements IWebcamService {
 

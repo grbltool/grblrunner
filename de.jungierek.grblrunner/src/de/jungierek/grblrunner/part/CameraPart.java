@@ -4,8 +4,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.WritableRaster;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
+import jakarta.annotation.PostConstruct;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.jface.resource.StringConverter;

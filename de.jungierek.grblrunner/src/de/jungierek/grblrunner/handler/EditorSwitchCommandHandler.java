@@ -2,7 +2,7 @@ package de.jungierek.grblrunner.handler;
 
 import java.util.List;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.contexts.IEclipseContext;

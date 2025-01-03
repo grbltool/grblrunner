@@ -2,7 +2,7 @@ package de.jungierek.grblrunner.handler.menu;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.ui.di.AboutToShow;

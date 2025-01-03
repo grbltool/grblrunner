@@ -1,6 +1,6 @@
 package de.jungierek.grblrunner.part;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.jface.dialogs.Dialog;
